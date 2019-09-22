@@ -1,3 +1,25 @@
+# Table of Contents
+
+  * [Java中的包概念](#java中的包概念)
+    * [包的作用](#包的作用)
+    * [package 的目录结构](#package-的目录结构)
+    * [设置 CLASSPATH 系统变量](#设置-classpath-系统变量)
+  * [常用jar包](#常用jar包)
+    * [java软件包的类型](#java软件包的类型)
+    * [dt.jar](#dtjar)
+    * [rt.jar](#rtjar)
+  * [*.java文件的奥秘](#java文件的奥秘)
+    * [*.Java文件简介](#java文件简介)
+    * [为什么一个java源文件中只能有一个public类？](#为什么一个java源文件中只能有一个public类？)
+    * [Main方法](#main方法)
+    * [外部类的访问权限](#外部类的访问权限)
+    * [Java包的命名规则](#java包的命名规则)
+  * [参考文章](#参考文章)
+  * [微信公众号](#微信公众号)
+    * [Java技术江湖](#java技术江湖)
+    * [个人公众号：黄小斜](#个人公众号：黄小斜)
+
+
 ---
 title: 夯实Java基础系列5：Java文件和Java包结构
 date: 2019-9-5 15:56:26 # 文章生成时间，一般不改

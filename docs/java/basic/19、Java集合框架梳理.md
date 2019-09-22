@@ -1,3 +1,37 @@
+# Table of Contents
+
+  * [集合类大图](#集合类大图)
+  * [Collection接口](#collection接口)
+  * [List接口](#list接口)
+  * [Set接口](#set接口)
+  * [Map接口](#map接口)
+  * [Queue](#queue)
+  * [关于Java集合的小抄](#关于java集合的小抄)
+    * [List](#list)
+      * [ArrayList](#arraylist)
+      * [LinkedList](#linkedlist)
+      * [CopyOnWriteArrayList](#copyonwritearraylist)
+      * [遗憾](#遗憾)
+    * [Map](#map)
+      * [HashMap](#hashmap)
+      * [LinkedHashMap](#linkedhashmap)
+      * [TreeMap](#treemap)
+      * [EnumMap](#enummap)
+      * [ConcurrentHashMap](#concurrenthashmap)
+      * [ConcurrentSkipListMap](#concurrentskiplistmap)
+    * [Set](#set)
+    * [Queue](#queue-1)
+      * [普通队列](#普通队列)
+      * [PriorityQueue](#priorityqueue)
+      * [线程安全的队列](#线程安全的队列)
+      * [线程安全的阻塞队列](#线程安全的阻塞队列)
+      * [同步队列](#同步队列)
+  * [参考文章](#参考文章)
+  * [微信公众号](#微信公众号)
+    * [Java技术江湖](#java技术江湖)
+    * [个人公众号：黄小斜](#个人公众号：黄小斜)
+
+
 ---
 title: 夯实Java基础系列19：一文搞懂Java集合类框架，以及常见面试题
 date: 2019-9-19  15:56:26 # 文章生成时间，一般不改

@@ -1,3 +1,37 @@
+# Table of Contents
+
+  * [string基础](#string基础)
+    * [Java String 类](#java-string-类)
+    * [创建字符串](#创建字符串)
+    * [StringDemo.java 文件代码：](#stringdemojava-文件代码：)
+  * [String基本用法](#string基本用法)
+    * [创建String对象的常用方法](#创建string对象的常用方法)
+    * [String中常用的方法，用法如图所示，具体问度娘](#string中常用的方法，用法如图所示，具体问度娘)
+    * [三个方法的使用： lenth()   substring()   charAt()](#三个方法的使用：-lenth---substring---charat)
+    * [字符串与byte数组间的相互转换](#字符串与byte数组间的相互转换)
+    * [==运算符和equals之间的区别：](#运算符和equals之间的区别：)
+    * [字符串的不可变性](#字符串的不可变性)
+    * [String的连接](#string的连接)
+    * [String、String builder和String buffer的区别](#string、string-builder和string-buffer的区别)
+  * [String类的源码分析](#string类的源码分析)
+    * [String类型的intern](#string类型的intern)
+    * [String类型的equals](#string类型的equals)
+    * [StringBuffer和Stringbuilder](#stringbuffer和stringbuilder)
+    * [append方法](#append方法)
+    * [扩容](#扩容)
+                                        * [](#)
+    * [删除](#删除)
+    * [system.arraycopy方法](#systemarraycopy方法)
+  * [String和JVM的关系](#string和jvm的关系)
+  * [String为什么不可变？](#string为什么不可变？)
+    * [不可变有什么好处？](#不可变有什么好处？)
+  * [String常用工具类](#string常用工具类)
+  * [参考文章](#参考文章)
+  * [微信公众号](#微信公众号)
+    * [Java技术江湖](#java技术江湖)
+    * [个人公众号：黄小斜](#个人公众号：黄小斜)
+
+
 ---
 title: 夯实Java基础系列3：一文搞懂String常见面试题，从基础到实战，更有原理分析和源码解析！
 date: 2019-9-3 15:56:26 # 文章生成时间，一般不改

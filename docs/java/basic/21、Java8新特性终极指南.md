@@ -1,3 +1,27 @@
+# Table of Contents
+
+  * [Java语言新特性](#java语言新特性)
+    * [Lambda表达式](#lambda表达式)
+    * [函数式接口](#函数式接口)
+    * [方法引用](#方法引用)
+    * [接口的默认方法](#接口的默认方法)
+    * [重复注解](#重复注解)
+  * [Java编译器的新特性](#java编译器的新特性)
+    * [方法参数名字可以反射获取](#方法参数名字可以反射获取)
+  * [Java 类库的新特性](#java-类库的新特性)
+    * [Optional](#optional)
+    * [Stream](#stream)
+    * [Date/Time API (JSR 310)](#datetime-api-jsr-310)
+    * [并行（parallel）数组](#并行（parallel）数组)
+    * [CompletableFuture](#completablefuture)
+  * [Java虚拟机（JVM）的新特性](#java虚拟机（jvm）的新特性)
+  * [总结](#总结)
+  * [参考文章](#参考文章)
+  * [微信公众号](#微信公众号)
+    * [Java技术江湖](#java技术江湖)
+    * [个人公众号：黄小斜](#个人公众号：黄小斜)
+
+
 ---
 title: 夯实Java基础系列21：Java8新特性终极指南
 date: 2019-9-21 15:56:26 # 文章生成时间，一般不改

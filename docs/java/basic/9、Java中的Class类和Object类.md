@@ -1,3 +1,26 @@
+# Table of Contents
+
+  * [Java中Class类及用法](#java中class类及用法)
+    * [Class类原理](#class类原理)
+    * [如何获得一个Class类对象](#如何获得一个class类对象)
+    * [使用Class类的对象来生成目标类的实例](#使用class类的对象来生成目标类的实例)
+  * [Object类](#object类)
+    * [类构造器public Object();](#类构造器public-object)
+    * [registerNatives()方法;](#registernatives方法)
+    * [Clone()方法实现浅拷贝](#clone方法实现浅拷贝)
+    * [getClass()方法](#getclass方法)
+    * [equals()方法](#equals方法)
+    * [hashCode()方法;](#hashcode方法)
+    * [toString()方法](#tostring方法)
+    * [wait() notify() notifAll()](#wait-notify-notifall)
+    * [finalize()方法](#finalize方法)
+  * [CLass类和Object类的关系](#class类和object类的关系)
+  * [参考文章](#参考文章)
+  * [微信公众号](#微信公众号)
+    * [Java技术江湖](#java技术江湖)
+    * [个人公众号：黄小斜](#个人公众号：黄小斜)
+
+
 ---
 title: 夯实Java基础系列9：深入理解Class类和Object类
 date: 2019-9-9 15:56:26 # 文章生成时间，一般不改

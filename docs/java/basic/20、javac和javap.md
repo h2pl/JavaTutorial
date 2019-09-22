@@ -1,3 +1,39 @@
+# Table of Contents
+
+  * [聊聊IDE的实现原理](#聊聊ide的实现原理)
+    * [源代码保存](#源代码保存)
+    * [编译为class文件](#编译为class文件)
+    * [查找class](#查找class)
+    * [生成对象，并调用对象方法](#生成对象，并调用对象方法)
+  * [javac命令初窥](#javac命令初窥)
+    * [classpath是什么](#classpath是什么)
+      * [IDE中的classpath](#ide中的classpath)
+      * [Java项目和Java web项目的本质区别](#java项目和java-web项目的本质区别)
+    * [javac命令后缀](#javac命令后缀)
+      * [-g、-g:none、-g:{lines,vars,source}](#-g、-gnone、-g{linesvarssource})
+      * [-bootclasspath、-extdirs](#-bootclasspath、-extdirs)
+      * [-sourcepath和-classpath（-cp）](#-sourcepath和-classpath（-cp）)
+      * [-d](#-d)
+      * [-implicit:{none,class}](#-implicit{noneclass})
+      * [-source和-target](#-source和-target)
+      * [-encoding](#-encoding)
+      * [-verbose](#-verbose)
+      * [其他命令](#其他命令)
+  * [使用javac构建项目](#使用javac构建项目)
+                    * [](#)
+* [java文件列表目录](#java文件列表目录)
+                        * [放入列表文件中](#放入列表文件中)
+                * [生成bin目录](#生成bin目录)
+                * [列表](#列表)
+    * [通过-cp指定所有的引用jar包，将src下的所有java文件进行编译](#通过-cp指定所有的引用jar包，将src下的所有java文件进行编译)
+    * [通过-cp指定所有的引用jar包，指定入口函数运行](#通过-cp指定所有的引用jar包，指定入口函数运行)
+  * [javap 的使用](#javap-的使用)
+  * [参考文章](#参考文章)
+  * [微信公众号](#微信公众号)
+    * [Java技术江湖](#java技术江湖)
+    * [个人公众号：黄小斜](#个人公众号：黄小斜)
+
+
 ---
 title: 夯实Java基础系列20：从IDE的实现原理聊起，谈谈那些年我们用过的Java命令
 date: 2019-9-20 15:56:26 # 文章生成时间，一般不改

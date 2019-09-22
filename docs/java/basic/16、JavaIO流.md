@@ -1,3 +1,32 @@
+# Table of Contents
+
+  * [IO概述](#io概述)
+    * [什么是Java IO流](#什么是java-io流)
+    * [IO文件](#io文件)
+    * [字符流和字节流](#字符流和字节流)
+    * [IO管道](#io管道)
+    * [Java IO：网络](#java-io：网络)
+    * [字节和字符数组](#字节和字符数组)
+    * [System.in, System.out, System.err](#systemin-systemout-systemerr)
+    * [字符流的Buffered和Filter](#字符流的buffered和filter)
+  * [JavaIO流面试题](#javaio流面试题)
+    * [什么是IO流？](#什么是io流？)
+    * [字节流和字符流的区别。](#字节流和字符流的区别。)
+    * [Java中流类的超类主要由那些？](#java中流类的超类主要由那些？)
+    * [FileInputStream和FileOutputStream是什么？](#fileinputstream和fileoutputstream是什么？)
+    * [System.out.println()是什么？](#systemoutprintln是什么？)
+    * [什么是Filter流？](#什么是filter流？)
+    * [有哪些可用的Filter流？](#有哪些可用的filter流？)
+    * [在文件拷贝的时候，那一种流可用提升更多的性能？](#在文件拷贝的时候，那一种流可用提升更多的性能？)
+    * [说说管道流(Piped Stream)](#说说管道流piped-stream)
+    * [说说File类](#说说file类)
+    * [说说RandomAccessFile?](#说说randomaccessfile)
+  * [参考文章](#参考文章)
+  * [微信公众号](#微信公众号)
+    * [Java技术江湖](#java技术江湖)
+    * [个人公众号：黄小斜](#个人公众号：黄小斜)
+
+
 ---
 title: 夯实Java基础系列16：一文读懂Java IO流和常见面试题
 date: 2019-9-16 15:56:26 # 文章生成时间，一般不改
