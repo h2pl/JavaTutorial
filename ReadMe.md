@@ -40,101 +40,87 @@
 
 ### 基础
 
-* [1 面向对象基础](docs/java/basic/1、面向对象基础.md)
-
+* [面向对象基础](docs/java/basic/1、面向对象基础.md)
+* [Java基本数据类型](docs/java/basic/2、Java基本数据类型.md)
+* [string和包装类](docs/java/basic/3、string和包装类.md)
+* [final关键字特性](docs/java/basic/4、final关键字特性.md)
+* [Java类和包](docs/java/basic/5、Java类和包.md)
 
 ### 容器
-* [1 面向对象基础](java/basic/1面向对象基础.md)
+* [Java集合类总结](docs/java/collection/Java集合类总结.md)
 
 
 ### 并发
-* [1 面向对象基础](java/basic/1面向对象基础.md)
+* [Java并发总结](docs/java/currency/Java并发总结.md)
 
 
 ### JVM
-* [1 面向对象基础](java/basic/1面向对象基础.md)
+* [JVM总结](docs/java/jvm/JVM总结.md)
 
 
 ### Java网络编程
-* [1 面向对象基础](java/basic/1面向对象基础.md)
+* [Java网络与NIO总结](docs/java/network-programing/Java网络与NIO总结.md)
 
 ### 设计模式
-* [1 面向对象基础](java/basic/1面向对象基础.md)
+* [设计模式学习总结](docs/java/design-parttern/设计模式学习总结.md)
 
 ## JavaWeb
 
 ### Maven
-* [1 面向对象基础](java/basic/1面向对象基础.md)
 
 ### Spring
-* [1 面向对象基础](java/basic/1面向对象基础.md)
 
 ### SpringMVC
-* [1 面向对象基础](java/basic/1面向对象基础.md)
 
 ### SpringBoot
-* [1 面向对象基础](java/basic/1面向对象基础.md)
 
 ## 计算机网络
-* [1 面向对象基础](java/basic/1面向对象基础.md)
+* [计算机网络学习总结](docs/network/计算机网络学习总结.md)
 
 
 ## 操作系统
-* [1 面向对象基础](java/basic/1面向对象基础.md)
+* [操作系统学习总结](docs/operateing-system/操作系统学习总结.md)
 
 ### Linux相关
-* [1 面向对象基础](java/basic/1面向对象基础.md)
+* [Linux内核与基础命令学习总结](docs/operateing-system/Linux内核与基础命令学习总结.md)
 
 
 ## 数据结构与算法
 
 ### 数据结构
-* [1 面向对象基础](java/basic/1面向对象基础.md)
 
 
 ### 算法
-* [1 面向对象基础](java/basic/1面向对象基础.md)
+* [剑指offer](docs/algorithms/剑指offer.md)
 
 
 ## 数据库
 
 ### MySQL
-* [1 面向对象基础](java/basic/1面向对象基础.md)
+* [Mysql原理与实践总结](docs/database/Mysql原理与实践总结.md)
 
 
 
 ## 缓存
 
 ### Redis
-* [1 面向对象基础](java/basic/1面向对象基础.md)
+* [Redis原理与实践总结](docs/cache/Redis原理与实践总结.md)
 
 ## 消息队列
-* [1 面向对象基础](java/basic/1面向对象基础.md)
 
 ### Kafka
-* [1 面向对象基础](java/basic/1面向对象基础.md)
-
-
 
 ## 面试指南
 
 ### 校招指南
-* [1 面向对象基础](java/basic/1面向对象基础.md)
 
 ### 面经
-* [1 面向对象基础](java/basic/1面向对象基础.md)
 
 ## 工具
 
-### Git
-* [1 面向对象基础](java/basic/1面向对象基础.md)
-
 ## 资料
-* [1 面向对象基础](java/basic/1面向对象基础.md)
-
 
 ### 书单
-* [1 面向对象基础](java/basic/1面向对象基础.md)
 
 ***
 
@@ -145,6 +131,8 @@
 - [x] Java网络编程
 - [x] JVM
 - [x] 设计面试
+
+## 说明
 
 ## 公众号
 
