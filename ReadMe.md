@@ -4,7 +4,7 @@
 
 <p align="center">
 <a href="https://github.com/h2pl/Java-Tutorial" target="_blank">
-    <img src="https://s2.ax1x.com/2019/09/23/uFaedP.jpg" width="200" height="200"/>
+    <img src="https://s2.ax1x.com/2019/09/23/uFaedP.jpg" width="200" height="160"/>
 </a>
 </p>
 
