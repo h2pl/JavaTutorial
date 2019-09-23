@@ -1,4 +1,4 @@
-# Table of Contents
+# 目录
 
   * [final使用](#final使用)
     * [final变量](#final变量)
@@ -21,7 +21,6 @@
   * [微信公众号](#微信公众号)
     * [Java技术江湖](#java技术江湖)
     * [个人公众号：黄小斜](#个人公众号：黄小斜)
-
 
 ---
 title: 夯实Java基础系列4：一文了解final关键字的特性、使用方法，以及实现原理
@@ -350,7 +349,7 @@ final修饰的函数会被编译器优化，优化的结果是减少了函数调
 ​    
 ​    在使用findbugs插件时，就会提示public static String[] color = { "red", "blue", "yellow", "black" };这行代码不安全，但加上final修饰，这行代码仍然是不安全的，因为final没有做到保证变量的值不会被修改！
 ​    
-    原因是：final关键字只能保证变量本身不能被赋与新值，而不能保证变量的内部结构不被修改。例如在main方法有如下代码Color.color = new String[]{""};就会报错了。
+​    原因是：final关键字只能保证变量本身不能被赋与新值，而不能保证变量的内部结构不被修改。例如在main方法有如下代码Color.color = new String[]{""};就会报错了。
 
 ### 如何保证数组内部不被修改
 

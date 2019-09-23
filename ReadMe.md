@@ -1,5 +1,22 @@
 点击订阅[Java面试进阶指南](https://xiaozhuanlan.com/java-coder)(专为Java面试方向准备)
 
+点击关注[微信公众号](#微信公众号)及时获取笔主最新更新文章，并可免费领取Java工程师必备学习资源。
+
+<p align="center">
+<a href="https://github.com/h2pl/Java-Tutorial" target="_blank">
+    <img src="https://imgchr.com/i/uFaedP" width=""/>
+</a>
+</p>
+
+<p align="center">
+  <a href="https://how2playlife.com/"><img src="https://img.shields.io/badge/阅读-read-brightgreen.svg" alt="阅读"></a>
+  <a href="#微信群"><img src="https://img.shields.io/badge/chat-微信群-blue.svg" alt="微信群"></a>
+  <a href="#公众号"><img src="https://img.shields.io/badge/%E5%85%AC%E4%BC%97%E5%8F%B7-JavaGuide-lightgrey.svg" alt="公众号"></a>
+  <a href="#投稿"><img src="https://img.shields.io/badge/support-投稿-critical.svg" alt="投稿"></a>
+</p>
+
+推荐使用 https://how2playlife.com/ 在线阅读，在线阅读内容本仓库同步一致。这种方式阅读的优势在于：左侧边栏有目录，阅读体验更好。
+
 ## 目录
 
 - [Java](#Java)
@@ -46,6 +63,24 @@
 * [string和包装类](docs/java/basic/3、string和包装类.md)
 * [final关键字特性](docs/java/basic/4、final关键字特性.md)
 * [Java类和包](docs/java/basic/5、Java类和包.md)
+* [抽象类和接口](docs/java/basic/6、抽象类和接口.md)
+* [代码块和代码执行顺序](docs/java/basic/7、代码块和代码执行顺序.md)
+* [Java自动拆箱装箱里隐藏的秘密](docs/java/basic/8、Java自动拆箱装箱里隐藏的秘密.md)
+* [Java中的Class类和Object类](docs/java/basic/9、Java中的Class类和Object类.md)
+* [Java异常](docs/java/basic/10、Java异常.md)
+* [解读Java中的回调](docs/java/basic/11、解读Java中的回调.md)
+* [反射](docs/java/basic/12、反射.md)
+* [泛型](docs/java/basic/13、泛型.md)
+* [枚举类](docs/java/basic/14、枚举类.md)
+* [Java注解和最佳实践](docs/java/basic/15、Java注解和最佳实践.md)
+* [JavaIO流](docs/java/basic/16、JavaIO流.md)
+* [多线程](docs/java/basic/17、多线程.md)
+* [深入理解内部类](docs/java/basic/18、深入理解内部类.md)
+* [javac和javap](docs/java/basic/19、Java集合框架梳理.md)
+* [Java8新特性终极指南](docs/java/basic/20、javac和javap.md)
+* [Java类和包](docs/java/basic/21、Java8新特性终极指南.md)
+* [序列化和反序列化](docs/java/basic/22、序列化和反序列化.md)
+* [继承、封装、多态的实现原理](docs/java/basic/23、继承、封装、多态的实现原理.md)
 
 ### 容器
 * [Java集合类总结](docs/java/collection/Java集合类总结.md)
