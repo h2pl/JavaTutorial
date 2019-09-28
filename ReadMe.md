@@ -4,15 +4,13 @@
 
 <p align="center">
 <a href="https://github.com/h2pl/Java-Tutorial" target="_blank">
-    <img src="https://imgchr.com/i/uFaedP" width=""/>
+    <img src="https://s2.ax1x.com/2019/09/23/uFaedP.jpg" width="200" height="160"/>
 </a>
 </p>
 
 <p align="center">
   <a href="https://how2playlife.com/"><img src="https://img.shields.io/badge/阅读-read-brightgreen.svg" alt="阅读"></a>
-  <a href="#微信群"><img src="https://img.shields.io/badge/chat-微信群-blue.svg" alt="微信群"></a>
-  <a href="#公众号"><img src="https://img.shields.io/badge/%E5%85%AC%E4%BC%97%E5%8F%B7-JavaGuide-lightgrey.svg" alt="公众号"></a>
-  <a href="#投稿"><img src="https://img.shields.io/badge/support-投稿-critical.svg" alt="投稿"></a>
+  <a href="#微信公众号"><img src="https://img.shields.io/badge/chat-微信群-blue.svg" alt="微信公众号"></a>
 </p>
 
 推荐使用 https://how2playlife.com/ 在线阅读，在线阅读内容本仓库同步一致。这种方式阅读的优势在于：左侧边栏有目录，阅读体验更好。
