@@ -1,3 +1,21 @@
+# Table of Contents
+
+  * [JVM介绍和源码](#jvm介绍和源码)
+  * [JVM内存模型](#jvm内存模型)
+  * [JVM OOM和内存泄漏](#jvm-oom和内存泄漏)
+  * [常见调试工具](#常见调试工具)
+  * [class文件结构](#class文件结构)
+  * [JVM的类加载机制](#jvm的类加载机制)
+  * [defineclass findclass和loadclass](#defineclass-findclass和loadclass)
+  * [JVM虚拟机字节码执行引擎](#jvm虚拟机字节码执行引擎)
+  * [编译期优化和运行期优化](#编译期优化和运行期优化)
+  * [JVM的垃圾回收](#jvm的垃圾回收)
+  * [JVM的锁优化](#jvm的锁优化)
+  * [微信公众号](#微信公众号)
+    * [Java技术江湖](#java技术江湖)
+    * [个人公众号：黄小斜](#个人公众号：黄小斜)
+
+
 ---
 title: JVM原理学习总结
 date: 2018-07-08 22:09:47
