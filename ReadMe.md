@@ -132,13 +132,13 @@
 * [Java网络编程和NIO详解1：JAVA 中原生的 socket 通信机制](docs/java/jvm/Java网络编程和NIO详解1：JAVA%20中原生的%20socket%20通信机制.md)
 * [Java网络编程与NIO详解2：JAVA NIO 一步步构建IO多路复用的请求模型](docs/java/jvm/Java网络编程与NIO详解2：JAVA%20NIO%20一步步构建IO多路复用的请求模型.md) 
 * [Java网络编程和NIO详解3：IO模型与Java网络编程模型](docs/java/jvm/Java网络编程和NIO详解3：IO模型与Java网络编程模型.md) 
-* [Java网络编程与NIO详解4：浅析NIO包中的Buffer、Channel 和 Selector](docs/java/jvm/Java网络编程与NIO详解4：浅析NIO包中的Buffer、Channel%20和%20Selector.md) 
-* [Java网络编程和NIO详解5：Java 非阻塞 IO 和异步 IO] (Java网络编程和NIO详解5：Java%20非阻塞%20IO%20和异步%20IO.md)
+* [Java网络编程与NIO详解4：浅析NIO包中的Buffer、Channel 和 Selector](https://github.com/h2pl/Java-Tutorial/blob/master/docs/java/network-programming/Java%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E4%B8%8ENIO%E8%AF%A6%E8%A7%A34%EF%BC%9A%E6%B5%85%E6%9E%90NIO%E5%8C%85%E4%B8%AD%E7%9A%84Buffer%E3%80%81Channel%20%E5%92%8C%20Selector.md) 
+* [Java网络编程和NIO详解5：Java 非阻塞 IO 和异步 IO] (https://github.com/h2pl/Java-Tutorial/blob/master/docs/java/network-programming/Java%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E5%92%8CNIO%E8%AF%A6%E8%A7%A35%EF%BC%9AJava%20%E9%9D%9E%E9%98%BB%E5%A1%9E%20IO%20%E5%92%8C%E5%BC%82%E6%AD%A5%20IO.md)
 * [Java网络编程和NIO详解6：Linux epoll实现原理详解](docs/java/jvm/Java网络编程和NIO详解6：Linux%20epoll实现原理详解.md) 
 * [Java网络编程和NIO详解7：浅谈 Linux 中NIO Selector 的实现原理] (Java网络编程和NIO详解7：浅谈%20Linux%20中NIO%20Selector%20的实现原理.md)
-* [Java网络编程与NIO详解8：浅析mmap和Direct Buffer] (Java网络编程与NIO详解8：浅析mmap和Direct%20Buffer.md)
+* [Java网络编程与NIO详解8：浅析mmap和Direct Buffer] (https://github.com/h2pl/Java-Tutorial/blob/master/docs/java/network-programming/Java%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E4%B8%8ENIO%E8%AF%A6%E8%A7%A38%EF%BC%9A%E6%B5%85%E6%9E%90mmap%E5%92%8CDirect%20Buffer.md)
 * [Java网络编程和NIO详解9：基于NIO的网络编程框架Netty](docs/java/jvm/Java网络编程和NIO详解9：基于NIO的网络编程框架Netty.md)
-* [Java网络编程与NIO详解10：深度解读Tomcat中的NIO模型] (Java网络编程与NIO详解10：深度解读Tomcat中的NIO模型.md)
+* [Java网络编程与NIO详解10：深度解读Tomcat中的NIO模型] (https://github.com/h2pl/Java-Tutorial/blob/master/docs/java/network-programming/Java%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E4%B8%8ENIO%E8%AF%A6%E8%A7%A310%EF%BC%9A%E6%B7%B1%E5%BA%A6%E8%A7%A3%E8%AF%BBTomcat%E4%B8%AD%E7%9A%84NIO%E6%A8%A1%E5%9E%8B.md)
 * [Java网络编程与NIO详解11：Tomcat中的Connector源码分析（NIO）](docs/java/jvm/Java网络编程与NIO详解11：Tomcat中的Connector源码分析（NIO）.md)
 
 ### 设计模式
