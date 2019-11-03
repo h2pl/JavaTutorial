@@ -94,7 +94,6 @@
 
 ### 并发
 
-* [Java并发总结](https://github.com/h2pl/Java-Tutorial/blob/master/docs/java/currency/Java%E5%B9%B6%E5%8F%91%E6%80%BB%E7%BB%93.md）
 * [Java并发指南1：并发基础与Java多线程](docs/java/currency/Java并发指南1：并发基础与Java多线程.md)
 * [Java并发指南2：深入理解Java内存模型JMM](docs/java/currency/Java并发指南2：深入理解Java内存模型JMM.md)
 * [Java并发指南3：并发三大问题与volatile关键字，CAS操作](docs/java/currency/Java并发指南3：并发三大问题与volatile关键字，CAS操作.md)
@@ -110,6 +109,7 @@
 * [Java并发指南13：Java 中的 HashMap 和 ConcurrentHashMap 全解析](https://github.com/h2pl/Java-Tutorial/blob/master/docs/java/currency/Java%E5%B9%B6%E5%8F%91%E6%8C%87%E5%8D%9713%EF%BC%9AJava%20%E4%B8%AD%E7%9A%84%20HashMap%20%E5%92%8C%20ConcurrentHashMap%20%E5%85%A8%E8%A7%A3%E6%9E%90.md)
 * [Java并发指南14：JUC中常用的Unsafe和Locksupport](docs/java/currency/Java并发指南14：JUC中常用的Unsafe和Locksupport.md)
 * [Java并发指南15：Fork join并发框架与工作窃取算法剖析](docs/java/currency/Java并发编程指南15：Fork%20join并发框架与工作窃取算法剖析.md)
+* [Java并发总结](https://github.com/h2pl/Java-Tutorial/blob/master/docs/java/currency/Java%E5%B9%B6%E5%8F%91%E6%80%BB%E7%BB%93.md）
 
 
 ### JVM
