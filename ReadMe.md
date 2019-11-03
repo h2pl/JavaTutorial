@@ -154,7 +154,7 @@
 * [走进JavaWeb技术世界1：JavaWeb的由来和基础知识](docs/java-web/走进JavaWeb技术世界1：JavaWeb的由来和基础知识.md)
 * [走进JavaWeb技术世界2：JSP与Servlet的曾经与现在](docs/java-web/走进JavaWeb技术世界2：JSP与Servlet的曾经与现在.md)
 * [走进JavaWeb技术世界3：JDBC的进化与连接池技术](docs/java-web/走进JavaWeb技术世界3：JDBC的进化与连接池技术.md)
-* [走进JavaWeb技术世界4：Servlet 工作原理详解](docs/java-web/走进JavaWeb技术世界4：Servlet 工作原理详解.md)
+* [走进JavaWeb技术世界4：Servlet 工作原理详解](docs/java-web/走进JavaWeb技术世界4：Servlet%29工作原理详解.md)
 * [走进JavaWeb技术世界5：初探Tomcat的HTTP请求过程](docs/java-web/走进JavaWeb技术世界5：初探Tomcat的HTTP请求过程.md)
 * [走进JavaWeb技术世界6：Tomcat5总体架构剖析](docs/java-web/走进JavaWeb技术世界6：Tomcat5总体架构剖析.md)
 * [走进JavaWeb技术世界7：Tomcat和其他WEB容器的区别](docs/java-web/走进JavaWeb技术世界7：Tomcat和其他WEB容器的区别.md)
