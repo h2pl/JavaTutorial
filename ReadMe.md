@@ -105,7 +105,7 @@
 * [Java并发指南10：Java 读写锁 ReentrantReadWriteLock 源码分析](docs/java/currency/Java并发指南10：Java%20读写锁%20ReentrantReadWriteLock%20源码分析.md)
 * [Java并发指南11：解读 Java 阻塞队列 BlockingQueue](docs/java/currency/Java并发指南11：解读%20Java%20阻塞队列%20BlockingQueue.md)
 * [Java并发指南12：深度解读 java 线程池设计思想及源码实现](docs/java/currency/Java并发指南12：深度解读%20java%20线程池设计思想及源码实现.md)
-* [Java并发指南13：Java 中的 HashMap 和 ConcurrentHashMap 全解析](docs/java/currency/Java并发指南13：Java%20中的%20HashMap%20和 ConcurrentHashMap%20全解析.md)
+* [Java并发指南13：Java 中的 HashMap 和 ConcurrentHashMap 全解析](https://github.com/h2pl/Java-Tutorial/blob/master/docs/java/currency/Java%E5%B9%B6%E5%8F%91%E6%8C%87%E5%8D%9713%EF%BC%9AJava%20%E4%B8%AD%E7%9A%84%20HashMap%20%E5%92%8C%20ConcurrentHashMap%20%E5%85%A8%E8%A7%A3%E6%9E%90.md)
 * [Java并发指南14：JUC中常用的Unsafe和Locksupport](docs/java/currency/Java并发指南14：JUC中常用的Unsafe和Locksupport.md)
 * [Java并发指南15：Fork join并发框架与工作窃取算法剖析](docs/java/currency/Java并发编程指南15：Fork%20join并发框架与工作窃取算法剖析.md)
 
