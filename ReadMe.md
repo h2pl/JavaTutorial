@@ -112,7 +112,20 @@
 
 ### JVM
 * [JVM总结](docs/java/jvm/JVM总结.md)
-
+* [深入理解JVM虚拟机1：JVM内存的结构与消失的永久代](深入理解JVM虚拟机1：JVM内存的结构与消失的永久代.md)
+* [深入理解JVM虚拟机2：JVM垃圾回收基本原理和算法](深入理解JVM虚拟机2：JVM垃圾回收基本原理和算法.md)
+* [深入理解JVM虚拟机3：垃圾回收器详解](深入理解JVM虚拟机3：垃圾回收器详解.md)
+* [深入理解JVM虚拟机4：Javaclass介绍与解析实践](深入理解JVM虚拟机4：Javaclass介绍与解析实践.md)
+* [深入理解JVM虚拟机5：虚拟机字节码执行引擎](深入理解JVM虚拟机5：虚拟机字节码执行引擎.md)
+* [深入理解JVM虚拟机6：深入理解JVM类加载机制](深入理解JVM虚拟机6：深入理解JVM类加载机制.md)
+* [深入理解JVM虚拟机7：JNDI，OSGI，Tomcat类加载器实现](深入理解JVM虚拟机7：JNDI，OSGI，Tomcat类加载器实现.md)
+* [深入了解JVM虚拟机8：Java的编译期优化与运行期优化](深入了解JVM虚拟机8：Java的编译期优化与运行期优化.md)
+* [深入理解JVM虚拟机9：JVM监控工具与诊断实践](深入理解JVM虚拟机9：JVM监控工具与诊断实践.md)
+* [深入理解JVM虚拟机10：JVM常用参数以及调优实践](深入理解JVM虚拟机10：JVM常用参数以及调优实践.md)
+* [深入理解JVM虚拟机11：Java内存异常原理与实践](深入理解JVM虚拟机11：Java内存异常原理与实践.md)
+* [深入理解JVM虚拟机12：JVM性能管理神器VisualVM介绍与实战](深入理解JVM虚拟机12：JVM性能管理神器VisualVM介绍与实战.md)
+* [深入理解JVM虚拟机13：再谈四种引用及GC实践](深入理解JVM虚拟机13：再谈四种引用及GC实践.md)
+* [深入理解JVM虚拟机14：GC调优思路与常用工具](深入理解JVM虚拟机：GC调优思路与常用工具.md)
 
 ### Java网络编程
 * [Java网络与NIO总结](docs/java/network-programing/Java网络与NIO总结.md)
