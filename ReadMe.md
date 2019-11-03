@@ -93,7 +93,7 @@
 
 
 ### 并发
-* [JVM总结](docs/java/currency/JVM总结.md）
+* [Java并发总结](docs/java/currency/Java并发总结.md）
 * [Java并发指南1：并发基础与Java多线程](docs/java/currency/Java并发指南1：并发基础与Java多线程.md)
 * [Java并发指南2：深入理解Java内存模型JMM](docs/java/currency/Java并发指南2：深入理解Java内存模型JMM.md)
 * [Java并发指南3：并发三大问题与volatile关键字，CAS操作](docs/java/currency/Java并发指南3：并发三大问题与volatile关键字，CAS操作.md)
