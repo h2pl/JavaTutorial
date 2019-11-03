@@ -119,11 +119,11 @@
 
 ### 设计模式
 * [设计模式学习总结](docs/java/design-parttern/设计模式学习总结.md)
-* [初探Java设计模式1：创建型模式（工厂，单例等）.md].md](docs/java/design-parttern/初探Java设计模式1：创建型模式（工厂，单例等）.md)
-* [初探Java设计模式2：结构型模式（代理模式，适配器模式等）.md].md](docs/java/design-parttern/初探Java设计模式2：结构型模式（代理模式，适配器模式等）.md)
-* [初探Java设计模式3：行为型模式（策略，观察者等）.md].md](docs/java/design-parttern/初探Java设计模式3：行为型模式（策略，观察者等）.md)
-* [初探Java设计模式4：JDK中的设计模式.md].md](docs/java/design-parttern/初探Java设计模式4：JDK中的设计模式.md)
-* [初探Java设计模式5：Spring涉及到的9种设计模式.md].md](docs/java/design-parttern/初探Java设计模式5：Spring涉及到的9种设计模式.md)
+* [初探Java设计模式1：创建型模式（工厂，单例等）.md](docs/java/design-parttern/初探Java设计模式1：创建型模式（工厂，单例等）.md)
+* [初探Java设计模式2：结构型模式（代理模式，适配器模式等）.md](docs/java/design-parttern/初探Java设计模式2：结构型模式（代理模式，适配器模式等）.md)
+* [初探Java设计模式3：行为型模式（策略，观察者等）.md](docs/java/design-parttern/初探Java设计模式3：行为型模式（策略，观察者等）.md)
+* [初探Java设计模式4：JDK中的设计模式.md](docs/java/design-parttern/初探Java设计模式4：JDK中的设计模式.md)
+* [初探Java设计模式5：Spring涉及到的9种设计模式.md](docs/java/design-parttern/初探Java设计模式5：Spring涉及到的9种设计模式.md)
 
 ## JavaWeb
 
