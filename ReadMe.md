@@ -299,7 +299,29 @@ todo
 * [分布式系统理论基础6：Raft、Zab ](docs/distrubuted/理论/分布式系统理论基础6：Raft、Zab.md)
 * [分布式系统理论进阶7：Paxos变种和优化 ](docs/distrubuted/理论/分布式系统理论进阶7：Paxos变种和优化.md)
 * [分布式系统理论基础8：zookeeper分布式协调服务 ](docs/distrubuted/理论/分布式系统理论基础8：zookeeper分布式协调服务.md)
+
 ### 技术
+* [搞懂分布式技术1：分布式系统的一些基本概念 ](docs/distrubuted/实战/搞懂分布式技术1：分布式系统的一些基本概念.md )
+* [搞懂分布式技术2：分布式一致性协议与Paxos，Raft算法](docs/distrubuted/实战/搞懂分布式技术2：分布式一致性协议与Paxos，Raft算法.md)
+* [搞懂分布式技术3：初探分布式协调服务zookeeper ](docs/distrubuted/实战/搞懂分布式技术3：初探分布式协调服务zookeeper.md )
+* [搞懂分布式技术4：ZAB协议概述与选主流程详解 ](docs/distrubuted/实战/搞懂分布式技术4：ZAB协议概述与选主流程详解.md )
+* [搞懂分布式技术5：Zookeeper的配置与集群管理实战](docs/distrubuted/实战/搞懂分布式技术5：Zookeeper的配置与集群管理实战.md)
+* [搞懂分布式技术6：Zookeeper典型应用场景及实践 ](docs/distrubuted/实战/搞懂分布式技术6：Zookeeper典型应用场景及实践.md )
+* [搞懂分布式技术7：负载均衡概念与主流方案](docs/distrubuted/实战/搞懂分布式技术7：负载均衡概念与主流方案.md)
+* [搞懂分布式技术8：负载均衡原理剖析 ](docs/distrubuted/实战/搞懂分布式技术8：负载均衡原理剖析.md )
+* [搞懂分布式技术9：Nginx负载均衡原理与实践 ](docs/distrubuted/实战/搞懂分布式技术9：Nginx负载均衡原理与实践.md)
+* [搞懂分布式技术10：LVS实现负载均衡的原理与实践 ](docs/distrubuted/实战/搞懂分布式技术10：LVS实现负载均衡的原理与实践.md )
+* [搞懂分布式技术11：分布式session解决方案与一致性hash](docs/distrubuted/实战/搞懂分布式技术11：分布式session解决方案与一致性hash.md)
+* [搞懂分布式技术12：分布式ID生成方案 ](docs/distrubuted/实战/搞懂分布式技术12：分布式ID生成方案.md )
+* [搞懂分布式技术13：缓存的那些事](docs/distrubuted/实战/搞懂分布式技术13：缓存的那些事.md)
+* [搞懂分布式技术14：Spring Boot使用注解集成Redis缓存](docs/distrubuted/实战/搞懂分布式技术14：Spring%20Boot使用注解集成Redis缓存.md)
+* [搞懂分布式技术15：缓存更新的套路 ](docs/distrubuted/实战/搞懂分布式技术15：缓存更新的套路.md )
+* [搞懂分布式技术16：浅谈分布式锁的几种方案 ](docs/distrubuted/实战/搞懂分布式技术16：浅谈分布式锁的几种方案.md )
+* [搞懂分布式技术17：浅析分布式事务 ](docs/distrubuted/实战/搞懂分布式技术17：浅析分布式事务.md )
+* [搞懂分布式技术18：分布式事务常用解决方案 ](docs/distrubuted/实战/搞懂分布式技术18：分布式事务常用解决方案.md )
+* [搞懂分布式技术19：使用RocketMQ事务消息解决分布式事务 ](docs/distrubuted/实战/搞懂分布式技术19：使用RocketMQ事务消息解决分布式事务.md )
+* [搞懂分布式技术20：消息队列因何而生](docs/distrubuted/实战/搞懂分布式技术20：消息队列因何而生.md)
+* [搞懂分布式技术21：浅谈分布式消息技术 Kafka ](docs/distrubuted/实战/搞懂分布式技术21：浅谈分布式消息技术%20Kafka.md )
 
 
 ## 面试指南
