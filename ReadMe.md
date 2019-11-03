@@ -43,6 +43,9 @@
 - [消息队列](#消息队列)
     - [Kafka](#Kafka)
 - [大后端](#大后端)
+- [分布式](#分布式)
+    - [理论](#理论)
+    - [实战](#实战)
 - [面试指南](#面试指南)
     - [校招指南](#校招指南)
     - [面经](#面经)
@@ -281,9 +284,23 @@ todo
 * [后端技术杂谈7：OpenStack的基石KVM](docs/big-backEnd/后端技术杂谈7：OpenStack的基石KVM.md)
 * [后端技术杂谈8：OpenStack架构设计](docs/big-backEnd/后端技术杂谈8：OpenStack架构设计.md)
 * [后端技术杂谈9：先搞懂Docker核心概念吧](docs/big-backEnd/后端技术杂谈9：先搞懂Docker核心概念吧.md)
-* [后端技术杂谈10：Docker 核心技术与实现原理](docs/big-backEnd/后端技术杂谈10：Docker 核心技术与实现原理.md)
+* [后端技术杂谈10：Docker 核心技术与实现原理](docs/big-backEnd/后端技术杂谈10：Docker%20核心技术与实现原理.md)
 * [后端技术杂谈11：十分钟理解Kubernetes核心概念](docs/big-backEnd/后端技术杂谈11：十分钟理解Kubernetes核心概念.md)
 * [后端技术杂谈12：捋一捋大数据研发的基本概念](docs/big-backEnd/后端技术杂谈12：捋一捋大数据研发的基本概念.md)
+
+## 分布式
+### 理论
+* [分布式系统理论基础开篇：从放弃到入门](docs/distrubuted/理论/分布式系统理论基础开篇：从放弃到入门.md)
+* [分布式系统理论基础1： 一致性、2PC和3PC ](docs/distrubuted/理论/分布式系统理论基础1：%20一致性、2PC和3PC.md)
+* [分布式系统理论基础2：CAP ](docs/distrubuted/理论/分布式系统理论基础2%20：CAP.md)
+* [分布式系统理论基础3： 时间、时钟和事件顺序](docs/distrubuted/理论/分布式系统理论基础3：%20时间、时钟和事件顺序.md)
+* [分布式系统理论基础4：Paxos](docs/distrubuted/理论/分布式系统理论基础4：Paxos.md)
+* [分布式系统理论基础5：选举、多数派和租约](docs/distrubuted/理论/分布式系统理论基础5：选举、多数派和租约.md)
+* [分布式系统理论基础6：Raft、Zab ](docs/distrubuted/理论/分布式系统理论基础6：Raft、Zab.md)
+* [分布式系统理论进阶7：Paxos变种和优化 ](docs/distrubuted/理论/分布式系统理论进阶7：Paxos变种和优化.md)
+* [分布式系统理论基础8：zookeeper分布式协调服务 ](docs/distrubuted/理论/分布式系统理论基础8：zookeeper分布式协调服务.md)
+### 技术
+
 
 ## 面试指南
 
