@@ -171,6 +171,66 @@ Lambda是Java 8最大的卖点。它具有吸引越来越多程序员到Java平�
             void get(int i,String j);
         }
 
+接下来看看Lambda和匿名内部类的区别
+
+匿名内部类仍然是一个类，只是不需要我们显式指定类名，编译器会自动为该类取名。比如有如下形式的代码：
+
+    public class LambdaTest {
+        public static void main(String[] args) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    System.out.println("Hello World");
+                }
+            }).start();
+        }
+    }
+
+编译之后将会产生两个 class 文件：
+
+    LambdaTest.class
+    LambdaTest$1.class
+
+使用 javap -c LambdaTest.class 进一步分析 LambdaTest.class 的字节码，部分结果如下：
+
+    public static void main(java.lang.String[]);
+    Code:
+        0: new           #2                  // class java/lang/Thread
+        3: dup
+        4: new           #3                  // class com/example/myapplication/lambda/LambdaTest$1
+        7: dup
+        8: invokespecial #4                  // Method com/example/myapplication/lambda/LambdaTest$1."<init>":()V
+        11: invokespecial #5                  // Method java/lang/Thread."<init>":(Ljava/lang/Runnable;)V
+        14: invokevirtual #6                  // Method java/lang/Thread.start:()V
+        17: return
+
+可以发现在 4: new #3 这一行创建了匿名内部类的对象。
+
+而对于 Lambda表达式的实现， 接下来我们将上面的示例代码使用 Lambda 表达式实现，代码如下：
+
+    public class LambdaTest {
+        public static void main(String[] args) {
+            new Thread(() -> System.out.println("Hello World")).start();
+        }
+    }
+
+此时编译后只会产生一个文件 LambdaTest.class，再来看看通过 javap 对该文件反编译后的结果：
+
+    public static void main(java.lang.String[]);
+    Code:
+        0: new           #2                  // class java/lang/Thread
+        3: dup
+        4: invokedynamic #3,  0              // InvokeDynamic #0:run:()Ljava/lang/Runnable;
+        9: invokespecial #4                  // Method java/lang/Thread."<init>":(Ljava/lang/Runnable;)V
+        12: invokevirtual #5                  // Method java/lang/Thread.start:()V
+        15: return
+
+从上面的结果我们发现 Lambda 表达式被封装成了主类的一个私有方法，并通过 invokedynamic 指令进行调用。
+
+因此，我们可以得出结论：Lambda 表达式是通过 invokedynamic 指令实现的，并且书写 Lambda 表达式不会产生新的类。
+
+既然 Lambda 表达式不会创建匿名内部类，那么在 Lambda 表达式中使用 this 关键字时，其指向的是外部类的引用。
+
 ### 函数式接口
 
 所谓的函数式接口就是只有一个抽象方法的接口，注意这里说的是抽象方法，因为Java8中加入了默认方法的特性，但是函数式接口是不关心接口中有没有默认方法的。 一般函数式接口可以使用@FunctionalInterface注解的形式来标注表示这是一个函数式接口，该注解标注与否对函数式接口没有实际的影响， 不过一般还是推荐使用该注解，就像使用@Override注解一样。
