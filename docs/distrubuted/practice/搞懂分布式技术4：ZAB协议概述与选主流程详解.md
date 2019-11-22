@@ -29,6 +29,24 @@
 * [[](http://www.jasongj.com/zookeeper/fastleaderelection/?hmsr=toutiao.io&utm_medium=toutiao.io&utm_source=toutiao.io#%E6%80%BB%E7%BB%93 "总结")总结](#[]httpwwwjasongjcomzookeeperfastleaderelectionhmsrtoutiaoioutm_mediumtoutiaoioutm_sourcetoutiaoioe680bbe7bb93-总结总结)
 
 
+本文内容参考网络，侵删
+
+本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看
+> https://github.com/h2pl/Java-Tutorial
+
+喜欢的话麻烦点下Star哈
+
+本文也将同步到我的个人博客：
+> www.how2playlife.com
+
+更多Java技术文章将陆续在微信公众号【Java技术江湖】更新，敬请关注。
+
+该系列博文会告诉你什么是分布式系统，这对后端工程师来说是很重要的一门学问，我们会逐步了解常见的分布式技术、以及一些较为常见的分布式系统概念，同时也需要进一步了解zookeeper、分布式事务、分布式锁、负载均衡等技术，以便让你更完整地了解分布式技术的具体实战方法，为真正应用分布式技术做好准备。
+
+如果对本系列文章有什么建议，或者是有什么疑问的话，也可以关注公众号【Java技术江湖】联系作者，欢迎你参与本系列博文的创作和修订。
+
+<!-- more -->
+
 ## ZAB协议
 
 1.  ZAB协议是专门为zookeeper实现分布式协调功能而设计。zookeeper主要是根据ZAB协议是实现分布式系统数据一致性。
