@@ -25,10 +25,23 @@
 
 # [Qemu，KVM，Virsh傻傻的分不清](https://www.cnblogs.com/popsuper1982/p/8522535.html)
 
-原创文章，转载请注明： 转载自[Itweet](https://link.juejin.im/?target=http%3A%2F%2Fwww.itweet.cn)的博客
+ 本文转载自[Itweet](https://link.juejin.im/?target=http%3A%2F%2Fwww.itweet.cn)的博客
+
+本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看
+> https://github.com/h2pl/Java-Tutorial
+
+喜欢的话麻烦点下Star哈
+
+本系列文章将整理到我的个人博客
+> www.how2playlife.com
+
+更多Java技术文章会更新在我的微信公众号【Java技术江湖】上，欢迎关注
+该系列博文会介绍常见的后端技术，这对后端工程师来说是一种综合能力，我们会逐步了解搜索技术，云计算相关技术、大数据研发等常见的技术喜提，以便让你更完整地了解后端技术栈的全貌，为后续参与分布式应用的开发和学习做好准备。
 
 
+如果对本系列文章有什么建议，或者是有什么疑问的话，也可以关注公众号【Java技术江湖】联系我，欢迎你参与本系列博文的创作和修订。
 
+<!-- more -->
 
 
 
