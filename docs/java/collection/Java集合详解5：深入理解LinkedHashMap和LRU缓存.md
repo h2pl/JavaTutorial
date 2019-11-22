@@ -28,20 +28,21 @@
     * [Java技术江湖](#java技术江湖)
     * [个人公众号：黄小斜](#个人公众号：黄小斜)
 
+本文参考多篇优质技术博客，参考文章请在文末查看
 
-《Java集合详解系列》是我在完成夯实Java基础篇的系列博客后准备开始写的新系列。
+《Java集合详解系列》是我在完成夯实Java基础篇的系列博客后准备开始整理的新系列文章。
+为了更好地诠释知识点，形成体系文章，本系列文章整理了很多优质的博客内容，如有侵权请联系我，一定删除。
 
 这些文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看
 
+如果对本系列文章有什么建议，或者是有什么疑问的话，也可以关注公众号【Java技术江湖】联系作者，欢迎你参与本系列博文的创作和修订。
 > https://github.com/h2pl/Java-Tutorial
 
 喜欢的话麻烦点下Star、fork哈
 
-文章首发于我的个人博客：
+本系列文章将整理于我的个人博客：
 
 > www.how2playlife.com
-
-今天我们来深入探索一下LinkedHashMap的底层原理，并且使用linkedhashmap来实现LRU缓存。
 
 
 摘要：
@@ -835,7 +836,7 @@ linkedhashmap的实现：
 > 
 > 5 linkedhashmap的removeEldestEntry方法默认返回false，要实现lru很重要的一点就是集合满时要将最久未访问的元素删除，在linkedhashmap中这个元素就是头指针指向的元素。实现LRU可以直接实现继承linkedhashmap并重写removeEldestEntry方法来设置缓存大小。jdk中实现了LRUCache也可以直接使用。
 
-参考文章
+## 参考文章
 http://cmsblogs.com/?p=176
 
 https://www.jianshu.com/p/8f4f58b4b8ab
