@@ -1,28 +1,3 @@
-# Table of Contents
-
-  * [[](https://github.com/jasonGeng88/blog/blob/master/201708/java-nio.md#%E5%BD%93%E5%89%8D%E7%8E%AF%E5%A2%83)当前环境](#[]httpsgithubcomjasongeng88blogblobmaster201708java-niomde5bd93e5898de78eafe5a283当前环境)
-  * [[](https://github.com/jasonGeng88/blog/blob/master/201708/java-nio.md#%E4%BB%A3%E7%A0%81%E5%9C%B0%E5%9D%80)代码地址](#[]httpsgithubcomjasongeng88blogblobmaster201708java-niomde4bba3e7a081e59cb0e59d80代码地址)
-  * [[](https://github.com/jasonGeng88/blog/blob/master/201708/java-nio.md#%E7%9F%A5%E8%AF%86%E7%82%B9)知识点](#[]httpsgithubcomjasongeng88blogblobmaster201708java-niomde79fa5e8af86e782b9知识点)
-  * [[](https://github.com/jasonGeng88/blog/blob/master/201708/java-nio.md#%E5%9C%BA%E6%99%AF)场景](#[]httpsgithubcomjasongeng88blogblobmaster201708java-niomde59cbae699af场景)
-  * [[](https://github.com/jasonGeng88/blog/blob/master/201708/java-nio.md#nio-%E7%9A%84%E9%98%BB%E5%A1%9E%E5%AE%9E%E7%8E%B0)nio 的阻塞实现](#[]httpsgithubcomjasongeng88blogblobmaster201708java-niomdnio-e79a84e998bbe5a19ee5ae9ee78eb0nio-的阻塞实现)
-    * [[](https://github.com/jasonGeng88/blog/blob/master/201708/java-nio.md#%E5%BB%BA%E7%AB%8B%E8%BF%9E%E6%8E%A5)建立连接](#[]httpsgithubcomjasongeng88blogblobmaster201708java-niomde5bbbae7ab8be8bf9ee68ea5建立连接)
-    * [[](https://github.com/jasonGeng88/blog/blob/master/201708/java-nio.md#%E8%8E%B7%E5%8F%96-socket-%E8%BF%9E%E6%8E%A5)获取 socket 连接](#[]httpsgithubcomjasongeng88blogblobmaster201708java-niomde88eb7e58f96-socket-e8bf9ee68ea5获取-socket-连接)
-    * [[](https://github.com/jasonGeng88/blog/blob/master/201708/java-nio.md#%E5%AE%8C%E6%95%B4%E7%A4%BA%E4%BE%8B)完整示例](#[]httpsgithubcomjasongeng88blogblobmaster201708java-niomde5ae8ce695b4e7a4bae4be8b完整示例)
-  * [[](https://github.com/jasonGeng88/blog/blob/master/201708/java-nio.md#nio-%E7%9A%84%E9%9D%9E%E9%98%BB%E5%A1%9E%E5%AE%9E%E7%8E%B0)nio 的非阻塞实现](#[]httpsgithubcomjasongeng88blogblobmaster201708java-niomdnio-e79a84e99d9ee998bbe5a19ee5ae9ee78eb0nio-的非阻塞实现)
-    * [[](https://github.com/jasonGeng88/blog/blob/master/201708/java-nio.md#%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90)原理分析](#[]httpsgithubcomjasongeng88blogblobmaster201708java-niomde58e9fe79086e58886e69e90原理分析)
-    * [[](https://github.com/jasonGeng88/blog/blob/master/201708/java-nio.md#%E5%88%9B%E5%BB%BA%E9%80%89%E6%8B%A9%E5%99%A8)创建选择器](#[]httpsgithubcomjasongeng88blogblobmaster201708java-niomde5889be5bbbae98089e68ba9e599a8创建选择器)
-    * [[](https://github.com/jasonGeng88/blog/blob/master/201708/java-nio.md#%E5%88%9B%E5%BB%BA%E9%9D%9E%E9%98%BB%E5%A1%9E-io)创建非阻塞 I/O](#[]httpsgithubcomjasongeng88blogblobmaster201708java-niomde5889be5bbbae99d9ee998bbe5a19e-io创建非阻塞-io)
-    * [[](https://github.com/jasonGeng88/blog/blob/master/201708/java-nio.md#%E5%BB%BA%E7%AB%8B%E9%80%89%E6%8B%A9%E5%99%A8%E4%B8%8E-socket-%E7%9A%84%E5%85%B3%E8%81%94)建立选择器与 socket 的关联](#[]httpsgithubcomjasongeng88blogblobmaster201708java-niomde5bbbae7ab8be98089e68ba9e599a8e4b88e-socket-e79a84e585b3e88194建立选择器与-socket-的关联)
-    * [[](https://github.com/jasonGeng88/blog/blob/master/201708/java-nio.md#%E9%80%89%E6%8B%A9%E5%99%A8%E7%9B%91%E5%90%AC-socket-%E5%8F%98%E5%8C%96)选择器监听 socket 变化](#[]httpsgithubcomjasongeng88blogblobmaster201708java-niomde98089e68ba9e599a8e79b91e590ac-socket-e58f98e58c96选择器监听-socket-变化)
-    * [[](https://github.com/jasonGeng88/blog/blob/master/201708/java-nio.md#%E5%A4%84%E7%90%86%E8%BF%9E%E6%8E%A5%E5%B0%B1%E7%BB%AA%E4%BA%8B%E4%BB%B6)处理连接就绪事件](#[]httpsgithubcomjasongeng88blogblobmaster201708java-niomde5a484e79086e8bf9ee68ea5e5b0b1e7bbaae4ba8be4bbb6处理连接就绪事件)
-    * [[](https://github.com/jasonGeng88/blog/blob/master/201708/java-nio.md#%E5%A4%84%E7%90%86%E5%86%99%E5%85%A5%E5%B0%B1%E7%BB%AA%E4%BA%8B%E4%BB%B6)处理写入就绪事件](#[]httpsgithubcomjasongeng88blogblobmaster201708java-niomde5a484e79086e58699e585a5e5b0b1e7bbaae4ba8be4bbb6处理写入就绪事件)
-    * [[](https://github.com/jasonGeng88/blog/blob/master/201708/java-nio.md#%E5%A4%84%E7%90%86%E8%AF%BB%E5%8F%96%E5%B0%B1%E7%BB%AA%E4%BA%8B%E4%BB%B6)处理读取就绪事件](#[]httpsgithubcomjasongeng88blogblobmaster201708java-niomde5a484e79086e8afbbe58f96e5b0b1e7bbaae4ba8be4bbb6处理读取就绪事件)
-    * [[](https://github.com/jasonGeng88/blog/blob/master/201708/java-nio.md#%E5%AE%8C%E6%95%B4%E4%BB%A3%E7%A0%81)完整代码](#[]httpsgithubcomjasongeng88blogblobmaster201708java-niomde5ae8ce695b4e4bba3e7a081完整代码)
-    * [[](https://github.com/jasonGeng88/blog/blob/master/201708/java-nio.md#%E7%A4%BA%E4%BE%8B%E6%95%88%E6%9E%9C)示例效果](#[]httpsgithubcomjasongeng88blogblobmaster201708java-niomde7a4bae4be8be69588e69e9c示例效果)
-  * [[](https://github.com/jasonGeng88/blog/blob/master/201708/java-nio.md#%E6%80%BB%E7%BB%93)总结](#[]httpsgithubcomjasongeng88blogblobmaster201708java-niomde680bbe7bb93总结)
-  * [[](https://github.com/jasonGeng88/blog/blob/master/201708/java-nio.md#%E5%90%8E%E7%BB%AD)后续](#[]httpsgithubcomjasongeng88blogblobmaster201708java-niomde5908ee7bbad后续)
-
-
 本文转载自：[https://github.com/jasonGeng88/blog](https://github.com/jasonGeng88/blog)
 
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看
