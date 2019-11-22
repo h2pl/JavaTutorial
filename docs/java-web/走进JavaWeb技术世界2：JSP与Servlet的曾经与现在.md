@@ -1,3 +1,23 @@
+# Table of Contents
+
+  * [servlet和jsp的区别](#servlet和jsp的区别)
+  * [servlet和jsp各自的特点](#servlet和jsp各自的特点)
+  * [通过MVC双剑合璧](#通过mvc双剑合璧)
+  * [JavaWeb基础知识](#javaweb基础知识)
+    * [一、Servlet 是什么？](#一、servlet-是什么？)
+    * [二、Servlet的生命周期](#二、servlet的生命周期)
+      * [init() 方法](#init-方法)
+      * [service() 方法](#service-方法)
+      * [ destroy() 方法](# destroy-方法)
+  * [相关面试题](#相关面试题)
+    * [怎样理解Servlet的单实例多线程？**](#怎样理解servlet的单实例多线程？)
+    * [JSP的中存在的多线程问题：](#jsp的中存在的多线程问题：)
+    * [如何开发线程安全的Servlet](#如何开发线程安全的servlet)
+  * [同步对共享数据的操作](#同步对共享数据的操作)
+  * [五、servlet与jsp的区别](#五、servlet与jsp的区别)
+  * [参考文章](#参考文章)
+
+
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看
 > https://github.com/h2pl/Java-Tutorial
 

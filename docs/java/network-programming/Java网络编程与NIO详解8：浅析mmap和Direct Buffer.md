@@ -1,3 +1,29 @@
+# Table of Contents
+
+* [mmap基础概念](#mmap基础概念)
+* [mmap内存映射原理](#mmap内存映射原理)
+* [mmap和常规文件操作的区别](#mmap和常规文件操作的区别)
+* [mmap优点总结](#mmap优点总结)
+* [mmap使用细节](#mmap使用细节)
+    * [堆外内存](#堆外内存)
+    * [在讲解DirectByteBuffer之前，需要先简单了解两个知识点](#在讲解directbytebuffer之前，需要先简单了解两个知识点)
+      * [java引用类型，因为DirectByteBuffer是通过虚引用(Phantom Reference)来实现堆外内存的释放的。](#java引用类型，因为directbytebuffer是通过虚引用phantom-reference来实现堆外内存的释放的。)
+      * [关于linux的内核态和用户态](#关于linux的内核态和用户态)
+    * [DirectByteBuffer ———— 直接缓冲](#directbytebuffer--直接缓冲)
+    * [DirectByteBuffer堆外内存的创建和回收的源码解读](#directbytebuffer堆外内存的创建和回收的源码解读)
+      * [堆外内存分配](#堆外内存分配)
+      * [Bits.reserveMemory(size, cap) 方法](#bitsreservememorysize-cap-方法)
+      * [堆外内存回收](#堆外内存回收)
+      * [通过配置参数的方式来回收堆外内存](#通过配置参数的方式来回收堆外内存)
+    * [堆外内存那些事](#堆外内存那些事)
+      * [使用堆外内存的原因](#使用堆外内存的原因)
+      * [什么情况下使用堆外内存](#什么情况下使用堆外内存)
+      * [堆外内存 VS 内存池](#堆外内存-vs-内存池)
+      * [堆外内存的特点](#堆外内存的特点)
+      * [堆外内存的一些问题](#堆外内存的一些问题)
+  * [参考文章](#参考文章)
+
+
 本文转自：https://www.cnblogs.com/huxiao-tee/p/4660352.html
 
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看

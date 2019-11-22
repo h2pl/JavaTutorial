@@ -1,3 +1,12 @@
+# Table of Contents
+
+      * [quicklist概述](#quicklist概述)
+      * [quicklist的数据结构定义](#quicklist的数据结构定义)
+      * [quicklist的创建](#quicklist的创建)
+      * [quicklist的push操作](#quicklist的push操作)
+      * [quicklist的其它操作](#quicklist的其它操作)
+
+
 本文转自互联网
 
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看

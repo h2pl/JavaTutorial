@@ -1,3 +1,18 @@
+# Table of Contents
+
+  * [打破双亲委派模型](#打破双亲委派模型)
+    * [JNDI](#jndi)
+    * [[JNDI 的理解](https://yq.aliyun.com/go/articleRenderRedirect?url=https%3A%2F%2Fwww.cnblogs.com%2Fzhchoutai%2Fp%2F7389089.html)](#[jndi-的理解]httpsyqaliyuncomgoarticlerenderredirecturlhttps3a2f2fwwwcnblogscom2fzhchoutai2fp2f7389089html)
+  * [OSGI](#osgi)
+    * [1.如何正确的理解和认识OSGI技术？](#1如何正确的理解和认识osgi技术？)
+  * [Tomcat类加载器以及应用间class隔离与共享](#tomcat类加载器以及应用间class隔离与共享)
+    * [类加载器](#类加载器)
+  * [参考文章](#参考文章)
+  * [微信公众号](#微信公众号)
+    * [Java技术江湖](#java技术江湖)
+    * [个人公众号：黄小斜](#个人公众号：黄小斜)
+
+
 本文转自互联网，侵删
 
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看

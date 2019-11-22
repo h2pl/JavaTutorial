@@ -1,3 +1,20 @@
+# Table of Contents
+
+  * [[](http://blog.720ui.com/2016/redis_action_04_cluster/#Replication%EF%BC%88%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%EF%BC%89 "Replication（主从复制）")Replication（主从复制）](#[]httpblog720uicom2016redis_action_04_clusterreplicationefbc88e4b8bbe4bb8ee5a48de588b6efbc89-replication（主从复制）replication（主从复制）)
+    * [[](http://blog.720ui.com/2016/redis_action_04_cluster/#%E9%85%8D%E7%BD%AE%E4%B8%BB%E6%9C%8D%E5%8A%A1%E5%99%A8 "配置主服务器")配置主服务器](#[]httpblog720uicom2016redis_action_04_clustere9858de7bdaee4b8bbe69c8de58aa1e599a8-配置主服务器配置主服务器)
+    * [[](http://blog.720ui.com/2016/redis_action_04_cluster/#%E9%85%8D%E7%BD%AE%E4%BB%8E%E6%9C%8D%E5%8A%A1%E5%99%A8 "配置从服务器")配置从服务器](#[]httpblog720uicom2016redis_action_04_clustere9858de7bdaee4bb8ee69c8de58aa1e599a8-配置从服务器配置从服务器)
+    * [[](http://blog.720ui.com/2016/redis_action_04_cluster/#%E6%B5%8B%E8%AF%95 "测试")测试](#[]httpblog720uicom2016redis_action_04_clustere6b58be8af95-测试测试)
+  * [[](http://blog.720ui.com/2016/redis_action_04_cluster/#Sentinel%EF%BC%88%E5%93%A8%E5%85%B5%EF%BC%89 "Sentinel（哨兵）")Sentinel（哨兵）](#[]httpblog720uicom2016redis_action_04_clustersentinelefbc88e593a8e585b5efbc89-sentinel（哨兵）sentinel（哨兵）)
+    * [[](http://blog.720ui.com/2016/redis_action_04_cluster/#%E9%85%8D%E7%BD%AESentinel "配置Sentinel")配置Sentinel](#[]httpblog720uicom2016redis_action_04_clustere9858de7bdaesentinel-配置sentinel配置sentinel)
+    * [[](http://blog.720ui.com/2016/redis_action_04_cluster/#%E5%90%AF%E5%8A%A8-Sentinel "启动 Sentinel")启动 Sentinel](#[]httpblog720uicom2016redis_action_04_clustere590afe58aa8-sentinel-启动-sentinel启动-sentinel)
+    * [[](http://blog.720ui.com/2016/redis_action_04_cluster/#%E6%B5%8B%E8%AF%95-1 "测试")测试](#[]httpblog720uicom2016redis_action_04_clustere6b58be8af95-1-测试测试)
+  * [[](http://blog.720ui.com/2016/redis_action_04_cluster/#Twemproxy "Twemproxy")Twemproxy](#[]httpblog720uicom2016redis_action_04_clustertwemproxy-twemproxytwemproxy)
+  * [[](http://blog.720ui.com/2016/redis_action_04_cluster/#Codis "Codis")Codis](#[]httpblog720uicom2016redis_action_04_clustercodis-codiscodis)
+  * [[](http://blog.720ui.com/2016/redis_action_04_cluster/#Redis-3-0%E9%9B%86%E7%BE%A4 "Redis 3.0集群")Redis 3.0集群](#[]httpblog720uicom2016redis_action_04_clusterredis-3-0e99b86e7bea4-redis-30集群redis-30集群)
+    * [[](http://blog.720ui.com/2016/redis_action_04_cluster/#%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA "环境搭建")环境搭建](#[]httpblog720uicom2016redis_action_04_clustere78eafe5a283e690ade5bbba-环境搭建环境搭建)
+    * [[](http://blog.720ui.com/2016/redis_action_04_cluster/#%E5%88%9B%E5%BB%BA%E9%9B%86%E7%BE%A4 "创建集群")创建集群](#[]httpblog720uicom2016redis_action_04_clustere5889be5bbbae99b86e7bea4-创建集群创建集群)
+
+
 本文转自互联网
 
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看

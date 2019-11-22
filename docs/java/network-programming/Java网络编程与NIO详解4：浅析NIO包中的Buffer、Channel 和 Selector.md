@@ -1,3 +1,21 @@
+# Table of Contents
+
+  * [Buffer](#buffer)
+    * [position、limit、capacity](#position、limit、capacity)
+    * [初始化 Buffer](#初始化-buffer)
+    * [填充 Buffer](#填充-buffer)
+    * [提取 Buffer 中的值](#提取-buffer-中的值)
+    * [mark() & reset()](#mark--reset)
+    * [rewind() & clear() & compact()](#rewind--clear--compact)
+  * [Channel](#channel)
+    * [FileChannel](#filechannel)
+    * [SocketChannel](#socketchannel)
+    * [ServerSocketChannel](#serversocketchannel)
+    * [DatagramChannel](#datagramchannel)
+  * [Selector](#selector)
+  * [小结](#小结)
+
+
 本文转载自互联网
 
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看

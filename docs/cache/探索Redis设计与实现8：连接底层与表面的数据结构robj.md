@@ -1,3 +1,29 @@
+# Table of Contents
+
+      * [robj的数据结构定义](#robj的数据结构定义)
+            * [OBJ_STRING 0](#obj_string-0)
+            * [OBJ_LIST 1](#obj_list-1)
+            * [OBJ_SET 2](#obj_set-2)
+            * [OBJ_ZSET 3](#obj_zset-3)
+            * [OBJ_HASH 4](#obj_hash-4)
+            * [OBJ_ENCODING_RAW 0     /* Raw representation */](#obj_encoding_raw-0------raw-representation-)
+            * [OBJ_ENCODING_INT 1     /* Encoded as integer */](#obj_encoding_int-1------encoded-as-integer-)
+            * [OBJ_ENCODING_HT 2      /* Encoded as hash table */](#obj_encoding_ht-2-------encoded-as-hash-table-)
+            * [OBJ_ENCODING_ZIPMAP 3  /* Encoded as zipmap */](#obj_encoding_zipmap-3---encoded-as-zipmap-)
+            * [OBJ_ENCODING_LINKEDLIST 4 /* Encoded as regular linked list */](#obj_encoding_linkedlist-4--encoded-as-regular-linked-list-)
+            * [OBJ_ENCODING_ZIPLIST 5 /* Encoded as ziplist */](#obj_encoding_ziplist-5--encoded-as-ziplist-)
+            * [OBJ_ENCODING_INTSET 6  /* Encoded as intset */](#obj_encoding_intset-6---encoded-as-intset-)
+            * [OBJ_ENCODING_SKIPLIST 7  /* Encoded as skiplist */](#obj_encoding_skiplist-7---encoded-as-skiplist-)
+            * [OBJ_ENCODING_EMBSTR 8  /* Embedded sds string encoding */](#obj_encoding_embstr-8---embedded-sds-string-encoding-)
+            * [OBJ_ENCODING_QUICKLIST 9 /* Encoded as linked list of ziplists */](#obj_encoding_quicklist-9--encoded-as-linked-list-of-ziplists-)
+            * [LRU_BITS 24](#lru_bits-24)
+      * [string robj的编码过程](#string-robj的编码过程)
+            * [sdsEncodedObject(objptr) (objptr->encoding == OBJ_ENCODING_RAW || objptr->encoding == OBJ_ENCODING_EMBSTR)](#sdsencodedobjectobjptr-objptr-encoding--obj_encoding_raw--objptr-encoding--obj_encoding_embstr)
+      * [string robj的解码过程](#string-robj的解码过程)
+      * [再谈sds与string的关系](#再谈sds与string的关系)
+      * [robj的引用计数操作](#robj的引用计数操作)
+
+
 本文转自互联网
 
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看

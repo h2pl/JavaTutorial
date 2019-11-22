@@ -1,3 +1,26 @@
+# Table of Contents
+
+  * [使用和基础数据结构（外观）](#使用和基础数据结构（外观）)
+  * [底层数据结构](#底层数据结构)
+  * [redis server结构和数据库redisDb](#redis-server结构和数据库redisdb)
+  * [redis的事件模型](#redis的事件模型)
+  * [备份方式](#备份方式)
+  * [redis主从复制](#redis主从复制)
+  * [分布式锁实现](#分布式锁实现)
+    * [使用setnx加expire实现加锁和时限](#使用setnx加expire实现加锁和时限)
+    * [使用getset加锁和获取过期时间](#使用getset加锁和获取过期时间)
+    * [2.0的setnx可以配置过期时间。](#20的setnx可以配置过期时间。)
+    * [使用sentx将值设为时间戳，通过lua脚本进行cas比较和删除操作](#使用sentx将值设为时间戳，通过lua脚本进行cas比较和删除操作)
+    * [分布式Redis锁：Redlock](#分布式redis锁：redlock)
+    * [总结](#总结)
+  * [分布式方案](#分布式方案)
+  * [redis事务](#redis事务)
+    * [redis脚本事务](#redis脚本事务)
+  * [微信公众号](#微信公众号)
+    * [Java技术江湖](#java技术江湖)
+    * [个人公众号：黄小斜](#个人公众号：黄小斜)
+
+
 ---
 title: Redis原理与实践总结
 date: 2018-07-08 22:15:12

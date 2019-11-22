@@ -1,3 +1,19 @@
+# Table of Contents
+
+  * [前言](#前言)
+  * [Java代理介绍](#java代理介绍)
+  * [静态代理](#静态代理)
+  * [JDK动态代理](#jdk动态代理)
+    * [JDK动态代理实现原理](#jdk动态代理实现原理)
+    * [Proxy类中的newProxyInstance](#proxy类中的newproxyinstance)
+    * [字节码生成](#字节码生成)
+  * [代理类的方法调用](#代理类的方法调用)
+  * [深入理解CGLIB动态代理机制](#深入理解cglib动态代理机制)
+    * [CGLIB动态代理示例](#cglib动态代理示例)
+    * [生成代理类对象](#生成代理类对象)
+    * [对委托类进行代理](#对委托类进行代理)
+
+
 转自 https://www.jianshu.com/u/668d0795a95b
 
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看

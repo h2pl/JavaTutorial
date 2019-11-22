@@ -1,3 +1,19 @@
+# Table of Contents
+
+  * [Web MVC简介](#web-mvc简介)
+    * [Web开发中的请求-响应模型：](#web开发中的请求-响应模型：)
+    * [标准MVC模型概述](#标准mvc模型概述)
+    * [Web MVC概述](#web-mvc概述)
+    * [Web端开发发展历程](#web端开发发展历程)
+  * [Spring Web MVC是什么](#spring-web-mvc是什么)
+  * [Spring Web MVC能帮我们做什么](#spring-web-mvc能帮我们做什么)
+  * [Spring Web MVC架构](#spring-web-mvc架构)
+    * [Spring Web MVC处理请求的流程](#spring-web-mvc处理请求的流程)
+    * [Spring Web MVC架构](#spring-web-mvc架构-1)
+  * [Spring Web MVC优势](#spring-web-mvc优势)
+  * [DispatcherServlet作用](#dispatcherservlet作用)
+
+
 转自：[跟开涛学SpringMVC](http://jinnianshilongnian.iteye.com/category/231099)
 
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看

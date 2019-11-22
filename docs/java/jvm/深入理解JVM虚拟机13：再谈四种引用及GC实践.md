@@ -1,3 +1,18 @@
+# Table of Contents
+
+  * [一、背景](#一、背景)
+  * [二、简介](#二、简介)
+    * [1.强引用 StrongReference](#1强引用-strongreference)
+    * [2.弱引用 WeakReference](#2弱引用-weakreference)
+    * [3.软引用 SoftReference](#3软引用-softreference)
+    * [4.虚引用 PhantomReference](#4虚引用-phantomreference)
+  * [三、小结](#三、小结)
+  * [参考文章](#参考文章)
+  * [微信公众号](#微信公众号)
+    * [Java技术江湖](#java技术江湖)
+    * [个人公众号：黄小斜](#个人公众号：黄小斜)
+
+
 本文转自互联网，侵删
 
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看

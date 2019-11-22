@@ -1,3 +1,28 @@
+# Table of Contents
+
+* [[Qemu，KVM，Virsh傻傻的分不清](https://www.cnblogs.com/popsuper1982/p/8522535.html)](#[qemu，kvm，virsh傻傻的分不清]httpswwwcnblogscompopsuper1982p8522535html)
+  * [ Kvm虚拟化技术实践](# kvm虚拟化技术实践)
+    * [VMware虚拟机支持Kvm虚拟化技术？](#vmware虚拟机支持kvm虚拟化技术？)
+    * [安装Kvm虚拟化软件](#安装kvm虚拟化软件)
+* [ifconfig virbr0virbr0    Link encap:Ethernet  HWaddr 52:54:00:D7:23:AD            inet addr:192.168.122.1  Bcast:192.168.122.255  Mask:255.255.255.0          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1          RX packets:0 errors:0 dropped:0 overruns:0 frame:0          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0          collisions:0 txqueuelen:0           RX bytes:0 (0.0 b)  TX bytes:0 (0.0 b)](#ifconfig-virbr0virbr0----link-encapethernet--hwaddr-525400d723ad------------inet-addr1921681221--bcast192168122255--mask2552552550----------up-broadcast-running-multicast--mtu1500--metric1----------rx-packets0-errors0-dropped0-overruns0-frame0----------tx-packets0-errors0-dropped0-overruns0-carrier0----------collisions0-txqueuelen0-----------rx-bytes0-00-b--tx-bytes0-00-b)
+* [brctl showbridge name     bridge id               STP enabled     interfacesvirbr0          8000.525400d723ad       yes             virbr0-nic](#brctl-showbridge-name-----bridge-id---------------stp-enabled-----interfacesvirbr0----------8000525400d723ad-------yes-------------virbr0-nic)
+* [iptables -nvL -t natChain PREROUTING (policy ACCEPT 304 packets, 38526 bytes) pkts bytes target     prot opt in     out     source               destination          Chain POSTROUTING (policy ACCEPT 7 packets, 483 bytes) pkts bytes target     prot opt in     out     source               destination             0     0 MASQUERADE  tcp  --  *      *       192.168.122.0/24    !192.168.122.0/24    masq ports: 1024-65535     0     0 MASQUERADE  udp  --  *      *       192.168.122.0/24    !192.168.122.0/24    masq ports: 1024-65535     0     0 MASQUERADE  all  --  *      *       192.168.122.0/24    !192.168.122.0/24     Chain OUTPUT (policy ACCEPT 7 packets, 483 bytes) pkts bytes target     prot opt in     out     source               destination](#iptables--nvl--t-natchain-prerouting-policy-accept-304-packets-38526-bytes-pkts-bytes-target-----prot-opt-in-----out-----source---------------destination----------chain-postrouting-policy-accept-7-packets-483-bytes-pkts-bytes-target-----prot-opt-in-----out-----source---------------destination-------------0-----0-masquerade--tcp-------------------192168122024----192168122024----masq-ports-1024-65535-----0-----0-masquerade--udp-------------------192168122024----192168122024----masq-ports-1024-65535-----0-----0-masquerade--all-------------------192168122024----192168122024-----chain-output-policy-accept-7-packets-483-bytes-pkts-bytes-target-----prot-opt-in-----out-----source---------------destination)
+    * [kvm创建虚拟机](#kvm创建虚拟机)
+* [netstat -ntlp|grep 5900tcp        0      0 0.0.0.0:5900                0.0.0.0:*                   LISTEN      2504/qemu-kvm](#netstat--ntlpgrep-5900tcp--------0------0-00005900----------------0000-------------------listen------2504qemu-kvm)
+    * [虚拟机远程管理软件](#虚拟机远程管理软件)
+    * [KVM虚拟机管理](#kvm虚拟机管理)
+    * [libvirt虚拟机配置文件](#libvirt虚拟机配置文件)
+* [lltotal 8-rw-------. 1 root root 3047 Oct 19  2016 Centos-6.6-x68_64.xmldrwx------. 3 root root 4096 Oct 17  2016 networks](#lltotal-8-rw--------1-root-root-3047-oct-19--2016-centos-66-x68_64xmldrwx-------3-root-root-4096-oct-17--2016-networks)
+    * [监控kvm虚拟机](#监控kvm虚拟机)
+    * [KVM修改NAT模式为桥接[案例]](#kvm修改nat模式为桥接[案例])
+* [virsh edit Centos-6.6-x68_64  # 命令 52     <interface type='network'>     53       <mac address='52:54:00:2a:2d:60'/>     54       <source network='default'/>     55            56     </interface> 修改为：52     <interface type='bridge'>     53       <mac address='52:54:00:2a:2d:60'/>     54       <source bridge='br0'/>     55            56     </interface>](#virsh-edit-centos-66-x68_64---命令-52-----interface-typenetwork-----53-------mac-address5254002a2d60-----54-------source-networkdefault-----55------------56-----interface-修改为：52-----interface-typebridge-----53-------mac-address5254002a2d60-----54-------source-bridgebr0-----55------------56-----interface)
+* [brctl showbridge name     bridge id               STP enabled     interfacesbr0             8000.000c29f824c9       no              eth0virbr0          8000.525400353d8e       yes             virbr0-nic](#brctl-showbridge-name-----bridge-id---------------stp-enabled-----interfacesbr0-------------8000000c29f824c9-------no--------------eth0virbr0----------8000525400353d8e-------yes-------------virbr0-nic)
+* [virsh start CentOS-6.6-x86_64Domain CentOS-6.6-x86_64 started # brctl show                   bridge name     bridge id               STP enabled     interfacesbr0             8000.000c29f824c9       no              eth0                                                        vnet0virbr0          8000.525400353d8e       yes             virbr0-nic](#virsh-start-centos-66-x86_64domain-centos-66-x86_64-started--brctl-show-------------------bridge-name-----bridge-id---------------stp-enabled-----interfacesbr0-------------8000000c29f824c9-------no--------------eth0--------------------------------------------------------vnet0virbr0----------8000525400353d8e-------yes-------------virbr0-nic)
+* [ifup eth0](#ifup-eth0)
+* [ssh 192.168.2.108root@192.168.2.108's password: Last login: Sat Jan 30 12:40:28 2016](#ssh-1921682108root1921682108s-password-last-login-sat-jan-30-124028-2016)
+    * [总结](#总结)
+
+
 # [Qemu，KVM，Virsh傻傻的分不清](https://www.cnblogs.com/popsuper1982/p/8522535.html)
 
 原创文章，转载请注明： 转载自[Itweet](https://link.juejin.im/?target=http%3A%2F%2Fwww.itweet.cn)的博客

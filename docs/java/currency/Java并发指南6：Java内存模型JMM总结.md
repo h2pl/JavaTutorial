@@ -1,3 +1,24 @@
+# Table of Contents
+
+  * [简介](#简介)
+    * [一、Java内存区域（JVM内存区域）](#一、java内存区域（jvm内存区域）)
+    * [二、Java内存模型](#二、java内存模型)
+  * [三、as-if-serial语义、happens-before原则](#三、as-if-serial语义、happens-before原则)
+    * [3.1 as-if-serial语义](#31-as-if-serial语义)
+    * [3.2 happens-before原则](#32-happens-before原则)
+    * [3.3 happens-before定义](#33-happens-before定义)
+    * [3.3 happens-before对比as-if-serial](#33-happens-before对比as-if-serial)
+    * [3.4 happens-before具体规则](#34-happens-before具体规则)
+    * [3.5 happens-before与JMM的关系图](#35-happens-before与jmm的关系图)
+  * [四、volatile、锁的内存语义](#四、volatile、锁的内存语义)
+    * [4.1 volatile的内存语义](#41-volatile的内存语义)
+    * [4.2 volatile内存语义的实现](#42-volatile内存语义的实现)
+    * [4.3 锁的内存语义](#43-锁的内存语义)
+    * [4.4 final域的内存语义](#44-final域的内存语义)
+  * [五、JMM是如何处理并发过程中的三大特性](#五、jmm是如何处理并发过程中的三大特性)
+  * [参考链接：](#参考链接：)
+
+
 本文转自 https://www.cnblogs.com/kukri/p/9109639.html
 
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看

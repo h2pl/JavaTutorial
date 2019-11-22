@@ -1,3 +1,18 @@
+# Table of Contents
+
+    * [skiplist数据结构简介](#skiplist数据结构简介)
+    * [skiplist的算法性能分析](#skiplist的算法性能分析)
+    * [skiplist与平衡树、哈希表的比较](#skiplist与平衡树、哈希表的比较)
+    * [Redis中的skiplist实现](#redis中的skiplist实现)
+      * [sorted set的命令举例](#sorted-set的命令举例)
+      * [Redis中skiplist实现的特殊性](#redis中skiplist实现的特殊性)
+      * [skiplist的数据结构定义](#skiplist的数据结构定义)
+            * [ZSKIPLIST_MAXLEVEL 32](#zskiplist_maxlevel-32)
+            * [ZSKIPLIST_P 0.25](#zskiplist_p-025)
+    * [Redis中的sorted set](#redis中的sorted-set)
+    * [Redis为什么用skiplist而不用平衡树？](#redis为什么用skiplist而不用平衡树？)
+
+
 本文转自互联网
 
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看

@@ -1,3 +1,40 @@
+# Table of Contents
+
+  * [前言](#前言)
+  * [[](https://draveness.me/mysql-innodb#%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E5%AE%9A%E4%B9%89)数据库的定义](#[]httpsdravenessmemysql-innodbe695b0e68daee5ba93e79a84e5ae9ae4b989数据库的定义)
+    * [[](https://draveness.me/mysql-innodb#%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E5%AE%9E%E4%BE%8B)数据库和实例](#[]httpsdravenessmemysql-innodbe695b0e68daee5ba93e5928ce5ae9ee4be8b数据库和实例)
+    * [[](https://draveness.me/mysql-innodb#mysql-%E7%9A%84%E6%9E%B6%E6%9E%84)MySQL 的架构](#[]httpsdravenessmemysql-innodbmysql-e79a84e69eb6e69e84mysql-的架构)
+  * [[](https://draveness.me/mysql-innodb#%E6%95%B0%E6%8D%AE%E7%9A%84%E5%AD%98%E5%82%A8)数据的存储](#[]httpsdravenessmemysql-innodbe695b0e68daee79a84e5ad98e582a8数据的存储)
+    * [[](https://draveness.me/mysql-innodb#%E5%A6%82%E4%BD%95%E5%AD%98%E5%82%A8%E8%A1%A8)如何存储表](#[]httpsdravenessmemysql-innodbe5a682e4bd95e5ad98e582a8e8a1a8如何存储表)
+      * [[](https://draveness.me/mysql-innodb#frm-%E6%96%87%E4%BB%B6).frm 文件](#[]httpsdravenessmemysql-innodbfrm-e69687e4bbb6frm-文件)
+      * [[](https://draveness.me/mysql-innodb#ibd-%E6%96%87%E4%BB%B6).ibd 文件](#[]httpsdravenessmemysql-innodbibd-e69687e4bbb6ibd-文件)
+    * [[](https://draveness.me/mysql-innodb#%E5%A6%82%E4%BD%95%E5%AD%98%E5%82%A8%E8%AE%B0%E5%BD%95)如何存储记录](#[]httpsdravenessmemysql-innodbe5a682e4bd95e5ad98e582a8e8aeb0e5bd95如何存储记录)
+      * [[](https://draveness.me/mysql-innodb#%E8%A1%8C%E6%BA%A2%E5%87%BA%E6%95%B0%E6%8D%AE)行溢出数据](#[]httpsdravenessmemysql-innodbe8a18ce6baa2e587bae695b0e68dae行溢出数据)
+    * [[](https://draveness.me/mysql-innodb#%E6%95%B0%E6%8D%AE%E9%A1%B5%E7%BB%93%E6%9E%84)数据页结构](#[]httpsdravenessmemysql-innodbe695b0e68daee9a1b5e7bb93e69e84数据页结构)
+  * [[](https://draveness.me/mysql-innodb#%E7%B4%A2%E5%BC%95)索引](#[]httpsdravenessmemysql-innodbe7b4a2e5bc95索引)
+    * [[](https://draveness.me/mysql-innodb#%E7%B4%A2%E5%BC%95%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84)索引的数据结构](#[]httpsdravenessmemysql-innodbe7b4a2e5bc95e79a84e695b0e68daee7bb93e69e84索引的数据结构)
+    * [[](https://draveness.me/mysql-innodb#%E8%81%9A%E9%9B%86%E7%B4%A2%E5%BC%95%E5%92%8C%E8%BE%85%E5%8A%A9%E7%B4%A2%E5%BC%95)聚集索引和辅助索引](#[]httpsdravenessmemysql-innodbe8819ae99b86e7b4a2e5bc95e5928ce8be85e58aa9e7b4a2e5bc95聚集索引和辅助索引)
+      * [[](https://draveness.me/mysql-innodb#%E8%81%9A%E9%9B%86%E7%B4%A2%E5%BC%95)聚集索引](#[]httpsdravenessmemysql-innodbe8819ae99b86e7b4a2e5bc95聚集索引)
+      * [[](https://draveness.me/mysql-innodb#%E8%BE%85%E5%8A%A9%E7%B4%A2%E5%BC%95)辅助索引](#[]httpsdravenessmemysql-innodbe8be85e58aa9e7b4a2e5bc95辅助索引)
+    * [[](https://draveness.me/mysql-innodb#%E7%B4%A2%E5%BC%95%E7%9A%84%E8%AE%BE%E8%AE%A1)索引的设计](#[]httpsdravenessmemysql-innodbe7b4a2e5bc95e79a84e8aebee8aea1索引的设计)
+  * [[](https://draveness.me/mysql-innodb#%E9%94%81)锁](#[]httpsdravenessmemysql-innodbe99481锁)
+    * [[](https://draveness.me/mysql-innodb#%E5%B9%B6%E5%8F%91%E6%8E%A7%E5%88%B6%E6%9C%BA%E5%88%B6)并发控制机制](#[]httpsdravenessmemysql-innodbe5b9b6e58f91e68ea7e588b6e69cbae588b6并发控制机制)
+    * [[](https://draveness.me/mysql-innodb#%E9%94%81%E7%9A%84%E7%A7%8D%E7%B1%BB)锁的种类](#[]httpsdravenessmemysql-innodbe99481e79a84e7a78de7b1bb锁的种类)
+    * [[](https://draveness.me/mysql-innodb#%E9%94%81%E7%9A%84%E7%B2%92%E5%BA%A6)锁的粒度](#[]httpsdravenessmemysql-innodbe99481e79a84e7b292e5baa6锁的粒度)
+    * [[](https://draveness.me/mysql-innodb#%E9%94%81%E7%9A%84%E7%AE%97%E6%B3%95)锁的算法](#[]httpsdravenessmemysql-innodbe99481e79a84e7ae97e6b395锁的算法)
+      * [[](https://draveness.me/mysql-innodb#record-lock)Record Lock](#[]httpsdravenessmemysql-innodbrecord-lockrecord-lock)
+      * [[](https://draveness.me/mysql-innodb#gap-lock)Gap Lock](#[]httpsdravenessmemysql-innodbgap-lockgap-lock)
+      * [[](https://draveness.me/mysql-innodb#next-key-lock)Next-Key Lock](#[]httpsdravenessmemysql-innodbnext-key-locknext-key-lock)
+    * [[](https://draveness.me/mysql-innodb#%E6%AD%BB%E9%94%81%E7%9A%84%E5%8F%91%E7%94%9F)死锁的发生](#[]httpsdravenessmemysql-innodbe6adbbe99481e79a84e58f91e7949f死锁的发生)
+  * [[](https://draveness.me/mysql-innodb#%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB)事务与隔离级别](#[]httpsdravenessmemysql-innodbe4ba8be58aa1e4b88ee99a94e7a6bbe7baa7e588ab事务与隔离级别)
+    * [[](https://draveness.me/mysql-innodb#%E5%87%A0%E7%A7%8D%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB)几种隔离级别](#[]httpsdravenessmemysql-innodbe587a0e7a78de99a94e7a6bbe7baa7e588ab几种隔离级别)
+    * [[](https://draveness.me/mysql-innodb#%E8%84%8F%E8%AF%BB)脏读](#[]httpsdravenessmemysql-innodbe8848fe8afbb脏读)
+    * [[](https://draveness.me/mysql-innodb#%E4%B8%8D%E5%8F%AF%E9%87%8D%E5%A4%8D%E8%AF%BB)不可重复读](#[]httpsdravenessmemysql-innodbe4b88de58fafe9878de5a48de8afbb不可重复读)
+    * [[](https://draveness.me/mysql-innodb#%E5%B9%BB%E8%AF%BB)幻读](#[]httpsdravenessmemysql-innodbe5b9bbe8afbb幻读)
+  * [[](https://draveness.me/mysql-innodb#%E6%80%BB%E7%BB%93)总结](#[]httpsdravenessmemysql-innodbe680bbe7bb93总结)
+  * [[](https://draveness.me/mysql-innodb#reference)Reference](#[]httpsdravenessmemysql-innodbreferencereference)
+
+
 本文转自互联网
 
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看

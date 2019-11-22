@@ -1,3 +1,15 @@
+# Table of Contents
+
+  * [目录](#目录)
+  * [前言](#前言)
+  * [重要接口和类介绍](#重要接口和类介绍)
+  * [源码分析](#源码分析)
+  * [编码自定义的ViewResolver](#编码自定义的viewresolver)
+    * [This is jsp page](#this-is-jsp-page)
+    * [This is freemarker page](#this-is-freemarker-page)
+  * [总结](#总结)
+
+
 转自 [SpringMVC视图机制详解[附带源码分析]](https://www.cnblogs.com/fangjian0423/p/springMVC-view-viewResolver.html)
 
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看

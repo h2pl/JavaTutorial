@@ -1,3 +1,11 @@
+# Table of Contents
+
+  * [前言](#前言)
+  * [step1:](#step1)
+  * [step2:](#step2)
+  * [step3 : 我们已经step by step 的看到了如何将xml文件转换成Document的，现在就要分析是如何提取和注册bean的。](#step3--我们已经step-by-step-的看到了如何将xml文件转换成document的，现在就要分析是如何提取和注册bean的。)
+
+
 本文转自五月的仓颉 https://www.cnblogs.com/xrq730
 
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看

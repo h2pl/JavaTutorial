@@ -1,3 +1,12 @@
+# Table of Contents
+
+      * [什么是ziplist](#什么是ziplist)
+      * [ziplist的数据结构定义](#ziplist的数据结构定义)
+      * [ziplist的接口](#ziplist的接口)
+      * [ziplist的插入逻辑解析](#ziplist的插入逻辑解析)
+      * [hash与ziplist](#hash与ziplist)
+
+
 本文转自互联网
 
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看

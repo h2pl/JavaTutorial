@@ -1,3 +1,17 @@
+# Table of Contents
+
+    * [intset数据结构简介](#intset数据结构简介)
+            * [INTSET_ENC_INT16 (sizeof(int16_t))](#intset_enc_int16-sizeofint16_t)
+            * [INTSET_ENC_INT32 (sizeof(int32_t))](#intset_enc_int32-sizeofint32_t)
+            * [INTSET_ENC_INT64 (sizeof(int64_t))](#intset_enc_int64-sizeofint64_t)
+    * [intset的查找和添加操作](#intset的查找和添加操作)
+    * [Redis的set](#redis的set)
+    * [Redis set的并、交、差算法](#redis-set的并、交、差算法)
+      * [交集](#交集)
+      * [并集](#并集)
+      * [差集](#差集)
+
+
 本文转自互联网
 
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看

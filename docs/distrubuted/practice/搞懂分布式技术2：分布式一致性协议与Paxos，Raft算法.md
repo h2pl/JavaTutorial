@@ -1,3 +1,7 @@
+# Table of Contents
+
+
+
 本文较为粗略地讲述了一致性协议与两种一致性算法，更加系统的理论可以参考后面的分布式系统理论专题文章。
 2PC
 由于BASE理论需要在一致性和可用性方面做出权衡，因此涌现了很多关于一致性的算法和协议。其中比较著名的有二阶提交协议（2 Phase Commitment Protocol），三阶提交协议（3 Phase Commitment Protocol）和Paxos算法。

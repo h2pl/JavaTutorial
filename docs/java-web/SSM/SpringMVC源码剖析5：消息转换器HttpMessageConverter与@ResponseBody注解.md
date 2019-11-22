@@ -1,3 +1,16 @@
+# Table of Contents
+
+  * [目录](#目录)
+  * [前言](#前言)
+  * [现象](#现象)
+  * [源码分析](#源码分析)
+  * [实例讲解](#实例讲解)
+  * [关于配置](#关于配置)
+  * [总结](#总结)
+  * [详解RequestBody和@ResponseBody注解](#详解requestbody和responsebody注解)
+  * [参考资料](#参考资料)
+
+
 转自 [SpringMVC关于json、xml自动转换的原理研究[附带源码分析]](https://www.cnblogs.com/fangjian0423/p/springMVC-xml-json-convert.html)
 
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看

@@ -1,3 +1,31 @@
+# Table of Contents
+
+  * [maven简介](#maven简介)
+    * [1.1 Maven是什么](#11-maven是什么)
+    * [1.2 Maven发展史](#12-maven发展史)
+    * [1.3 为什么要用Maven](#13-为什么要用maven)
+  * [Maven 新手入门](#maven-新手入门)
+    * [Maven概念](#maven概念)
+    * [maven的安装](#maven的安装)
+    * [maven目录](#maven目录)
+    * [Maven常用命令说明](#maven常用命令说明)
+    * [Maven使用](#maven使用)
+  * [[](http://tengj.top/2018/01/01/maven/#%E4%BE%9D%E8%B5%96%E7%9A%84%E9%85%8D%E7%BD%AE "依赖的配置")依赖的配置](#[]httptengjtop20180101mavene4be9de8b596e79a84e9858de7bdae-依赖的配置依赖的配置)
+  * [[](http://tengj.top/2018/01/01/maven/#%E4%BE%9D%E8%B5%96%E8%8C%83%E5%9B%B4 "依赖范围")依赖范围](#[]httptengjtop20180101mavene4be9de8b596e88c83e59bb4-依赖范围依赖范围)
+    * [传递性依赖](#传递性依赖)
+    * [依赖范围](#依赖范围)
+  * [Maven和Gradle的比较](#maven和gradle的比较)
+    * [依赖管理系统](#依赖管理系统)
+    * [多模块构建](#多模块构建)
+    * [一致的项目结构](#一致的项目结构)
+    * [一致的构建模型](#一致的构建模型)
+    * [插件机制](#插件机制)
+  * [参考文章](#参考文章)
+  * [微信公众号](#微信公众号)
+    * [个人公众号：程序员黄小斜](#个人公众号：程序员黄小斜)
+    * [技术公众号：Java技术江湖](#技术公众号：java技术江湖)
+
+
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看
 > https://github.com/h2pl/Java-Tutorial
 

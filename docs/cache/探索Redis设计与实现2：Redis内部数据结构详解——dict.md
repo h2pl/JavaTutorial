@@ -1,3 +1,13 @@
+# Table of Contents
+
+      * [dict的数据结构定义](#dict的数据结构定义)
+      * [dict的创建（dictCreate）](#dict的创建（dictcreate）)
+      * [dict的查找（dictFind）](#dict的查找（dictfind）)
+            * [dictIsRehashing(d) ((d)->rehashidx != -1)](#dictisrehashingd-d-rehashidx---1)
+      * [dict的插入（dictAdd和dictReplace）](#dict的插入（dictadd和dictreplace）)
+      * [dict的删除（dictDelete）](#dict的删除（dictdelete）)
+
+
 本文转自互联网
 
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看

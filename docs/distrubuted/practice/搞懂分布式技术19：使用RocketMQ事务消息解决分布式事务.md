@@ -1,3 +1,12 @@
+# Table of Contents
+
+* [初步认识RocketMQ的核心模块](#初步认识rocketmq的核心模块)
+* [错误的方案0](#错误的方案0)
+* [方案1–业务方自己实现](#方案1业务方自己实现)
+* [方案2 – RocketMQ 事务消息](#方案2--rocketmq-事务消息)
+* [人工介入](#人工介入)
+
+
 本文转载自 linkedkeeper.com
 
 

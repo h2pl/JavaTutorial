@@ -1,3 +1,36 @@
+# Table of Contents
+
+  * [前言](#前言)
+  * [Java7 HashMap](#java7-hashmap)
+    * [put 过程分析](#put-过程分析)
+      * [数组初始化](#数组初始化)
+      * [计算具体数组位置](#计算具体数组位置)
+      * [添加节点到链表中](#添加节点到链表中)
+      * [数组扩容](#数组扩容)
+    * [get 过程分析](#get-过程分析)
+  * [Java7 ConcurrentHashMap](#java7-concurrenthashmap)
+    * [初始化](#初始化)
+    * [put 过程分析](#put-过程分析-1)
+      * [初始化槽: ensureSegment](#初始化槽-ensuresegment)
+      * [获取写入锁: scanAndLockForPut](#获取写入锁-scanandlockforput)
+      * [扩容: rehash](#扩容-rehash)
+    * [get 过程分析](#get-过程分析-1)
+    * [并发问题分析](#并发问题分析)
+  * [Java8 HashMap](#java8-hashmap)
+    * [put 过程分析](#put-过程分析-2)
+      * [数组扩容](#数组扩容-1)
+    * [get 过程分析](#get-过程分析-2)
+  * [Java8 ConcurrentHashMap](#java8-concurrenthashmap)
+    * [初始化](#初始化-1)
+    * [put 过程分析](#put-过程分析-3)
+      * [初始化数组：initTable](#初始化数组：inittable)
+      * [链表转红黑树: treeifyBin](#链表转红黑树-treeifybin)
+    * [扩容：tryPresize](#扩容：trypresize)
+      * [数据迁移：transfer](#数据迁移：transfer)
+    * [get 过程分析](#get-过程分析-3)
+  * [总结](#总结)
+
+
 本文转自：https://www.javadoop.com/
 
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看

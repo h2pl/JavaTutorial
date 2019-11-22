@@ -1,3 +1,34 @@
+# Table of Contents
+
+  * [ZAB协议](#zab协议)
+  * [消息广播模式](#消息广播模式)
+  * [崩溃恢复](#崩溃恢复)
+    * [数据同步](#数据同步)
+  * [ZAB协议原理](#zab协议原理)
+  * [Zookeeper设计目标](#zookeeper设计目标)
+* [ZAB与FastLeaderElection选主算法流程详解](#zab与fastleaderelection选主算法流程详解)
+  * [选择机制中的概念](#选择机制中的概念)
+    * [服务器ID](#服务器id)
+    * [数据ID](#数据id)
+    * [逻辑时钟](#逻辑时钟)
+    * [选举状态](#选举状态)
+  * [选举消息内容](#选举消息内容)
+  * [选举流程图](#选举流程图)
+  * [源码分析](#源码分析)
+    * [QuorumPeer](#quorumpeer)
+    * [FastLeaderElection](#fastleaderelection)
+    * [判断是否已经胜出](#判断是否已经胜出)
+  * [选举流程简述](#选举流程简述)
+  * [[](http://www.jasongj.com/zookeeper/fastleaderelection/?hmsr=toutiao.io&utm_medium=toutiao.io&utm_source=toutiao.io#%E5%87%A0%E7%A7%8D%E9%A2%86%E5%AF%BC%E9%80%89%E4%B8%BE%E5%9C%BA%E6%99%AF "几种领导选举场景")几种领导选举场景](#[]httpwwwjasongjcomzookeeperfastleaderelectionhmsrtoutiaoioutm_mediumtoutiaoioutm_sourcetoutiaoioe587a0e7a78de9a286e5afbce98089e4b8bee59cbae699af-几种领导选举场景几种领导选举场景)
+    * [[](http://www.jasongj.com/zookeeper/fastleaderelection/?hmsr=toutiao.io&utm_medium=toutiao.io&utm_source=toutiao.io#%E9%9B%86%E7%BE%A4%E5%90%AF%E5%8A%A8%E9%A2%86%E5%AF%BC%E9%80%89%E4%B8%BE "集群启动领导选举")集群启动领导选举](#[]httpwwwjasongjcomzookeeperfastleaderelectionhmsrtoutiaoioutm_mediumtoutiaoioutm_sourcetoutiaoioe99b86e7bea4e590afe58aa8e9a286e5afbce98089e4b8be-集群启动领导选举集群启动领导选举)
+    * [[](http://www.jasongj.com/zookeeper/fastleaderelection/?hmsr=toutiao.io&utm_medium=toutiao.io&utm_source=toutiao.io#Follower%E9%87%8D%E5%90%AF "Follower重启")Follower重启](#[]httpwwwjasongjcomzookeeperfastleaderelectionhmsrtoutiaoioutm_mediumtoutiaoioutm_sourcetoutiaoiofollowere9878de590af-follower重启follower重启)
+    * [[](http://www.jasongj.com/zookeeper/fastleaderelection/?hmsr=toutiao.io&utm_medium=toutiao.io&utm_source=toutiao.io#Leader%E9%87%8D%E5%90%AF "Leader重启")Leader重启](#[]httpwwwjasongjcomzookeeperfastleaderelectionhmsrtoutiaoioutm_mediumtoutiaoioutm_sourcetoutiaoioleadere9878de590af-leader重启leader重启)
+* [[](http://www.jasongj.com/zookeeper/fastleaderelection/?hmsr=toutiao.io&utm_medium=toutiao.io&utm_source=toutiao.io#%E4%B8%80%E8%87%B4%E6%80%A7%E4%BF%9D%E8%AF%81 "一致性保证")一致性保证](#[]httpwwwjasongjcomzookeeperfastleaderelectionhmsrtoutiaoioutm_mediumtoutiaoioutm_sourcetoutiaoioe4b880e887b4e680a7e4bf9de8af81-一致性保证一致性保证)
+  * [[](http://www.jasongj.com/zookeeper/fastleaderelection/?hmsr=toutiao.io&utm_medium=toutiao.io&utm_source=toutiao.io#Commit%E8%BF%87%E7%9A%84%E6%95%B0%E6%8D%AE%E4%B8%8D%E4%B8%A2%E5%A4%B1 "Commit过的数据不丢失")Commit过的数据不丢失](#[]httpwwwjasongjcomzookeeperfastleaderelectionhmsrtoutiaoioutm_mediumtoutiaoioutm_sourcetoutiaoiocommite8bf87e79a84e695b0e68daee4b88de4b8a2e5a4b1-commit过的数据不丢失commit过的数据不丢失)
+  * [[](http://www.jasongj.com/zookeeper/fastleaderelection/?hmsr=toutiao.io&utm_medium=toutiao.io&utm_source=toutiao.io#%E6%9C%AACommit%E8%BF%87%E7%9A%84%E6%B6%88%E6%81%AF%E5%AF%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8D%E5%8F%AF%E8%A7%81 "未Commit过的消息对客户端不可见")未Commit过的消息对客户端不可见](#[]httpwwwjasongjcomzookeeperfastleaderelectionhmsrtoutiaoioutm_mediumtoutiaoioutm_sourcetoutiaoioe69caacommite8bf87e79a84e6b688e681afe5afb9e5aea2e688b7e7abafe4b88de58fafe8a781-未commit过的消息对客户端不可见未commit过的消息对客户端不可见)
+* [[](http://www.jasongj.com/zookeeper/fastleaderelection/?hmsr=toutiao.io&utm_medium=toutiao.io&utm_source=toutiao.io#%E6%80%BB%E7%BB%93 "总结")总结](#[]httpwwwjasongjcomzookeeperfastleaderelectionhmsrtoutiaoioutm_mediumtoutiaoioutm_sourcetoutiaoioe680bbe7bb93-总结总结)
+
+
 ## ZAB协议
 
 1.  ZAB协议是专门为zookeeper实现分布式协调功能而设计。zookeeper主要是根据ZAB协议是实现分布式系统数据一致性。

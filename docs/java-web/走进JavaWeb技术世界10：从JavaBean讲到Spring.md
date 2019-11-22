@@ -1,3 +1,18 @@
+# Table of Contents
+
+  * [**Java Bean**](#java-bean)
+  * [**JSP + Java Bean**](#jsp--java-bean)
+  * [Enterprise Java bean](#enterprise-java-bean)
+  * [Spring](#spring)
+  * [JavaBean 和 Spring中Bean的区别](#javabean-和-spring中bean的区别)
+    * [Jave bean](#jave-bean)
+    * [spring bean](#spring bean)
+  * [参考文章](#参考文章)
+  * [微信公众号](#微信公众号)
+    * [个人公众号：程序员黄小斜](#个人公众号：程序员黄小斜)
+    * [技术公众号：Java技术江湖](#技术公众号：java技术江湖)
+
+
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看
 > https://github.com/h2pl/Java-Tutorial
 

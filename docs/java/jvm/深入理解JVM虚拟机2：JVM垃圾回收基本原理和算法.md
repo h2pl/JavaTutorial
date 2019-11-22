@@ -1,3 +1,36 @@
+# Table of Contents
+
+  * [JVM GC基本原理与GC算法](#jvm-gc基本原理与gc算法)
+  * [Java关键术语](#java关键术语)
+  * [Java HotSpot 虚拟机](#java-hotspot-虚拟机)
+  * [Java堆内存](#java堆内存)
+  * [启动Java垃圾回收](#启动java垃圾回收)
+  * [各种GC的触发时机(When)](#各种gc的触发时机when)
+    * [GC类型](#gc类型)
+    * [触发时机](#触发时机)
+    * [FULL GC触发条件详解](#full-gc触发条件详解)
+    * [总结](#总结)
+    * [什么是Stop the world](#什么是stop-the-world)
+  * [Java垃圾回收过程](#java垃圾回收过程)
+  * [垃圾回收中实例的终结](#垃圾回收中实例的终结)
+  * [对象什么时候符合垃圾回收的条件？](#对象什么时候符合垃圾回收的条件？)
+    * [GC Scope 示例程序](#gc-scope-示例程序)
+  * [[JVM GC算法](https://www.cnblogs.com/wupeixuan/p/8670341.html)](#[jvm-gc算法]httpswwwcnblogscomwupeixuanp8670341html)
+  * [JVM垃圾判定算法](#jvm垃圾判定算法)
+    * [引用计数算法(Reference Counting)](#引用计数算法reference-counting)
+    * [可达性分析算法（根搜索算法）](#可达性分析算法（根搜索算法）)
+  * [四种引用](#四种引用)
+  * [JVM垃圾回收算法](#jvm垃圾回收算法)
+  * [标记—清除算法（Mark-Sweep）](#标记清除算法（mark-sweep）)
+  * [复制算法（Copying）](#复制算法（copying）)
+  * [标记—整理算法（Mark-Compact）](#标记整理算法（mark-compact）)
+  * [分代收集算法(Generational Collection)](#分代收集算法generational-collection)
+  * [参考文章](#参考文章)
+  * [微信公众号](#微信公众号)
+    * [Java技术江湖](#java技术江湖)
+    * [个人公众号：黄小斜](#个人公众号：黄小斜)
+
+
 本文转自互联网，侵删
 
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看

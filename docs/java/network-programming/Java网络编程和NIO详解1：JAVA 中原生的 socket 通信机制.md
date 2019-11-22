@@ -1,3 +1,18 @@
+# Table of Contents
+
+  * [当前环境](#当前环境)
+  * [[](https://github.com/jasonGeng88/blog/blob/master/201708/java-socket.md#%E7%9F%A5%E8%AF%86%E7%82%B9)知识点](#[]httpsgithubcomjasongeng88blogblobmaster201708java-socketmde79fa5e8af86e782b9知识点)
+  * [[](https://github.com/jasonGeng88/blog/blob/master/201708/java-socket.md#%E5%9C%BA%E6%99%AF)场景](#[]httpsgithubcomjasongeng88blogblobmaster201708java-socketmde59cbae699af场景)
+    * [[](https://github.com/jasonGeng88/blog/blob/master/201708/java-socket.md#%E5%BB%BA%E7%AB%8B-socket-%E8%BF%9E%E6%8E%A5)建立 socket 连接](#[]httpsgithubcomjasongeng88blogblobmaster201708java-socketmde5bbbae7ab8b-socket-e8bf9ee68ea5建立-socket-连接)
+    * [[](https://github.com/jasonGeng88/blog/blob/master/201708/java-socket.md#%E5%A4%84%E7%90%86-socket-%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%E6%B5%81)处理 socket 输入输出流](#[]httpsgithubcomjasongeng88blogblobmaster201708java-socketmde5a484e79086-socket-e8be93e585a5e8be93e587bae6b581处理-socket-输入输出流)
+    * [[](https://github.com/jasonGeng88/blog/blob/master/201708/java-socket.md#%E6%95%B0%E6%8D%AE%E8%AF%B7%E6%B1%82%E4%B8%8E%E5%93%8D%E5%BA%94)数据请求与响应](#[]httpsgithubcomjasongeng88blogblobmaster201708java-socketmde695b0e68daee8afb7e6b182e4b88ee5938de5ba94数据请求与响应)
+    * [[](https://github.com/jasonGeng88/blog/blob/master/201708/java-socket.md#%E7%BB%93%E6%9E%9C%E5%B1%95%E7%A4%BA)结果展示](#[]httpsgithubcomjasongeng88blogblobmaster201708java-socketmde7bb93e69e9ce5b195e7a4ba结果展示)
+  * [[](https://github.com/jasonGeng88/blog/blob/master/201708/java-socket.md#%E8%AF%B7%E6%B1%82%E6%A8%A1%E5%9E%8B%E4%BC%98%E5%8C%96)请求模型优化](#[]httpsgithubcomjasongeng88blogblobmaster201708java-socketmde8afb7e6b182e6a8a1e59e8be4bc98e58c96请求模型优化)
+  * [补充1：TCP客户端与服务端](#补充1：tcp客户端与服务端)
+  * [补充2：UDP客户端和服务端](#补充2：udp客户端和服务端)
+  * [[](https://github.com/jasonGeng88/blog/blob/master/201708/java-socket.md#%E5%90%8E%E7%BB%AD)后续](#[]httpsgithubcomjasongeng88blogblobmaster201708java-socketmde5908ee7bbad后续)
+
+
 本文转自：https://github.com/jasonGeng88/blog
 
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看

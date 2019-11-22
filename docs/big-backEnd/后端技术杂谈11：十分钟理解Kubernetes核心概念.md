@@ -1,3 +1,17 @@
+# Table of Contents
+
+* [十分钟带你理解Kubernetes核心概念](#十分钟带你理解kubernetes核心概念)
+    * [什么是Kubernetes？](#什么是kubernetes？)
+    * [集群](#集群)
+    * [Pod](#pod)
+    * [Lable](#lable)
+    * [Replication Controller](#replication-controller)
+    * [Service](#service)
+    * [Node](#node)
+    * [Kubernetes Master](#kubernetes-master)
+    * [下一步](#下一步)
+
+
 # 十分钟带你理解Kubernetes核心概念
 
 本文将会简单介绍[Kubernetes](http://kubernetes.io/v1.1/docs/whatisk8s.html)的核心概念。因为这些定义可以在Kubernetes的文档中找到，所以文章也会避免用大段的枯燥的文字介绍。相反，我们会使用一些图表（其中一些是动画）和示例来解释这些概念。我们发现一些概念（比如Service）如果没有图表的辅助就很难全面地理解。在合适的地方我们也会提供Kubernetes文档的链接以便读者深入学习。

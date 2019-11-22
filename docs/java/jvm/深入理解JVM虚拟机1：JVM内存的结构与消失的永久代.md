@@ -1,3 +1,33 @@
+# Table of Contents
+
+  * [前言](#前言)
+  * [Java堆（Heap）](#java堆（heap）)
+  * [方法区（Method Area）](#方法区（method-area）)
+  * [程序计数器（Program Counter Register）](#程序计数器（program-counter-register）)
+  * [JVM栈（JVM Stacks）](#jvm栈（jvm-stacks）)
+  * [本地方法栈（Native Method Stacks）](#本地方法栈（native-method-stacks）)
+  * [哪儿的OutOfMemoryError](#哪儿的outofmemoryerror)
+* [[JDK8-废弃永久代（PermGen）迎来元空间（Metaspace）](https://www.cnblogs.com/yulei126/p/6777323.html)](#[jdk8-废弃永久代（permgen）迎来元空间（metaspace）]httpswwwcnblogscomyulei126p6777323html)
+  * [一、背景](#一、背景)
+    * [1.1 永久代（PermGen）在哪里？](#11-永久代（permgen）在哪里？)
+    * [1.2 JDK8永久代的废弃](#12-jdk8永久代的废弃)
+  * [ 二、为什么废弃永久代（PermGen）](# 二、为什么废弃永久代（permgen）)
+    * [ 2.1 官方说明](# 21-官方说明)
+  * [Motivation](#motivation)
+    * [ 2.2 现实使用中易出问题](# 22-现实使用中易出问题)
+  * [三、深入理解元空间（Metaspace）](#三、深入理解元空间（metaspace）)
+    * [3.1元空间的内存大小](#31元空间的内存大小)
+    * [3.2常用配置参数](#32常用配置参数)
+    * [3.3测试并追踪元空间大小](#33测试并追踪元空间大小)
+      * [ 3.3.1.测试字符串常量](# 331测试字符串常量)
+      * [3.3.2.测试元空间溢出](#332测试元空间溢出)
+  * [ 四、总结](# 四、总结)
+  * [参考文章](#参考文章)
+  * [微信公众号](#微信公众号)
+    * [Java技术江湖](#java技术江湖)
+    * [个人公众号：黄小斜](#个人公众号：黄小斜)
+
+
 本文转自互联网，侵删
 
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看

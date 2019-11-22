@@ -1,3 +1,28 @@
+# Table of Contents
+
+  * [一、抛砖引玉：探索Spring IoC容器](#一、抛砖引玉：探索spring-ioc容器)
+    * [1.1、Spring IoC容器](#11、spring-ioc容器)
+    * [1.2、Spring容器扩展机制](#12、spring容器扩展机制)
+  * [二、夯实基础：JavaConfig与常见Annotation](#二、夯实基础：javaconfig与常见annotation)
+    * [2.1、JavaConfig](#21、javaconfig)
+    * [2.2、@ComponentScan](#22、componentscan)
+    * [2.3、@Import](#23、import)
+    * [2.4、@Conditional](#24、conditional)
+    * [2.5、@ConfigurationProperties与@EnableConfigurationProperties](#25、configurationproperties与enableconfigurationproperties)
+      * [](#)
+  * [三、削铁如泥：SpringFactoriesLoader详解](#三、削铁如泥：springfactoriesloader详解)
+  * [四、另一件武器：Spring容器的事件监听机制](#四、另一件武器：spring容器的事件监听机制)
+      * [Spring容器内的事件监听机制](#spring容器内的事件监听机制)
+  * [五、出神入化：揭秘自动配置原理](#五、出神入化：揭秘自动配置原理)
+  * [六、启动引导：Spring Boot应用启动的秘密](#六、启动引导：spring-boot应用启动的秘密)
+    * [6.1 SpringApplication初始化](#61-springapplication初始化)
+    * [6.2 Spring Boot启动流程](#62-spring-boot启动流程)
+  * [参考文章](#参考文章)
+  * [微信公众号](#微信公众号)
+    * [个人公众号：黄小斜](#个人公众号：黄小斜)
+    * [技术公众号：Java技术江湖](#技术公众号：java技术江湖)
+
+
 本文转自互联网，侵删
 
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看

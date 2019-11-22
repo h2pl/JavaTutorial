@@ -1,3 +1,18 @@
+# Table of Contents
+
+  * [spring ioc 容器的加载流程](#spring-ioc-容器的加载流程)
+  * [Spring Ioc Demo](#spring-ioc-demo)
+  * [ApplicationContext 继承结构](#applicationcontext-继承结构)
+  * [Spring Ioc容器加载过程源码详解](#spring-ioc容器加载过程源码详解)
+* [refresh()方法](#refresh方法)
+  * [调试栈截图](#调试栈截图)
+  * [整体流程](#整体流程)
+  * [bean.xml的处理](#beanxml的处理)
+  * [loadBeanDefinitions](#loadbeandefinitions)
+    * [loadBeanDefinitions: 源码阅读](#loadbeandefinitions-源码阅读)
+* [loadBeanDefinitions](#loadbeandefinitions-1)
+
+
 本文转自五月的仓颉 https://www.cnblogs.com/xrq730
 
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看
