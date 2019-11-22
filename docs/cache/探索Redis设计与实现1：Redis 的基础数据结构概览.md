@@ -4,18 +4,13 @@
 * [[](https://www.xilidou.com/2018/03/12/redis-data/#%E9%93%BE%E8%A1%A8 "链表")链表](#[]httpswwwxilidoucom20180312redis-datae993bee8a1a8-链表链表)
 * [[](https://www.xilidou.com/2018/03/12/redis-data/#%E5%AD%97%E5%85%B8 "字典")字典](#[]httpswwwxilidoucom20180312redis-datae5ad97e585b8-字典字典)
 
-
-本文转自互联网
 本文转自https://www.xilidou.com/2018/03/22/redis-event/
 作者：犀利豆
 
-本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看
+本文将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看
 > https://github.com/h2pl/Java-Tutorial
 
 喜欢的话麻烦点下Star哈
-
-系列文章将整理于我的个人博客：
-> www.how2playlife.com
 
 本文部分内容来源于网络，为了把本文主题讲得清晰透彻，也整合了很多我认为不错的技术博客内容，引用其中了一些比较好的博客文章，如有侵权，请联系作者。
 
