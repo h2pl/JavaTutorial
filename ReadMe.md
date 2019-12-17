@@ -216,14 +216,14 @@ todo
 ## 计算机基础
 
 ### 计算机网络
-* [计算机网络学习总结](docs/network/计算机网络学习总结.md)
+todo
 
 
 ### 操作系统
-* [操作系统学习总结](docs/operateing-system/操作系统学习总结.md)
+todo
 
 #### Linux相关
-* [Linux内核与基础命令学习总结](docs/operateing-system/Linux内核与基础命令学习总结.md)
+todo
 
 
 ### 数据结构与算法
@@ -233,9 +233,10 @@ todo
 todo
 
 #### 算法
-* [剑指offer](docs/algorithms/剑指offer.md)
+todo
 
 ## 数据库
+todo
 
 ### MySQL
 * [Mysql原理与实践总结](docs/database/Mysql原理与实践总结.md)
