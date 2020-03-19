@@ -468,9 +468,9 @@ public static void main(String[] args) {
 
 （2）Byte复用了全部256个对象[-128,127]；
 
-（3）Short服用了[-128,127]这些对象；
+（3）Short复用了[-128,127]这些对象；
 
-（4）Long服用了[-128,127];
+（4）Long复用了[-128,127];
 
 （5）Character复用了[0,127],Charater不能表示负数;
 
