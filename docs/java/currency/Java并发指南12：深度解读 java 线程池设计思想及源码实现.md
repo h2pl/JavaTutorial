@@ -8,6 +8,7 @@
   * [AbstractExecutorService](#abstractexecutorservice)
   * [ThreadPoolExecutor](#threadpoolexecutor)
   * [Executors](#executors)
+  * [Worker获取任务](#getTask)
   * [总结](#总结)
 
 
@@ -1275,6 +1276,51 @@ else if (!addWorker(command, false))
 
 > SynchronousQueue 是一个比较特殊的 BlockingQueue，其本身不储存任何元素，它有一个虚拟队列（或虚拟栈），不管读操作还是写操作，如果当前队列中存储的是与当前操作相同模式的线程，那么当前操作也进入队列中等待；如果是相反模式，则配对成功，从当前队列中取队头节点。具体的信息，可以看我的另一篇关于 BlockingQueue 的文章。
 
+## getTask
+  前文已经分析了`runWorker`方法，我们可以看到该方法中有一行这样的代码
+  ```java
+  //...
+   while (task != null || (task = getTask()) != null) {
+  //...
+   ```
+  这一行代码如果`task!=null`，即前一个条件为`true`时意味着传入的一个非`null`的`task`，同时代码会优化使得第二个条件不去执行；那么前一个条件为`false`时，就会尝试调用`getTask`方法。在这一个方法中，`worker`会尝试从工作队列中取出任务来进行执行。
+  ```java
+   private Runnable getTask() {
+        boolean timedOut = false;
+        //不断尝试获得任务
+        for (;;) {
+            int c = ctl.get();
+            int rs = runStateOf(c);
+            // 前文已有相似的状态，这里不再赘述
+            if (rs >= SHUTDOWN && (rs >= STOP || workQueue.isEmpty())) {
+                decrementWorkerCount();
+                return null;
+            }
+            int wc = workerCountOf(c);
+            //是否设置了允许核心线程超时（设置了之后核心线程在超时后会销毁），或者当前worker数量比核心池大
+            boolean timed = allowCoreThreadTimeOut || wc > corePoolSize;
+          
+            if ((wc > maximumPoolSize || (timed && timedOut))&& (wc > 1 || workQueue.isEmpty())) {
+                if (compareAndDecrementWorkerCount(c))
+                    return null;
+                continue;
+            }
+            try {
+                //是否设置了允许核心线程超时（设置了之后核心线程在超时后会销毁），或者当前worker数量比核心池大
+                //如果是调用queue的poll(int,TimeUnit)方法，否则直接调用take方法
+                Runnable r = timed ? workQueue.poll(keepAliveTime, TimeUnit.NANOSECONDS) : workQueue.take();
+                //能获取到非空的任务就返回
+                //对于不设置允许核心线程超时的情况，核心线程就一直在getTask的这个循环中
+                //一直等待有新的任务来执行
+                if (r != null)
+                    return r;
+                timedOut = true;
+            } catch (InterruptedException retry) {
+                timedOut = false;
+            }
+        }
+    }
+    ```
 ## 总结
 
 我一向不喜欢写总结，因为我把所有需要表达的都写在正文中了，写小篇幅的总结并不能真正将话说清楚，本文的总结部分为准备面试的读者而写，希望能帮到面试者或者没有足够的时间看完全文的读者。
