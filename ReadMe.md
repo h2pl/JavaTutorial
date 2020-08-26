@@ -81,9 +81,8 @@
 * [JavaIO流](docs/java/basic/16、JavaIO流.md)
 * [多线程](docs/java/basic/17、多线程.md)
 * [深入理解内部类](docs/java/basic/18、深入理解内部类.md)
-* [javac和javap](docs/java/basic/19、Java集合框架梳理.md)
-* [Java8新特性终极指南](docs/java/basic/20、javac和javap.md)
-* [Java类和包](docs/java/basic/21、Java8新特性终极指南.md)
+* [javac和javap](docs/java/basic/20、javac和javap.md)
+* [Java8新特性终极指南](docs/java/basic/21、Java8新特性终极指南.md)
 * [序列化和反序列化](docs/java/basic/22、序列化和反序列化.md)
 * [继承、封装、多态的实现原理](docs/java/basic/23、继承、封装、多态的实现原理.md)
 
