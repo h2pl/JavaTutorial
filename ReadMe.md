@@ -24,7 +24,7 @@
     - [容器](#容器)
     - [设计模式](#设计模式)
 - [JavaWeb](#JavaWeb)
-    - [Srping](#Spring)
+    - [Spring](#Spring)
     - [SpringMVC](#SpringMVC)
     - [SpringBoot](#SpringBoot)
 - [Java进阶](#Java进阶)
