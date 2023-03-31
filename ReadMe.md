@@ -24,7 +24,7 @@
     - [容器](#容器)
     - [设计模式](#设计模式)
 - [JavaWeb](#JavaWeb)
-    - [Srping](#Spring)
+    - [Spring](#Spring)
     - [SpringMVC](#SpringMVC)
     - [SpringBoot](#SpringBoot)
 - [Java进阶](#Java进阶)
@@ -349,15 +349,10 @@ springboot和springcloud
 
 ## 微信公众号
 
-### 程序员黄小斜
-
-微信公众号【程序员黄小斜】作者是前蚂蚁金服Java工程师，专注分享Java技术干货和求职成长心得，不限于BAT面试，算法、计算机基础、数据库、分布式、spring全家桶、微服务、高并发、JVM、Docker容器，ELK、大数据等
-
-**500页Java面试手册PDF:** 关注公众号后回复 **”PDF“** 即可领取超级热门的Java面试宝典pdf
 
 ### Java技术江湖
 
-如果大家想要实时关注我更新的文章以及分享的干货的话，可以关注我的公众号【Java技术江湖】一位阿里 Java 工程师的技术小站，作者黄小斜，专注 Java 相关技术：SSM、SpringBoot、MySQL、分布式、中间件、集群、Linux、网络、多线程，偶尔讲点Docker、ELK，同时也分享技术干货和学习经验，致力于Java全栈开发！
+如果大家想要实时关注我更新的文章以及分享的干货的话，可以关注我的公众号【Java技术江湖】前阿里 Java 工程师的技术小站，作者黄小斜，专注 Java 相关技术：SSM、SpringBoot、MySQL、分布式、中间件、集群、Linux、网络、多线程，偶尔讲点Docker、ELK，同时也分享技术干货和学习经验，致力于Java全栈开发！
 
 **Java工程师技术学习资料:** 一些Java工程师常用学习资源，关注公众号后，后台回复关键字 **“Java”** 即可免费无套路获取。
 
