@@ -11,18 +11,6 @@
     * [Java技术江湖](#java技术江湖)
     * [个人公众号：黄小斜](#个人公众号：黄小斜)
 
-
-
----
-title: 夯实Java基础系列11：深入理解Java中的回调机制
-date: 2019-9-11 15:56:26 # 文章生成时间，一般不改
-categories:
-    - Java技术江湖
-    - Java基础
-tags:
-    - 回调机制
----
-
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看
 > https://github.com/h2pl/Java-Tutorial
 
@@ -73,49 +61,49 @@ tags:
 Java多线程中可以通过callable和future或futuretask结合来获取线程执行后的返回值。实现方法是通过get方法来调用callable的call方法获取返回值。
 
 其实这种方法本质上不是回调，回调要求的是任务完成以后被调用者主动回调调用者的接口。而这里是调用者主动使用get方法阻塞获取返回值。
-
-    public class 多线程中的回调 {
-        //这里简单地使用future和callable实现了线程执行完后
-        public static void main(String[] args) throws ExecutionException, InterruptedException {
-            ExecutorService executor = Executors.newCachedThreadPool();
-            Future<String> future = executor.submit(new Callable<String>() {
-                @Override
-                public String call() throws Exception {
-                    System.out.println("call");
-                    TimeUnit.SECONDS.sleep(1);
-                    return "str";
-                }
-            });
-            //手动阻塞调用get通过call方法获得返回值。
-            System.out.println(future.get());
-            //需要手动关闭，不然线程池的线程会继续执行。
-            executor.shutdown();
-
-        //使用futuretask同时作为线程执行单元和数据请求单元。
-        FutureTask<Integer> futureTask = new FutureTask(new Callable<Integer>() {
+````
+public class 多线程中的回调 {
+    //这里简单地使用future和callable实现了线程执行完后
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
+        ExecutorService executor = Executors.newCachedThreadPool();
+        Future<String> future = executor.submit(new Callable<String>() {
             @Override
-            public Integer call() throws Exception {
-                System.out.println("dasds");
-                return new Random().nextInt();
+            public String call() throws Exception {
+                System.out.println("call");
+                TimeUnit.SECONDS.sleep(1);
+                return "str";
             }
         });
-        new Thread(futureTask).start();
-        //阻塞获取返回值
-        System.out.println(futureTask.get());
-    }
-    @Test
-    public void test () {
-        Callable callable = new Callable() {
-            @Override
-            public Object call() throws Exception {
-                return null;
-            }
-        };
-        FutureTask futureTask = new FutureTask(callable);
+        //手动阻塞调用get通过call方法获得返回值。
+        System.out.println(future.get());
+        //需要手动关闭，不然线程池的线程会继续执行。
+        executor.shutdown();
 
-    }
-    }
+    //使用futuretask同时作为线程执行单元和数据请求单元。
+    FutureTask<Integer> futureTask = new FutureTask(new Callable<Integer>() {
+        @Override
+        public Integer call() throws Exception {
+            System.out.println("dasds");
+            return new Random().nextInt();
+        }
+    });
+    new Thread(futureTask).start();
+    //阻塞获取返回值
+    System.out.println(futureTask.get());
+}
+@Test
+public void test () {
+    Callable callable = new Callable() {
+        @Override
+        public Object call() throws Exception {
+            return null;
+        }
+    };
+    FutureTask futureTask = new FutureTask(callable);
 
+}
+}
+````
 ## Java回调机制实战
 
 曾经自己偶尔听说过回调机制，隐隐约约能够懂一些意思，但是当让自己写一个简单的示例程序时，自己就傻眼了。随着工作经验的增加，自己经常听到这儿使用了回调，那儿使用了回调，自己是时候好好研究一下Java回调机制了。网上关于Java回调的文章一抓一大把，但是看完总是云里雾里，不知所云，特别是看到抓取别人的代码走两步时，总是现眼。于是自己决定写一篇关于Java机制的文章，以方便大家和自己更深入的学习Java回调机制。
@@ -138,22 +126,12 @@ Java多线程中可以通过callable和future或futuretask结合来获取线程�
 
 同步调用时序图：
 
-
-
-
-
-![](https://upload-images.jianshu.io/upload_images/3796264-6a5b5b898aa3930e.png?imageMogr2/auto-orient/strip|imageView2/2/w/1031/format/webp)
-
-
-
-同步调用时序图
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230403210703.png)
 
 
 **1.1.1 底层服务类:BottomService.java**
 
-```
-
+````
 package synchronization.demo;
 
 /**
@@ -182,11 +160,11 @@ return param +" BottomService.bottom() execute -->";
 
 }
 
-```
+
 
 **1.1.2 上层服务接口: UpperService.java**
 
-```
+
 package synchronization.demo;
 
 /**
@@ -203,11 +181,11 @@ public String callBottomService(final String param);
 
 }
 
-```
+
 
 **1.1.3 上层服务接口实现类:UpperServiceImpl.java**
 
-```
+
 package synchronization.demo;
 
 /**
@@ -244,11 +222,11 @@ return bottomService.bottom(param + " callBottomService.bottom() execute --> ");
 
 }
 
-```
+
 
 **1.1.4 Test测试类:Test.java**
 
-```
+
 package synchronization.demo;
 
 import java.util.Date;
@@ -281,7 +259,7 @@ System.out.println("=============== callBottomService end ====================:"
 
 }
 
-```
+````
 
 **1.1.5 输出结果:**
 
@@ -306,37 +284,37 @@ callBottomService start -->  callBottomService.bottom() execute -->  BottomServi
 解答：回调更像是一个约定，就是如果我调用了b()方法，那么就必须要回调，而不需要显示调用
 一、Java的回调-浅
 我们用例子来解释：小明和小李相约一起去吃早饭，但是小李起的有点晚要先洗漱，等小李洗漱完成后，通知小明再一起去吃饭。小明就是类A，小李就是类B。一起去吃饭这个事件就是方法a(),小李去洗漱就是方法b()。
+````
+public class XiaoMing { 
+   //小明和小李一起吃饭
+   public void eatFood() {
+      XiaoLi xl = new XiaoLi();
+      //A调用B的方法
+      xl.washFace();
+   }
+ 
+   public void eat() {
+      System.out.print("小明和小李一起去吃大龙虾");
+   }
+}
+那么怎么让小李洗漱完后在通知小明一起去吃饭呢
 
-    public class XiaoMing { 
-       //小明和小李一起吃饭
-       public void eatFood() {
-          XiaoLi xl = new XiaoLi();
-          //A调用B的方法
-          xl.washFace();
-       }
-     
-       public void eat() {
-          System.out.print("小明和小李一起去吃大龙虾");
-       }
-    }
-    那么怎么让小李洗漱完后在通知小明一起去吃饭呢
-    
-    public class XiaoMing { 
-       //小明和小李一起吃饭
-       public void eatFood() {
-          XiaoLi xl = new XiaoLi();
-          //A调用B的方法
-          xl.washFace();
-          eat();
-       }
-     
-       public void eat() {
-          System.out.print("小明和小李一起去吃大龙虾");
-       }
-    }
-    
+public class XiaoMing { 
+   //小明和小李一起吃饭
+   public void eatFood() {
+      XiaoLi xl = new XiaoLi();
+      //A调用B的方法
+      xl.washFace();
+      eat();
+   }
+ 
+   public void eat() {
+      System.out.print("小明和小李一起去吃大龙虾");
+   }
+}
+````   
 不过上面已经说过了这个不是回调函数，所以不能这样子，正确的方式如下
-
+````
     public class XiaoLi{//小李
        public void washFace() {
         System.out.print("小李要洗漱");
@@ -345,7 +323,7 @@ callBottomService start -->  callBottomService.bottom() execute -->  BottomServi
         xm.eat();//洗漱完后，一起去吃饭
        }
     }
-    
+````   
 这样子就可以实现washFace()同时也能实现eat()。小李洗漱完后，再通知小明一起去吃饭，这就是回调。
 
 二、Java的回调-中
@@ -354,50 +332,50 @@ callBottomService start -->  callBottomService.bottom() execute -->  BottomServi
 小明和小李相约一起去吃早饭，但是小李起的有点晚要先洗漱，等小李洗漱完成后，通知小明再一起去吃饭。小明就是类A，小李就是类B。不同的是我们新建一个吃饭的接口EatRice，接口中有个抽象方法eat()。在小明中调用这个接口，并实现eat()；小李声明这个接口对象，并且调用这个接口的抽象方法。这里可能有点绕口，不过没关系，看看例子就很清楚了。
 
 EatRice接口：
+````
+public interface EatRice {
+   public void eat(String food);
+}
+小明：
 
-    public interface EatRice {
-       public void eat(String food);
-    }
-    小明：
+public class XiaoMing implements EatRice{//小明
     
-    public class XiaoMing implements EatRice{//小明
-        
-       //小明和小李一起吃饭
-       public void eatFood() {
-        XiaoLi xl = new XiaoLi();
-        //A调用B的方法
-        xl.washFace("大龙虾", this);//this指的是小明这个类实现的EatRice接口
-       }
-     
-       @Override
-       public void eat(String food) {
-        // TODO Auto-generated method stub
-        System.out.println("小明和小李一起去吃" + food);
-       }
-    }
-    小李:
-    
-    public class XiaoLi{//小李
-       public void washFace(String food,EatRice er) {
-        System.out.println("小李要洗漱");
-            //B调用了A的方法
-        er.eat(food);
-       }
-    }
-    测试Demo:
-    
-    public class demo {
-       public static void main(String args[]) {
-        XiaoMing xm = new XiaoMing();
-        xm.eatFood();
-       }
-    }
-    
+   //小明和小李一起吃饭
+   public void eatFood() {
+    XiaoLi xl = new XiaoLi();
+    //A调用B的方法
+    xl.washFace("大龙虾", this);//this指的是小明这个类实现的EatRice接口
+   }
+ 
+   @Override
+   public void eat(String food) {
+    // TODO Auto-generated method stub
+    System.out.println("小明和小李一起去吃" + food);
+   }
+}
+小李:
+
+public class XiaoLi{//小李
+   public void washFace(String food,EatRice er) {
+    System.out.println("小李要洗漱");
+        //B调用了A的方法
+    er.eat(food);
+   }
+}
+测试Demo:
+
+public class demo {
+   public static void main(String args[]) {
+    XiaoMing xm = new XiaoMing();
+    xm.eatFood();
+   }
+}
+````   
 测试结果：
 
 
 这样子就通过接口的形式实现了软编码。通过接口的形式我可以实现小李洗漱完后，和小王一起去上网。代码如下
-
+````
     public class XiaoWang implements EatRice{//小王
         
        //小王和小李一起去上网
@@ -413,7 +391,7 @@ EatRice接口：
         System.out.println("小王和小李一起去" + bar);
        }
     }
-
+````
 ## 实例三：Tom做题
 
 数学老师让Tom做一道题，并且Tom做题期间数学老师不用盯着Tom，而是在玩手机，等Tom把题目做完后再把答案告诉老师。
@@ -425,64 +403,64 @@ EatRice接口：
 > 3 Tom需要数学老师的一个引用，以便Tom把答案给这位老师，而不是隔壁的体育老师。
 
 回调接口，可以理解为老师接口
+````
+//回调指的是A调用B来做一件事，B做完以后将结果告诉给A，这期间A可以做别的事情。
+//这个接口中有一个方法，意为B做完题目后告诉A时使用的方法。
+//所以我们必须提供这个接口以便让B来回调。
+//回调接口，
+public interface CallBack {
+    void tellAnswer(int res);
+}
+````
 
-        //回调指的是A调用B来做一件事，B做完以后将结果告诉给A，这期间A可以做别的事情。
-        //这个接口中有一个方法，意为B做完题目后告诉A时使用的方法。
-        //所以我们必须提供这个接口以便让B来回调。
-        //回调接口，
-        public interface CallBack {
-            void tellAnswer(int res);
-        }
-        
-        
 数学老师类
-        
-        //老师类实例化回调接口，即学生写完题目之后通过老师的提供的方法进行回调。
-        //那么学生如何调用到老师的方法呢，只要在学生类的方法中传入老师的引用即可。
-        //而老师需要指定学生答题，所以也要传入学生的实例。
-    public class Teacher implements CallBack{
-        private Student student;
-    
-        Teacher(Student student) {
-            this.student = student;
-        }
-    
-        void askProblem (Student student, Teacher teacher) {
-            //main方法是主线程运行，为了实现异步回调，这里开启一个线程来操作
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    student.resolveProblem(teacher);
-                }
-            }).start();
-            //老师让学生做题以后，等待学生回答的这段时间，可以做别的事，比如玩手机.\
-            //而不需要同步等待，这就是回调的好处。
-            //当然你可以说开启一个线程让学生做题就行了，但是这样无法让学生通知老师。
-            //需要另外的机制去实现通知过程。
-            // 当然，多线程中的future和callable也可以实现数据获取的功能。
-            for (int i = 1;i < 4;i ++) {
-                System.out.println("等学生回答问题的时候老师玩了 " + i + "秒的手机");
+````        
+    //老师类实例化回调接口，即学生写完题目之后通过老师的提供的方法进行回调。
+    //那么学生如何调用到老师的方法呢，只要在学生类的方法中传入老师的引用即可。
+    //而老师需要指定学生答题，所以也要传入学生的实例。
+public class Teacher implements CallBack{
+    private Student student;
+
+    Teacher(Student student) {
+        this.student = student;
+    }
+
+    void askProblem (Student student, Teacher teacher) {
+        //main方法是主线程运行，为了实现异步回调，这里开启一个线程来操作
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                student.resolveProblem(teacher);
             }
-        }
-    
-        @Override
-        public void tellAnswer(int res) {
-            System.out.println("the answer is " + res);
+        }).start();
+        //老师让学生做题以后，等待学生回答的这段时间，可以做别的事，比如玩手机.\
+        //而不需要同步等待，这就是回调的好处。
+        //当然你可以说开启一个线程让学生做题就行了，但是这样无法让学生通知老师。
+        //需要另外的机制去实现通知过程。
+        // 当然，多线程中的future和callable也可以实现数据获取的功能。
+        for (int i = 1;i < 4;i ++) {
+            System.out.println("等学生回答问题的时候老师玩了 " + i + "秒的手机");
         }
     }
-    
-学生接口
 
+    @Override
+    public void tellAnswer(int res) {
+        System.out.println("the answer is " + res);
+    }
+}
+````
+学生接口
+````
         //学生的接口，解决问题的方法中要传入老师的引用，否则无法完成对具体实例的回调。
         //写为接口的好处就是，很多个学生都可以实现这个接口，并且老师在提问题时可以通过
         //传入List<Student>来聚合学生，十分方便。
     public interface Student {
         void resolveProblem (Teacher teacher);
     }
-
+````
 学生Tom
 
-
+````
     public class Tom implements Student{
     
         @Override
@@ -496,9 +474,9 @@ EatRice接口：
                 e.printStackTrace();
             }
         }
-        
+````        
 测试类
-
+````
     public class Test {
         public static void main(String[] args) {
             //测试
@@ -513,9 +491,7 @@ EatRice接口：
     //        the answer is 111
         }
     }
-    
-
-
+````
 ## 参考文章
 
 https://blog.csdn.net/fengye454545/article/details/80198446

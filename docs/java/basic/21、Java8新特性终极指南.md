@@ -19,15 +19,6 @@
   * [微信公众号](#微信公众号)
     * [Java技术江湖](#java技术江湖)
     * [个人公众号：黄小斜](#个人公众号：黄小斜)
----
-title: 夯实Java基础系列21：Java8新特性终极指南
-date: 2019-9-21 15:56:26 # 文章生成时间，一般不改
-categories:
-    - Java技术江湖
-    - Java基础
-tags:
-    - Java8
----
 
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看
 > https://github.com/h2pl/Java-Tutorial
@@ -48,8 +39,7 @@ tags:
 
 这是一个Java8新增特性的总结图。接下来让我们一次实践一下这些新特性吧
 
-![image](https://img2018.cnblogs.com/blog/493447/201906/493447-20190604133048748-2090946599.png)
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230403215737.png)
 ## Java语言新特性
 
 ### Lambda表达式
@@ -100,13 +90,14 @@ java.lang.Runnable与java.util.concurrent.Callable是函数式接口最典型的
 在实际使用过程中，函数式接口是容易出错的：如有某个人在接口定义中增加了另一个方法，这时，这个接口就不再是函数式的了，并且编译过程也会失败。
 
 为了克服函数式接口的这种脆弱性并且能够明确声明接口作为函数式接口的意图，Java8增加了一种特殊的注解@FunctionalInterface（Java8中所有类库的已有接口都添加了@FunctionalInterface注解）。让我们看一下这种函数式接口的定义：
-
+````
 @FunctionalInterface
 public interface Functional {
     void method();
 }
+````
 需要记住的一件事是：默认方法与静态方法并不影响函数式接口的契约，可以任意使用：
-
+````
 @FunctionalInterface
 public interface FunctionalDefaultMethods {
     void method();
@@ -114,82 +105,83 @@ public interface FunctionalDefaultMethods {
     default void defaultMethod() {            
     }        
 }
+````
 Lambda是Java 8最大的卖点。它具有吸引越来越多程序员到Java平台上的潜力，并且能够在纯Java语言环境中提供一种优雅的方式来支持函数式编程。更多详情可以参考官方文档。
 
 下面看一个例子：
+````
+public class lambda和函数式编程 {
+    @Test
+    public void test1() {
+        List names = Arrays.asList("peter", "anna", "mike", "xenia");
 
-    public class lambda和函数式编程 {
-        @Test
-        public void test1() {
-            List names = Arrays.asList("peter", "anna", "mike", "xenia");
-    
-            Collections.sort(names, new Comparator<String>() {
-                @Override
-                public int compare(String a, String b) {
-                    return b.compareTo(a);
-                }
-            });
-            System.out.println(Arrays.toString(names.toArray()));
-        }
-    
-        @Test
-        public void test2() {
-            List<String> names = Arrays.asList("peter", "anna", "mike", "xenia");
-    
-            Collections.sort(names, (String a, String b) -> {
+        Collections.sort(names, new Comparator<String>() {
+            @Override
+            public int compare(String a, String b) {
                 return b.compareTo(a);
-            });
-    
-            Collections.sort(names, (String a, String b) -> b.compareTo(a));
-    
-            Collections.sort(names, (a, b) -> b.compareTo(a));
-            System.out.println(Arrays.toString(names.toArray()));
-        }
-    
+            }
+        });
+        System.out.println(Arrays.toString(names.toArray()));
     }
-    
-        static void add(double a,String b) {
-            System.out.println(a + b);
-        }
-        @Test
-        public void test5() {
-            D d = (a,b) -> add(a,b);
-    //        interface D {
-    //            void get(int i,String j);
-    //        }
-            //这里要求，add的两个参数和get的两个参数吻合并且返回类型也要相等，否则报错
-    //        static void add(double a,String b) {
-    //            System.out.println(a + b);
-    //        }
-        }
-    
-        @FunctionalInterface
-        interface D {
-            void get(int i,String j);
-        }
 
+    @Test
+    public void test2() {
+        List<String> names = Arrays.asList("peter", "anna", "mike", "xenia");
+
+        Collections.sort(names, (String a, String b) -> {
+            return b.compareTo(a);
+        });
+
+        Collections.sort(names, (String a, String b) -> b.compareTo(a));
+
+        Collections.sort(names, (a, b) -> b.compareTo(a));
+        System.out.println(Arrays.toString(names.toArray()));
+    }
+
+}
+
+    static void add(double a,String b) {
+        System.out.println(a + b);
+    }
+    @Test
+    public void test5() {
+        D d = (a,b) -> add(a,b);
+//        interface D {
+//            void get(int i,String j);
+//        }
+        //这里要求，add的两个参数和get的两个参数吻合并且返回类型也要相等，否则报错
+//        static void add(double a,String b) {
+//            System.out.println(a + b);
+//        }
+    }
+
+    @FunctionalInterface
+    interface D {
+        void get(int i,String j);
+    }
+````
 接下来看看Lambda和匿名内部类的区别
 
 匿名内部类仍然是一个类，只是不需要我们显式指定类名，编译器会自动为该类取名。比如有如下形式的代码：
-
-    public class LambdaTest {
-        public static void main(String[] args) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    System.out.println("Hello World");
-                }
-            }).start();
-        }
+````
+public class LambdaTest {
+    public static void main(String[] args) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("Hello World");
+            }
+        }).start();
     }
-
+}
+````
 编译之后将会产生两个 class 文件：
 
     LambdaTest.class
     LambdaTest$1.class
 
 使用 javap -c LambdaTest.class 进一步分析 LambdaTest.class 的字节码，部分结果如下：
-
+````
     public static void main(java.lang.String[]);
     Code:
         0: new           #2                  // class java/lang/Thread
@@ -200,28 +192,28 @@ Lambda是Java 8最大的卖点。它具有吸引越来越多程序员到Java平�
         11: invokespecial #5                  // Method java/lang/Thread."<init>":(Ljava/lang/Runnable;)V
         14: invokevirtual #6                  // Method java/lang/Thread.start:()V
         17: return
-
+````
 可以发现在 4: new #3 这一行创建了匿名内部类的对象。
 
 而对于 Lambda表达式的实现， 接下来我们将上面的示例代码使用 Lambda 表达式实现，代码如下：
-
-    public class LambdaTest {
-        public static void main(String[] args) {
-            new Thread(() -> System.out.println("Hello World")).start();
-        }
+````
+public class LambdaTest {
+    public static void main(String[] args) {
+        new Thread(() -> System.out.println("Hello World")).start();
     }
-
+}
+````
 此时编译后只会产生一个文件 LambdaTest.class，再来看看通过 javap 对该文件反编译后的结果：
-
-    public static void main(java.lang.String[]);
-    Code:
-        0: new           #2                  // class java/lang/Thread
-        3: dup
-        4: invokedynamic #3,  0              // InvokeDynamic #0:run:()Ljava/lang/Runnable;
-        9: invokespecial #4                  // Method java/lang/Thread."<init>":(Ljava/lang/Runnable;)V
-        12: invokevirtual #5                  // Method java/lang/Thread.start:()V
-        15: return
-
+````
+public static void main(java.lang.String[]);
+Code:
+    0: new           #2                  // class java/lang/Thread
+    3: dup
+    4: invokedynamic #3,  0              // InvokeDynamic #0:run:()Ljava/lang/Runnable;
+    9: invokespecial #4                  // Method java/lang/Thread."<init>":(Ljava/lang/Runnable;)V
+    12: invokevirtual #5                  // Method java/lang/Thread.start:()V
+    15: return
+````
 从上面的结果我们发现 Lambda 表达式被封装成了主类的一个私有方法，并通过 invokedynamic 指令进行调用。
 
 因此，我们可以得出结论：Lambda 表达式是通过 invokedynamic 指令实现的，并且书写 Lambda 表达式不会产生新的类。
@@ -238,50 +230,50 @@ lambda表达式是如何符合 Java 类型系统的？每个lambda对应于一�
 我们可以使用任意的接口作为lambda表达式，只要这个接口只包含一个抽象方法。为了保证你的接口满足需求，你需要增加@FunctionalInterface注解。编译器知道这个注解，一旦你试图给这个接口增加第二个抽象方法声明时，它将抛出一个编译器错误。
 
 下面举几个例子
-    
-    public class 函数式接口使用 {
-        @FunctionalInterface
-        interface A {
-            void say();
-            default void talk() {
-    
-            }
-        }
-        @Test
-        public void test1() {
-            A a = () -> System.out.println("hello");
-            a.say();
-        }
-    
-        @FunctionalInterface
-        interface B {
-            void say(String i);
-        }
-        public void test2() {
-            //下面两个是等价的，都是通过B接口来引用一个方法，而方法可以直接使用::来作为方法引用
-            B b = System.out::println;
-            B b1 = a -> Integer.parseInt("s");//这里的a其实换成别的也行，只是将方法传给接口作为其方法实现
-            B b2 = Integer::valueOf;//i与方法传入参数的变量类型一直时，可以直接替换
-            B b3 = String::valueOf;
-            //B b4 = Integer::parseInt;类型不符，无法使用
-    
-        }
-        @FunctionalInterface
-        interface C {
-            int say(String i);
-        }
-        public void test3() {
-            C c = Integer::parseInt;//方法参数和接口方法的参数一样，可以替换。
-            int i = c.say("1");
-            //当我把C接口的int替换为void时就会报错，因为返回类型不一致。
-            System.out.println(i);
-            //综上所述，lambda表达式提供了一种简便的表达方式，可以将一个方法传到接口中。
-            //函数式接口是只提供一个抽象方法的接口，其方法由lambda表达式注入，不需要写实现类，
-            //也不需要写匿名内部类，可以省去很多代码，比如实现runnable接口。
-            //函数式编程就是指把方法当做一个参数或引用来进行操作。除了普通方法以外，静态方法，构造方法也是可以这样操作的。
+````    
+public class 函数式接口使用 {
+    @FunctionalInterface
+    interface A {
+        void say();
+        default void talk() {
+
         }
     }
+    @Test
+    public void test1() {
+        A a = () -> System.out.println("hello");
+        a.say();
+    }
 
+    @FunctionalInterface
+    interface B {
+        void say(String i);
+    }
+    public void test2() {
+        //下面两个是等价的，都是通过B接口来引用一个方法，而方法可以直接使用::来作为方法引用
+        B b = System.out::println;
+        B b1 = a -> Integer.parseInt("s");//这里的a其实换成别的也行，只是将方法传给接口作为其方法实现
+        B b2 = Integer::valueOf;//i与方法传入参数的变量类型一直时，可以直接替换
+        B b3 = String::valueOf;
+        //B b4 = Integer::parseInt;类型不符，无法使用
+
+    }
+    @FunctionalInterface
+    interface C {
+        int say(String i);
+    }
+    public void test3() {
+        C c = Integer::parseInt;//方法参数和接口方法的参数一样，可以替换。
+        int i = c.say("1");
+        //当我把C接口的int替换为void时就会报错，因为返回类型不一致。
+        System.out.println(i);
+        //综上所述，lambda表达式提供了一种简便的表达方式，可以将一个方法传到接口中。
+        //函数式接口是只提供一个抽象方法的接口，其方法由lambda表达式注入，不需要写实现类，
+        //也不需要写匿名内部类，可以省去很多代码，比如实现runnable接口。
+        //函数式编程就是指把方法当做一个参数或引用来进行操作。除了普通方法以外，静态方法，构造方法也是可以这样操作的。
+    }
+}
+````
 请记住如果@FunctionalInterface 这个注解被遗漏，此代码依然有效。
 
 ### 方法引用
@@ -290,7 +282,7 @@ Lambda表达式和方法引用
 
 有了函数式接口之后，就可以使用Lambda表达式和方法引用了。其实函数式接口的表中的函数描述符就是Lambda表达式，在函数式接口中Lambda表达式相当于匿名内部类的效果。 举个简单的例子：
 
-
+````
 public class TestLambda {
 
     public static void execute(Runnable runnable) {
@@ -310,7 +302,7 @@ public class TestLambda {
         execute(() -> System.out.println("run"));
     }
 }
-
+````
 可以看到，相比于使用匿名内部类的方式，Lambda表达式可以使用更少的代码但是有更清晰的表述。注意，Lambda表达式也不是完全等价于匿名内部类的， 两者的不同点在于this的指向和本地变量的屏蔽上。
 
 方法引用可以看作Lambda表达式的更简洁的一种表达形式，使用::操作符，方法引用主要有三类：
@@ -351,31 +343,31 @@ public class TestLambda {
 ### 接口的默认方法
 
 Java 8 使我们能够使用default 关键字给接口增加非抽象的方法实现。这个特性也被叫做 扩展方法（Extension Methods）。如下例所示：
-
-    public class 接口的默认方法 {
-        class B implements A {
-    //        void a(){}实现类方法不能重名
-        }
-        interface A {
-            //可以有多个默认方法
-            public default void a(){
-                System.out.println("a");
-            }
-            public default void b(){
-                System.out.println("b");
-            }
-            //报错static和default不能同时使用
-    //        public static default void c(){
-    //            System.out.println("c");
-    //        }
-        }
-        public void test() {
-            B b = new B();
-            b.a();
-    
-        }
+````
+public class 接口的默认方法 {
+    class B implements A {
+//        void a(){}实现类方法不能重名
     }
+    interface A {
+        //可以有多个默认方法
+        public default void a(){
+            System.out.println("a");
+        }
+        public default void b(){
+            System.out.println("b");
+        }
+        //报错static和default不能同时使用
+//        public static default void c(){
+//            System.out.println("c");
+//        }
+    }
+    public void test() {
+        B b = new B();
+        b.a();
 
+    }
+}
+````
 默认方法出现的原因是为了对原有接口的扩展，有了默认方法之后就不怕因改动原有的接口而对已经使用这些接口的程序造成的代码不兼容的影响。 在Java8中也对一些接口增加了一些默认方法，比如Map接口等等。一般来说，使用默认方法的场景有两个：可选方法和行为的多继承。
 
 默认方法的使用相对来说比较简单，唯一要注意的点是如何处理默认方法的冲突。关于如何处理默认方法的冲突可以参考以下三条规则：
@@ -385,7 +377,7 @@ Java 8 使我们能够使用default 关键字给接口增加非抽象的方法�
 如果无法依据第一条规则进行判断，那么子接口的优先级更高：函数签名相同时，优先选择拥有最具体实现的默认方法的接口。即如果B继承了A，那么B就比A更具体。
 
 最后，如果还是无法判断，继承了多个接口的类必须通过显式覆盖和调用期望的方法，显式地选择使用哪一个默认方法的实现。那么如何显式地指定呢:
-
+````
     public class C implements B, A {
      
         public void hello() {
@@ -393,43 +385,46 @@ Java 8 使我们能够使用default 关键字给接口增加非抽象的方法�
         }
      
     }
+````
 使用X.super.m(..)显式地调用希望调用的方法。
 
 Java 8用默认方法与静态方法这两个新概念来扩展接口的声明。默认方法使接口有点像Traits（Scala中特征(trait)类似于Java中的Interface，但它可以包含实现代码，也就是目前Java8新增的功能），但与传统的接口又有些不一样，它允许在已有的接口中添加新方法，而同时又保持了与旧版本代码的兼容性。
 
 默认方法与抽象方法不同之处在于抽象方法必须要求实现，但是默认方法则没有这个要求。相反，每个接口都必须提供一个所谓的默认实现，这样所有的接口实现者将会默认继承它（如果有必要的话，可以覆盖这个默认实现）。让我们看看下面的例子：
-
-    private interface Defaulable {
-        // Interfaces now allow default methods, the implementer may or 
-        // may not implement (override) them.
-        default String notRequired() { 
-            return "Default implementation"; 
-        }        
-    }
-             
-    private static class DefaultableImpl implements Defaulable {
-    }
+````
+private interface Defaulable {
+    // Interfaces now allow default methods, the implementer may or 
+    // may not implement (override) them.
+    default String notRequired() { 
+        return "Default implementation"; 
+    }        
+}
          
-    private static class OverridableImpl implements Defaulable {
-        @Override
-        public String notRequired() {
-            return "Overridden implementation";
-        }
+private static class DefaultableImpl implements Defaulable {
+}
+     
+private static class OverridableImpl implements Defaulable {
+    @Override
+    public String notRequired() {
+        return "Overridden implementation";
     }
+}
+````
 Defaulable接口用关键字default声明了一个默认方法notRequired()，Defaulable接口的实现者之一DefaultableImpl实现了这个接口，并且让默认方法保持原样。Defaulable接口的另一个实现者OverridableImpl用自己的方法覆盖了默认方法。
 
 Java 8带来的另一个有趣的特性是接口可以声明（并且可以提供实现）静态方法。例如：
 
-
+````
     private interface DefaulableFactory {
         // Interfaces now allow static methods
         static Defaulable create( Supplier< Defaulable > supplier ) {
             return supplier.get();
         }
     }
+````
 下面的一小段代码片段把上面的默认方法与静态方法黏合到一起。
 
-
+````
     public static void main( String[] args ) {
         Defaulable defaulable = DefaulableFactory.create( DefaultableImpl::new );
         System.out.println( defaulable.notRequired() );
@@ -437,6 +432,7 @@ Java 8带来的另一个有趣的特性是接口可以声明（并且可以提�
         defaulable = DefaulableFactory.create( OverridableImpl::new );
         System.out.println( defaulable.notRequired() );
     }
+````
 这个程序的控制台输出如下：
 
 Default implementation
@@ -450,58 +446,57 @@ Overridden implementation
 自从Java 5引入了注解机制，这一特性就变得非常流行并且广为使用。然而，使用注解的一个限制是相同的注解在同一位置只能声明一次，不能声明多次。Java 8打破了这条规则，引入了重复注解机制，这样相同的注解可以在同一地方声明多次。
 
 重复注解机制本身必须用@Repeatable注解。事实上，这并不是语言层面上的改变，更多的是编译器的技巧，底层的原理保持不变。让我们看一个快速入门的例子：
-
-    package com.javacodegeeks.java8.repeatable.annotations;
+````
+package com.javacodegeeks.java8.repeatable.annotations;
+ 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Repeatable;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+ 
+public class RepeatingAnnotations {
+    @Target( ElementType.TYPE )
+    @Retention( RetentionPolicy.RUNTIME )
+    public @interface Filters {
+        Filter[] value();
+    }
      
-    import java.lang.annotation.ElementType;
-    import java.lang.annotation.Repeatable;
-    import java.lang.annotation.Retention;
-    import java.lang.annotation.RetentionPolicy;
-    import java.lang.annotation.Target;
+    @Target( ElementType.TYPE )
+    @Retention( RetentionPolicy.RUNTIME )
+    @Repeatable( Filters.class )
+    public @interface Filter {
+        String value();
+    };
      
-    public class RepeatingAnnotations {
-        @Target( ElementType.TYPE )
-        @Retention( RetentionPolicy.RUNTIME )
-        public @interface Filters {
-            Filter[] value();
-        }
-         
-        @Target( ElementType.TYPE )
-        @Retention( RetentionPolicy.RUNTIME )
-        @Repeatable( Filters.class )
-        public @interface Filter {
-            String value();
-        };
-         
-        @Filter( "filter1" )
-        @Filter( "filter2" )
-        public interface Filterable {        
-        }
-         
-        public static void main(String[] args) {
-            for( Filter filter: Filterable.class.getAnnotationsByType( Filter.class ) ) {
-                System.out.println( filter.value() );
-            }
+    @Filter( "filter1" )
+    @Filter( "filter2" )
+    public interface Filterable {        
+    }
+     
+    public static void main(String[] args) {
+        for( Filter filter: Filterable.class.getAnnotationsByType( Filter.class ) ) {
+            System.out.println( filter.value() );
         }
     }
+}
+````
 正如我们看到的，这里有个使用@Repeatable( Filters.class )注解的注解类Filter，Filters仅仅是Filter注解的数组，但Java编译器并不想让程序员意识到Filters的存在。这样，接口Filterable就拥有了两次Filter（并没有提到Filter）注解。
 
 同时，反射相关的API提供了新的函数getAnnotationsByType()来返回重复注解的类型（请注意Filterable.class.getAnnotation( Filters.class )经编译器处理后将会返回Filters的实例）。
 
 程序输出结果如下：
 
-filter1
-filter2
+    filter1
+    filter2
 更多详情请参考官方文档
-
-
 
 ## Java编译器的新特性
 
 ### 方法参数名字可以反射获取
 
 很长一段时间里，Java程序员一直在发明不同的方式使得方法参数的名字能保留在Java字节码中，并且能够在运行时获取它们（比如，Paranamer类库）。最终，在Java 8中把这个强烈要求的功能添加到语言层面（通过反射API与Parameter.getName()方法）与字节码文件（通过新版的javac的–parameters选项）中。
-
+````
 package com.javacodegeeks.java8.parameter.names;
 
 import java.lang.reflect.Method;
@@ -515,6 +510,7 @@ public class ParameterNames {
         }
     }
 }
+````
 如果不使用–parameters参数来编译这个类，然后运行这个类，会得到下面的输出：
 
 Parameter: arg0
@@ -531,7 +527,7 @@ Java 8 通过增加大量新类，扩展已有类的功能的方式来改善对�
 Optional实际上是个容器：它可以保存类型T的值，或者仅仅保存null。Optional提供很多有用的方法，这样我们就不用显式进行空值检测。更多详情请参考官方文档。
 
 我们下面用两个小例子来演示如何使用Optional类：一个允许为空值，一个不允许为空值。
-
+````
     public class 空指针Optional {
         public static void main(String[] args) {
     
@@ -554,7 +550,7 @@ Optional实际上是个容器：它可以保存类型T的值，或者仅仅保�
             //输出Optional.empty。
         }
     }
-
+````
 如果Optional类的实例为非空值的话，isPresent()返回true，否从返回false。为了防止Optional为空值，orElseGet()方法通过回调函数来产生一个默认值。map()函数对当前Optional的值进行转化，然后返回一个新的Optional实例。orElse()方法和orElseGet()方法类似，但是orElse接受一个默认值而不是一个回调函数。下面是这个程序的输出：
 
 Full Name is set? false
@@ -581,14 +577,15 @@ Hey Tom!
 Stream API极大简化了集合框架的处理（但它的处理的范围不仅仅限于集合框架的处理，这点后面我们会看到）。让我们以一个简单的Task类为例进行介绍：
 
 Task类有一个分数的概念（或者说是伪复杂度），其次是还有一个值可以为OPEN或CLOSED的状态.让我们引入一个Task的小集合作为演示例子：
-
+````
     final Collection< Task > tasks = Arrays.asList(
         new Task( Status.OPEN, 5 ),
         new Task( Status.OPEN, 13 ),
         new Task( Status.CLOSED, 8 ) 
     );
+````
 我们下面要讨论的第一个问题是所有状态为OPEN的任务一共有多少分数？在Java 8以前，一般的解决方式用foreach循环，但是在Java 8里面我们可以使用stream：一串支持连续、并行聚集操作的元素。
-
+````
     // Calculate total points of all active tasks using sum()
     final long totalPointsOfOpenTasks = tasks
         .stream()
@@ -597,9 +594,10 @@ Task类有一个分数的概念（或者说是伪复杂度），其次是还有�
         .sum();
              
     System.out.println( "Total points: " + totalPointsOfOpenTasks );
+````
 程序在控制台上的输出如下：
 
-Total points: 18
+    Total points: 18
 
 这里有几个注意事项。
 
@@ -617,7 +615,7 @@ Total points: 18
 stream另一个有价值的地方是能够原生支持并行处理。让我们来看看这个算task分数和的例子。
 
 stream另一个有价值的地方是能够原生支持并行处理。让我们来看看这个算task分数和的例子。
-
+````
     // Calculate total points of all tasks
     final double totalPoints = tasks
        .stream()
@@ -626,23 +624,28 @@ stream另一个有价值的地方是能够原生支持并行处理。让我们�
        .reduce( 0, Integer::sum );
          
     System.out.println( "Total points (all tasks): " + totalPoints );
+````
 这个例子和第一个例子很相似，但这个例子的不同之处在于这个程序是并行运行的，其次使用reduce方法来算最终的结果。
 下面是这个例子在控制台的输出：
 
 Total points (all tasks): 26.0
 经常会有这个一个需求：我们需要按照某种准则来对集合中的元素进行分组。Stream也可以处理这样的需求，下面是一个例子：
 
-
+````
     // Group tasks by their status
     final Map< Status, List< Task > > map = tasks
         .stream()
         .collect( Collectors.groupingBy( Task::getStatus ) );
     System.out.println( map );
+````
+
 这个例子的控制台输出如下：
 
-{CLOSED=[[CLOSED, 8]], OPEN=[[OPEN, 5], [OPEN, 13]]}
+    {CLOSED=[[CLOSED, 8]], OPEN=[[OPEN, 5], [OPEN, 13]]}
+
 让我们来计算整个集合中每个task分数（或权重）的平均值来结束task的例子。
 
+````
     // Calculate the weight of each tasks (as percent of total points) 
     final Collection< String > result = tasks
         .stream()                                        // Stream< String >
@@ -655,15 +658,19 @@ Total points (all tasks): 26.0
         .collect( Collectors.toList() );                 // List< String > 
              
     System.out.println( result );
+````
+
 下面是这个例子的控制台输出：
 
 [19%, 50%, 30%]
 最后，就像前面提到的，Stream API不仅仅处理Java集合框架。像从文本文件中逐行读取数据这样典型的I/O操作也很适合用Stream API来处理。下面用一个例子来应证这一点。
-
+````
     final Path path = new File( filename ).toPath();
     try( Stream< String > lines = Files.lines( path, StandardCharsets.UTF_8 ) ) {
         lines.onClose( () -> System.out.println("Done!") ).forEach( System.out::println );
     }
+````
+
 对一个stream对象调用onClose方法会返回一个在原有功能基础上新增了关闭功能的stream对象，当对stream对象调用close()方法时，与关闭相关的处理器就会执行。
 
 Stream API、Lambda表达式与方法引用在接口默认方法与静态方法的配合下是Java 8对现代软件开发范式的回应。更多详情请参考官方文档。
@@ -674,19 +681,19 @@ Java 8通过发布新的Date-Time API (JSR 310)来进一步加强对日期与时
 这种情况直接导致了Joda-Time——一个可替换标准日期/时间处理且功能非常强大的Java API的诞生。Java 8新的Date-Time API (JSR 310)在很大程度上受到Joda-Time的影响，并且吸取了其精髓。新的java.time包涵盖了所有处理日期，时间，日期/时间，时区，时刻（instants），过程（during）与时钟（clock）的操作。在设计新版API时，十分注重与旧版API的兼容性：不允许有任何的改变（从java.util.Calendar中得到的深刻教训）。如果需要修改，会返回这个类的一个新实例。
 
 让我们用例子来看一下新版API主要类的使用方法。第一个是Clock类，它通过指定一个时区，然后就可以获取到当前的时刻，日期与时间。Clock可以替换System.currentTimeMillis()与TimeZone.getDefault()。
-
+````
     // Get the system clock as UTC offset 
     final Clock clock = Clock.systemUTC();
     System.out.println( clock.instant() );
     System.out.println( clock.millis() );
-
+````
 下面是程序在控制台上的输出：
 
     2014-04-12T15:19:29.282Z
     1397315969360
 
 我们需要关注的其他类是LocaleDate与LocalTime。LocaleDate只持有ISO-8601格式且无时区信息的日期部分。相应的，LocaleTime只持有ISO-8601格式且无时区信息的时间部分。LocaleDate与LocalTime都可以从Clock中得到。
-
+````
     // Get the local date and local time
     final LocalDate date = LocalDate.now();
     final LocalDate dateFromClock = LocalDate.now( clock );
@@ -700,7 +707,7 @@ Java 8通过发布新的Date-Time API (JSR 310)来进一步加强对日期与时
          
     System.out.println( time );
     System.out.println( timeFromClock );
-
+````
 下面是程序在控制台上的输出：
 
     2014-04-12
@@ -715,7 +722,7 @@ Java 8通过发布新的Date-Time API (JSR 310)来进一步加强对日期与时
     2014-04-12T08:47:01.017-07:00[America/Los_Angeles]
 
 最后，让我们看一下Duration类：在秒与纳秒级别上的一段时间。Duration使计算两个日期间的不同变的十分简单。下面让我们看一个这方面的例子。
-
+````
     // Get duration between two dates
     final LocalDateTime from = LocalDateTime.of( 2014, Month.APRIL, 16, 0, 0, 0 );
     final LocalDateTime to = LocalDateTime.of( 2015, Month.APRIL, 16, 23, 59, 59 );
@@ -723,7 +730,7 @@ Java 8通过发布新的Date-Time API (JSR 310)来进一步加强对日期与时
     final Duration duration = Duration.between( from, to );
     System.out.println( "Duration in days: " + duration.toDays() );
     System.out.println( "Duration in hours: " + duration.toHours() );
-
+````
 上面的例子计算了两个日期2014年4月16号与2014年4月16号之间的过程。下面是程序在控制台上的输出：
 
 Duration in days: 365
@@ -733,7 +740,7 @@ Duration in hours: 8783
 
 ### 并行（parallel）数组
 Java 8增加了大量的新方法来对数组进行并行处理。可以说，最重要的是parallelSort()方法，因为它可以在多核机器上极大提高数组排序的速度。下面的例子展示了新方法（parallelXxx）的使用。
-
+````
     package com.javacodegeeks.java8.parallel.arrays;
      
     import java.util.Arrays;
@@ -755,7 +762,7 @@ Java 8增加了大量的新方法来对数组进行并行处理。可以说，�
             System.out.println();
         }
     }
-
+````
 上面的代码片段使用了parallelSetAll()方法来对一个有20000个元素的数组进行随机赋值。然后，调用parallelSort方法。这个程序首先打印出前10个元素的值，之后对整个数组排序。这个程序在控制台上的输出如下（请注意数组元素是随机生产的）：
 
 Unsorted: 591217 891976 443951 424479 766825 351964 242997 642839 119108 552378 
@@ -766,7 +773,7 @@ Sorted: 39 220 263 268 325 607 655 678 723 793
 在Java8之前，我们会使用JDK提供的Future接口来进行一些异步的操作，其实CompletableFuture也是实现了Future接口， 并且基于ForkJoinPool来执行任务，因此本质上来讲，CompletableFuture只是对原有API的封装， 而使用CompletableFuture与原来的Future的不同之处在于可以将两个Future组合起来，或者如果两个Future是有依赖关系的，可以等第一个执行完毕后再实行第二个等特性。
 
 **先来看看基本的使用方式：**
-
+````
     public Future<Double> getPriceAsync(final String product) {
         final CompletableFuture<Double> futurePrice = new CompletableFuture<>();
         new Thread(() -> {
@@ -775,13 +782,14 @@ Sorted: 39 220 263 268 325 607 655 678 723 793
         }).start();
         return futurePrice;
     }
+````
 得到Future之后就可以使用get方法来获取结果，CompletableFuture提供了一些工厂方法来简化这些API，并且使用函数式编程的方式来使用这些API，例如：
 
 Fufure<Double> price = CompletableFuture.supplyAsync(() -> calculatePrice(product));  
 代码是不是一下子简洁了许多呢。之前说了，CompletableFuture可以组合多个Future，不管是Future之间有依赖的，还是没有依赖的。 
 
 **如果第二个请求依赖于第一个请求的结果，那么可以使用thenCompose方法来组合两个Future**
-
+````
     public List<String> findPriceAsync(String product) {
         List<CompletableFutute<String>> priceFutures = tasks.stream()
         .map(task -> CompletableFuture.supplyAsync(() -> task.getPrice(product),executor))
@@ -791,24 +799,26 @@ Fufure<Double> price = CompletableFuture.supplyAsync(() -> calculatePrice(produc
     
         return priceFutures.stream().map(CompletableFuture::join).collect(Collectors.toList());
     }
+````
 上面这段代码使用了thenCompose来组合两个CompletableFuture。supplyAsync方法第二个参数接受一个自定义的Executor。 首先使用CompletableFuture执行一个任务，调用getPrice方法，得到一个Future，之后使用thenApply方法，将Future的结果应用parse方法， 之后再使用执行完parse之后的结果作为参数再执行一个applyCount方法，然后收集成一个CompletableFuture<String>的List， 最后再使用一个流，调用CompletableFuture的join方法，这是为了等待所有的异步任务执行完毕，获得最后的结果。
 
 注意，这里必须使用两个流，如果在一个流里调用join方法，那么由于Stream的延迟特性，所有的操作还是会串行的执行，并不是异步的。
 
 **再来看一个两个Future之间没有依赖关系的例子：**
-
+````
     Future<String> futurePriceInUsd = CompletableFuture.supplyAsync(() -> shop.getPrice(“price1”))
                                         .thenCombine(CompletableFuture.supplyAsync(() -> shop.getPrice(“price2”)), (s1, s2) -> s1 + s2);
+````
 这里有两个异步的任务，使用thenCombine方法来组合两个Future，thenCombine方法的第二个参数就是用来合并两个Future方法返回值的操作函数。
 
 有时候，我们并不需要等待所有的异步任务结束，只需要其中的一个完成就可以了，CompletableFuture也提供了这样的方法：
-
+````
     //假设getStream方法返回一个Stream<CompletableFuture<String>>
     CompletableFuture[] futures = getStream(“listen”).map(f -> f.thenAccept(System.out::println)).toArray(CompletableFuture[]::new);
     //等待其中的一个执行完毕
     CompletableFuture.anyOf(futures).join();
     使用anyOf方法来响应CompletableFuture的completion事件。
-
+````
 ## Java虚拟机（JVM）的新特性
 PermGen空间被移除了，取而代之的是Metaspace（JEP 122）。JVM选项-XX:PermSize与-XX:MaxPermSize分别被-XX:MetaSpaceSize与-XX:MaxMetaspaceSize所代替。
 

@@ -48,25 +48,25 @@ Java程序在运行时，Java运行时系统一直对所有的对象进行所谓
 > Class类的对象内容是你创建的类的类型信息，比如你创建一个shapes类，那么，Java会生成一个内容是shapes的Class类的对象
 
 > Class类的对象不能像普通类一样，以 new shapes() 的方式创建，它的对象只能由JVM创建，因为这个类没有public构造函数
-
-        /*
-         * Private constructor. Only the Java Virtual Machine creates Class objects.
-         * This constructor is not used and prevents the default constructor being
-         * generated.
-         */
-         //私有构造方法，只能由jvm进行实例化
-        private Class(ClassLoader loader) {
-            // Initialize final field for classLoader.  The initialization value of non-null
-            // prevents future JIT optimizations from assuming this final field is null.
-            classLoader = loader;
-        }
-
+````
+/*
+ * Private constructor. Only the Java Virtual Machine creates Class objects.
+ * This constructor is not used and prevents the default constructor being
+ * generated.
+ */
+ //私有构造方法，只能由jvm进行实例化
+private Class(ClassLoader loader) {
+    // Initialize final field for classLoader.  The initialization value of non-null
+    // prevents future JIT optimizations from assuming this final field is null.
+    classLoader = loader;
+}
+````
 > Class类的作用是运行时提供或获得某个对象的类型信息，和C++中的typeid()函数类似。这些信息也可用于反射。
 
 ### Class类原理
 
 看一下Class类的部分源码
-
+````
     //Class类中封装了类型的各种信息。在jvm中就是通过Class类的实例来获取每个Java类的所有信息的。
     
     public class Class类 {
@@ -161,6 +161,7 @@ Java程序在运行时，Java运行时系统一直对所有的对象进行所谓
     //        }
     //    }
     }
+````
 
 > 我们都知道所有的java类都是继承了object这个类，在object这个类中有一个方法：getclass().这个方法是用来取得该类已经被实例化了的对象的该类的引用，这个引用指向的是Class类的对象。
 > 
@@ -172,11 +173,7 @@ Java程序在运行时，Java运行时系统一直对所有的对象进行所谓
     {
         return defineClass(name, b, off, len, null);
     }
-> 
-> 我们生成的对象都会有个字段记录该对象所属类在CLass类的对象的所在位置。如下图所示：
-
-[外链图片转存失败(img-ZfMJTzO4-1569074134147)(http://dl.iteye.com/upload/picture/pic/101542/0047a6e9-6608-3c3c-a67c-d8ee95e7fcb8.jpg)]
-
+>
 
 ### 如何获得一个Class类对象
 
@@ -204,7 +201,7 @@ Java程序在运行时，Java运行时系统一直对所有的对象进行所谓
 > 生成不精确的object实例
 > 
 
-==获取一个Class类的对象后，可以用 newInstance() 函数来生成目标类的一个实例。然而，该函数并不能直接生成目标类的实例，只能生成object类的实例==
+获取一个Class类的对象后，可以用 newInstance() 函数来生成目标类的一个实例。然而，该函数并不能直接生成目标类的实例，只能生成object类的实例
 
 > Class obj=Class.forName("shapes");
 > Object ShapesInstance=obj.newInstance();
@@ -214,7 +211,7 @@ Java程序在运行时，Java运行时系统一直对所有的对象进行所谓
 > Class<shapes> obj=shapes.class;
 > shapes newShape=obj.newInstance();
 > 因为有了类型限制，所以使用泛化Class语法的对象引用不能指向别的类。
-
+    
     Class obj1=int.class;
     Class<Integer> obj2=int.class;
     obj1=double.class;
@@ -236,11 +233,12 @@ Java程序在运行时，Java运行时系统一直对所有的对象进行所谓
     Class<round> rclass=round.class;
     Class<? super round> sclass= rclass.getSuperClass();
     //Class<shapes> sclass=rclass.getSuperClass();
+
     我们明知道，round的基类就是shapes，但是却不能直接声明 Class < shapes >，必须使用特殊语法
     
     Class < ? super round >
-
-这个记住就可以啦。
+    
+    这个记住就可以啦。
 
 ## Object类
 
@@ -288,7 +286,9 @@ Object类位于java.lang包中，java.lang包包含着Java最基础和核心的�
 
 
 ### registerNatives()方法;
+````
 private static native void registerNatives();
+````
 
 > registerNatives函数前面有native关键字修饰，Java中，用native关键字修饰的函数表明该方法的实现并不是在Java中去完成，而是由C/C++去完成，并被编译成了.dll，由Java去调用。
 > 
@@ -298,19 +298,16 @@ private static native void registerNatives();
 >  
 > 既然如此，可能有人会问，registerNatives()修饰符为private，且并没有执行，作用何以达到？其实，在Java源码中，此方法的声明后有紧接着一段静态代码块：
 
-
-    private static native void registerNatives();  
-    static {  
-         registerNatives();  
-    }  
-
+````
+private static native void registerNatives();  
+static {  
+     registerNatives();  
+}  
+````
 ### Clone()方法实现浅拷贝
-
-    protected native Object clone() throwsCloneNotSupportedException;
-
- 
-
-
+````
+protected native Object clone() throwsCloneNotSupportedException;
+````
 > 看，clode()方法又是一个被声明为native的方法，因此，我们知道了clone()方法并不是Java的原生方法，具体的实现是有C/C++完成的。clone英文翻译为"克隆"，其目的是创建并返回此对象的一个副本。
 
 > 形象点理解，这有一辆科鲁兹，你看着不错，想要个一模一样的。你调用此方法即可像变魔术一样变出一辆一模一样的科鲁兹出来。配置一样，长相一样。但从此刻起，原来的那辆科鲁兹如果进行了新的装饰，与你克隆出来的这辆科鲁兹没有任何关系了。
@@ -321,7 +318,7 @@ private static native void registerNatives();
 
 首先看一下下面的这个例子：
 
-
+````
     package com.corn.objectsummary;  
       
     import com.corn.Person;  
@@ -336,9 +333,7 @@ private static native void registerNatives();
         }  
       
     }  
-
- 
-
+````
 
 > 例子很简单，在main()方法中，new一个Oject对象后，想直接调用此对象的clone方法克隆一个对象，但是出现错误提示："The method clone() from the type Object is not visible"
 >  
@@ -350,25 +345,23 @@ private static native void registerNatives();
 
 于是，上例改成如下形式，我们发现，可以正常编译：
 
-
-        public class clone方法 {
-        public static void main(String[] args) {
+````
+public class clone方法 {
+    public static void main(String[] args) {
     
-        }
-        public void test1() {
-    
-            User user = new User();
-    //        User copy = user.clone();
-        }
-        public void test2() {
-            User user = new User();
-    //        User copy = (User)user.clone();
-        }
     }
+    public void test1() {
+    
+    User user = new User();
+    //User copy = user.clone();
+    }
+    public void test2() {
+    User user = new User();
+    //User copy = (User)user.clone();
+    }
+}
 
- 
-
-
+````
 是的，因为此时的主调已经是子类的引用了。
 
 > 上述代码在运行过程中会抛出"java.lang.CloneNotSupportedException",表明clone()方法并未正确执行完毕，问题的原因在与Java中的语法规定：
@@ -378,9 +371,8 @@ private static native void registerNatives();
 > Cloneable接口仅是一个表示接口，接口本身不包含任何方法，用来指示Object.clone()可以合法的被子类引用所调用。
 >  
 > 于是，上述代码改成如下形式，即可正确指定clone()方法以实现克隆。
-
-
-    public class User implements Cloneable{
+````
+public class User implements Cloneable{
     public int id;
     public String name;
     public UserInfo userInfo;
@@ -407,11 +399,12 @@ private static native void registerNatives();
     //    com.javase.Class和Object.Object方法.用到的类.User@6ff3c5b5
     //    com.javase.Class和Object.Object方法.用到的类.UserInfo@d716361
     }
+````
 
 总结：
 clone方法实现的是浅拷贝，只拷贝当前对象，并且在堆中分配新的空间，放这个复制的对象。但是对象如果里面有其他类的子对象，那么就不会拷贝到新的对象中。
 
-==深拷贝和浅拷贝的区别==
+深拷贝和浅拷贝的区别
 
 > 浅拷贝
 > 浅拷贝是按位拷贝对象，它会创建一个新对象，这个对象有着原始对象属性值的一份精确拷贝。如果属性是基本类型，拷贝的就是基本类型的值；如果属性是内存地址（引用类型），拷贝的就是内存地址 ，因此如果其中一个对象改变了这个地址，就会影响到另一个对象。
@@ -430,12 +423,13 @@ clone方法实现的是浅拷贝，只拷贝当前对象，并且在堆中分配
 > 
 > 填充完成之后，clone方法返回，一个新的相同的对象被创建，同样可以把这个新对象的引用发布到外部。
 
-==也就是说，一个对象在浅拷贝以后，只是把对象复制了一份放在堆空间的另一个地方，但是成员变量如果有引用指向其他对象，这个引用指向的对象和被拷贝的对象中引用指向的对象是一样的。当然，基本数据类型还是会重新拷贝一份的。==
-
+也就是说，一个对象在浅拷贝以后，只是把对象复制了一份放在堆空间的另一个地方，但是成员变量如果有引用指向其他对象，这个引用指向的对象和被拷贝的对象中引用指向的对象是一样的。当然，基本数据类型还是会重新拷贝一份的。
 
 ### getClass()方法
+````
+public final native Class<?> getClass();
 
-4.public final native Class<?> getClass();
+````
 
 > getClass()也是一个native方法，返回的是此Object对象的类对象/运行时类对象Class<?>。效果与Object.class相同。
 >  
@@ -443,8 +437,8 @@ clone方法实现的是浅拷贝，只拷贝当前对象，并且在堆中分配
 > 
 > 作为概念层次的类，其本身也具有某些共同的特性，如都具有类名称、由类加载器去加载，都具有包，具有父类，属性和方法等。
 > 
-> 于是，Java中有专门定义了一个类，Class，去描述其他类所具有的这些特性，因此，从此角度去看，类本身也都是属于Class类的对象。为与经常意义上的对象相区分，在此称之为"类对象"。
-
+> 于是，Java中定义了一个类，Class，去描述其他类所具有的这些特性，因此，从此角度去看，类本身也都是属于Class类的对象。为与经常意义上的对象相区分，在此称之为"类对象"。
+````
     public class getClass方法 {
         public static void main(String[] args) {
             User user = new User();
@@ -470,6 +464,7 @@ clone方法实现的是浅拷贝，只拷贝当前对象，并且在堆中分配
             }
         }
     } 
+````
 
 此处主要大量涉及到Java中的反射知识
 
@@ -490,9 +485,6 @@ clone方法实现的是浅拷贝，只拷贝当前对象，并且在堆中分配
          return (this == obj);  
     }  
 
- 
-
-
 > 由此可见，Object原生的equals()方法内部调用的正是==，与==具有相同的含义。既然如此，为什么还要定义此equals()方法？
 >  
 > equals()方法的正确理解应该是：判断两个对象是否相等。那么判断对象相等的标尺又是什么？
@@ -506,10 +498,10 @@ ObjectTest中打印出true，因为User类定义中重写了equals()方法，这
 
 > 如上重写equals方法表面上看上去是可以了，实则不然。因为它破坏了Java中的约定：重写equals()方法必须重写hasCode()方法。
 
-
 ### hashCode()方法;
-
-6. public native int hashCode()
+````
+public native int hashCode()
+````
 
 hashCode()方法返回一个整形数值，表示该对象的哈希码值。
 
@@ -549,16 +541,16 @@ hashCode()具有如下约定：
 
 
 ### toString()方法
-7.public String toString();
+````
+public String toString();
 
     toString()方法返回该对象的字符串表示。先看一下Object中的具体方法体：
     
      public String toString() {  
         return getClass().getName() + "@" + Integer.toHexString(hashCode());  
     }  
-
- 
-
+    
+````
 
 > toString()方法相信大家都经常用到，即使没有显式调用，但当我们使用System.out.println(obj)时，其内部也是通过toString()来实现的。
 >  
@@ -570,7 +562,7 @@ hashCode()具有如下约定：
 
 
 ### wait() notify() notifAll()
-8/9/10/11/12. wait(...) / notify() / notifyAll()
+
 >  
 > 一说到wait(...) / notify() | notifyAll()几个方法，首先想到的是线程。确实，这几个方法主要用于java多线程之间的协作。先具体看下这几个方法的主要含义：
 >  
@@ -583,8 +575,7 @@ hashCode()具有如下约定：
 > wait(...) / notify() | notifyAll()一般情况下都是配套使用。下面来看一个简单的例子：
 
 这是一个生产者消费者的模型，只不过这里只用flag来标识哪个线程需要工作
-
-
+````
     public class wait和notify {
         //volatile保证线程可见性
         volatile static int flag = 1;
@@ -652,6 +643,7 @@ hashCode()具有如下约定：
     //    notify t2
     //不断循环
     }
+````
 
 >  从上述例子的输出结果中可以得出如下结论：
 >  
@@ -661,13 +653,11 @@ hashCode()具有如下约定：
 
 在Java源码中，可以看到wait()具体定义如下：
 
-
-    public final void wait() throws InterruptedException {  
-         wait(0);  
-    }  
-
- 
-
+````
+public final void wait() throws InterruptedException {  
+     wait(0);  
+}  
+````
 
 > 且wait(long timeout, int nanos)方法定义内部实质上也是通过调用wait(long timeout)完成。而wait(long timeout)是一个native方法。因此，wait(...)方法本质上都是native方式实现。
 
@@ -676,15 +666,11 @@ notify()/notifyAll()方法也都是native方法。
 Java中线程具有较多的知识点，是一块比较大且重要的知识点。后期会有博文专门针对Java多线程作出详细总结。此处不再细述。
 
 ### finalize()方法
-13. protected void finalize();
-
 finalize方法主要与Java垃圾回收机制有关。首先我们看一下finalized方法在Object中的具体定义：
 
-
-    protected void finalize() throws Throwable { }  
-
- 
-
+````
+protected void finalize() throws Throwable { }  
+````
 
 > 我们发现Object类中finalize方法被定义成一个空方法，为什么要如此定义呢？finalize方法的调用时机是怎么样的呢？
 >  

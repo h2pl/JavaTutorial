@@ -61,8 +61,7 @@ tags:
 
 在编写java程序中，我们最常用的除了八种基本数据类型，String对象外还有一个集合类，在我们的的程序中到处充斥着集合类的身影！
 
-![image](https://img-blog.csdnimg.cn/20190222094403579.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p6dzE1MzE0MzkwOTA=,size_16,color_FFFFFF,t_70)
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230403214433.png)
 java中集合大家族的成员实在是太丰富了，有常用的ArrayList、HashMap、HashSet，也有不常用的Stack、Queue，有线程安全的Vector、HashTable，也有线程不安全的LinkedList、TreeMap等等！
 
 ![](https://images0.cnblogs.com/blog/381060/201312/28124707-3a873160808e457686d67c118af6fa70.png)
@@ -90,63 +89,63 @@ java中集合大家族的成员实在是太丰富了，有常用的ArrayList、H
   在Java中所有实现了Collection接口的类都必须提供两套标准的构造函数，一个是无参，用于创建一个空的Collection，一个是带有Collection参数的有参构造函数，用于创建一个新的Collection，这个新的Collection与传入进来的Collection具备相同的元素。
 //要求实现基本的增删改查方法，并且需要能够转换为数组类型
 
+````
+public class Collection接口 {
+    class collect implements Collection {
 
-    public class Collection接口 {
-        class collect implements Collection {
-    
-            @Override
-            public int size() {
-                return 0;
-            }
-    
-            @Override
-            public boolean isEmpty() {
-                return false;
-            }
-    
-            @Override
-            public boolean contains(Object o) {
-                return false;
-            }
-    
-            @Override
-            public Iterator iterator() {
-                return null;
-            }
-    
-            @Override
-            public Object[] toArray() {
-                return new Object[0];
-            }
-    
-            @Override
-            public boolean add(Object o) {
-                return false;
-            }
-    
-            @Override
-            public boolean remove(Object o) {
-                return false;
-            }
-    
-            @Override
-            public boolean addAll(Collection c) {
-                return false;
-            }
-    
-            @Override
-            public void clear() {
-    
-            }
-    //省略部分代码  
-    
-            @Override
-            public Object[] toArray(Object[] a) {
-                return new Object[0];
-            }
+        @Override
+        public int size() {
+            return 0;
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return false;
+        }
+
+        @Override
+        public boolean contains(Object o) {
+            return false;
+        }
+
+        @Override
+        public Iterator iterator() {
+            return null;
+        }
+
+        @Override
+        public Object[] toArray() {
+            return new Object[0];
+        }
+
+        @Override
+        public boolean add(Object o) {
+            return false;
+        }
+
+        @Override
+        public boolean remove(Object o) {
+            return false;
+        }
+
+        @Override
+        public boolean addAll(Collection c) {
+            return false;
+        }
+
+        @Override
+        public void clear() {
+
+        }
+//省略部分代码  
+
+        @Override
+        public Object[] toArray(Object[] a) {
+            return new Object[0];
         }
     }
-
+}
+````
 ## List接口
 
 >   List接口为Collection直接接口。List所代表的是有序的Collection，即它用某种特定的插入顺序来维护元素顺序。用户可以对列表中每个元素的插入位置进行精确地控制，同时可以根据元素的整数索引（在列表中的位置）访问元素，并搜索列表中的元素。实现List接口的集合主要有：ArrayList、LinkedList、Vector、Stack。
@@ -173,84 +172,84 @@ java中集合大家族的成员实在是太丰富了，有常用的ArrayList、H
 >
 > 2.4、Stack
 >    Stack继承自Vector，实现一个后进先出的堆栈。Stack提供5个额外的方法使得Vector得以被当作堆栈使用。基本的push和pop 方法，还有peek方法得到栈顶的元素，empty方法测试堆栈是否为空，search方法检测一个元素在堆栈中的位置。Stack刚创建后是空栈。。
+````
+public class List接口 {
+    //下面是List的继承关系，由于List接口规定了包括诸如索引查询，迭代器的实现，所以实现List接口的类都会有这些方法。
+    //所以不管是ArrayList和LinkedList底层都可以使用数组操作，但一般不提供这样外部调用方法。
+    //    public interface Iterable<T>
+//    public interface Collection<E> extends Iterable<E>
+//    public interface List<E> extends Collection<E>
+    class MyList implements List {
 
-    public class List接口 {
-        //下面是List的继承关系，由于List接口规定了包括诸如索引查询，迭代器的实现，所以实现List接口的类都会有这些方法。
-        //所以不管是ArrayList和LinkedList底层都可以使用数组操作，但一般不提供这样外部调用方法。
-        //    public interface Iterable<T>
-    //    public interface Collection<E> extends Iterable<E>
-    //    public interface List<E> extends Collection<E>
-        class MyList implements List {
-    
-            @Override
-            public int size() {
-                return 0;
-            }
-    
-            @Override
-            public boolean isEmpty() {
-                return false;
-            }
-    
-            @Override
-            public boolean contains(Object o) {
-                return false;
-            }
-    
-            @Override
-            public Iterator iterator() {
-                return null;
-            }
-    
-            @Override
-            public Object[] toArray() {
-                return new Object[0];
-            }
-    
-            @Override
-            public boolean add(Object o) {
-                return false;
-            }
-    
-            @Override
-            public boolean remove(Object o) {
-                return false;
-            }
-    
-            @Override
-            public void clear() {
-    
-            }
-    
-           //省略部分代码
-           
-            @Override
-            public Object get(int index) {
-                return null;
-            }
-    
-            @Override
-            public ListIterator listIterator() {
-                return null;
-            }
-    
-            @Override
-            public ListIterator listIterator(int index) {
-                return null;
-            }
-    
-            @Override
-            public List subList(int fromIndex, int toIndex) {
-                return null;
-            }
-    
-            @Override
-            public Object[] toArray(Object[] a) {
-                return new Object[0];
-            }
+        @Override
+        public int size() {
+            return 0;
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return false;
+        }
+
+        @Override
+        public boolean contains(Object o) {
+            return false;
+        }
+
+        @Override
+        public Iterator iterator() {
+            return null;
+        }
+
+        @Override
+        public Object[] toArray() {
+            return new Object[0];
+        }
+
+        @Override
+        public boolean add(Object o) {
+            return false;
+        }
+
+        @Override
+        public boolean remove(Object o) {
+            return false;
+        }
+
+        @Override
+        public void clear() {
+
+        }
+
+       //省略部分代码
+       
+        @Override
+        public Object get(int index) {
+            return null;
+        }
+
+        @Override
+        public ListIterator listIterator() {
+            return null;
+        }
+
+        @Override
+        public ListIterator listIterator(int index) {
+            return null;
+        }
+
+        @Override
+        public List subList(int fromIndex, int toIndex) {
+            return null;
+        }
+
+        @Override
+        public Object[] toArray(Object[] a) {
+            return new Object[0];
         }
     }
-
+}
+````
 ## Set接口
 
 > Set是一种不包括重复元素的Collection。它维持它自己的内部排序，所以随机访问没有任何意义。与List一样，它同样运行null的存在但是仅有一个。由于Set接口的特殊性，所有传入Set集合中的元素都必须不同，同时要注意任何可变对象，如果在对集合中元素进行操作时，导致e1.equals(e2)==true，则必定会产生某些问题。实现了Set接口的集合有：EnumSet、HashSet、TreeSet。
@@ -261,83 +260,84 @@ java中集合大家族的成员实在是太丰富了，有常用的ArrayList、H
 > 3.2、HashSet
 >    HashSet堪称查询速度最快的集合，因为其内部是以HashCode来实现的。它内部元素的顺序是由哈希码来决定的，所以它不保证set 的迭代顺序；特别是它不保证该顺序恒久不变。
 
-    public class Set接口 {
-        // Set接口规定将set看成一个集合，并且使用和数组类似的增删改查方式，同时提供iterator迭代器
-        //    public interface Set<E> extends Collection<E>
-        //    public interface Collection<E> extends Iterable<E>
-        //    public interface Iterable<T>
-        class MySet implements Set {
-    
-            @Override
-            public int size() {
-                return 0;
-            }
-    
-            @Override
-            public boolean isEmpty() {
-                return false;
-            }
-    
-            @Override
-            public boolean contains(Object o) {
-                return false;
-            }
-    
-            @Override
-            public Iterator iterator() {
-                return null;
-            }
-    
-            @Override
-            public Object[] toArray() {
-                return new Object[0];
-            }
-    
-            @Override
-            public boolean add(Object o) {
-                return false;
-            }
-    
-            @Override
-            public boolean remove(Object o) {
-                return false;
-            }
-    
-            @Override
-            public boolean addAll(Collection c) {
-                return false;
-            }
-    
-            @Override
-            public void clear() {
-    
-            }
-    
-            @Override
-            public boolean removeAll(Collection c) {
-                return false;
-            }
-    
-            @Override
-            public boolean retainAll(Collection c) {
-                return false;
-            }
-    
-            @Override
-            public boolean containsAll(Collection c) {
-                return false;
-            }
-    
-            @Override
-            public Object[] toArray(Object[] a) {
-                return new Object[0];
-            }
+````
+public class Set接口 {
+    // Set接口规定将set看成一个集合，并且使用和数组类似的增删改查方式，同时提供iterator迭代器
+    //    public interface Set<E> extends Collection<E>
+    //    public interface Collection<E> extends Iterable<E>
+    //    public interface Iterable<T>
+    class MySet implements Set {
+
+        @Override
+        public int size() {
+            return 0;
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return false;
+        }
+
+        @Override
+        public boolean contains(Object o) {
+            return false;
+        }
+
+        @Override
+        public Iterator iterator() {
+            return null;
+        }
+
+        @Override
+        public Object[] toArray() {
+            return new Object[0];
+        }
+
+        @Override
+        public boolean add(Object o) {
+            return false;
+        }
+
+        @Override
+        public boolean remove(Object o) {
+            return false;
+        }
+
+        @Override
+        public boolean addAll(Collection c) {
+            return false;
+        }
+
+        @Override
+        public void clear() {
+
+        }
+
+        @Override
+        public boolean removeAll(Collection c) {
+            return false;
+        }
+
+        @Override
+        public boolean retainAll(Collection c) {
+            return false;
+        }
+
+        @Override
+        public boolean containsAll(Collection c) {
+            return false;
+        }
+
+        @Override
+        public Object[] toArray(Object[] a) {
+            return new Object[0];
         }
     }
-
+}
+````
 ## Map接口
 
->   Map与List、Set接口不同，它是由一系列键值对组成的集合，提供了key到Value的映射。同时它也没有继承Collection。在Map中它保证了key与value之间的一一对应关系。也就是说一个key对应一个value，所以它不能存在相同的key值，当然value值可以相同。实现map的有：HashMap、TreeMap、HashTable、Properties、EnumMap。
+> Map与List、Set接口不同，它是由一系列键值对组成的集合，提供了key到Value的映射。同时它也没有继承Collection。在Map中它保证了key与value之间的一一对应关系。也就是说一个key对应一个value，所以它不能存在相同的key值，当然value值可以相同。实现map的有：HashMap、TreeMap、HashTable、Properties、EnumMap。
 
 > 4.1、HashMap
 >    以哈希表数据结构实现，查找对象时通过哈希函数计算其位置，它是为快速查询而设计的，其内部定义了一个hash表数组（Entry[] table），元素会通过哈希转换函数将元素的哈希地址转换成数组中存放的索引，如果有冲突，则使用散列链表的形式将所有相同哈希地址的元素串起来，可能通过查看HashMap.Entry的源码它是一个单链表结构。
@@ -347,152 +347,152 @@ java中集合大家族的成员实在是太丰富了，有常用的ArrayList、H
 >
 > 4.3、HashTable
 >    也是以哈希表数据结构实现的，解决冲突时与HashMap也一样也是采用了散列链表的形式，不过性能比HashMap要低
+````
+public class Map接口 {
+    //Map接口是最上层接口，Map接口实现类必须实现put和get等哈希操作。
+    //并且要提供keyset和values，以及entryset等查询结构。
+    //public interface Map<K,V>
+    class MyMap implements Map {
 
-    public class Map接口 {
-        //Map接口是最上层接口，Map接口实现类必须实现put和get等哈希操作。
-        //并且要提供keyset和values，以及entryset等查询结构。
-        //public interface Map<K,V>
-        class MyMap implements Map {
-    
-            @Override
-            public int size() {
-                return 0;
-            }
-    
-            @Override
-            public boolean isEmpty() {
-                return false;
-            }
-    
-            @Override
-            public boolean containsKey(Object key) {
-                return false;
-            }
-    
-            @Override
-            public boolean containsValue(Object value) {
-                return false;
-            }
-    
-            @Override
-            public Object get(Object key) {
-                return null;
-            }
-    
-            @Override
-            public Object put(Object key, Object value) {
-                return null;
-            }
-    
-            @Override
-            public Object remove(Object key) {
-                return null;
-            }
-    
-            @Override
-            public void putAll(Map m) {
-    
-            }
-    
-            @Override
-            public void clear() {
-    
-            }
-    
-            @Override
-            public Set keySet() {
-                return null;
-            }
-    
-            @Override
-            public Collection values() {
-                return null;
-            }
-    
-            @Override
-            public Set<Entry> entrySet() {
-                return null;
-            }
+        @Override
+        public int size() {
+            return 0;
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return false;
+        }
+
+        @Override
+        public boolean containsKey(Object key) {
+            return false;
+        }
+
+        @Override
+        public boolean containsValue(Object value) {
+            return false;
+        }
+
+        @Override
+        public Object get(Object key) {
+            return null;
+        }
+
+        @Override
+        public Object put(Object key, Object value) {
+            return null;
+        }
+
+        @Override
+        public Object remove(Object key) {
+            return null;
+        }
+
+        @Override
+        public void putAll(Map m) {
+
+        }
+
+        @Override
+        public void clear() {
+
+        }
+
+        @Override
+        public Set keySet() {
+            return null;
+        }
+
+        @Override
+        public Collection values() {
+            return null;
+        }
+
+        @Override
+        public Set<Entry> entrySet() {
+            return null;
         }
     }
-
+}
+````
 ## Queue
 
 >   队列，它主要分为两大类，一类是阻塞式队列，队列满了以后再插入元素则会抛出异常，主要包括ArrayBlockQueue、PriorityBlockingQueue、LinkedBlockingQueue。另一种队列则是双端队列，支持在头、尾两端插入和移除元素，主要包括：ArrayDeque、LinkedBlockingDeque、LinkedList。
+````
+public class Queue接口 {
+    //queue接口是对队列的一个实现，需要提供队列的进队出队等方法。一般使用linkedlist作为实现类
+    class MyQueue implements Queue {
 
-    public class Queue接口 {
-        //queue接口是对队列的一个实现，需要提供队列的进队出队等方法。一般使用linkedlist作为实现类
-        class MyQueue implements Queue {
-    
-            @Override
-            public int size() {
-                return 0;
-            }
-    
-            @Override
-            public boolean isEmpty() {
-                return false;
-            }
-    
-            @Override
-            public boolean contains(Object o) {
-                return false;
-            }
-    
-            @Override
-            public Iterator iterator() {
-                return null;
-            }
-    
-            @Override
-            public Object[] toArray() {
-                return new Object[0];
-            }
-    
-            @Override
-            public Object[] toArray(Object[] a) {
-                return new Object[0];
-            }
-    
-            @Override
-            public boolean add(Object o) {
-                return false;
-            }
-    
-            @Override
-            public boolean remove(Object o) {
-                return false;
-            }
-    
-            //省略部分代码
-            @Override
-            public boolean offer(Object o) {
-                return false;
-            }
-    
-            @Override
-            public Object remove() {
-                return null;
-            }
-    
-            @Override
-            public Object poll() {
-                return null;
-            }
-    
-            @Override
-            public Object element() {
-                return null;
-            }
-    
-            @Override
-            public Object peek() {
-                return null;
-            }
+        @Override
+        public int size() {
+            return 0;
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return false;
+        }
+
+        @Override
+        public boolean contains(Object o) {
+            return false;
+        }
+
+        @Override
+        public Iterator iterator() {
+            return null;
+        }
+
+        @Override
+        public Object[] toArray() {
+            return new Object[0];
+        }
+
+        @Override
+        public Object[] toArray(Object[] a) {
+            return new Object[0];
+        }
+
+        @Override
+        public boolean add(Object o) {
+            return false;
+        }
+
+        @Override
+        public boolean remove(Object o) {
+            return false;
+        }
+
+        //省略部分代码
+        @Override
+        public boolean offer(Object o) {
+            return false;
+        }
+
+        @Override
+        public Object remove() {
+            return null;
+        }
+
+        @Override
+        public Object poll() {
+            return null;
+        }
+
+        @Override
+        public Object element() {
+            return null;
+        }
+
+        @Override
+        public Object peek() {
+            return null;
         }
     }
+}
 
-
+````
 ## 关于Java集合的小抄
 
 这部分内容转自我偶像 江南白衣 的博客：http://calvin1978.blogcn.com/articles/collection.html

@@ -24,15 +24,6 @@
   * [微信公众号](#微信公众号)
     * [Java技术江湖](#java技术江湖)
     * [个人公众号：黄小斜](#个人公众号：黄小斜)
----
-title: 夯实Java基础系列16：一文读懂Java IO流和常见面试题
-date: 2019-9-16 15:56:26 # 文章生成时间，一般不改
-categories:
-    - Java技术江湖
-    - Java基础
-tags:
-    - Java IO流
----
 
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看
 > https://github.com/h2pl/Java-Tutorial
@@ -60,7 +51,6 @@ tags:
 > 在这一小节，我会试着给出Java IO(java.io)包下所有类的概述。更具体地说，我会根据类的用途对类进行分组。这个分组将会使你在未来的工作中，进行类的用途判定时，或者是为某个特定用途选择类时变得更加容易。
 
 
-​    
 **输入和输出**
 
     术语“输入”和“输出”有时候会有一点让人疑惑。一个应用程序的输入往往是另外一个应用程序的输出
@@ -174,7 +164,7 @@ java.io.InputStream类是所有Java IO输入流的基类。如果你正在开发
     这使得RandomAccessFile可以覆盖一个文件的某些部分、或者追加内容到它的末尾、或者删除它的某些内容，当然它也可以从文件的任何位置开始读取文件。
 
 下面是具体例子：
-
+````
     @Test
         //文件流范例，打开一个文件的输入流，读取到字节数组，再写入另一个文件的输出流
         public void test1() {
@@ -193,6 +183,7 @@ java.io.InputStream类是所有Java IO输入流的基类。如果你正在开发
                 e.printStackTrace();
             }
         }
+````
 ### 字符流和字节流
 
 Java IO的Reader和Writer除了基于字符之外，其他方面都与InputStream和OutputStream非常类似。他们被用于读写文本。InputStream和OutputStream是基于字节的，还记得吗？
@@ -204,46 +195,47 @@ Writer
 Writer类是Java IO中所有Writer的基类。子类包括BufferedWriter和PrintWriter等等。
 
 这是一个简单的Java IO Reader的例子：
+````
+Reader reader = new FileReader("c:\\data\\myfile.txt");
 
-    Reader reader = new FileReader("c:\\data\\myfile.txt");
-    
-    int data = reader.read();
-    
-    while(data != -1){
-    
-        char dataChar = (char) data;
-    
-        data = reader.read();
-    
-    }
+int data = reader.read();
 
+while(data != -1){
+
+    char dataChar = (char) data;
+
+    data = reader.read();
+
+}
+````
 你通常会使用Reader的子类，而不会直接使用Reader。Reader的子类包括InputStreamReader，CharArrayReader，FileReader等等。可以查看Java IO概述浏览完整的Reader表格。
 
 **整合Reader与InputStream**
 
 一个Reader可以和一个InputStream相结合。如果你有一个InputStream输入流，并且想从其中读取字符，可以把这个InputStream包装到InputStreamReader中。把InputStream传递到InputStreamReader的构造函数中：
-
-    Reader reader = new InputStreamReader(inputStream);
+````
+Reader reader = new InputStreamReader(inputStream);
+````
 在构造函数中可以指定解码方式。
 
 **Writer**
 
 Writer类是Java IO中所有Writer的基类。子类包括BufferedWriter和PrintWriter等等。这是一个Java IO Writer的例子：
+````
+Writer writer = new FileWriter("c:\\data\\file-output.txt"); 
 
-    Writer writer = new FileWriter("c:\\data\\file-output.txt"); 
-    
-    writer.write("Hello World Writer"); 
-    
-    writer.close();
+writer.write("Hello World Writer"); 
 
+writer.close();
+````
 同样，你最好使用Writer的子类，不需要直接使用Writer，因为子类的实现更加明确，更能表现你的意图。常用子类包括OutputStreamWriter，CharArrayWriter，FileWriter等。Writer的write(int c)方法，会将传入参数的低16位写入到Writer中，忽略高16位的数据。
 
 **整合Writer和OutputStream**
 
 与Reader和InputStream类似，一个Writer可以和一个OutputStream相结合。把OutputStream包装到OutputStreamWriter中，所有写入到OutputStreamWriter的字符都将会传递给OutputStream。这是一个OutputStreamWriter的例子：
-
-    Writer writer = new OutputStreamWriter(outputStream);
-
+````
+Writer writer = new OutputStreamWriter(outputStream);
+````
 ### IO管道
 
 Java IO中的管道为运行在同一个JVM中的两个线程提供了通信的能力。所以管道也可以作为数据源以及目标媒介。
@@ -258,37 +250,38 @@ Java IO中的管道为运行在同一个JVM中的两个线程提供了通信的�
 
 Java IO管道示例
 这是一个如何将PipedInputStream和PipedOutputStream关联起来的简单例子：
-
-    //使用管道来完成两个线程间的数据点对点传递
-        @Test
-        public void test2() throws IOException {
-            PipedInputStream pipedInputStream = new PipedInputStream();
-            PipedOutputStream pipedOutputStream = new PipedOutputStream(pipedInputStream);
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        pipedOutputStream.write("hello input".getBytes());
-                        pipedOutputStream.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+````
+//使用管道来完成两个线程间的数据点对点传递
+    @Test
+    public void test2() throws IOException {
+        PipedInputStream pipedInputStream = new PipedInputStream();
+        PipedOutputStream pipedOutputStream = new PipedOutputStream(pipedInputStream);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    pipedOutputStream.write("hello input".getBytes());
+                    pipedOutputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            }).start();
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        byte []arr = new byte[128];
-                        while (pipedInputStream.read(arr) != -1) {
-                            System.out.println(Arrays.toString(arr));
-                        }
-                        pipedInputStream.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+            }
+        }).start();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    byte []arr = new byte[128];
+                    while (pipedInputStream.read(arr) != -1) {
+                        System.out.println(Arrays.toString(arr));
                     }
+                    pipedInputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            }).start();
+            }
+        }).start();
+````
 
 管道和线程
 请记得，当使用两个相关联的管道流时，务必将它们分配给不同的线程。read()方法和write()方法调用时会导致流阻塞，这意味着如果你尝试在一个线程中同时进行读和写，可能会导致线程死锁。
@@ -304,7 +297,7 @@ Java中网络的内容或多或少的超出了Java IO的范畴。关于Java网�
 当两个进程之间建立了网络连接之后，他们通信的方式如同操作文件一样：利用InputStream读取数据，利用OutputStream写入数据。换句话来说，Java网络API用来在不同进程之间建立网络连接，而Java IO则用来在建立了连接之后的进程之间交换数据。
 
 基本上意味着如果你有一份能够对文件进行写入某些数据的代码，那么这些数据也可以很容易地写入到网络连接中去。你所需要做的仅仅只是在代码中利用OutputStream替代FileOutputStream进行数据的写入。因为FileOutputStream是OuputStream的子类，所以这么做并没有什么问题。
-
+````
     //从网络中读取字节流也可以直接使用OutputStream
     public void test3() {
         //读取网络进程的输出流
@@ -318,7 +311,7 @@ Java中网络的内容或多或少的超出了Java IO的范畴。关于Java网�
         //处理网络信息
         //do something with the OutputStream
     }
-
+````
 ### 字节和字符数组
 
 
@@ -330,7 +323,7 @@ Java中网络的内容或多或少的超出了Java IO的范畴。关于Java网�
 
 前面的例子中，字符数组或字节数组是用来缓存数据的临时存储空间，不过它们同时也可以作为数据来源或者写入目的地。
 举个例子：
-
+````
     //字符数组和字节数组在io过程中的作用
         public void test4() {
             //arr和brr分别作为数据源
@@ -339,7 +332,7 @@ Java中网络的内容或多或少的超出了Java IO的范畴。关于Java网�
             byte []brr = {1,2,3,4,5};
             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(brr);
         }
-
+````
 ### System.in, System.out, System.err    
 
 System.in, System.out, System.err这3个流同样是常见的数据来源和数据流目的地。使用最多的可能是在控制台程序里利用System.out将输出打印到控制台上。
@@ -358,7 +351,7 @@ JVM启动的时候通过Java运行时初始化这3个流，所以你不需要初
 
 System.out和System.err的简单例子：
 这是一个System.out和System.err结合使用的简单示例：
-
+````
      //测试System.in, System.out, System.err    
         public static void main(String[] args) {
             int in = new Scanner(System.in).nextInt();
@@ -370,7 +363,7 @@ System.out和System.err的简单例子：
     //        10
     //        out
         }
-
+````
 
 ### 字符流的Buffered和Filter
 
@@ -436,8 +429,6 @@ Filter Stream是一种IO流主要作用是用来对存在的流增加一些额�
 ### 有哪些可用的Filter流？
 
 在java.io包中主要由4个可用的filter Stream。两个字节filter stream，两个字符filter stream. 分别是FilterInputStream, FilterOutputStream, FilterReader and FilterWriter.这些类是抽象类，不能被实例化的。
-
-
 
 ### 在文件拷贝的时候，那一种流可用提升更多的性能？
 在字节流的时候，使用BufferedInputStream和BufferedOutputStream。

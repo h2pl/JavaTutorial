@@ -31,15 +31,6 @@
   * [微信公众号](#微信公众号)
     * [Java技术江湖](#java技术江湖)
     * [个人公众号：黄小斜](#个人公众号：黄小斜)
----
-title: 夯实Java基础系列20：从IDE的实现原理聊起，谈谈那些年我们用过的Java命令
-date: 2019-9-20 15:56:26 # 文章生成时间，一般不改
-categories:
-    - Java技术江湖
-    - Java基础
-tags:
-    - Java命令行
----
 
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看
 > https://github.com/h2pl/Java-Tutorial
@@ -81,119 +72,119 @@ java提供了JavaCompiler，我们可以通过它来编译java源文件为class�
 通过上面一个查找class，得到Class对象后，可以通过newInstance()或构造器的newInstance()得到对象。然后得到Method，最后调用方法，传入相关参数即可。
 
 示例代码：
+````
+public class MyIDE {
 
-    public class MyIDE {
-    
-        public static void main(String[] args) throws IOException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-            // 定义java代码，并保存到文件（Test.java）
-            StringBuilder sb = new StringBuilder();
-            sb.append("package com.tommy.core.test.reflect;\n");
-            sb.append("public class Test {\n");
-            sb.append("    private String name;\n");
-            sb.append("    public Test(String name){\n");
-            sb.append("        this.name = name;\n");
-            sb.append("        System.out.println(\"hello,my name is \" + name);\n");
-            sb.append("    }\n");
-            sb.append("    public String sayHello(String name) {\n");
-            sb.append("        return \"hello,\" + name;\n");
-            sb.append("    }\n");
-            sb.append("}\n");
-    
-            System.out.println(sb.toString());
-    
-            String baseOutputDir = "F:\\output\\classes\\";
-            String baseDir = baseOutputDir + "com\\tommy\\core\\test\\reflect\\";
-            String targetJavaOutputPath = baseDir + "Test.java";
-            // 保存为java文件
-            FileWriter fileWriter = new FileWriter(targetJavaOutputPath);
-            fileWriter.write(sb.toString());
-            fileWriter.flush();
-            fileWriter.close();
-    
-            // 编译为class文件
-            JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-            StandardJavaFileManager manager = compiler.getStandardFileManager(null,null,null);
-            List<File> files = new ArrayList<>();
-            files.add(new File(targetJavaOutputPath));
-            Iterable compilationUnits = manager.getJavaFileObjectsFromFiles(files);
-    
-            // 编译
-            // 设置编译选项，配置class文件输出路径
-            Iterable<String> options = Arrays.asList("-d",baseOutputDir);
-            JavaCompiler.CompilationTask task = compiler.getTask(null, manager, null, options, null, compilationUnits);
-            // 执行编译任务
-            task.call();
+    public static void main(String[] args) throws IOException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+        // 定义java代码，并保存到文件（Test.java）
+        StringBuilder sb = new StringBuilder();
+        sb.append("package com.tommy.core.test.reflect;\n");
+        sb.append("public class Test {\n");
+        sb.append("    private String name;\n");
+        sb.append("    public Test(String name){\n");
+        sb.append("        this.name = name;\n");
+        sb.append("        System.out.println(\"hello,my name is \" + name);\n");
+        sb.append("    }\n");
+        sb.append("    public String sayHello(String name) {\n");
+        sb.append("        return \"hello,\" + name;\n");
+        sb.append("    }\n");
+        sb.append("}\n");
+
+        System.out.println(sb.toString());
+
+        String baseOutputDir = "F:\\output\\classes\\";
+        String baseDir = baseOutputDir + "com\\tommy\\core\\test\\reflect\\";
+        String targetJavaOutputPath = baseDir + "Test.java";
+        // 保存为java文件
+        FileWriter fileWriter = new FileWriter(targetJavaOutputPath);
+        fileWriter.write(sb.toString());
+        fileWriter.flush();
+        fileWriter.close();
+
+        // 编译为class文件
+        JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+        StandardJavaFileManager manager = compiler.getStandardFileManager(null,null,null);
+        List<File> files = new ArrayList<>();
+        files.add(new File(targetJavaOutputPath));
+        Iterable compilationUnits = manager.getJavaFileObjectsFromFiles(files);
+
+        // 编译
+        // 设置编译选项，配置class文件输出路径
+        Iterable<String> options = Arrays.asList("-d",baseOutputDir);
+        JavaCompiler.CompilationTask task = compiler.getTask(null, manager, null, options, null, compilationUnits);
+        // 执行编译任务
+        task.call();
 
 
-​    
-​            // 通过反射得到对象
-​    //        Class clazz = Class.forName("com.tommy.core.test.reflect.Test");
-​            // 使用自定义的类加载器加载class
-​            Class clazz = new MyClassLoader(baseOutputDir).loadClass("com.tommy.core.test.reflect.Test");
-​            // 得到构造器
-​            Constructor constructor = clazz.getConstructor(String.class);
-​            // 通过构造器new一个对象
-​            Object test = constructor.newInstance("jack.tsing");
-​            // 得到sayHello方法
-​            Method method = clazz.getMethod("sayHello", String.class);
-​            // 调用sayHello方法
-​            String result = (String) method.invoke(test, "jack.ma");
-​            System.out.println(result);
-​        }
-​    }
-
+   
+        // 通过反射得到对象
+//        Class clazz = Class.forName("com.tommy.core.test.reflect.Test");
+        // 使用自定义的类加载器加载class
+        Class clazz = new MyClassLoader(baseOutputDir).loadClass("com.tommy.core.test.reflect.Test");
+        // 得到构造器
+        Constructor constructor = clazz.getConstructor(String.class);
+        // 通过构造器new一个对象
+        Object test = constructor.newInstance("jack.tsing");
+        // 得到sayHello方法
+        Method method = clazz.getMethod("sayHello", String.class);
+        // 调用sayHello方法
+        String result = (String) method.invoke(test, "jack.ma");
+        System.out.println(result);
+    }
+}
+````
 自定义类加载器代码：
 
-
-​    
-​    public class MyClassLoader extends ClassLoader {
-​        private String baseDir;
-​        public MyClassLoader(String baseDir) {
-​            this.baseDir = baseDir;
-​        }
-​        @Override
-​        protected Class<?> findClass(String name) throws ClassNotFoundException {
-​            String fullClassFilePath = this.baseDir + name.replace("\\.","/") + ".class";
-​            File classFilePath = new File(fullClassFilePath);
-​            if (classFilePath.exists()) {
-​                FileInputStream fileInputStream = null;
-​                ByteArrayOutputStream byteArrayOutputStream = null;
-​                try {
-​                    fileInputStream = new FileInputStream(classFilePath);
-​                    byte[] data = new byte[1024];
-​                    int len = -1;
-​                    byteArrayOutputStream = new ByteArrayOutputStream();
-​                    while ((len = fileInputStream.read(data)) != -1) {
-​                        byteArrayOutputStream.write(data,0,len);
-​                    }
-​    
-                    return defineClass(name,byteArrayOutputStream.toByteArray(),0,byteArrayOutputStream.size());
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } finally {
-                    if (null != fileInputStream) {
-                        try {
-                            fileInputStream.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
+````
     
-                    if (null != byteArrayOutputStream) {
-                        try {
-                            byteArrayOutputStream.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+public class MyClassLoader extends ClassLoader {
+    private String baseDir;
+    public MyClassLoader(String baseDir) {
+        this.baseDir = baseDir;
+    }
+    @Override
+    protected Class<?> findClass(String name) throws ClassNotFoundException {
+        String fullClassFilePath = this.baseDir + name.replace("\\.","/") + ".class";
+        File classFilePath = new File(fullClassFilePath);
+        if (classFilePath.exists()) {
+            FileInputStream fileInputStream = null;
+            ByteArrayOutputStream byteArrayOutputStream = null;
+            try {
+                fileInputStream = new FileInputStream(classFilePath);
+                byte[] data = new byte[1024];
+                int len = -1;
+                byteArrayOutputStream = new ByteArrayOutputStream();
+                while ((len = fileInputStream.read(data)) != -1) {
+                    byteArrayOutputStream.write(data,0,len);
+                }
+
+                return defineClass(name,byteArrayOutputStream.toByteArray(),0,byteArrayOutputStream.size());
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (null != fileInputStream) {
+                    try {
+                        fileInputStream.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                if (null != byteArrayOutputStream) {
+                    try {
+                        byteArrayOutputStream.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
                 }
             }
-            return super.findClass(name);
         }
-    }    
-
+        return super.findClass(name);
+    }
+}    
+````
 ## javac命令初窥
 
 注：以下红色标记的参数在下文中有所讲解。
@@ -316,7 +307,7 @@ javac：如果当前你要编译的java文件中引用了其它的类(比如说�
 > 这里展示一个web项目的.classpath
 
 Xml代码
-
+````
     <?xml version="1.0" encoding="UTF-8"?>
     <classpath>
     <classpathentry kind="src" path="src"/>
@@ -328,7 +319,7 @@ Xml代码
          ……
     <classpathentry kind="output" path="webapp/WEB-INF/classes"/>
     </classpath>
-
+````
 > XML文档包含一个根元素，就是classpath，类路径，那么这里面包含了什么信息呢？子元素是classpathentry，kind属性区别了种 类信息，src源码，con你看看后面的path就知道是JRE容器的信息。lib是项目依赖的第三方类库，output是src编译后的位置。
 
 > 既然是web项目，那么就是WEB-INF/classes目录，可能用MyEclipse的同学会说他们那里是WebRoot或者是WebContext而不是webapp，有区别么？回答：完全没有！
@@ -393,26 +384,26 @@ Xml代码
 举个例子，
 
 
-
-    public class A
-    {
-        public static void main(String[] args) {
-            B b = new B();
-            b.print();
-        }
+````
+public class A
+{
+    public static void main(String[] args) {
+        B b = new B();
+        b.print();
     }
+}
 
 
-​    
-​    
-​    public class B
-​    {
-​        public void print()
-​        {
-​            System.out.println("old");
-​        }
-​    }
 
+
+public class B
+{
+    public void print()
+    {
+        System.out.println("old");
+    }
+}
+````
 
 目录结构如下：
 
@@ -451,19 +442,19 @@ sourcepath          //此处为当前目录
 这里我用来实现一下这个功能，假设项目名称为project，此目录为当前目录，且在src/com目录中有一个Main.java文件。‘
 
 
-​    
-​    package com;
-​    public class Main
-​    {
-​        public static void main(String[] args) {
-​            System.out.println("Hello");
-​        }
-​    }
+````  
+    package com;
+    public class Main
+    {
+        public static void main(String[] args) {
+            System.out.println("Hello");
+        }
+    }
 
 
-​    
-​    
-​    javac -d bin src/com/Main.java
+````    
+    
+javac -d bin src/com/Main.java
 
 上面的语句将Main.class生成在bin/com目录下。
 
@@ -472,23 +463,23 @@ sourcepath          //此处为当前目录
 •如果有文件为A.java（其中有类A），且在类A中使用了类B，类B在B.java中，则编译A.java时，默认会自动编译B.java，且生成B.class。
 •implicit:none：不自动生成隐式引用的类文件。
 •implicit:class（默认）：自动生成隐式引用的类文件。
-
-    public class A
-    {
-        public static void main(String[] args) {
-            B b = new B();
-        }
+````
+public class A
+{
+    public static void main(String[] args) {
+        B b = new B();
     }
-    
-    public class B
-    {
-    }
-    
-    如果使用：
+}
+
+public class B
+{
+}
+````
+如果使用：
 
 
-​    
-​     javac -implicit:none A.java
+    
+javac -implicit:none A.java
 
 则不会生成 B.class。
 
@@ -578,18 +569,18 @@ src/com/yp/test/HelloWorld.java
 build/
 
 
-```
+````
 ├─build
 └─src
     └─com
         └─yp
             └─test
                     HelloWorld.java
-```
+````
 
 
 java文件非常简单
-
+````
     package com.yp.test;
     public class HelloWorld {
     
@@ -597,12 +588,14 @@ java文件非常简单
             System.out.println("helloWorld");
         }
     }
+````
+
 编译:
 javac src/com/yp/test/HelloWorld.java -d build
 
 -d 表示编译到 build文件夹下
 
-```
+````
 查看build文件夹
 ├─build
 │  └─com
@@ -615,10 +608,11 @@ javac src/com/yp/test/HelloWorld.java -d build
         └─yp
             └─test
                     HelloWorld.java
-```
+````
 
 
 运行文件
+
 > E:\codeplace\n_learn\java\javacmd> java com/yp/test/HelloWorld.class
 > 错误: 找不到或无法加载主类 build.com.yp.test.HelloWorld.class
 >
@@ -677,27 +671,28 @@ javac src/com/yp/test/HelloWorld.java -d build
 
 先下一个jar包 这里直接下 log4j 
     
-    * main函数改成
-    
-    import com.yp.test.entity.Cat;
-    import org.apache.log4j.Logger;
-    
-    public class HelloWorld {
-    
-        static Logger log = Logger.getLogger(HelloWorld.class);
-    
-        public static void main(String[] args) {
-            Cat c = new Cat("keyboard");
-            log.info("这是log4j");
-            System.out.println("hello," + c.getName());
-        }
-    
+* main函数改成
+
+````    
+import com.yp.test.entity.Cat;
+import org.apache.log4j.Logger;
+
+public class HelloWorld {
+
+    static Logger log = Logger.getLogger(HelloWorld.class);
+
+    public static void main(String[] args) {
+        Cat c = new Cat("keyboard");
+        log.info("这是log4j");
+        System.out.println("hello," + c.getName());
     }
 
+}
+````
 现的文件是这样的
 
 
-```
+````
 ├─build
 ├─lib
 │      log4j-1.2.17.jar
@@ -710,8 +705,7 @@ javac src/com/yp/test/HelloWorld.java -d build
                 │
                 └─entity
                         Cat.java
-```
-
+````
 
     这个时候 javac命令要接上 -cp ./lib/*.jar
     E:\codeplace\n_learn\java\javacmd>javac -encoding "utf8" src/com/yp/test/HelloWorld.java -sourcepath src -d build -g -cp ./lib/*.jar
@@ -729,21 +723,22 @@ javac src/com/yp/test/HelloWorld.java -d build
 
 由于没有 log4j的配置文件，所以提示上面的问题,往 build 里面加上 log4j.xml
 
-    <?xml version="1.0" encoding="UTF-8" ?>
-    <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
-    <log4j:configuration xmlns:log4j='http://jakarta.apache.org/log4j/'>
-        <appender name="stdout" class="org.apache.log4j.ConsoleAppender">
-            <layout class="org.apache.log4j.PatternLayout">
-                <param name="ConversionPattern" value="%d{ABSOLUTE} %-5p [%c{1}] %m%n" />
-            </layout>
-        </appender>
-    
-        <root>
-            <level value="info" />
-            <appender-ref ref="stdout" />
-        </root>
-    </log4j:configuration>
+````
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j='http://jakarta.apache.org/log4j/'>
+    <appender name="stdout" class="org.apache.log4j.ConsoleAppender">
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{ABSOLUTE} %-5p [%c{1}] %m%n" />
+        </layout>
+    </appender>
 
+    <root>
+        <level value="info" />
+        <appender-ref ref="stdout" />
+    </root>
+</log4j:configuration>
+````
 再运行
 
     E:\codeplace\n_learn\java\javacmd>java -cp lib/log4j-1.2.17.jar;build com.yp.tes t.HelloWorld
@@ -757,7 +752,7 @@ ok 一个简单的java 工程就运行完了
 但是  貌似有些繁琐,  需要手动键入 java文件 以及相应的jar包 很是麻烦,
 so 可以用 shell 来脚本来简化相关操作 
 shell 文件整理如下:
-
+````
     #!/bin/bash  
     echo "build start"  
       
@@ -788,6 +783,7 @@ shell 文件整理如下:
       
     #运行 通过-cp指定所有的引用jar包，指定入口函数运行
     java -cp $BIN_PATH$jarfile com.zuiapps.danmaku.server.Main  
+````
 
 > 有一点需要注意的是,  javac -d $BIN_PATH/ -cp $jarfile @$SRC_FILE_LIST_PATH
 > 在要编译的文件很多时候，一个个敲命令会显得很长，也不方便修改，
@@ -805,7 +801,7 @@ shell 文件整理如下:
        1.需要吧 编译时设置的bin目录和 所有jar包加入到 classpath 中去
 
 
-​    
+    
 ## javap 的使用
 
 > javap是jdk自带的一个工具，可以对代码反编译，也可以查看java编译器生成的字节码。
@@ -815,37 +811,37 @@ shell 文件整理如下:
 > 
 >
 > javap命令分解一个class文件，它根据options来决定到底输出什么。如果没有使用options,那么javap将会输出包，类里的protected和public域以及类里的所有方法。javap将会把它们输出在标准输出上。来看这个例子，先编译(javac)下面这个类。
-
-    import java.awt.*;
-    import java.applet.*;
-     
-    public class DocFooter extends Applet {
-            String date;
-            String email;
-     
-            public void init() {
-                    resize(500,100);
-                    date = getParameter("LAST_UPDATED");
-                    email = getParameter("EMAIL");
-            }
-    }
-
+````
+import java.awt.*;
+import java.applet.*;
+ 
+public class DocFooter extends Applet {
+        String date;
+        String email;
+ 
+        public void init() {
+                resize(500,100);
+                date = getParameter("LAST_UPDATED");
+                email = getParameter("EMAIL");
+        }
+}
+````
 在命令行上键入javap DocFooter后，输出结果如下
 
 
 Compiled from "DocFooter.java"
-
-    public class DocFooter extends java.applet.Applet {
-      java.lang.String date;
-      java.lang.String email;
-      public DocFooter();
-      public void init();
-    }
-
+````
+public class DocFooter extends java.applet.Applet {
+  java.lang.String date;
+  java.lang.String email;
+  public DocFooter();
+  public void init();
+}
+````
 如果加入了-c，即javap -c DocFooter，那么输出结果如下
 
 Compiled from "DocFooter.java"
-
+````
     public class DocFooter extends java.applet.Applet {
       java.lang.String date;
      
@@ -876,6 +872,7 @@ Compiled from "DocFooter.java"
           29: return       
     
     }
+````
 上面输出的内容就是字节码。
 
 用法摘要

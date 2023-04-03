@@ -26,18 +26,6 @@
     * [Java技术江湖](#java技术江湖)
     * [个人公众号：黄小斜](#个人公众号：黄小斜)
 
-
----
-title: 夯实Java基础系列15：Java注解简介和最佳实践
-date: 2019-9-15 15:56:26 # 文章生成时间，一般不改
-categories:
-    - Java技术江湖
-    - Java基础
-tags:
-    - annotation
-    - Java注解
----
-
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看
 > https://github.com/h2pl/Java-Tutorial
 
@@ -73,9 +61,7 @@ Annotation 中文译过来就是注解、标释的意思，在 Java 中注解是
 
 并且，往抽象地说，标签并不一定是一张纸，它可以是对人和事物的属性评价。也就是说，标签具备对于抽象事物的解释。
 
-![](https://img-blog.csdn.net/20170627213419176?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYnJpYmx1ZQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)
-
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230403213103.png)
 
 所以，基于如此，我完成了自我的知识认知升级，我决定用标签来解释注解。
 
@@ -166,8 +152,8 @@ java.lang.annotation提供了四种元注解，专门注解其他的注解（在
 JDK 内置注解
 先来看几个 Java 内置的注解，让大家热热身。
 
-   @Override 演示
-
+@Override 演示
+````
     class Parent {
         public void run() {
         }
@@ -182,7 +168,9 @@ JDK 内置注解
         public void run() {
         }
     }
+````
 @Deprecated 演示
+````
 class Parent {
 
     /**
@@ -201,7 +189,9 @@ class Parent {
             parent.run(); // 在编译器中此方法会显示过时标志
         }
     }
+````
 @SuppressWarnings 演示
+````
 class Parent {
 
     // 因为定义的 name 没有使用，那么编译器就会有警告，这时候使用此注解可以屏蔽掉警告
@@ -209,8 +199,10 @@ class Parent {
     @SuppressWarnings("all")
     private String name;
     }
-
+````
 @FunctionalInterface 演示
+
+````
 /**
  * 此注解是 Java8 提出的函数式接口，接口中只允许有一个抽象方法
  * 加上这个注解之后，类中多一个抽象方法或者少一个抽象方法都会报错
@@ -219,7 +211,7 @@ class Parent {
 interface Func {
     void run();
 }
-
+````
 
 ## 注解处理器实战
 
@@ -230,27 +222,30 @@ interface Func {
 我们先来了解下如何通过在运行时使用反射获取在程序中的使用的注解信息。如下类注解和方法注解。
 
 类注解
-    Class aClass = ApiController.class;
-    Annotation[] annotations = aClass.getAnnotations();
-    
-    for(Annotation annotation : annotations) {
-        if(annotation instanceof ApiAuthAnnotation) {
-            ApiAuthAnnotation apiAuthAnnotation = (ApiAuthAnnotation) annotation;
-            System.out.println("name: " + apiAuthAnnotation.name());
-            System.out.println("age: " + apiAuthAnnotation.age());
-        }
+
+````
+Class aClass = ApiController.class;
+Annotation[] annotations = aClass.getAnnotations();
+
+for(Annotation annotation : annotations) {
+    if(annotation instanceof ApiAuthAnnotation) {
+        ApiAuthAnnotation apiAuthAnnotation = (ApiAuthAnnotation) annotation;
+        System.out.println("name: " + apiAuthAnnotation.name());
+        System.out.println("age: " + apiAuthAnnotation.age());
     }
-    方法注解
-    Method method = ... //通过反射获取方法对象
-    Annotation[] annotations = method.getDeclaredAnnotations();
-    
-    for(Annotation annotation : annotations) {
-        if(annotation instanceof ApiAuthAnnotation) {
-            ApiAuthAnnotation apiAuthAnnotation = (ApiAuthAnnotation) annotation;
-            System.out.println("name: " + apiAuthAnnotation.name());
-            System.out.println("age: " + apiAuthAnnotation.age());
-        }
-    }   
+}
+方法注解
+Method method = ... //通过反射获取方法对象
+Annotation[] annotations = method.getDeclaredAnnotations();
+
+for(Annotation annotation : annotations) {
+    if(annotation instanceof ApiAuthAnnotation) {
+        ApiAuthAnnotation apiAuthAnnotation = (ApiAuthAnnotation) annotation;
+        System.out.println("name: " + apiAuthAnnotation.name());
+        System.out.println("age: " + apiAuthAnnotation.age());
+    }
+}   
+````
 此部分内容可参考: 通过反射获取注解信息
 
 注解处理器实战
@@ -260,33 +255,33 @@ interface Func {
 接下来要做的事情: 写一个切面，拦截浏览器访问带注解的接口，取出注解信息，判断年龄来确定是否可以继续访问。
 
 在 dispatcher-servlet.xml 文件中定义 aop 切面
-
-    <aop:config>
-        <!--定义切点，切的是我们自定义的注解-->
-        <aop:pointcut id="apiAuthAnnotation" expression="@annotation(cn.caijiajia.devops.aspect.ApiAuthAnnotation)"/>
-        <!--定义切面，切点是 apiAuthAnnotation，切面类即注解处理器是 apiAuthAspect，主处理逻辑在方法名为 auth 的方法中-->
-        <aop:aspect ref="apiAuthAspect">
-            <aop:around method="auth" pointcut-ref="apiAuthAnnotation"/>
-        </aop:aspect>
-    </aop:config>
+````
+<aop:config>
+    <!--定义切点，切的是我们自定义的注解-->
+    <aop:pointcut id="apiAuthAnnotation" expression="@annotation(cn.caijiajia.devops.aspect.ApiAuthAnnotation)"/>
+    <!--定义切面，切点是 apiAuthAnnotation，切面类即注解处理器是 apiAuthAspect，主处理逻辑在方法名为 auth 的方法中-->
+    <aop:aspect ref="apiAuthAspect">
+        <aop:around method="auth" pointcut-ref="apiAuthAnnotation"/>
+    </aop:aspect>
+</aop:config>
+````
 切面类处理逻辑即注解处理器代码如
+````
+@Component("apiAuthAspect")
+public class ApiAuthAspect {
 
-    @Component("apiAuthAspect")
-    public class ApiAuthAspect {
-    
-        public Object auth(ProceedingJoinPoint pjp) throws Throwable {
-            Method method = ((MethodSignature) pjp.getSignature()).getMethod();
-            ApiAuthAnnotation apiAuthAnnotation = method.getAnnotation(ApiAuthAnnotation.class);
-            Integer age = apiAuthAnnotation.age();
-            if (age > 18) {
-                return pjp.proceed();
-            } else {
-                throw new RuntimeException("你未满18岁，禁止访问");
-            }
+    public Object auth(ProceedingJoinPoint pjp) throws Throwable {
+        Method method = ((MethodSignature) pjp.getSignature()).getMethod();
+        ApiAuthAnnotation apiAuthAnnotation = method.getAnnotation(ApiAuthAnnotation.class);
+        Integer age = apiAuthAnnotation.age();
+        if (age > 18) {
+            return pjp.proceed();
+        } else {
+            throw new RuntimeException("你未满18岁，禁止访问");
         }
     }
-
-
+}
+````
 
 ## 不同类型的注解
 
@@ -295,7 +290,7 @@ interface Func {
 你可以在运行期访问类，方法或者变量的注解信息，下是一个访问类注解的例子：
 
 ```
- Class aClass = TheClass.class;
+Class aClass = TheClass.class;
 Annotation[] annotations = aClass.getAnnotations();
 
 for(Annotation annotation : annotations){
