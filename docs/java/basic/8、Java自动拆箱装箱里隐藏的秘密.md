@@ -18,10 +18,6 @@
     * [Java技术江湖](#java技术江湖)
     * [个人公众号：黄小斜](#个人公众号：黄小斜)
 
-
-    - Java基本数据类型
----
-
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看
 > https://github.com/h2pl/Java-Tutorial
 
@@ -148,13 +144,13 @@ float fn = Float.MIN_VALUE;
 //64位
 double dx = Double.MAX_VALUE;
 double dn = Double.MIN_VALUE;
-//16位
-char cx = Character.MAX_VALUE;
-char cn = Character.MIN_VALUE;
 //1位
 boolean bt = Boolean.TRUE;
 boolean bf = Boolean.FALSE;
 ```
+
+```
+打印它们的结果可以得到
 
 `127`
 `-128`
@@ -168,10 +164,9 @@ boolean bf = Boolean.FALSE;
 `1.4E-45`
 `1.7976931348623157E308`
 `4.9E-324`
-`￿`
-
 `true`
 `false`
+```
 
 ### 引用类型
 
@@ -203,23 +198,23 @@ char a = 'A'
 ## 自动拆箱和装箱（详解）
 
 Java 5增加了自动装箱与自动拆箱机制，方便基本类型与包装类型的相互转换操作。在Java 5之前，如果要将一个int型的值转换成对应的包装器类型Integer，必须显式的使用new创建一个新的Integer对象，或者调用静态方法Integer.valueOf()。
-
+````
 //在Java 5之前，只能这样做
 Integer value = new Integer(10);
 //或者这样做
 Integer value = Integer.valueOf(10);
 //直接赋值是错误的
 //Integer value = 10;`
-
+````
 在Java 5中，可以直接将整型赋给Integer对象，由编译器来完成从int型到Integer类型的转换，这就叫自动装箱。
-
-`//在Java 5中，直接赋值是合法的，由编译器来完成转换`
-`Integer value = 10;`
-`与此对应的，自动拆箱就是可以将包装类型转换为基本类型，具体的转换工作由编译器来完成。`
-`//在Java 5 中可以直接这么做`
-`Integer value = new Integer(10);`
-`int i = value;`
-
+````
+//在Java 5中，直接赋值是合法的，由编译器来完成转换
+Integer value = 10;
+与此对应的，自动拆箱就是可以将包装类型转换为基本类型，具体的转换工作由编译器来完成。
+//在Java 5 中可以直接这么做
+Integer value = new Integer(10);
+int i = value;
+````
 自动装箱与自动拆箱为程序员提供了很大的方便，而在实际的应用中，自动装箱与拆箱也是使用最广泛的特性之一。自动装箱和自动拆箱其实是Java编译器提供的一颗语法糖（语法糖是指在计算机语言中添加的某种语法，这种语法对语言的功能并没有影响，但是更方便程序员使用。通过可提高开发效率，增加代码可读性，增加代码的安全性）。
 
 ###  简易实现
@@ -231,6 +226,7 @@ Integer value = Integer.valueOf(10);
 实例方法xxxValue()：将具体的包装类型对象转换成基本类型；
 下面我们以int和Integer为例，说明Java中自动装箱与自动拆箱的实现机制。看如下代码：
 
+````
 class Auto //code1
 {
 	public static void main(String[] args) 
@@ -246,7 +242,10 @@ class Auto //code1
 		
 	}
 }
+````
+
 上面的代码先将int型转为Integer对象，再讲Integer对象转换为int型，毫无疑问，这是可以正确运行的。可是，这种转换是怎么进行的呢？使用反编译工具，将生成的Class文件在反编译为Java文件，让我们看看发生了什么：
+````
 class Auto//code2
 {
   public static void main(String[] paramArrayOfString)
@@ -254,17 +253,11 @@ class Auto//code2
     Integer localInteger = Integer.valueOf(10);
     
     int i = localInteger.intValue();
-
- 
-
-
-
-
-
     Double localDouble = Double.valueOf(12.4D);
     double d = localDouble.doubleValue();
   }
 }
+````
 我们可以看到经过javac编译之后，code1的代码被转换成了code2，实际运行时，虚拟机运行的就是code2的代码。也就是说，虚拟机根本不知道有自动拆箱和自动装箱这回事；在将Java源文件编译为class文件的过程中，javac编译器在自动装箱的时候，调用了Integer.valueOf()方法，在自动拆箱时，又调用了intValue()方法。我们可以看到，double和Double也是如此。
 实现总结：其实自动装箱和自动封箱是编译器为我们提供的一颗语法糖。在自动装箱时，编译器调用包装类型的valueOf()方法；在自动拆箱时，编译器调用了相应的xxxValue()方法。
 
@@ -274,128 +267,132 @@ class Auto//code2
 
 Integer源码
 
+````
 public final class Integer extends Number implements Comparable<Integer> {
-	private final int value;
-	
-	/*Integer的构造方法，接受一个整型参数,Integer对象表示的int值，保存在value中*/
-	 public Integer(int value) {
-	        this.value = value;
-	 }
-	 
-	/*equals()方法判断的是:所代表的int型的值是否相等*/
-	 public boolean equals(Object obj) {
-	        if (obj instanceof Integer) {
-	            return value == ((Integer)obj).intValue();
-	        }
-	        return false;
-	}
-	 
-	/*返回这个Integer对象代表的int值，也就是保存在value中的值*/
-	 public int intValue() {
-	        return value;
-	 }
-	 
-	 /**
-	  * 首先会判断i是否在[IntegerCache.low,Integer.high]之间
-	  * 如果是，直接返回Integer.cache中相应的元素
-	  * 否则，调用构造方法，创建一个新的Integer对象
-	  */
-	 public static Integer valueOf(int i) {
-	    assert IntegerCache.high >= 127;
-	    if (i >= IntegerCache.low && i <= IntegerCache.high)
-	        return IntegerCache.cache[i + (-IntegerCache.low)];
-	    return new Integer(i);
-	 }
-	
-	/**
-	  * 静态内部类，缓存了从[low,high]对应的Integer对象
-	  * low -128这个值不会被改变
-	  * high 默认是127，可以改变，最大不超过：Integer.MAX_VALUE - (-low) -1
-	  * cache 保存从[low,high]对象的Integer对象
-	 */
-	 private static class IntegerCache {
-	    static final int low = -128;
-	    static final int high;
-	    static final Integer cache[];
-	 
-	    static {
-	        // high value may be configured by property
-	        int h = 127;
-	        String integerCacheHighPropValue =
-	            sun.misc.VM.getSavedProperty("java.lang.Integer.IntegerCache.high");
-	        if (integerCacheHighPropValue != null) {
-	            int i = parseInt(integerCacheHighPropValue);
-	            i = Math.max(i, 127);
-	            // Maximum array size is Integer.MAX_VALUE
-	            h = Math.min(i, Integer.MAX_VALUE - (-low) -1);
-	        }
-	        high = h;
-	 
-	        cache = new Integer[(high - low) + 1];
-	        int j = low;
-	        for(int k = 0; k < cache.length; k++)
-	            cache[k] = new Integer(j++);
-	    }
-	 
-	    private IntegerCache() {}
-	}
+    private final int value;
+    
+    /*Integer的构造方法，接受一个整型参数,Integer对象表示的int值，保存在value中*/
+     public Integer(int value) {
+            this.value = value;
+     }
+     
+    /*equals()方法判断的是:所代表的int型的值是否相等*/
+     public boolean equals(Object obj) {
+            if (obj instanceof Integer) {
+                return value == ((Integer)obj).intValue();
+            }
+            return false;
+    }
+     
+    /*返回这个Integer对象代表的int值，也就是保存在value中的值*/
+     public int intValue() {
+            return value;
+     }
+     
+     /**
+      * 首先会判断i是否在[IntegerCache.low,Integer.high]之间
+      * 如果是，直接返回Integer.cache中相应的元素
+      * 否则，调用构造方法，创建一个新的Integer对象
+      */
+     public static Integer valueOf(int i) {
+        assert IntegerCache.high >= 127;
+        if (i >= IntegerCache.low && i <= IntegerCache.high)
+            return IntegerCache.cache[i + (-IntegerCache.low)];
+        return new Integer(i);
+     }
+    
+    /**
+      * 静态内部类，缓存了从[low,high]对应的Integer对象
+      * low -128这个值不会被改变
+      * high 默认是127，可以改变，最大不超过：Integer.MAX_VALUE - (-low) -1
+      * cache 保存从[low,high]对象的Integer对象
+     */
+     private static class IntegerCache {
+        static final int low = -128;
+        static final int high;
+        static final Integer cache[];
+     
+        static {
+            // high value may be configured by property
+            int h = 127;
+            String integerCacheHighPropValue =
+                sun.misc.VM.getSavedProperty("java.lang.Integer.IntegerCache.high");
+            if (integerCacheHighPropValue != null) {
+                int i = parseInt(integerCacheHighPropValue);
+                i = Math.max(i, 127);
+                // Maximum array size is Integer.MAX_VALUE
+                h = Math.min(i, Integer.MAX_VALUE - (-low) -1);
+            }
+            high = h;
+     
+            cache = new Integer[(high - low) + 1];
+            int j = low;
+            for(int k = 0; k < cache.length; k++)
+                cache[k] = new Integer(j++);
+        }
+     
+        private IntegerCache() {}
+    }
 }
-以上是Oracle(Sun)公司JDK 1.7中Integer源码的一部分，通过分析上面的代码，得到：
-1）Integer有一个实例域value，它保存了这个Integer所代表的int型的值，且它是final的，也就是说这个Integer对象一经构造完成，它所代表的值就不能再被改变。
-2）Integer重写了equals()方法，它通过比较两个Integer对象的value，来判断是否相等。
-3）重点是静态内部类IntegerCache，通过类名就可以发现：它是用来缓存数据的。它有一个数组，里面保存的是连续的Integer对象。
-   (a) low：代表缓存数据中最小的值，固定是-128。
-   (b) high：代表缓存数据中最大的值，它可以被该改变，默认是127。high最小是127，最大是Integer.MAX_VALUE-(-low)-1，如果high超过了这个值，那么cache[ ]的长度就超过Integer.MAX_VALUE了，也就溢出了。
-   (c) cache[]：里面保存着从[low,high]所对应的Integer对象，长度是high-low+1(因为有元素0，所以要加1)。
-4）调用valueOf(int i)方法时，首先判断i是否在[low,high]之间，如果是，则复用Integer.cache[i-low]。比如，如果Integer.valueOf(3)，直接返回Integer.cache[131]；如果i不在这个范围，则调用构造方法，构造出一个新的Integer对象。
-5）调用intValue()，直接返回value的值。
-通过3）和4）可以发现，默认情况下，在使用自动装箱时，VM会复用[-128,127]之间的Integer对象。
+````
 
-Integer  a1 = 1;
-Integer  a2 = 1;
-Integer  a3 = new Integer(1);
-//会打印true，因为a1和a2是同一个对象,都是Integer.cache[129]
-System.out.println(a1 == a2);
-//false，a3构造了一个新的对象，不同于a1,a2
-System.out.println(a1 == a3);
+    以上是Oracle(Sun)公司JDK 1.7中Integer源码的一部分，通过分析上面的代码，得到：
+    1）Integer有一个实例域value，它保存了这个Integer所代表的int型的值，且它是final的，也就是说这个Integer对象一经构造完成，它所代表的值就不能再被改变。
+    2）Integer重写了equals()方法，它通过比较两个Integer对象的value，来判断是否相等。
+    3）重点是静态内部类IntegerCache，通过类名就可以发现：它是用来缓存数据的。它有一个数组，里面保存的是连续的Integer对象。
+       (a) low：代表缓存数据中最小的值，固定是-128。
+       (b) high：代表缓存数据中最大的值，它可以被该改变，默认是127。high最小是127，最大是Integer.MAX_VALUE-(-low)-1，如果high超过了这个值，那么cache[ ]的长度就超过Integer.MAX_VALUE了，也就溢出了。
+       (c) cache[]：里面保存着从[low,high]所对应的Integer对象，长度是high-low+1(因为有元素0，所以要加1)。
+    4）调用valueOf(int i)方法时，首先判断i是否在[low,high]之间，如果是，则复用Integer.cache[i-low]。比如，如果Integer.valueOf(3)，直接返回Integer.cache[131]；如果i不在这个范围，则调用构造方法，构造出一个新的Integer对象。
+    5）调用intValue()，直接返回value的值。
+    通过3）和4）可以发现，默认情况下，在使用自动装箱时，VM会复用[-128,127]之间的Integer对象。
+    
+    Integer  a1 = 1;
+    Integer  a2 = 1;
+    Integer  a3 = new Integer(1);
+    //会打印true，因为a1和a2是同一个对象,都是Integer.cache[129]
+    System.out.println(a1 == a2);
+    //false，a3构造了一个新的对象，不同于a1,a2
+    System.out.println(a1 == a3);
 
 ### 了解基本类型缓存（常量池）的最佳实践
 
-    //基本数据类型的常量池是-128到127之间。
-    // 在这个范围中的基本数据类的包装类可以自动拆箱，比较时直接比较数值大小。
-    public static void main(String[] args) {
-        //int的自动拆箱和装箱只在-128到127范围中进行，超过该范围的两个integer的 == 判断是会返回false的。
-        Integer a1 = 128;
-        Integer a2 = -128;
-        Integer a3 = -128;
-        Integer a4 = 128;
-        System.out.println(a1 == a4);
-        System.out.println(a2 == a3);
-    
-        Byte b1 = 127;
-        Byte b2 = 127;
-        Byte b3 = -128;
-        Byte b4 = -128;
-        //byte都是相等的，因为范围就在-128到127之间
-        System.out.println(b1 == b2);
-        System.out.println(b3 == b4);
-    
-        //
-        Long c1 = 128L;
-        Long c2 = 128L;
-        Long c3 = -128L;
-        Long c4 = -128L;
-        System.out.println(c1 == c2);
-        System.out.println(c3 == c4);
-    
-        //char没有负值
-        //发现char也是在0到127之间自动拆箱
-        Character d1 = 128;
-        Character d2 = 128;
-        Character d3 = 127;
-        Character d4 = 127;
-        System.out.println(d1 == d2);
-        System.out.println(d3 == d4);
+````
+//基本数据类型的常量池是-128到127之间。
+// 在这个范围中的基本数据类的包装类可以自动拆箱，比较时直接比较数值大小。
+public static void main(String[] args) {
+
+//int的自动拆箱和装箱只在-128到127范围中进行，超过该范围的两个integer的 == 判断是会返回false的。
+Integer a1 = 128;
+Integer a2 = -128;
+Integer a3 = -128;
+Integer a4 = 128;
+System.out.println(a1 == a4);
+System.out.println(a2 == a3);
+
+Byte b1 = 127;
+Byte b2 = 127;
+Byte b3 = -128;
+Byte b4 = -128;
+//byte都是相等的，因为范围就在-128到127之间
+System.out.println(b1 == b2);
+System.out.println(b3 == b4);
+
+Long c1 = 128L;
+Long c2 = 128L;
+Long c3 = -128L;
+Long c4 = -128L;
+System.out.println(c1 == c2);
+System.out.println(c3 == c4);
+
+//char没有负值
+//发现char也是在0到127之间自动拆箱
+Character d1 = 128;
+Character d2 = 128;
+Character d3 = 127;
+Character d4 = 127;
+System.out.println(d1 == d2);
+System.out.println(d3 == d4);
 
 `结果`
 
@@ -409,27 +406,29 @@ System.out.println(a1 == a3);
 `true`
 
 
-        Integer i = 10;
-        Byte b = 10;
-        //比较Byte和Integer.两个对象无法直接比较，报错
-        //System.out.println(i == b);
-        System.out.println("i == b " + i.equals(b));
-        //答案是false,因为包装类的比较时先比较是否是同一个类，不是的话直接返回false.
-        int ii = 128;
-        short ss = 128;
-        long ll = 128;
-        char cc = 128;
-        System.out.println("ii == bb " + (ii == ss));
-        System.out.println("ii == ll " + (ii == ll));
-        System.out.println("ii == cc " + (ii == cc));
-        
-        结果
-        i == b false
-        ii == bb true
-        ii == ll true
-        ii == cc true
-        
-        //这时候都是true，因为基本数据类型直接比较值，值一样就可以。
+Integer i = 10;
+Byte b = 10;
+//比较Byte和Integer.两个对象无法直接比较，报错
+//System.out.println(i == b);
+System.out.println("i == b " + i.equals(b));
+//答案是false,因为包装类的比较时先比较是否是同一个类，不是的话直接返回false.
+
+int ii = 128;
+short ss = 128;
+long ll = 128;
+char cc = 128;
+System.out.println("ii == bb " + (ii == ss));
+System.out.println("ii == ll " + (ii == ll));
+System.out.println("ii == cc " + (ii == cc));
+
+结果
+i == b false
+ii == bb true
+ii == ll true
+ii == cc true
+
+//这时候都是true，因为基本数据类型直接比较值，值一样就可以。
+````
 
 ### 总结：
 
@@ -439,11 +438,9 @@ System.out.println(a1 == a3);
 
 （2）当需要一个基本类型时会自动拆箱，比如int a = new Integer(10);算术运算是在基本类型间进行的，所以当遇到算术运算时会自动拆箱，比如代码中的 c == (a + b);
 
-（3） 包装类型 == 基本类型时，包装类型自动拆箱；
+（3）包装类型 == 基本类型时，包装类型自动拆箱；
 
 需要注意的是：“==”在没遇到算术运算时，不会自动拆箱；基本类型只会自动装箱为对应的包装类型，代码中最后一条说明的内容。
-
-
 
 在JDK 1.5中提供了自动装箱与自动拆箱，这其实是Java 编译器的语法糖，编译器通过调用包装类型的valueOf()方法实现自动装箱，调用xxxValue()方法自动拆箱。自动装箱和拆箱会有一些陷阱，那就是包装类型复用了某些对象。
 
@@ -468,11 +465,13 @@ Boolean没有自动装箱与拆箱，它也复用了Boolean.TRUE和Boolean.FALSE
 上面自动拆箱和装箱的原理其实与常量池有关。
 
 ### 存在栈中：
-public void(int a)
-{
-int i = 1;
-int j = 1;
-}
+
+    public void(int a)
+    {
+    int i = 1;
+    int j = 1;
+    }
+
 方法中的i 存在虚拟机栈的局部变量表里，i是一个引用，j也是一个引用，它们都指向局部变量表里的整型值 1.
 int a是传值引用，所以a也会存在局部变量表。
 
@@ -485,50 +484,53 @@ i是类的成员变量。类实例化的对象存在堆中，所以成员变量�
 
 3 包装类对象怎么存
 其实我们说的常量池也可以叫对象池。
+
 比如String a= new String("a").intern()时会先在常量池找是否有“a"对象如果有的话直接返回“a"对象在常量池的地址，即让引用a指向常量”a"对象的内存地址。
-public native String intern();
 Integer也是同理。
 
 下图是Integer类型在常量池中查找同值对象的方法。
 
-    public static Integer valueOf(int i) {
-        if (i >= IntegerCache.low && i <= IntegerCache.high)
-            return IntegerCache.cache[i + (-IntegerCache.low)];
-        return new Integer(i);
-    }
-    private static class IntegerCache {
-        static final int low = -128;
-        static final int high;
-        static final Integer cache[];
-    
-        static {
-            // high value may be configured by property
-            int h = 127;
-            String integerCacheHighPropValue =
-                sun.misc.VM.getSavedProperty("java.lang.Integer.IntegerCache.high");
-            if (integerCacheHighPropValue != null) {
-                try {
-                    int i = parseInt(integerCacheHighPropValue);
-                    i = Math.max(i, 127);
-                    // Maximum array size is Integer.MAX_VALUE
-                    h = Math.min(i, Integer.MAX_VALUE - (-low) -1);
-                } catch( NumberFormatException nfe) {
-                    // If the property cannot be parsed into an int, ignore it.
-                }
+````
+public static Integer valueOf(int i) {
+    if (i >= IntegerCache.low && i <= IntegerCache.high)
+        return IntegerCache.cache[i + (-IntegerCache.low)];
+    return new Integer(i);
+}
+private static class IntegerCache {
+    static final int low = -128;
+    static final int high;
+    static final Integer cache[];
+
+    static {
+        // high value may be configured by property
+        int h = 127;
+        String integerCacheHighPropValue =
+            sun.misc.VM.getSavedProperty("java.lang.Integer.IntegerCache.high");
+        if (integerCacheHighPropValue != null) {
+            try {
+                int i = parseInt(integerCacheHighPropValue);
+                i = Math.max(i, 127);
+                // Maximum array size is Integer.MAX_VALUE
+                h = Math.min(i, Integer.MAX_VALUE - (-low) -1);
+            } catch( NumberFormatException nfe) {
+                // If the property cannot be parsed into an int, ignore it.
             }
-            high = h;
-    
-            cache = new Integer[(high - low) + 1];
-            int j = low;
-            for(int k = 0; k < cache.length; k++)
-                cache[k] = new Integer(j++);
-    
-            // range [-128, 127] must be interned (JLS7 5.1.7)
-            assert IntegerCache.high >= 127;
         }
-    
-        private IntegerCache() {}
+        high = h;
+
+        cache = new Integer[(high - low) + 1];
+        int j = low;
+        for(int k = 0; k < cache.length; k++)
+            cache[k] = new Integer(j++);
+
+        // range [-128, 127] must be interned (JLS7 5.1.7)
+        assert IntegerCache.high >= 127;
     }
+
+    private IntegerCache() {}
+}
+````
+
 所以基本数据类型的包装类型可以在常量池查找对应值的对象，找不到就会自动在常量池创建该值的对象。
 
 而String类型可以通过intern来完成这个操作。
@@ -537,7 +539,6 @@ JDK1.7后，常量池被放入到堆空间中，这导致intern()函数的功能
 
 
 ```
-[java] view plain copy
 String s = new String("1");  
 s.intern();  
 String s2 = "1";  
@@ -554,9 +555,6 @@ JDK1.6以及以下：false false
 JDK1.7以及以上：false true
 ```
 
-![image](https://img-blog.csdn.net/20180422231916788?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2E3MjQ4ODg=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
-
-![image](https://img-blog.csdn.net/20180422231929413?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2E3MjQ4ODg=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
 JDK1.6查找到常量池存在相同值的对象时会直接返回该对象的地址。
 
 JDK 1.7后，intern方法还是会先去查询常量池中是否有已经存在，如果存在，则返回常量池中的引用，这一点与之前没有区别，区别在于，如果在常量池找不到对应的字符串，则不会再将字符串拷贝到常量池，而只是在常量池中生成一个对原字符串的引用。

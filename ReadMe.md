@@ -67,6 +67,7 @@
 * [2、Java基本数据类型](docs/java/basic/2、Java基本数据类型.md)
 * [3、string和包装类](docs/java/basic/3、string和包装类.md)
 * [4、final关键字特性](docs/java/basic/4、final关键字特性.md)
+
 * [5、Java类和包](docs/java/basic/5、Java类和包.md)
 * [6、抽象类和接口](docs/java/basic/6、抽象类和接口.md)
 * [7、代码块和代码执行顺序](docs/java/basic/7、代码块和代码执行顺序.md)
@@ -112,7 +113,7 @@
 * [走进JavaWeb技术世界1：JavaWeb的由来和基础知识](docs/java-web/走进JavaWeb技术世界1：JavaWeb的由来和基础知识.md)
 * [走进JavaWeb技术世界2：JSP与Servlet的曾经与现在](docs/java-web/走进JavaWeb技术世界2：JSP与Servlet的曾经与现在.md)
 * [走进JavaWeb技术世界3：JDBC的进化与连接池技术](docs/java-web/走进JavaWeb技术世界3：JDBC的进化与连接池技术.md)
-* [走进JavaWeb技术世界4：Servlet 工作原理详解](docs/java-web/走进JavaWeb技术世界4：Servlet%20工作原理详解.md)
+* [走进JavaWeb技术世界4：Servlet工作原理详解](docs/java-web/走进JavaWeb技术世界4：Servlet工作原理详解.md)
 * [走进JavaWeb技术世界5：初探Tomcat的HTTP请求过程](docs/java-web/走进JavaWeb技术世界5：初探Tomcat的HTTP请求过程.md)
 * [走进JavaWeb技术世界6：Tomcat5总体架构剖析](docs/java-web/走进JavaWeb技术世界6：Tomcat5总体架构剖析.md)
 * [走进JavaWeb技术世界7：Tomcat和其他WEB容器的区别](docs/java-web/走进JavaWeb技术世界7：Tomcat和其他WEB容器的区别.md)
@@ -182,11 +183,11 @@ todo
 * [深入理解JVM虚拟机1：JVM内存的结构与消失的永久代](docs/java/jvm/深入理解JVM虚拟机1：JVM内存的结构与消失的永久代.md)
 * [深入理解JVM虚拟机2：JVM垃圾回收基本原理和算法](docs/java/jvm/深入理解JVM虚拟机2：JVM垃圾回收基本原理和算法.md)
 * [深入理解JVM虚拟机3：垃圾回收器详解](docs/java/jvm/深入理解JVM虚拟机3：垃圾回收器详解.md)
-* [深入理解JVM虚拟机4：Javaclass介绍与解析实践](docs/java/jvm/深入理解JVM虚拟机4：Javaclass介绍与解析实践.md)
+* [深入理解JVM虚拟机4：Javaclass介绍与解析实践](docs/java/jvm/深入理解JVM虚拟机4：Java字节码介绍与解析实践.md)
 * [深入理解JVM虚拟机5：虚拟机字节码执行引擎](docs/java/jvm/深入理解JVM虚拟机5：虚拟机字节码执行引擎.md)
 * [深入理解JVM虚拟机6：深入理解JVM类加载机制](docs/java/jvm/深入理解JVM虚拟机6：深入理解JVM类加载机制.md)
 * [深入理解JVM虚拟机7：JNDI，OSGI，Tomcat类加载器实现](docs/java/jvm/深入理解JVM虚拟机7：JNDI，OSGI，Tomcat类加载器实现.md)
-* [深入了解JVM虚拟机8：Java的编译期优化与运行期优化](docs/java/jvm/深入了解JVM虚拟机8：Java的编译期优化与运行期优化.md)
+* [深入了解JVM虚拟机8：Java的编译期优化与运行期优化](docs/java/jvm/深入理解JVM虚拟机8：Java的编译期优化与运行期优化.md)
 * [深入理解JVM虚拟机9：JVM监控工具与诊断实践](docs/java/jvm/深入理解JVM虚拟机9：JVM监控工具与诊断实践.md)
 * [深入理解JVM虚拟机10：JVM常用参数以及调优实践](docs/java/jvm/深入理解JVM虚拟机10：JVM常用参数以及调优实践.md)
 * [深入理解JVM虚拟机11：Java内存异常原理与实践](docs/java/jvm/深入理解JVM虚拟机11：Java内存异常原理与实践.md)
@@ -199,8 +200,8 @@ todo
 * [Java网络编程和NIO详解1：JAVA 中原生的 socket 通信机制](docs/java/network-programming/Java网络编程与NIO详解1：JAVA中原生的socket通信机制.md)
 * [Java网络编程与NIO详解2：JAVA NIO 一步步构建IO多路复用的请求模型](docs/java/network-programming/Java网络编程与NIO详解2：JavaNIO一步步构建IO多路复用的请求模型.md) 
 * [Java网络编程和NIO详解3：IO模型与Java网络编程模型](docs/java/network-programming/Java网络编程与NIO详解3：IO模型与Java网络编程模型.md) 
-* [Java网络编程与NIO详解4：浅析NIO包中的Buffer、Channel 和 Selector](docs/java/network-programming/Java网络编程与NIO详解4：浅析NIO包中的Buffer、Channel和Selector.md) 
-* [Java网络编程和NIO详解5：Java 非阻塞 IO 和异步 IO](docs/java/network-programming/Java网络编程与NIO详解5：Java非阻塞IO和异步IO.md)
+* [Java网络编程与NIO详解4：浅析NIO包中的Buffer、Channel和Selector](docs/java/network-programming/Java网络编程与NIO详解4：浅析NIO包中的Buffer、Channel和Selector.md) 
+* [Java网络编程和NIO详解5：Java非阻塞IO和异步IO](docs/java/network-programming/Java网络编程与NIO详解5：Java非阻塞IO和异步IO.md)
 * [Java网络编程与NIO详解6：LinuxEpoll实现原理详解](docs/java/network-programming/Java网络编程与NIO详解6：LinuxEpoll实现原理详解.md.md) 
 * [Java网络编程与NIO详解7：浅谈Linux中Selector的实现原理](docs/java/network-programming/Java网络编程与NIO详解7：浅谈Linux中Selector的实现原理.md)
 * [Java网络编程与NIO详解8：浅析mmap和DirectBuffer](docs/java/network-programming/Java网络编程与NIO详解8：浅析mmap和DirectBuffer.md)
@@ -255,7 +256,7 @@ todo
 ### Redis
 * [Redis原理与实践总结](docs/cache/Redis原理与实践总结.md)
 * [探索Redis设计与实现开篇：什么是Redis](docs/cache/探索Redis设计与实现开篇：什么是Redis.md)
-* [探索Redis设计与实现1：Redis 的基础数据结构概览](docs/cache/探索Redis设计与实现1：Redis%20的基础数据结构概览.md)
+* [探索Redis设计与实现1：Redis的基础数据结构概览](docs/cache/探索Redis设计与实现1：Redis的基础数据结构概览.md)
 * [探索Redis设计与实现2：Redis内部数据结构详解——dict](docs/cache/探索Redis设计与实现2：Redis内部数据结构详解——dict.md)
 * [探索Redis设计与实现3：Redis内部数据结构详解——sds](docs/cache/探索Redis设计与实现3：Redis内部数据结构详解——sds.md)
 * [探索Redis设计与实现4：Redis内部数据结构详解——ziplist](docs/cache/探索Redis设计与实现4：Redis内部数据结构详解——ziplist.md)
@@ -292,9 +293,9 @@ todo
 
 ## 分布式
 ### 理论
-* [分布式系统理论基础1： 一致性、2PC和3PC ](docs/distributed/basic/分布式系统理论基础1：%20一致性、2PC和3PC.md)
-* [分布式系统理论基础2：CAP ](docs/distributed/basic/分布式系统理论基础2%20：CAP.md)
-* [分布式系统理论基础3： 时间、时钟和事件顺序](docs/distributed/basic/分布式系统理论基础3：%20时间、时钟和事件顺序.md)
+* [分布式系统理论基础1：一致性、2PC和3PC ](docs/distributed/basic/分布式系统理论基础1：一致性、2PC和3PC.md)
+* [分布式系统理论基础2：CAP ](docs/distributed/basic/分布式系统理论基础2：CAP.md)
+* [分布式系统理论基础3：时间、时钟和事件顺序](docs/distributed/basic/分布式系统理论基础3：时间、时钟和事件顺序.md)
 * [分布式系统理论基础4：Paxos](docs/distributed/basic/分布式系统理论基础4：Paxos.md)
 * [分布式系统理论基础5：选举、多数派和租约](docs/distributed/basic/分布式系统理论基础5：选举、多数派和租约.md)
 * [分布式系统理论基础6：Raft、Zab ](docs/distributed/basic/分布式系统理论基础6：Raft、Zab.md)
@@ -302,13 +303,14 @@ todo
 * [分布式系统理论基础8：zookeeper分布式协调服务 ](docs/distributed/basic/分布式系统理论基础8：zookeeper分布式协调服务.md)
 
 * [分布式技术实践总结](docs/distributed/分布式理论总结.md)
+
 ### 技术
-* [搞懂分布式技术1：分布式系统的一些基本概念 ](docs/distributed/practice/搞懂分布式技术1：分布式系统的一些基本概念.md )
+* [搞懂分布式技术1：分布式系统的一些基本概念](docs/distributed/practice/搞懂分布式技术1：分布式系统的一些基本概念.md )
 * [搞懂分布式技术2：分布式一致性协议与Paxos，Raft算法](docs/distributed/practice/搞懂分布式技术2：分布式一致性协议与Paxos，Raft算法.md)
-* [搞懂分布式技术3：初探分布式协调服务zookeeper ](docs/distributed/practice/搞懂分布式技术3：初探分布式协调服务zookeeper.md )
-* [搞懂分布式技术4：ZAB协议概述与选主流程详解 ](docs/distributed/practice/搞懂分布式技术4：ZAB协议概述与选主流程详解.md )
+* [搞懂分布式技术3：初探分布式协调服务zookeeper](docs/distributed/practice/搞懂分布式技术3：初探分布式协调服务zookeeper.md )
+* [搞懂分布式技术4：ZAB协议概述与选主流程详解](docs/distributed/practice/搞懂分布式技术4：ZAB协议概述与选主流程详解.md )
 * [搞懂分布式技术5：Zookeeper的配置与集群管理实战](docs/distributed/practice/搞懂分布式技术5：Zookeeper的配置与集群管理实战.md)
-* [搞懂分布式技术6：Zookeeper典型应用场景及实践 ](docs/distributed/practice/搞懂分布式技术6：Zookeeper典型应用场景及实践.md )
+* [搞懂分布式技术6：Zookeeper典型应用场景及实践](docs/distributed/practice/搞懂分布式技术6：Zookeeper典型应用场景及实践.md )
 
 [//]: # (* [搞懂分布式技术7：负载均衡概念与主流方案]&#40;docs/distributed/practice/搞懂分布式技术7：负载均衡概念与主流方案.md&#41;)
 
@@ -322,7 +324,7 @@ todo
 * [搞懂分布式技术14：SpringBoot使用注解集成Redis缓存](docs/distributed/practice/搞懂分布式技术14：SpringBoot使用注解集成Redis缓存.md)
 * [搞懂分布式技术15：缓存更新的套路 ](docs/distributed/practice/搞懂分布式技术15：缓存更新的套路.md )
 * [搞懂分布式技术16：浅谈分布式锁的几种方案 ](docs/distributed/practice/搞懂分布式技术16：浅谈分布式锁的几种方案.md )
-* [搞懂分布式技术17：浅析分布式事务 ](docs/distributed/practice/搞懂分布式技术17：浅析分布式事务.md )
+* [搞懂分布式技术17：浅析分布式事务](docs/distributed/practice/搞懂分布式技术17：浅析分布式事务.md )
 * [搞懂分布式技术18：分布式事务常用解决方案 ](docs/distributed/practice/搞懂分布式技术18：分布式事务常用解决方案.md )
 * [搞懂分布式技术19：使用RocketMQ事务消息解决分布式事务 ](docs/distributed/practice/搞懂分布式技术19：使用RocketMQ事务消息解决分布式事务.md )
 * [搞懂分布式技术20：消息队列因何而生](docs/distributed/practice/搞懂分布式技术20：消息队列因何而生.md)

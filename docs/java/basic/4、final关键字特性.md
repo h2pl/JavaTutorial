@@ -184,7 +184,7 @@ final方法的好处:
 2.  final变量在多线程中并发安全，无需额外的同步开销
 3.  final方法是静态编译的，提高了调用速度
 4.  **final类创建的对象是只可读的，在多线程可以安全共享**
-5.  
+
 ## final关键字的最佳实践
 
 ### final的用法 
@@ -198,7 +198,7 @@ final修饰的变量有三种：静态变量、实例变量和局部变量，分
 　另外，final变量定义的时候，可以先声明，而不给初值，这中变量也称为final空白，无论什么情况，编译器都确保空白final在使用之前必须被初始化。
 　
 但是，final空白在final关键字final的使用上提供了更大的灵活性，为此，一个类中的final数据成员就可以实现依对象而有所不同，却有保持其恒定不变的特征。 
-
+````
     public class FinalTest { 
     final int p; 
     final int q=3; 
@@ -210,19 +210,20 @@ final修饰的变量有三种：静态变量、实例变量和局部变量，分
     q=i;//不能为一个final变量赋值 
     } 
     } 
-
+````
 ### final内存分配 
 刚提到了内嵌机制，现在详细展开。 
 要知道调用一个函数除了函数本身的执行时间之外，还需要额外的时间去寻找这个函数（类内部有一个函数签名和函数地址的映射表）。所以减少函数调用次数就等于降低了性能消耗。 
 
 final修饰的函数会被编译器优化，优化的结果是减少了函数调用的次数。如何实现的，举个例子给你看：
-
+````
     public class Test{ 
     final void func(){System.out.println("g");}; 
     public void main(String[] args){ 
     for(int j=0;j<1000;j++)   
     func(); 
     }} 
+
     经过编译器优化之后，这个类变成了相当于这样写： 
     public class Test{ 
     final void func(){System.out.println("g");}; 
@@ -230,7 +231,7 @@ final修饰的函数会被编译器优化，优化的结果是减少了函数调
     for(int j=0;j<1000;j++)  
     {System.out.println("g");} 
     }} 
-
+````
 看出来区别了吧？编译器直接将func的函数体内嵌到了调用函数的地方，这样的结果是节省了1000次函数调用，当然编译器处理成字节码，只是我们可以想象成这样，看个明白。 
 
 不过，当函数体太长的话，用final可能适得其反，因为经过编译器内嵌之后代码长度大大增加，于是就增加了jvm解释字节码的时间。
@@ -243,7 +244,7 @@ final修饰的函数会被编译器优化，优化的结果是减少了函数调
 
 见下面的测试代码，我会执行五次：
 
-
+````
     public class Test   
     {   
         public static void getJava()   
@@ -283,6 +284,7 @@ final修饰的函数会被编译器优化，优化的结果是减少了函数调
         }   
     }  
 
+````
 
     结果为： 
     第一次： 
@@ -308,13 +310,13 @@ final修饰的函数会被编译器优化，优化的结果是减少了函数调
     
     由以上运行结果不难看出，执行最快的是“正常的执行”即代码直接编写，而使用final修饰的方法，不像有些书上或者文章上所说的那样，速度与效率与“正常的执行”无异，而是位于第二位，最差的是调用不加final修饰的方法。 
 
-观点：加了比不加好一点。 
+    观点：加了比不加好一点。 
 
 
 ### 使用final修饰变量会让变量的值不能被改变吗； 
 见代码：
 
-
+````
     public class Final   
     {   
         public static void main(String[] args)   
@@ -335,18 +337,18 @@ final修饰的函数会被编译器优化，优化的结果是减少了函数调
     red blue yellow white 
     看！，黑色变成了白色。 
 
-
-​    
-​    在使用findbugs插件时，就会提示public static String[] color = { "red", "blue", "yellow", "black" };这行代码不安全，但加上final修饰，这行代码仍然是不安全的，因为final没有做到保证变量的值不会被修改！
-​    
-​    原因是：final关键字只能保证变量本身不能被赋与新值，而不能保证变量的内部结构不被修改。例如在main方法有如下代码Color.color = new String[]{""};就会报错了。
+````
+    
+    在使用findbugs插件时，就会提示public static String[] color = { "red", "blue", "yellow", "black" };这行代码不安全，但加上final修饰，这行代码仍然是不安全的，因为final没有做到保证变量的值不会被修改！
+    
+    原因是：final关键字只能保证变量本身不能被赋与新值，而不能保证变量的内部结构不被修改。例如在main方法有如下代码Color.color = new String[]{""};就会报错了。
 
 ### 如何保证数组内部不被修改
 
     那可能有的同学就会问了，加上final关键字不能保证数组不会被外部修改，那有什么方法能够保证呢？答案就是降低访问级别，把数组设为private。这样的话，就解决了数组在外部被修改的不安全性，但也产生了另一个问题，那就是这个数组要被外部使用的。 
 
 解决这个问题见代码：
-
+````
     import java.util.AbstractList;   
     import java.util.List;   
     
@@ -384,7 +386,7 @@ final修饰的函数会被编译器优化，优化的结果是减少了函数调
 
 
     }
-
+````
 这样就OK了，既保证了代码安全，又能让数组中的元素被访问了。
 
 
@@ -397,7 +399,7 @@ final修饰的函数会被编译器优化，优化的结果是减少了函数调
 规则3：父类中private final方法，子类可以重新定义，这种情况不是重写。
 
 代码示例
-
+````
     规则1代码
     
     public class FinalMethodTest
@@ -429,7 +431,7 @@ final修饰的函数会被编译器优化，优化的结果是减少了函数调
     	// 下面方法定义将不会出现问题
     	public void test(){}
     }
-
+````
 
 ## final 和 jvm的关系
 
@@ -439,8 +441,8 @@ final修饰的函数会被编译器优化，优化的结果是减少了函数调
 2.  初次读一个包含 final 域的对象的引用，与随后初次读这个 final 域，这两个操作之间不能重排序。
 
 下面，我们通过一些示例性的代码来分别说明这两个规则：
-
-<pre>public class FinalExample {
+````
+public class FinalExample {
     int i;                            // 普通变量 
     final int j;                      //final 变量 
     static FinalExample obj;
@@ -460,7 +462,7 @@ final修饰的函数会被编译器优化，优化的结果是减少了函数调
         int b = object.j;                // 读 final 域 
     }
 }
-</pre>
+````
 
 这里假设一个线程 A 执行 writer () 方法，随后另一个线程 B 执行 reader () 方法。下面我们通过这两个线程的交互来说明这两个规则。
 
@@ -478,7 +480,7 @@ final修饰的函数会被编译器优化，优化的结果是减少了函数调
 
 假设线程 B 读对象引用与读对象的成员域之间没有重排序（马上会说明为什么需要这个假设），下图是一种可能的执行时序：
 
-![](https://static001.infoq.cn/resource/image/66/3a/6628576a54f0ba625c8c3af4586cef3a.jpg)
+![img](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/6628576a54f0ba625c8c3af4586cef3a.jpg)
 
 在上图中，写普通域的操作被编译器重排序到了构造函数之外，读线程 B 错误的读取了普通变量 i 初始化之前的值。而写 final 域的操作，被写 final 域的重排序规则“限定”在了构造函数之内，读线程 B 正确的读取了 final 变量初始化之后的值。
 
@@ -511,8 +513,8 @@ reader() 方法包含三个操作：
 上面我们看到的 final 域是基础数据类型，下面让我们看看如果 final 域是引用类型，将会有什么效果？
 
 请看下列示例代码：
-
-<pre>public class FinalReferenceExample {
+````
+public class FinalReferenceExample {
 final int[] intArray;                     //final 是引用类型 
 static FinalReferenceExample obj;
 
@@ -535,7 +537,7 @@ public static void reader () {              // 读线程 C 执行
     }
 }
 }
-</pre>
+````
 
 这里 final 域为一个引用类型，它引用一个 int 型的数组对象。对于引用类型，写 final 域的重排序规则对编译器和处理器增加了如下约束：
 
@@ -543,13 +545,13 @@ public static void reader () {              // 读线程 C 执行
 
 对上面的示例程序，我们假设首先线程 A 执行 writerOne() 方法，执行完后线程 B 执行 writerTwo() 方法，执行完后线程 C 执行 reader () 方法。下面是一种可能的线程执行时序：
 
-![](https://static001.infoq.cn/resource/image/29/db/29b097c36fd531028991826bb7c835db.png)
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/29b097c36fd531028991826bb7c835db.png)
 在上图中，1 是对 final 域的写入，2 是对这个 final 域引用的对象的成员域的写入，3 是把被构造的对象的引用赋值给某个引用变量。这里除了前面提到的 1 不能和 3 重排序外，2 和 3 也不能重排序。
 
 JMM 可以确保读线程 C 至少能看到写线程 A 在构造函数中对 final 引用对象的成员域的写入。即 C 至少能看到数组下标 0 的值为 1。而写线程 B 对数组元素的写入，读线程 C 可能看的到，也可能看不到。JMM 不保证线程 B 的写入对读线程 C 可见，因为写线程 B 和读线程 C 之间存在数据竞争，此时的执行结果不可预知。
 
 如果想要确保读线程 C 看到写线程 B 对数组元素的写入，写线程 B 和读线程 C 之间需要使用同步原语（lock 或 volatile）来确保内存可见性。
+
 
 ## 参考文章
 
