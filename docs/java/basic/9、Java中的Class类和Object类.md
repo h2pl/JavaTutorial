@@ -1,4 +1,4 @@
-# Table of Contents
+# 目录
 
   * [Java中Class类及用法](#java中class类及用法)
     * [Class类原理](#class类原理)
