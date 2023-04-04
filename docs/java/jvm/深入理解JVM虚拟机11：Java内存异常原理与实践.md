@@ -1,5 +1,4 @@
-# Table of Contents
-
+# 目录
   * [实战内存溢出异常](#实战内存溢出异常)
   * [1 . 对象的创建过程](#1--对象的创建过程)
   * [2 . 对象的内存布局](#2--对象的内存布局)
@@ -77,16 +76,16 @@ Student stu =new Student("张三"，"18");
 *   实例数据
 *   对齐填充
 
-**对象头:** 对象头中包含了对象运行时一些必要的信息，如GC分代信息，锁信息，哈希码，指向Class类元信息的指针等，其中对Javaer比较有用的是**锁信息与指向Class对象的指针**，关于锁信息，后期有机会讲解并发编程JUC时再扩展，关于指向Class对象的指针其实很好理解。比如上面那个Student的例子，当我们拿到stu对象时，调用Class stuClass=stu.getClass();的时候，其实就是根据这个指针去拿到了stu对象所属的Student类在方法区存放的Class类对象。虽然说的有点拗口，但这句话我反复琢磨了好几遍，应该是说清楚了。
+**对象头:**对象头中包含了对象运行时一些必要的信息，如GC分代信息，锁信息，哈希码，指向Class类元信息的指针等，其中对Javaer比较有用的是**锁信息与指向Class对象的指针**，关于锁信息，后期有机会讲解并发编程JUC时再扩展，关于指向Class对象的指针其实很好理解。比如上面那个Student的例子，当我们拿到stu对象时，调用Class stuClass=stu.getClass();的时候，其实就是根据这个指针去拿到了stu对象所属的Student类在方法区存放的Class类对象。虽然说的有点拗口，但这句话我反复琢磨了好几遍，应该是说清楚了。
 
-**实例数据:** 实例数据部分是对象真正存储的有效信息，就是程序代码中所定义的各种类型的字段内容。
+**实例数据:**实例数据部分是对象真正存储的有效信息，就是程序代码中所定义的各种类型的字段内容。
 
-**对齐填充:** 虚拟机规范要求对象大小必须是8字节的整数倍。对齐填充其实就是来补全对象大小的。
+**对齐填充:**虚拟机规范要求对象大小必须是8字节的整数倍。对齐填充其实就是来补全对象大小的。
 
 ## 3 . 对象的访问定位
 
 谈到对象的访问，还拿上面学生的例子来说，当我们拿到stu对象时，直接调用stu.getName();时，其实就完成了对对象的访问。但这里要累赘说一下的是，stu虽然通常被认为是一个对象，其实准确来说是不准确的，stu只是一个变量，变量里存储的是指向对象的指针，(如果干过C或者C++的小伙伴应该比较清楚指针这个概念)，当我们调用stu.getName()时，虚拟机会根据指针找到堆里面的对象然后拿到实例数据name.需要注意的是，当我们调用stu.getClass()时，虚拟机会首先根据stu指针定位到堆里面的对象，然后根据对象头里面存储的指向Class类元信息的指针再次到方法区拿到Class对象，进行了两次指针寻找。具体讲解图如下:
-![在这里插入图片描述](https://img-blog.csdnimg.cn/201901092235030.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzE5MjczMg==,size_16,color_FFFFFF,t_70)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404223333.png)
 
 ## 4 .实战内存异常
 
@@ -140,8 +139,10 @@ Dumping heap to /Users/zdy/Desktop/dump/java_pid1099.hprof …
 可以看到生成了dump文件到指定目录。并且爆出了OutOfMemoryError，还告诉了你是哪一片区域出的问题:heap space
 
 打开VisualVM工具导入对应的heapDump文件(如何使用请读者自行查阅相关资料)，相应的说明见图:
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20190109224456933.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzE5MjczMg==,size_16,color_FFFFFF,t_70)
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20190109224531128.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzE5MjczMg==,size_16,color_FFFFFF,t_70)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404223348.png)
+
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404223403.png)
+
 分析dump文件后，我们可以知道，OOMObject这个类创建了810326个实例。所以它能不溢出吗？接下来就在代码里找这个类在哪new的。排查问题。(我们的样例代码就不用排查了，While循环太凶猛了)分析dump文件后，我们可以知道，OOMObject这个类创建了810326个实例。所以它能不溢出吗？接下来就在代码里找这个类在哪new的。排查问题。(我们的样例代码就不用排查了，While循环太凶猛了)
 
 ### Java栈内存异常
@@ -182,7 +183,7 @@ public class JavaVMStackSOF {
 可以看到，递归调用了751次，栈容量不够用了。
 默认的栈容量在正常的方法调用时，栈深度可以达到1000-2000深度，所以，一般的递归是可以承受的住的。如果你的代码出现了StackOverflowError，首先检查代码，而不是改参数。
 
-这里顺带提一下，很多人在做多线程开发时，当创建很多线程时，**容易出现OOM(OutOfMemoryError),** 这时可以通过具体情况，减少最大堆容量，或者栈容量来解决问题，这是为什么呢。请看下面的公式:
+这里顺带提一下，很多人在做多线程开发时，当创建很多线程时，**容易出现OOM(OutOfMemoryError),**这时可以通过具体情况，减少最大堆容量，或者栈容量来解决问题，这是为什么呢。请看下面的公式:
 
 <font color="red">线程数*(最大栈容量)+最大堆值+其他内存(忽略不计或者一般不改动)=机器最大内存</font>
 
@@ -190,10 +191,10 @@ public class JavaVMStackSOF {
 
 ### 方法区内存异常
 
-写到这里时，作者本来想写一个无限创建动态代理对象的例子来演示方法区溢出，避开谈论JDK7与JDK8的内存区域变更的过渡，但细想一想，还是把这一块从始致终的说清楚。在上一篇文章中JVM系列之Java内存结构详解讲到方法区时提到，JDK7环境下方法区包括了(运行时常量池),其实这么说是不准确的。因为从JDK7开始，HotSpot团队就想到开始去"永久代",大家首先明确一个概念，**方法区和"永久代"(PermGen space)是两个概念，方法区是JVM虚拟机规范，任何虚拟机实现(J9等)都不能少这个区间，而"永久代"只是HotSpot对方法区的一个实现。** 为了把知识点列清楚，我还是才用列表的形式:
+写到这里时，作者本来想写一个无限创建动态代理对象的例子来演示方法区溢出，避开谈论JDK7与JDK8的内存区域变更的过渡，但细想一想，还是把这一块从始致终的说清楚。在上一篇文章中JVM系列之Java内存结构详解讲到方法区时提到，JDK7环境下方法区包括了(运行时常量池),其实这么说是不准确的。因为从JDK7开始，HotSpot团队就想到开始去"永久代",大家首先明确一个概念，**方法区和"永久代"(PermGen space)是两个概念，方法区是JVM虚拟机规范，任何虚拟机实现(J9等)都不能少这个区间，而"永久代"只是HotSpot对方法区的一个实现。**为了把知识点列清楚，我还是才用列表的形式:
 
-*   [ ]  JDK7之前(包括JDK7)拥有"永久代"(PermGen space),用来实现方法区。但在JDK7中已经逐渐在实现中把永久代中把很多东西移了出来，比如:符号引用(Symbols)转移到了native heap,运行时常量池(interned strings)转移到了java heap；类的静态变量(class statics)转移到了java heap.
-*   [ ]  所以这就是为什么我说上一篇文章中说方法区中包含运行时常量池是不正确的，因为已经移动到了java heap;
+*   [ ] JDK7之前(包括JDK7)拥有"永久代"(PermGen space),用来实现方法区。但在JDK7中已经逐渐在实现中把永久代中把很多东西移了出来，比如:符号引用(Symbols)转移到了native heap,运行时常量池(interned strings)转移到了java heap；类的静态变量(class statics)转移到了java heap.
+*   [ ] 所以这就是为什么我说上一篇文章中说方法区中包含运行时常量池是不正确的，因为已经移动到了java heap;
     **在JDK7之前(包括7)可以通过-XX:PermSize -XX:MaxPermSize来控制永久代的大小.
     JDK8正式去除"永久代",换成Metaspace(元空间)作为JVM虚拟机规范中方法区的实现。**
     元空间与永久代之间最大的区别在于：元空间并不在虚拟机中，而是使用本地内存。因此，默认情况下，元空间的大小仅受本地内存限制，但仍可以通过参数控制:-XX:MetaspaceSize与-XX:MaxMetaspaceSize来控制大小。
@@ -316,7 +317,8 @@ Java的一个重要优点就是通过垃圾收集器(Garbage Collection，GC)自
 为了更好理解GC的工作原理，我们可以将对象考虑为有向图的顶点，将引用关系考虑为图的有向边，有向边从引用者指向被引对象。另外，每个线程对象可以作为一个图的起始顶点，例如大多程序从main进程开始执行，那么该图就是以main进程顶点开始的一棵根树。在这个有向图中，根顶点可达的对象都是有效对象，GC将不回收这些对象。如果某个对象 (连通子图)与这个根顶点不可达(注意，该图为有向图)，那么我们认为这个(这些)对象不再被引用，可以被GC回收。
 
 以下，我们举一个例子说明如何用有向图表示内存管理。对于程序的每一个时刻，我们都有一个有向图表示JVM的内存分配情况。以下右图，就是左边程序运行到第6行的示意图。
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20190110151433131.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzE5MjczMg==,size_16,color_FFFFFF,t_70)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404223428.png)
+
 Java使用有向图的方式进行内存管理，可以消除引用循环的问题，例如有三个对象，相互引用，只要它们和根进程不可达的，那么GC也是可以回收它们的。这种方式的优点是管理内存的精度很高，但是效率较低。另外一种常用的内存管理技术是使用计数器，例如COM模型采用计数器方式管理构件，它与有向图相比，精度行低(很难处理循环引用的问题)，但执行效率很高。
 
 ## 什么是Java中的内存泄露？
@@ -326,7 +328,8 @@ Java使用有向图的方式进行内存管理，可以消除引用循环的问�
 在C++中，内存泄漏的范围更大一些。有些对象被分配了内存空间，然后却不可达，由于C++中没有GC，这些内存将永远收不回来。在Java中，这些不可达的对象都由GC负责回收，因此程序员不需要考虑这部分的内存泄露。
 
 通过分析，我们得知，对于C++，程序员需要自己管理边和顶点，而对于Java程序员只需要管理边就可以了(不需要管理顶点的释放)。通过这种方式，Java提高了编程的效率。
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20190110152226472.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzE5MjczMg==,size_16,color_FFFFFF,t_70)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404223441.png)
+
 因此，通过以上分析，我们知道在Java中也有内存泄漏，但范围比C++要小一些。因为Java从语言上保证，任何对象都是可达的，所有的不可达对象都由GC管理。
 
 对于程序员来说，GC基本是透明的，不可见的。虽然，我们只有几个函数可以访问GC，例如运行GC的函数System.gc()，但是根据Java语言规范定义， 该函数不保证JVM的垃圾收集器一定会执行。因为，不同的JVM实现者可能使用不同的算法管理GC。通常，GC的线程的优先级别较低。JVM调用GC的策略也有很多种，有的是内存使用到达一定程度时，GC才开始工作，也有定时执行的，有的是平缓执行GC，有的是中断式执行GC。但通常来说，我们不需要关心这些。除非在一些特定的场合，GC的执行影响应用程序的性能，例如对于基于Web的实时系统，如网络游戏等，用户不希望GC突然中断应用程序执行而进行垃圾回收，那么我们需要调整GC的参数，让GC能够通过平缓的方式释放内存，例如将垃圾回收分解为一系列的小步骤执行，Sun提供的HotSpot JVM就支持这一特性。
@@ -441,12 +444,6 @@ class B{
 Optimizeit Profiler版本4.11支持Application，Applet，Servlet和Romote Application四类应用，并且可以支持大多数类型的JVM，包括SUN JDK系列，IBM的JDK系列，和Jbuilder的JVM等。并且，该软件是由Java编写，因此它支持多种操作系统。Optimizeit系列还包括Thread Debugger和Code Coverage两个工具，分别用于监测运行时的线程状态和代码覆盖面。
 
 当设置好所有的参数了，我们就可以在OptimizeIt环境下运行被测程序，在程序运行过程中，Optimizeit可以监视内存的使用曲线(如下图)，包括JVM申请的堆(heap)的大小，和实际使用的内存大小。另外，在运行过程中，我们可以随时暂停程序的运行，甚至强行调用GC，让GC进行内存回收。通过内存使用曲线，我们可以整体了解程序使用内存的情况。这种监测对于长期运行的应用程序非常有必要，也很容易发现内存泄露。
-
-
-
-
-
-
 
 
 ## 参考文章

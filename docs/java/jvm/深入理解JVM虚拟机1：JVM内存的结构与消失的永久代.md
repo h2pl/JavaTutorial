@@ -1,5 +1,4 @@
-# Table of Contents
-
+# 目录
   * [前言](#前言)
   * [Java堆（Heap）](#java堆（heap）)
   * [方法区（Method Area）](#方法区（method-area）)
@@ -7,21 +6,20 @@
   * [JVM栈（JVM Stacks）](#jvm栈（jvm-stacks）)
   * [本地方法栈（Native Method Stacks）](#本地方法栈（native-method-stacks）)
   * [哪儿的OutOfMemoryError](#哪儿的outofmemoryerror)
-* [[JDK8-废弃永久代（PermGen）迎来元空间（Metaspace）](https://www.cnblogs.com/yulei126/p/6777323.html)](#[jdk8-废弃永久代（permgen）迎来元空间（metaspace）]httpswwwcnblogscomyulei126p6777323html)
   * [一、背景](#一、背景)
     * [1.1 永久代（PermGen）在哪里？](#11-永久代（permgen）在哪里？)
     * [1.2 JDK8永久代的废弃](#12-jdk8永久代的废弃)
-  * [ 二、为什么废弃永久代（PermGen）](# 二、为什么废弃永久代（permgen）)
-    * [ 2.1 官方说明](# 21-官方说明)
+  * [二、为什么废弃永久代（PermGen）](#二、为什么废弃永久代（permgen）)
+    * [2.1 官方说明](#21-官方说明)
   * [Motivation](#motivation)
-    * [ 2.2 现实使用中易出问题](# 22-现实使用中易出问题)
+    * [2.2 现实使用中易出问题](#22-现实使用中易出问题)
   * [三、深入理解元空间（Metaspace）](#三、深入理解元空间（metaspace）)
     * [3.1元空间的内存大小](#31元空间的内存大小)
     * [3.2常用配置参数](#32常用配置参数)
     * [3.3测试并追踪元空间大小](#33测试并追踪元空间大小)
-      * [ 3.3.1.测试字符串常量](# 331测试字符串常量)
+      * [3.3.1.测试字符串常量](#331测试字符串常量)
       * [3.3.2.测试元空间溢出](#332测试元空间溢出)
-  * [ 四、总结](# 四、总结)
+  * [四、总结](#四、总结)
   * [参考文章](#参考文章)
   * [微信公众号](#微信公众号)
     * [Java技术江湖](#java技术江湖)
@@ -54,11 +52,9 @@
 
 其实如果你经常解决服务器性能问题，那么这些问题就会变的非常常见，了解JVM内存也是为了服务器出现性能问题的时候可以快速的了解那块的内存区域出现问题，以便于快速的解决生产故障。
 
-
-
 先看一张图，这张图能很清晰的说明JVM内存结构布局。
 
-![](http://blog.itpub.net/ueditor/php/upload/image/20190817/1566036730192392.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404214718.png)
 
 JVM内存结构主要有三大块：堆内存、方法区和栈。堆内存是JVM中最大的一块由年轻代和老年代组成，而年轻代内存又被分成三部分，Eden空间、From Survivor空间、To Survivor空间,默认情况下年轻代按照8:1:1的比例来分配；
 
@@ -66,8 +62,7 @@ JVM内存结构主要有三大块：堆内存、方法区和栈。堆内存是JV
 
 在通过一张图来了解如何通过参数来控制各区域的内存大小
 
-![](http://blog.itpub.net/ueditor/php/upload/image/20190817/1566036730949557.png)
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404214735.png)
 控制参数
 
 *   -Xms设置堆的最小空间大小。
@@ -84,7 +79,7 @@ JVM内存结构主要有三大块：堆内存、方法区和栈。堆内存是JV
 
 从更高的一个维度再次来看JVM和系统调用之间的关系
 
-![](http://blog.itpub.net/ueditor/php/upload/image/20190817/1566036732641186.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404214754.png)
 
 方法区和对是所有线程共享的内存区域；而java栈、本地方法栈和程序员计数器是运行是线程私有的内存区域。
 
@@ -112,7 +107,7 @@ Java虚拟机规范对这个区域的限制非常宽松，除了和Java堆一样
 
 方法区有时被称为持久代（PermGen）。
 
-![](http://blog.itpub.net/ueditor/php/upload/image/20190817/1566036749972827.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404214839.png)
 
 所有的对象在实例化后的整个运行周期内，都被存放在堆内存中。堆内存又被划分成不同的部分：伊甸区(Eden)，幸存者区域(Survivor Sapce)，老年代（Old Generation Space）。
 
@@ -121,27 +116,26 @@ Java虚拟机规范对这个区域的限制非常宽松，除了和Java堆一样
 
 
 
-
-<pre>import java.text.SimpleDateFormat;import java.util.Date;import org.apache.log4j.Logger;
+````
+import java.text.SimpleDateFormat;import java.util.Date;import org.apache.log4j.Logger;
  public class HelloWorld {
-    private static Logger LOGGER = Logger.getLogger(HelloWorld.class.getName());
-    public void sayHello(String message) {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.YYYY");
-        String today = formatter.format(new Date());
-        LOGGER.info(today + ": " + message);
-    }}</pre>
+  private static Logger LOGGER = Logger.getLogger(HelloWorld.class.getName());
+  public void sayHello(String message) {
+    SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.YYYY");
+    String today = formatter.format(new Date());
+    LOGGER.info(today + ": " + message);
+  }}
 
-
+````
 
 
 
 这段程序的数据在内存中的存放如下：
 
-![](http://blog.itpub.net/ueditor/php/upload/image/20190817/1566036766406898.png)
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404214906.png)
 通过JConsole工具可以查看运行中的Java程序（比如Eclipse）的一些信息：堆内存的分配，线程的数量以及加载的类的个数；
 
-![](http://blog.itpub.net/ueditor/php/upload/image/20190817/1566036768475136.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404214922.png)
 
 ## 程序计数器（Program Counter Register）
 
@@ -172,69 +166,38 @@ Java虚拟机规范对这个区域的限制非常宽松，除了和Java堆一样
 对内存结构清晰的认识同样可以帮助理解不同OutOfMemoryErrors：
 
 
-
-
-
-<pre>Exception in thread “main”: java.lang.OutOfMemoryError: Java heap space</pre>
-
-
-
+Exception in thread “main”: java.lang.OutOfMemoryError: Java heap space
 
 
 原因：对象不能被分配到堆内存中
 
 
-
-
-
-<pre>Exception in thread “main”: java.lang.OutOfMemoryError: PermGen space</pre>
-
-
-
+Exception in thread “main”: java.lang.OutOfMemoryError: PermGen space
 
 
 原因：类或者方法不能被加载到持久代。它可能出现在一个程序加载很多类的时候，比如引用了很多第三方的库；
 
-
-
-
-
-<pre>Exception in thread “main”: java.lang.OutOfMemoryError: Requested array size exceeds VM limit</pre>
-
-
-
+Exception in thread “main”: java.lang.OutOfMemoryError: Requested array size exceeds VM limit
 
 
 原因：创建的数组大于堆内存的空间
 
 
-
-
-
-<pre>Exception in thread “main”: java.lang.OutOfMemoryError: request <size> bytes for <reason>. Out of swap space?</pre>
-
-
-
+Exception in thread “main”: java.lang.OutOfMemoryError: request <size> bytes for <reason>. Out of swap space?
 
 
 原因：分配本地分配失败。JNI、本地库或者Java虚拟机都会从本地堆中分配内存空间。
 
 
-
-
-
-<pre>Exception in thread “main”: java.lang.OutOfMemoryError: <reason> <stack trace>（Native method）</pre>
-
-
-
+Exception in thread “main”: java.lang.OutOfMemoryError: <reason> <stack trace>（Native method）
 
 
 原因：同样是本地方法内存分配失败，只不过是JNI或者本地方法或者Java虚拟机发现
 
-# [JDK8-废弃永久代（PermGen）迎来元空间（Metaspace）](https://www.cnblogs.com/yulei126/p/6777323.html)
+关于永久代的废弃可以参考这篇文章
 
-
-
+JDK8-废弃永久代（PermGen）迎来元空间（Metaspace）
+(https://www.cnblogs.com/yulei126/p/6777323.html)
 
 
 1.背景
@@ -253,8 +216,7 @@ Java虚拟机规范对这个区域的限制非常宽松，除了和Java堆一样
 
 根据，hotspot jvm结构如下(虚拟机栈和本地方法栈合一起了)：
 
-![](http://blog.itpub.net/ueditor/php/upload/image/20190817/1566036768860207.png)
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404215109.png)
 上图引自网络，但有个问题：方法区和heap堆都是线程共享的内存区域。
 
 关于方法区和永久代：
@@ -265,17 +227,16 @@ Java虚拟机规范对这个区域的限制非常宽松，除了和Java堆一样
 
 JDK8 永久代变化如下图：
 
-![](http://blog.itpub.net/ueditor/php/upload/image/20190817/1566036768834803.jpg)
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404215123.png)
 1.新生代：Eden+From Survivor+To Survivor
 
 2.老年代：OldGen
 
 3.永久代（方法区的实现） : PermGen----->替换为Metaspace(本地内存中)
 
-##  二、为什么废弃永久代（PermGen）
+## 二、为什么废弃永久代（PermGen）
 
-###  2.1 官方说明
+### 2.1 官方说明
 
 参照JEP122：http://openjdk.java.net/jeps/122，原文截取：
 
@@ -283,9 +244,9 @@ JDK8 永久代变化如下图：
 
 This is part of the JRockit and Hotspot convergence effort. JRockit customers do not need to configure the permanent generation (since JRockit does not have a permanent generation) and are accustomed to not configuring the permanent generation.
 
- 即：移除永久代是为融合HotSpot JVM与 JRockit VM而做出的努力，因为JRockit没有永久代，不需要配置永久代。
+即：移除永久代是为融合HotSpot JVM与 JRockit VM而做出的努力，因为JRockit没有永久代，不需要配置永久代。
 
-###  2.2 现实使用中易出问题
+### 2.2 现实使用中易出问题
 
 由于永久代内存经常不够用或发生内存泄露，爆出异常java.lang.OutOfMemoryError: PermGen
 
@@ -303,7 +264,7 @@ This is part of the JRockit and Hotspot convergence effort. JRockit customers do
 
 1.MetaspaceSize
 
-初始化的Metaspace大小，控制元空间发生GC的阈值。GC后，动态增加或降低MetaspaceSize。在默认情况下，这个值大小根据不同的平台在12M到20M浮动。使用[Java](http://lib.csdn.net/base/javase "Java SE知识库") -XX:+PrintFlagsInitial命令查看本机的初始化参数
+初始化的Metaspace大小，控制元空间发生GC的阈值。GC后，动态增加或降低MetaspaceSize。在默认情况下，这个值大小根据不同的平台在12M到20M浮动。使用[Java](http://lib.csdn.net/base/javase "Java SE知识库")-XX:+PrintFlagsInitial命令查看本机的初始化参数
 
 2.MaxMetaspaceSize
 
@@ -327,40 +288,32 @@ Metaspace增长时的最小幅度。在本机上该参数的默认值为340784B�
 
 ### 3.3测试并追踪元空间大小
 
-####  3.3.1.测试字符串常量
+#### 3.3.1.测试字符串常量
 
-
-
-
-
-
-<pre> 1 public class StringOomMock {
- 2     static String  base = "string";
- 3     
- 4     public static void main(String[] args) {
- 5         List<String> list = new ArrayList<String>();
- 6         for (int i=0;i< Integer.MAX_VALUE;i++){
- 7             String str = base + base;
- 8             base = str;
- 9             list.add(str.intern());
-10         }
-11     }
-12 }</pre>
-
-
-
-
-
+````
+public class StringOomMock {
+    static String  base = "string";
+    
+    public static void main(String[] args) {
+        List<String> list = new ArrayList<String>();
+        for (int i=0;i< Integer.MAX_VALUE;i++){
+            String str = base + base;
+            base = str;
+            list.add(str.intern());
+        }
+    }
+}
+````
 
 在eclipse中选中类--》run configuration-->java application--》new 参数如下：
 
-![](http://blog.itpub.net/ueditor/php/upload/image/20190817/1566036770114377.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404215213.png)
 
- 由于设定了最大内存20M，很快就溢出，如下图：
+由于设定了最大内存20M，很快就溢出，如下图：
 
-![](http://blog.itpub.net/ueditor/php/upload/image/20190817/1566036770308300.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404215254.png)
 
- 可见在jdk8中：
+可见在jdk8中：
 
 1.字符串常量由永久代转移到堆中。
 
@@ -369,86 +322,71 @@ Metaspace增长时的最小幅度。在本机上该参数的默认值为340784B�
 #### 3.3.2.测试元空间溢出
 
 根据定义，我们以加载类来测试元空间溢出，代码如下：
+````
+package jdk8;
 
+import java.io.File;
+import java.lang.management.ClassLoadingMXBean;
+import java.lang.management.ManagementFactory;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.List;
 
-
-
-
-
-<pre> 1 package jdk8;
- 2 
- 3 import java.io.File;
- 4 import java.lang.management.ClassLoadingMXBean;
- 5 import java.lang.management.ManagementFactory;
- 6 import java.net.URL;
- 7 import java.net.URLClassLoader;
- 8 import java.util.ArrayList;
- 9 import java.util.List;
-10 
-11 /**
-12  * 
-13  * @ClassName:OOMTest
-14  * @Description:模拟类加载溢出（元空间oom）
-15  * @author diandian.zhang
-16  * @date 2017年4月27日上午9:45:40
-17  */
-18 public class OOMTest {  
-19     public static void main(String[] args) {  
-20         try {  
-21             //准备url  
-22             URL url = new File("D:/58workplace/11study/src/main/java/jdk8").toURI().toURL();  
-23             URL[] urls = {url};  
-24             //获取有关类型加载的JMX接口  
-25             ClassLoadingMXBean loadingBean = ManagementFactory.getClassLoadingMXBean();  
-26             //用于缓存类加载器  
-27             List<ClassLoader> classLoaders = new ArrayList<ClassLoader>();  
-28             while (true) {  
-29                 //加载类型并缓存类加载器实例  
-30                 ClassLoader classLoader = new URLClassLoader(urls);  
-31                 classLoaders.add(classLoader);  
-32                 classLoader.loadClass("ClassA");  
-33                 //显示数量信息（共加载过的类型数目，当前还有效的类型数目，已经被卸载的类型数目）  
-34                 System.out.println("total: " + loadingBean.getTotalLoadedClassCount());  
-35                 System.out.println("active: " + loadingBean.getLoadedClassCount());  
-36                 System.out.println("unloaded: " + loadingBean.getUnloadedClassCount());  
-37             }  
-38         } catch (Exception e) {  
-39             e.printStackTrace();  
-40         }  
-41     }  
-42 }  </pre>
-
-
-
-
-
+/**
+ * 
+ * @ClassName:OOMTest
+ * @Description:模拟类加载溢出（元空间oom）
+ * @author diandian.zhang
+ * @date 2017年4月27日上午9:45:40
+ */
+public class OOMTest {  
+    public static void main(String[] args) {  
+        try {  
+            //准备url  
+            URL url = new File("D:/58workplace/11study/src/main/java/jdk8").toURI().toURL();  
+            URL[] urls = {url};  
+            //获取有关类型加载的JMX接口  
+            ClassLoadingMXBean loadingBean = ManagementFactory.getClassLoadingMXBean();  
+            //用于缓存类加载器  
+            List<ClassLoader> classLoaders = new ArrayList<ClassLoader>();  
+            while (true) {  
+                //加载类型并缓存类加载器实例  
+                ClassLoader classLoader = new URLClassLoader(urls);  
+                classLoaders.add(classLoader);  
+                classLoader.loadClass("ClassA");  
+                //显示数量信息（共加载过的类型数目，当前还有效的类型数目，已经被卸载的类型数目）  
+                System.out.println("total: " + loadingBean.getTotalLoadedClassCount());  
+                System.out.println("active: " + loadingBean.getLoadedClassCount());  
+                System.out.println("unloaded: " + loadingBean.getUnloadedClassCount());  
+            }  
+        } catch (Exception e) {  
+            e.printStackTrace();  
+        }  
+    }  
+}  
+````
 
 为了快速溢出，设置参数：-XX:MetaspaceSize=8m -XX:MaxMetaspaceSize=80m，运行结果如下：
 
-![](http://blog.itpub.net/ueditor/php/upload/image/20190817/1566036772261654.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404215337.png)
 
- 上图证实了，我们的JDK8中类加载（方法区的功能）已经不在永久代PerGem中了，而是Metaspace中。可以配合JVisualVM来看，更直观一些。
+上图证实了，我们的JDK8中类加载（方法区的功能）已经不在永久代PerGem中了，而是Metaspace中。可以配合JVisualVM来看，更直观一些。
 
-##  四、总结
+## 四、总结
 
 本文讲解了元空间（Metaspace）的由来和本质，常用配置，以及监控测试。元空间的大小是动态变更的，但不是无限大的，最好也时常关注一下大小，以免影响服务器内存。
 
 
-
-
-
-
-
-
 ## 参考文章
 
-<https://segmentfault.com/a/1190000009707894>
+https://segmentfault.com/a/1190000009707894
 
-<https://www.cnblogs.com/hysum/p/7100874.html>
+https://www.cnblogs.com/hysum/p/7100874.html
 
-<http://c.biancheng.net/view/939.html>
+http://c.biancheng.net/view/939.html
 
-<https://www.runoob.com/>
+https://www.runoob.com
 
 https://blog.csdn.net/android_hl/article/details/53228348
 

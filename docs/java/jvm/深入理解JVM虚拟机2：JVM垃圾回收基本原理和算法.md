@@ -1,5 +1,4 @@
-# Table of Contents
-
+# 目录
   * [JVM GC基本原理与GC算法](#jvm-gc基本原理与gc算法)
   * [Java关键术语](#java关键术语)
   * [Java HotSpot 虚拟机](#java-hotspot-虚拟机)
@@ -53,8 +52,6 @@
 
 ## JVM GC基本原理与GC算法
 
-
-
 Java的内存分配与回收全部由JVM垃圾回收进程自动完成。与C语言不同，Java开发者不需要自己编写代码实现垃圾回收。这是Java深受大家欢迎的众多特性之一，能够帮助程序员更好地编写Java程序。
 
 下面四篇教程是了解Java 垃圾回收（GC）的基础：
@@ -100,7 +97,7 @@ Java 垃圾回收是一项自动化的过程，用来管理程序所使用的运
 
 虽然这个请求机制提供给程序员一个启动 GC 过程的机会，但是启动由 JVM负责。JVM可以拒绝这个请求，所以并不保证这些调用都将执行垃圾回收。启动时机的选择由JVM决定，并且取决于堆内存中Eden区是否可用。JVM将这个选择留给了Java规范的实现，不同实现具体使用的算法不尽相同。
 
-毋庸置疑，我们知道垃圾回收过程是不能被强制执行的。我刚刚发现了一个调用`System.gc()`有意义的场景。通过这篇文章了解一下[适合调用System.gc() ](http://javapapers.com/core-java/system-gc-invocation-a-suitable-scenario/)这种极端情况。
+毋庸置疑，我们知道垃圾回收过程是不能被强制执行的。我刚刚发现了一个调用`System.gc()`有意义的场景。通过这篇文章了解一下[适合调用System.gc()](http://javapapers.com/core-java/system-gc-invocation-a-suitable-scenario/)这种极端情况。
 
 ## 各种GC的触发时机(When)
 
@@ -125,11 +122,11 @@ Java 垃圾回收是一项自动化的过程，用来管理程序所使用的运
 
 除直接调用System.gc外，触发Full GC执行的情况有如下四种。
 
-1. 旧生代空间不足
+1.旧生代空间不足
 
 旧生代空间只有在新生代对象转入及创建为大对象、大数组时才会出现不足的现象，当执行Full GC后空间仍然不足，则抛出如下错误：
 
-java.lang.OutOfMemoryError: Java heap space 
+java.lang.OutOfMemoryError:Javaheapspace
 
 为避免以上两种状况引起的Full GC，调优时应尽量做到让对象在Minor GC阶段被回收、让对象在新生代多存活一段时间及不要创建过大的对象及数组。
 
@@ -137,7 +134,7 @@ java.lang.OutOfMemoryError: Java heap space 
 
 Permanet Generation中存放的为一些class的信息等，当系统中要加载的类、反射的类和调用的方法较多时，Permanet Generation可能会被占满，在未配置为采用CMS GC的情况下会执行Full GC。如果经过Full GC仍然回收不了，那么JVM会抛出如下错误信息：
 
-java.lang.OutOfMemoryError: PermGen space 
+java.lang.OutOfMemoryError:PermGenspace
 
 为避免Perm Gen占满造成Full GC现象，可采用的方法为增大Perm Gen空间或转为使用CMS GC。
 
@@ -149,7 +146,7 @@ promotion failed是在进行Minor GC时，survivor space放不下、对象只能
 
 应对措施为：增大survivor space、旧生代空间或调低触发并发GC的比率，但在JDK 5.0+、6.0+的版本中有可能会由于JDK的bug29导致CMS在remark完毕后很久才触发sweeping动作。对于这种状况，可通过设置-XX: CMSMaxAbortablePrecleanTime=5（单位为ms）来避免。
 
-4. 统计得到的Minor GC晋升到旧生代的平均大小大于旧生代的剩余空间
+4.统计得到的Minor GC晋升到旧生代的平均大小大于旧生代的剩余空间
 
 这是一个较为复杂的触发情况，Hotspot为了避免由于新生代对象晋升到旧生代导致旧生代空间不足的现象，在进行Minor GC时，做了一个判断，如果之前统计所得到的Minor GC晋升到旧生代的平均大小大于旧生代的剩余空间，那么就直接触发Full GC。
 
@@ -161,7 +158,7 @@ promotion failed是在进行Minor GC时，survivor space放不下、对象只能
 
 ### 总结
 
-** Minor GC ，Full GC 触发条件**
+**Minor GC ，Full GC 触发条件**
 
 Minor GC触发条件：当Eden区满时，触发Minor GC。
 
@@ -201,7 +198,7 @@ JVM里有一条特殊的线程－－VM Threads，专门用来执行一些特殊�
 
 Eden 区：当一个实例被创建了，首先会被存储在堆内存年轻代的 Eden 区中。
 
-注意：如果你不能理解这些词汇，我建议你阅读这篇 [垃圾回收介绍](http://javapapers.com/java/java-garbage-collection-introduction/) ，这篇教程详细地介绍了内存模型、JVM 架构以及这些术语。
+注意：如果你不能理解这些词汇，我建议你阅读这篇[垃圾回收介绍](http://javapapers.com/java/java-garbage-collection-introduction/)，这篇教程详细地介绍了内存模型、JVM 架构以及这些术语。
 
 Survivor 区（S0 和 S1）：作为年轻代 GC（Minor GC）周期的一部分，存活的对象（仍然被引用的）从 Eden 区被移动到 Survivor 区的 S0 中。类似的，垃圾回收器会扫描 S0 然后将存活的实例移动到 S1 中。
 
@@ -209,7 +206,7 @@ Survivor 区（S0 和 S1）：作为年轻代 GC（Minor GC）周期的一部分
 
 死亡的实例（不再被引用）被标记为垃圾回收。根据垃圾回收器（有四种常用的垃圾回收器，将在下一教程中介绍它们）选择的不同，要么被标记的实例都会不停地从内存中移除，要么回收过程会在一个单独的进程中完成。
 
-老年代： 老年代（Old or tenured generation）是堆内存中的第二块逻辑区。当垃圾回收器执行 Minor GC 周期时，在 S1 Survivor 区中的存活实例将会被晋升到老年代，而未被引用的对象被标记为回收。
+老年代：老年代（Old or tenured generation）是堆内存中的第二块逻辑区。当垃圾回收器执行 Minor GC 周期时，在 S1 Survivor 区中的存活实例将会被晋升到老年代，而未被引用的对象被标记为回收。
 
 老年代 GC（Major GC）：相对于 Java 垃圾回收过程，老年代是实例生命周期的最后阶段。Major GC 扫描老年代的垃圾回收过程。如果实例不再被引用，那么它们会被标记为回收，否则它们会继续留在老年代中。
 
@@ -217,7 +214,7 @@ Survivor 区（S0 和 S1）：作为年轻代 GC（Minor GC）周期的一部分
 
 ## 垃圾回收中实例的终结
 
-在释放一个实例和回收内存空间之前，Java 垃圾回收器会调用实例各自的 `finalize()` 方法，从而该实例有机会释放所持有的资源。虽然可以保证 `finalize()` 会在回收内存空间之前被调用，但是没有指定的顺序和时间。多个实例间的顺序是无法被预知，甚至可能会并行发生。程序不应该预先调整实例之间的顺序并使用 `finalize()` 方法回收资源。
+在释放一个实例和回收内存空间之前，Java 垃圾回收器会调用实例各自的`finalize()`方法，从而该实例有机会释放所持有的资源。虽然可以保证`finalize()`会在回收内存空间之前被调用，但是没有指定的顺序和时间。多个实例间的顺序是无法被预知，甚至可能会并行发生。程序不应该预先调整实例之间的顺序并使用`finalize()`方法回收资源。
 
 *   任何在 finalize过程中未被捕获的异常会自动被忽略，然后该实例的 finalize 过程被取消。
 *   JVM 规范中并没有讨论关于弱引用的垃圾回收机制，也没有很明确的要求。具体的实现都由实现方决定。
@@ -237,8 +234,8 @@ Survivor 区（S0 和 S1）：作为年轻代 GC（Minor GC）周期的一部分
 | 弱引用（Weak Reference） | 符合垃圾收集 |
 | 虚引用（Phantom Reference） | 符合垃圾收集 |
 
-在编译过程中作为一种优化技术，Java 编译器能选择给实例赋 `null` 值，从而标记实例为可回收。
-
+在编译过程中作为一种优化技术，Java 编译器能选择给实例赋`null`值，从而标记实例为可回收。
+````
     class Animal {
     
         public static void main(String[] args) {
@@ -258,140 +255,144 @@ Survivor 区（S0 和 S1）：作为年轻代 GC（Minor GC）周期的一部分
         }
     
     }
-
-在上面的类中，`lion` 对象在实例化行后从未被使用过。因此 Java 编译器作为一种优化措施可以直接在实例化行后赋值`lion = null`。因此，即使在 SOP 输出之前， finalize 函数也能够打印出 `'Rest in Peace!'`。我们不能证明这确定会发生，因为它依赖JVM的实现方式和运行时使用的内存。然而，我们还能学习到一点：如果编译器看到该实例在未来再也不会被引用，能够选择并提早释放实例空间。
+````
+在上面的类中，`lion`对象在实例化行后从未被使用过。因此 Java 编译器作为一种优化措施可以直接在实例化行后赋值`lion = null`。因此，即使在 SOP 输出之前， finalize 函数也能够打印出`'Rest in Peace!'`。我们不能证明这确定会发生，因为它依赖JVM的实现方式和运行时使用的内存。然而，我们还能学习到一点：如果编译器看到该实例在未来再也不会被引用，能够选择并提早释放实例空间。
 
 *   关于对象什么时候符合垃圾回收有一个更好的例子。实例的所有属性能被存储在寄存器中，随后寄存器将被访问并读取内容。无一例外，这些值将被写回到实例中。虽然这些值在将来能被使用，这个实例仍然能被标记为符合垃圾回收。这是一个很经典的例子，不是吗？
 *   当被赋值为null时，这是很简单的一个符合垃圾回收的示例。当然，复杂的情况可以像上面的几点。这是由 JVM 实现者所做的选择。目的是留下尽可能小的内存占用，加快响应速度，提高吞吐量。为了实现这一目标， JVM 的实现者可以选择一个更好的方案或算法在垃圾回收过程中回收内存空间。
-*   当 `finalize()` 方法被调用时，JVM 会释放该线程上的所有同步锁。
+*   当`finalize()`方法被调用时，JVM 会释放该线程上的所有同步锁。
 
 ### GC Scope 示例程序
-    Class GCScope {
-    
-        GCScope t;
-    
-        static int i = 1;
-    
-     
-    
-        public static void main(String args[]) {
-    
-            GCScope t1 = new GCScope();
-    
-            GCScope t2 = new GCScope();
-    
-            GCScope t3 = new GCScope();
-    
-     
-    
-            // No Object Is Eligible for GC
-    
-     
-    
-            t1.t = t2; // No Object Is Eligible for GC
-    
-            t2.t = t3; // No Object Is Eligible for GC
-    
-            t3.t = t1; // No Object Is Eligible for GC
-    
-     
-    
-            t1 = null;
-    
-            // No Object Is Eligible for GC (t3.t still has a reference to t1)
-    
-     
-    
-            t2 = null;
-    
-            // No Object Is Eligible for GC (t3.t.t still has a reference to t2)
-    
-     
-    
-            t3 = null;
-    
-            // All the 3 Object Is Eligible for GC (None of them have a reference.
-    
-            // only the variable t of the objects are referring each other in a
-    
-            // rounded fashion forming the Island of objects with out any external
-    
-            // reference)
-    
-        }
-    
-     
-    
-        protected void finalize() {
-    
-            System.out.println("Garbage collected from object" + i);
-    
-            i++;
-    
-        }
-    
-     
-    
-    class GCScope {
-    
-        GCScope t;
-    
-        static int i = 1;
-    
-     
-    
-        public static void main(String args[]) {
-    
-            GCScope t1 = new GCScope();
-    
-            GCScope t2 = new GCScope();
-    
-            GCScope t3 = new GCScope();
-    
-     
-    
-            // 没有对象符合GC
-    
-            t1.t = t2; // 没有对象符合GC
-    
-            t2.t = t3; // 没有对象符合GC
-    
-            t3.t = t1; // 没有对象符合GC
-    
-     
-    
-            t1 = null;
-    
-            // 没有对象符合GC (t3.t 仍然有一个到 t1 的引用)
-    
-     
-    
-            t2 = null;
-    
-            // 没有对象符合GC (t3.t.t 仍然有一个到 t2 的引用)
-    
-     
-    
-            t3 = null;
-    
-            // 所有三个对象都符合GC (它们中没有一个拥有引用。
-    
-            // 只有各对象的变量 t 还指向了彼此，
-    
-            // 形成了一个由对象组成的环形的岛，而没有任何外部的引用。)
-    
-        }
-    
-     
-    
-        protected void finalize() {
-    
-            System.out.println("Garbage collected from object" + i);
-    
-            i++;
-    
-        }
-## [JVM GC算法](https://www.cnblogs.com/wupeixuan/p/8670341.html)
+````
+Class GCScope {
+
+    GCScope t;
+
+    static int i = 1;
+
+ 
+
+    public static void main(String args[]) {
+
+        GCScope t1 = new GCScope();
+
+        GCScope t2 = new GCScope();
+
+        GCScope t3 = new GCScope();
+
+ 
+
+        // No Object Is Eligible for GC
+
+ 
+
+        t1.t = t2; // No Object Is Eligible for GC
+
+        t2.t = t3; // No Object Is Eligible for GC
+
+        t3.t = t1; // No Object Is Eligible for GC
+
+ 
+
+        t1 = null;
+
+        // No Object Is Eligible for GC (t3.t still has a reference to t1)
+
+ 
+
+        t2 = null;
+
+        // No Object Is Eligible for GC (t3.t.t still has a reference to t2)
+
+ 
+
+        t3 = null;
+
+        // All the 3 Object Is Eligible for GC (None of them have a reference.
+
+        // only the variable t of the objects are referring each other in a
+
+        // rounded fashion forming the Island of objects with out any external
+
+        // reference)
+
+    }
+
+ 
+
+    protected void finalize() {
+
+        System.out.println("Garbage collected from object" + i);
+
+        i++;
+
+    }
+
+ 
+
+class GCScope {
+
+    GCScope t;
+
+    static int i = 1;
+
+ 
+
+    public static void main(String args[]) {
+
+        GCScope t1 = new GCScope();
+
+        GCScope t2 = new GCScope();
+
+        GCScope t3 = new GCScope();
+
+ 
+
+        // 没有对象符合GC
+
+        t1.t = t2; // 没有对象符合GC
+
+        t2.t = t3; // 没有对象符合GC
+
+        t3.t = t1; // 没有对象符合GC
+
+ 
+
+        t1 = null;
+
+        // 没有对象符合GC (t3.t 仍然有一个到 t1 的引用)
+
+ 
+
+        t2 = null;
+
+        // 没有对象符合GC (t3.t.t 仍然有一个到 t2 的引用)
+
+ 
+
+        t3 = null;
+
+        // 所有三个对象都符合GC (它们中没有一个拥有引用。
+
+        // 只有各对象的变量 t 还指向了彼此，
+
+        // 形成了一个由对象组成的环形的岛，而没有任何外部的引用。)
+
+    }
+
+ 
+
+    protected void finalize() {
+
+        System.out.println("Garbage collected from object" + i);
+
+        i++;
+
+    }
+}
+````
+## [JVM GC算法
+https://www.cnblogs.com/wupeixuan/p/8670341.html)
 
 在判断哪些内存需要回收和什么时候回收用到GC 算法，本文主要对GC 算法进行讲解。
 
@@ -433,7 +434,6 @@ public class ReferenceCountingGC {
 运行结果
 
 ```
-
 [GC (System.gc()) [PSYoungGen: 3329K->744K(38400K)] 3329K->752K(125952K), 0.0341414 secs] [Times: user=0.00 sys=0.00, real=0.06 secs] 
 [Full GC (System.gc()) [PSYoungGen: 744K->0K(38400K)] [ParOldGen: 8K->628K(87552K)] 752K->628K(125952K), [Metaspace: 3450K->3450K(1056768K)], 0.0060728 secs] [Times: user=0.05 sys=0.00, real=0.01 secs] 
 Heap
@@ -457,7 +457,7 @@ Process finished with exit code 0
 
 从GC Roots（每种具体实现对GC Roots有不同的定义）作为起点，向下搜索它们引用的对象，可以生成一棵引用树，树的节点视为可达对象，反之视为不可达。
 
-![可达性分析算法](https://images.cnblogs.com/cnblogs_com/wupeixuan/1186116/o_4240985.jpg)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404215732.png)
 
 在Java语言中，可以作为GC Roots的对象包括下面几种：
 
@@ -524,8 +524,7 @@ Stop-the-world意味着 JVM由于要执行GC而停止了应用程序的执行，
 *   标记和清除过程效率都不高
 *   会产生大量碎片，内存碎片过多可能导致无法给大对象分配内存。
 
-![标记-清除](https://images.cnblogs.com/cnblogs_com/wupeixuan/1186116/o_a4248c4b-6c1d-4fb8-a557-86da92d3a294.jpg)
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404215805.png)
 ## 复制算法（Copying）
 
 将内存划分为大小相等的两块，每次只使用其中一块，当这一块内存用完了就将还存活的对象复制到另一块上面，然后再把使用过的内存空间进行一次清理。
@@ -537,7 +536,7 @@ Stop-the-world意味着 JVM由于要执行GC而停止了应用程序的执行，
 *   将内存缩小为原来的一半，浪费了一半的内存空间，代价太高；如果不想浪费一半的空间，就需要有额外的空间进行分配担保，以应对被使用的内存中所有对象都100%存活的极端情况，所以在老年代一般不能直接选用这种算法。
 *   复制收集算法在对象存活率较高时就要进行较多的复制操作，效率将会变低。
 
-![复制](https://images.cnblogs.com/cnblogs_com/wupeixuan/1186116/o_e6b733ad-606d-4028-b3e8-83c3a73a3797.jpg)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404215817.png)
 
 ## 标记—整理算法（Mark-Compact）
 
@@ -547,7 +546,7 @@ Stop-the-world意味着 JVM由于要执行GC而停止了应用程序的执行，
 
 效率不高，不仅要标记存活对象，还要整理所有存活对象的引用地址，在效率上不如复制算法。
 
-![标记—整理](https://images.cnblogs.com/cnblogs_com/wupeixuan/1186116/o_902b83ab-8054-4bd2-898f-9a4a0fe52830.jpg)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404215845.png)
 
 ## 分代收集算法(Generational Collection)
 

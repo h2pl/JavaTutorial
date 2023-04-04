@@ -193,7 +193,7 @@ todo
 * [深入理解JVM虚拟机11：Java内存异常原理与实践](docs/java/jvm/深入理解JVM虚拟机11：Java内存异常原理与实践.md)
 * [深入理解JVM虚拟机12：JVM性能管理神器VisualVM介绍与实战](docs/java/jvm/深入理解JVM虚拟机12：JVM性能管理神器VisualVM介绍与实战.md)
 * [深入理解JVM虚拟机13：再谈四种引用及GC实践](docs/java/jvm/深入理解JVM虚拟机13：再谈四种引用及GC实践.md)
-* [深入理解JVM虚拟机14：GC调优思路与常用工具](docs/java/jvm/深入理解JVM虚拟机：GC调优思路与常用工具.md)
+* [深入理解JVM虚拟机14：GC调优思路与常用工具](docs/java/jvm/深入理解JVM虚拟机14：GC调优思路与常用工具.md)
 
 ### Java网络编程
 

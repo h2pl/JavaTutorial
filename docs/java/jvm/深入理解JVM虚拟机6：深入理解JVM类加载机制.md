@@ -1,5 +1,4 @@
-# Table of Contents
-
+# 目录
   * [一.目标：](#一目标：)
   * [二.原理 （类的加载过程及其最终产品）:](#二原理-（类的加载过程及其最终产品）)
   * [三.过程（类的生命周期）：](#三过程（类的生命周期）：)
@@ -14,7 +13,6 @@
   * [微信公众号](#微信公众号)
     * [Java技术江湖](#java技术江湖)
     * [个人公众号：黄小斜](#个人公众号：黄小斜)
-
 
 本文转自互联网，侵删
 
@@ -36,7 +34,6 @@
 
 <!-- more -->
 
-<!-- more -->
 ## 一.目标：
 
 1.什么是类的加载？
@@ -56,14 +53,7 @@ JVM将class文件字节码文件加载到内存中， 并将这些静态数据�
 JVM类加载机制分为五个部分：加载，验证，准备，解析，初始化，下面我们就分别来看一下这五个过程。其中加载、检验、准备、初始化和卸载这个五个阶段的顺序是固定的，而解析则未必。为了支持动态绑定，解析这个过程可以发生在初始化阶段之后。
 
 
-
-
-
-![](https://upload-images.jianshu.io/upload_images/13202633-3cb11d1712a9efc9.png?imageMogr2/auto-orient/strip|imageView2/2/w/739/format/webp)
-
-
-
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404221551.png)
 
 ### 加载：
 
@@ -139,13 +129,7 @@ java中，对于初始化阶段，有且只有以下五种情况才会对要求�
 ## 五.双亲委派机制：
 
 
-
-
-
-![](https://upload-images.jianshu.io/upload_images/13202633-4c819649aebff4df.png?imageMogr2/auto-orient/strip|imageView2/2/w/590/format/webp)
-
-
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404221618.png)
 
 
 双亲委派机制工作过程：

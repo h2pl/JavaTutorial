@@ -1,398 +1,644 @@
-# Table of Contents
 
-  * [目录](#目录)
-  * [调优准备](#调优准备)
-  * [性能分析](#性能分析)
-    * [CPU分析](#cpu分析)
-    * [内存分析](#内存分析)
-    * [IO分析](#io分析)
-    * [其他分析工具](#其他分析工具)
-  * [性能调优](#性能调优)
-    * [CPU调优](#cpu调优)
-    * [内存调优](#内存调优)
-    * [IO调优](#io调优)
-  * [其他优化建议](#其他优化建议)
-  * [JVM参数进阶](#jvm参数进阶)
-  * [参考资料](#参考资料)
-  * [参考文章](#参考文章)
-  * [微信公众号](#微信公众号)
-    * [Java技术江湖](#java技术江湖)
-    * [个人公众号：黄小斜](#个人公众号：黄小斜)
 
+![](https://pic.rmb.bdstatic.com/bjh/down/97522789c423e19931adafa65bd5424d.png)
 
-本文转自：https://www.rowkey.me/blog/2016/11/02/java-profile/?hmsr=toutiao.io&utm_medium=toutiao.io&utm_source=toutiao.io
+**目录**
 
-本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看
-> https://github.com/h2pl/Java-Tutorial
+一. JVM优化的必要性
 
-喜欢的话麻烦点下Star哈
+二. JVM调优原则
 
-文章将同步到我的个人博客：
-> www.how2playlife.com
+三. JVM运行参数设置
 
-本文是微信公众号【Java技术江湖】的《深入理解JVM虚拟机》其中一篇，本文部分内容来源于网络，为了把本文主题讲得清晰透彻，也整合了很多我认为不错的技术博客内容，引用其中了一些比较好的博客文章，如有侵权，请联系作者。
+四. JVM性能调优工具
 
-该系列博文会告诉你如何从入门到进阶，一步步地学习JVM基础知识，并上手进行JVM调优实战，JVM是每一个Java工程师必须要学习和理解的知识点，你必须要掌握其实现原理，才能更完整地了解整个Java技术体系，形成自己的知识框架。
+五. 常用调优策略
 
-为了更好地总结和检验你的学习成果，本系列文章也会提供每个知识点对应的面试题以及参考答案。
+六. JVM调优实例
 
-如果对本系列文章有什么建议，或者是有什么疑问的话，也可以关注公众号【Java技术江湖】联系作者，欢迎你参与本系列博文的创作和修订。
+七. 一个具体的实战案例分析
 
-<!-- more -->
-## 目录
+### JVM优化的必要性
 
-*   [调优准备](https://www.rowkey.me/blog/2016/11/02/java-profile/?hmsr=toutiao.io&utm_medium=toutiao.io&utm_source=toutiao.io#%E8%B0%83%E4%BC%98%E5%87%86%E5%A4%87)
-*   [性能分析](https://www.rowkey.me/blog/2016/11/02/java-profile/?hmsr=toutiao.io&utm_medium=toutiao.io&utm_source=toutiao.io#%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90)
-*   [性能调优](https://www.rowkey.me/blog/2016/11/02/java-profile/?hmsr=toutiao.io&utm_medium=toutiao.io&utm_source=toutiao.io#%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98)
-*   [其他优化建议](https://www.rowkey.me/blog/2016/11/02/java-profile/?hmsr=toutiao.io&utm_medium=toutiao.io&utm_source=toutiao.io#%E5%85%B6%E4%BB%96%E4%BC%98%E5%8C%96%E5%BB%BA%E8%AE%AE)
-*   [JVM参数进阶](https://www.rowkey.me/blog/2016/11/02/java-profile/?hmsr=toutiao.io&utm_medium=toutiao.io&utm_source=toutiao.io#JVM%E5%8F%82%E6%95%B0%E8%BF%9B%E9%98%B6)
+**1.1： 项目上线后，什么原因使得我们需要进行jvm调优**
 
-对于调优这个事情来说，一般就是三个过程：
+1)、垃圾太多（java线程，对象占满内存），内存占满了，程序跑不动了！！
+2)、垃圾回收线程太多，频繁地回收垃圾（垃圾回收线程本身也会占用资源： 占用内存，cpu资源），导致程序性能下降
+3)、回收垃圾频繁导致STW
 
-*   性能监控：问题没有发生，你并不知道你需要调优什么。此时需要一些系统、应用的监控工具来发现问题。
-*   性能分析：问题已经发生，但是你并不知道问题到底出在哪里。此时就需要使用工具、经验对系统、应用进行瓶颈分析，以求定位到问题原因。
-*   性能调优：经过上一步的分析定位到了问题所在，需要对问题进行解决，使用代码、配置等手段进行优化。
+因此基于以上的原因，程序上线后，必须进行调优，否则程序性能就无法提升；也就是程序上线后，必须设置合理的垃圾回收策略；
 
-Java调优也不外乎这三步。
+**1.2： jvm调优的本质是什么？？**
 
-此外，本文所讲的性能分析、调优等是抛开以下因素的：
+答案： 回收垃圾，及时回收没有用垃圾对象，及时释放掉内存空间
 
-*   系统底层环境：硬件、操作系统等
-*   数据结构和算法的使用
-*   外部系统如数据库、缓存的使用
+**1.3： 基于服务器环境，jvm堆内存到底应用设置多少内存？**
 
-## 调优准备
+1、32位的操作系统 --- 寻址能力 2^32 = 4GB ,最大的能支持4gb; jvm可以分配 2g+
 
-调优是需要做好准备工作的，毕竟每一个应用的业务目标都不尽相同，性能瓶颈也不会总在同一个点上。在业务应用层面，我们需要：
+2、64位的操作系统 --- 寻址能力 2^64 = 16384PB , 高性能计算机（IBM Z unix 128G 200+）
 
-*   需要了解系统的总体架构，明确压力方向。比如系统的哪一个接口、模块是使用率最高的，面临高并发的挑战。
-*   需要构建测试环境来测试应用的性能，使用ab、loadrunner、jmeter都可以。
-*   对关键业务数据量进行分析，这里主要指的是对一些数据的量化分析，如数据库一天的数据量有多少；缓存的数据量有多大等
-*   了解系统的响应速度、吞吐量、TPS、QPS等指标需求，比如秒杀系统对响应速度和QPS的要求是非常高的。
-*   了解系统相关软件的版本、模式和参数等，有时候限于应用依赖服务的版本、模式等，性能也会受到一定的影响。
+![](https://pic.rmb.bdstatic.com/bjh/down/aae367a929e2d1361975942091ffadfe.png)
 
-此外，我们还需要了解Java相关的一些知识：
+Jvm堆内存不能设置太大，否则会导致寻址垃圾的时间过长，也就是导致整个程序STW, 也不能设置太小，否则会导致回收垃圾过于频繁；
 
-1.  Java内存相关：这一部分可以参见[谈谈Java内存管理](http://www.rowkey.me/blog/2016/05/07/javamm/)一文
-2.  对Java代码进行基准性能测试：可以使用JMH来进行，[[译]使用JMH进行微基准测试：不要猜，要测试！](http://www.hollischuang.com/archives/1072)。
-3.  HotSpot VM相关知识：[http://www.oracle.com/technetwork/cn/java/javase/tech/index-jsp-136373-zhs.html](http://www.oracle.com/technetwork/cn/java/javase/tech/index-jsp-136373-zhs.html)
-4.  jdk自带各种java工具：[http://www.rowkey.me/blog/2016/11/03/jdk-tools/](http://www.rowkey.me/blog/2016/11/03/jdk-tools/)
+**1.4：总结**
 
-## 性能分析
+如果你遇到以下情况，就需要考虑进行JVM调优了：
 
-在系统层面能够影响应用性能的一般包括三个因素：CPU、内存和IO，可以从这三方面进行程序的性能瓶颈分析。
+*   Heap内存（老年代）持续上涨达到设置的最大内存值；
 
-### CPU分析
+*   Full GC 次数频繁；
 
-当程序响应变慢的时候，首先使用top、vmstat、ps等命令查看系统的cpu使用率是否有异常，从而可以判断出是否是cpu繁忙造成的性能问题。其中，主要通过us（用户进程所占的%）这个数据来看异常的进程信息。当us接近100%甚至更高时，可以确定是cpu繁忙造成的响应缓慢。一般说来，cpu繁忙的原因有以下几个：
+*   GC 停顿时间过长（超过1秒）；
 
-*   线程中有无限空循环、无阻塞、正则匹配或者单纯的计算
-*   发生了频繁的gc
-*   多线程的上下文切换
+*   应用出现OutOfMemory 等内存异常；
 
-确定好cpu使用率最高的进程之后就可以使用jstack来打印出异常进程的堆栈信息：
+*   应用中有使用本地缓存且占用大量内存空间；
 
-**jstack [pid]**
+*   系统吞吐量与响应性能不高或下降。
 
-![jstack](https://www.rowkey.me/images/blog_images/profile/jstack.jpg)
+### JVM调优原则
 
-接下来需要注意的一点是，Linux下所有线程最终还是以轻量级进程的形式存在系统中的，而使用jstack只能打印出进程的信息，这些信息里面包含了此进程下面所有线程（轻量级进程-LWP）的堆栈信息。因此，进一步的需要确定是哪一个线程耗费了大量CPU，此时可以使用top -p [processId] -H来查看，也可以直接通过ps -Le来显示所有进程,包括LWP的资源耗费信息。最后，通过在jstack的输出文件中查找对应的LWP的id即可以定位到相应的堆栈信息。其中需要注意的是线程的状态：RUNNABLE、WAITING等。对于Runnable的进程需要注意是否有耗费cpu的计算。对于Waiting的线程一般是锁的等待操作。
+![](https://pic.rmb.bdstatic.com/bjh/down/7cd4f5c19ab4f5f5d3087422097ee931.png)
 
-也可以使用jstat来查看对应进程的gc信息，以判断是否是gc造成了cpu繁忙。
+JVM调优是一个手段，但并不一定所有问题都可以通过JVM进行调优解决，因此，在进行JVM调优时，我们要遵循一些原则：
 
-**jstat -gcutil [pid]**
+*   大多数的Java应用不需要进行JVM优化；
 
-![jstat](https://www.rowkey.me/images/blog_images/profile/jstat.jpg)
+*   大多数导致GC问题的原因是代码层面的问题导致的（代码层面）；
 
-还可以通过vmstat，通过观察内核状态的上下文切换(cs)次数，来判断是否是上下文切换造成的cpu繁忙。
+*   上线之前，应先考虑将机器的JVM参数设置到最优；
 
-**vmstat 1 5**
+*   减少创建对象的数量（代码层面）；
 
-![jstat](https://www.rowkey.me/images/blog_images/profile/vmstat.jpg)
+*   减少使用全局变量和大对象（代码层面）；
 
-此外，有时候可能会由jit引起一些cpu飚高的情形，如大量方法编译等。这里可以使用-XX:+PrintCompilation这个参数输出jit编译情况，以排查jit编译引起的cpu问题。
+*   优先架构调优和代码调优，JVM优化是不得已的手段（代码、架构层面）；
 
-### 内存分析
+*   分析GC情况优化代码比优化JVM参数更好（代码层面）；
 
-对Java应用来说，内存主要是由堆外内存和堆内内存组成。
+通过以上原则，我们发现，其实最有效的优化手段是架构和代码层面的优化，而JVM优化则是最后不得已的手段，也可以说是对服务器配置的最后一次“压榨”。
 
-1.  堆外内存
+**2.1 JVM调优目标**
 
-    堆外内存主要是JNI、Deflater/Inflater、DirectByteBuffer（nio中会用到）使用的。对于这种堆外内存的分析，还是需要先通过vmstat、sar、top、pidstat(这里的sar,pidstat以及iostat都是[sysstat](http://sebastien.godard.pagesperso-orange.fr/documentation.html)软件套件的一部分，需要单独安装)等查看swap和物理内存的消耗状况再做判断的。此外，对于JNI、Deflater这种调用可以通过[Google-preftools](http://www.oschina.net/p/perftools)来追踪资源使用状况。
+调优的最终目的都是为了令应用程序使用最小的硬件消耗来承载更大的吞吐。jvm调优主要是针对垃圾收集器的收集性能优化，令运行在虚拟机上的应用能够使用更少的内存以及延迟获取更大的吞吐量。
 
-2.  堆内内存
+*   延迟：GC低停顿和GC低频率；
 
-    此部分内存为Java应用主要的内存区域。通常与这部分内存性能相关的有：
+*   低内存占用；
 
-    *   创建的对象：这个是存储在堆中的，需要控制好对象的数量和大小，尤其是大的对象很容易进入老年代
-    *   全局集合：全局集合通常是生命周期比较长的，因此需要特别注意全局集合的使用
-    *   缓存：缓存选用的数据结构不同，会很大程序影响内存的大小和gc
-    *   ClassLoader：主要是动态加载类容易造成永久代内存不足
-    *   多线程：线程分配会占用本地内存，过多的线程也会造成内存不足
+*   高吞吐量;
 
-    以上使用不当很容易造成：
+其中，任何一个属性性能的提高，几乎都是以牺牲其他属性性能的损为代价的，不可兼得。具体根据在业务中的重要性确定。
 
-    *   频繁GC -> Stop the world，使你的应用响应变慢
-    *   OOM，直接造成内存溢出错误使得程序退出。OOM又可以分为以下几种：
-        *   Heap space：堆内存不足
-        *   PermGen space：永久代内存不足
-        *   Native thread：本地线程没有足够内存可分配
+**2.2 JVM调优量化目标**
 
-    排查堆内存问题的常用工具是jmap，是jdk自带的。一些常用用法如下：
+下面展示了一些JVM调优的量化目标参考实例：
 
-    *   查看jvm内存使用状况：jmap -heap
-    *   查看jvm内存存活的对象：jmap -histo:live
-    *   把heap里所有对象都dump下来，无论对象是死是活：jmap -dump:format=b,file=xxx.hprof
-    *   先做一次full GC，再dump，只包含仍然存活的对象信息：jmap -dump:format=b,live,file=xxx.hprof
+*   Heap 内存使用率 <= 70%;
 
-    此外，不管是使用jmap还是在OOM时产生的dump文件，可以使用Eclipse的MAT(MEMORY ANALYZER TOOL)来分析，可以看到具体的堆栈和内存中对象的信息。当然jdk自带的jhat也能够查看dump文件(启动web端口供开发者使用浏览器浏览堆内对象的信息)。此外，VisualVM也能够打开hprof文件，使用它的heap walker查看堆内存信息。
+*   Old generation内存使用率<= 70%;
 
-    ![](https://www.rowkey.me/images/blog_images/profile/jhat.png)
+*   avgpause <= 1秒;
 
-### IO分析
+*   Full gc 次数0 或 avg pause interval >= 24小时 ;
 
-通常与应用性能相关的包括：文件IO和网络IO。
+注意：不同应用的JVM调优量化目标是不一样的。
 
-1.  文件IO
+**2.3 JVM调优的步骤**
 
-    可以使用系统工具pidstat、iostat、vmstat来查看io的状况。这里可以看一张使用vmstat的结果图。
+一般情况下，JVM调优可通过以下步骤进行：
 
-    ![](https://www.rowkey.me/images/blog_images/profile/io.png)
+*   分析GC日志及dump文件，判断是否需要优化，确定瓶颈问题点；
 
-    这里主要注意bi和bo这两个值，分别表示块设备每秒接收的块数量和块设备每秒发送的块数量，由此可以判定io繁忙状况。进一步的可以通过使用strace工具定位对文件io的系统调用。通常，造成文件io性能差的原因不外乎：
+*   确定JVM调优量化目标；
 
-    *   大量的随机读写
-    *   设备慢
-    *   文件太大
-2.  网络IO
+*   确定JVM调优参数（根据历史JVM参数来调整）；
 
-    查看网络io状况，一般使用的是netstat工具。可以查看所有连接的状况、数目、端口信息等。例如：当time_wait或者close_wait连接过多时，会影响应用的相应速度。
+*   依次调优内存、延迟、吞吐量等指标；
 
-    ```
-     netstat -anp
+*   对比观察调优前后的差异；
 
-    ```
+*   不断的分析和调整，直到找到合适的JVM参数配置；
 
-    ![](https://www.rowkey.me/images/blog_images/profile/netstat.png)
+*   找到最合适的参数，将这些参数应用到所有服务器，并进行后续跟踪。
 
-    此外，还可以使用tcpdump来具体分析网络io的数据。当然，tcpdump出的文件直接打开是一堆二进制的数据，可以使用wireshark阅读具体的连接以及其中数据的内容。
+以上操作步骤中，某些步骤是需要多次不断迭代完成的。一般是从满足程序的内存使用需求开始的，之后是时间延迟的要求，最后才是吞吐量的要求，要基于这个步骤来不断优化，每一个步骤都是进行下一步的基础，不可逆行之。
 
-    ```
-     tcpdump -i eth0 -w tmp.cap -tnn dst port 8080 #监听8080端口的网络请求并打印日志到tmp.cap中
+![](https://pic.rmb.bdstatic.com/bjh/down/c271890a3714d538ed3362073c66893d.png)
 
-    ```
+**调优原则总结**
 
-    还可以通过查看/proc/interrupts来获取当前系统使用的中断的情况。
+JVM的自动内存管理本来就是为了将开发人员从内存管理的泥潭里拉出来。JVM调优不是常规手段，性能问题一般第一选择是优化程序，最后的选择才是进行JVM调优。
 
-    ![](https://www.rowkey.me/images/blog_images/profile/interrupts.png)
+即使不得不进行JVM调优，也绝对不能拍脑门就去调整参数，一定要全面监控，详细分析性能数据。
 
-    各个列依次是：
+**附录：系统性能优化指导**
 
-    ```
-     irq的序号， 在各自cpu上发生中断的次数，可编程中断控制器，设备名称（request_irq的dev_name字段）
+![](https://pic.rmb.bdstatic.com/bjh/down/00d90cef8369568f8581a9850dcd42e6.png)
 
-    ```
+### JVM运行参数设置
 
-    通过查看网卡设备的终端情况可以判断网络io的状况。
+**3.1、堆参数设置**
 
-### 其他分析工具
+**-XX:+PrintGC**使用这个参数，虚拟机启动后，只要遇到GC就会打印日志
 
-上面分别针对CPU、内存以及IO讲了一些系统/JDK自带的分析工具。除此之外，还有一些综合分析工具或者框架可以更加方便我们对Java应用性能的排查、分析、定位等。
+**-XX:+UseSerialGC**配置串行回收器
 
-*   VisualVM
+**-XX:+PrintGCDetails**可以查看详细信息，包括各个区的情况
 
-    这个工具应该是Java开发者们非常熟悉的一款java应用监测工具，原理是通过jmx接口来连接jvm进程，从而能够看到jvm上的线程、内存、类等信息。 ![](https://www.rowkey.me/images/blog_images/profile/visualvm.png) 如果想进一步查看gc情况，可以安装visual gc插件。此外，visualvm也有btrace的插件，可以可视化直观的编写btrace代码并查看输出日志。 与VisualVm类似的，jconsole也是通过jmx查看远程jvm信息的一款工具，更进一步的，通过它还可以显示具体的线程堆栈信息以及内存中各个年代的占用情况，也支持直接远程执行MBEAN。当然，visualvm通过安装jconsole插件也可以拥有这些功能。 ![](https://www.rowkey.me/images/blog_images/profile/jconsole.png) 但由于这俩工具都是需要ui界面的，因此一般都是通过本地远程连接服务器jvm进程。服务器环境下，一般并不用此种方式。
+**-Xms**设置Java程序启动时初始化堆大小
 
-*   Java Mission Control(jmc)
+**-Xmx**设置Java程序能获得最大的堆大小
 
-    此工具是jdk7 u40开始自带的，原来是JRockit上的工具，是一款采样型的集诊断、分析和监控与一体的非常强大的工具: [https://docs.oracle.com/javacomponents/jmc-5-5/jmc-user-guide/toc.htm](https://docs.oracle.com/javacomponents/jmc-5-5/jmc-user-guide/toc.htm)。但是此工具是基于JFR(jcmd <pid>JFR.start name=test duration=60s settings=template.jfc filename=output.jfr)的，而开启JFR需要商业证书：jcmd <pid>VM.unlock_commercial_features。</pid></pid>
+**-Xmx20m -Xms5m -XX:+PrintCommandLineFlags**可以将隐式或者显示传给虚拟机的参数输出
 
-    ![](https://www.rowkey.me/images/blog_images/profile/jmc.png)
+**3.2、新生代参数配置**
 
-*   Btrace
+**-Xmn**可以设置新生代的大小，设置一个比较大的新生代会减少老年代的大小，这个参数对系统性能以及GC行为有很大的影响，新生代大小一般会设置整个堆空间的1/3到1/4左右
 
-    这里不得不提的是btrace这个神器，它使用java attach api+ java agent + instrument api能够实现jvm的动态追踪。在不重启应用的情况下可以加入拦截类的方法以打印日志等。具体的用法可以参考[Btrace入门到熟练小工完全指南](http://calvin1978.blogcn.com/articles/btrace1.html)。
+**-XX:SurvivorRatio**用来设置新生代中eden空间和from/to空间的比例。含义：-XX:SurvivorRatio=eden/from**/**eden/to
 
-*   Jwebap
+不同的堆分布情况，对系统执行会产生一定的影响，在实际工作中，应该根据系统的特点做出合理的配置，基本策略：尽可能将对象预留在新生代，减少老年代的GC次数
 
-    [Jwebap](http://www.oschina.net/p/jwebap)是一款JavaEE性能检测框架，基于asm增强字节码实现。支持：http请求、jdbc连接、method的调用轨迹跟踪以及次数、耗时的统计。由此可以获取最耗时的请求、方法，并可以查看jdbc连接的次数、是否关闭等。但此项目是2006年的一个项目，已经将近10年没有更新。根据笔者使用，已经不支持jdk7编译的应用。如果要使用，建议基于原项目二次开发，同时也可以加入对redis连接的轨迹跟踪。当然，基于字节码增强的原理，也可以实现自己的JavaEE性能监测框架。
+除了可以设置新生代的绝对大小（-Xmn），还可以使用（-XX:NewRatio）设置新生代和老年代的比例：-XX：NewRatio=老年代/新生代
 
-    ![](https://www.rowkey.me/images/blog_images/profile/jwebap.png)
+**配置运行时参数：**
 
-    上图来自笔者公司二次开发过的jwebap，已经支持jdk8和redis连接追踪。
+-Xms20m -Xmx20m -Xmn1m -XX:SurvivorRatio=2 -XX:+PrintGCDetails -XX:+UseSerialGC
 
-*   useful-scripts
+**3.3、堆溢出参数配置**
 
-    这里有一个本人参与的开源的项目：[https://github.com/superhj1987/useful-scripts](https://github.com/superhj1987/useful-scripts)，封装了很多常用的性能分析命令，比如上文讲的打印繁忙java线程堆栈信息，只需要执行一个脚本即可。
+在Java程序在运行过程中，如果对空间不足，则会抛出内存溢出的错误（Out Of Memory）OOM，一旦这类问题发生在生产环境，则可能引起严重的业务中断，Java虚拟机提供了**-XX:+
+HeapDumpOnOutOfMemoryError**，使用该参数可以在内存溢出时导出整个堆信息，与之配合使用的还有参数**-XX:HeapDumpPath**，可以设置导出堆的存放路径
 
-## 性能调优
+内存分析工具：Memory Analyzer
 
-与性能分析相对应，性能调优同样分为三部分。
+**配置运行时参数**-Xms1m -Xmx1m -XX:+
+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=d:/Demo3.dump
 
-### CPU调优
+**3.4、栈参数配置**
 
-*   不要存在一直运行的线程(无限while循环)，可以使用sleep休眠一段时间。这种情况普遍存在于一些pull方式消费数据的场景下，当一次pull没有拿到数据的时候建议sleep一下，再做下一次pull。
-*   轮询的时候可以使用wait/notify机制
-*   避免循环、正则表达式匹配、计算过多，包括使用String的format、split、replace方法(可以使用apache的commons-lang里的StringUtils对应的方法)，使用正则去判断邮箱格式(有时候会造成死循环)、序列/反序列化等。
-*   结合jvm和代码，避免产生频繁的gc，尤其是full GC。
+Java虚拟机提供了参数**-Xss**来指定线程的最大栈空间，整个参数也直接决定了函数可调用的最大深度。
 
-此外，使用多线程的时候，还需要注意以下几点：
+**配置运行时参数：**-Xss1m
 
-*   使用线程池，减少线程数以及线程的切换
-*   多线程对于锁的竞争可以考虑减小锁的粒度(使用ReetrantLock)、拆分锁(类似ConcurrentHashMap分bucket上锁), 或者使用CAS、ThreadLocal、不可变对象等无锁技术。此外，多线程代码的编写最好使用jdk提供的并发包、Executors框架以及ForkJoin等，此外[Discuptor](http://ifeve.com/disruptor-getting-started/)和[Actor](http://ifeve.com/introducing-actors-akka-notes-part-1/)在合适的场景也可以使用。
+3.5、方法区参数配置
 
-### 内存调优
+和Java堆一样，方法区是一块所有线程共享的内存区域，它用于保存系统的类信息，方法区（永久区）可以保存多少信息可以对其进行配置，在默认情况下，**-XX:MaxPermSize**为64M，如果系统运行时生产大量的类，就需要设置一个相对合适的方法区，以免出现永久区内存溢出的问题
 
-内存的调优主要就是对jvm的调优。
+-XX:PermSize=64M -XX:MaxPermSize=64M
 
-*   合理设置各个代的大小。避免新生代设置过小(不够用，经常minor gc并进入老年代)以及过大(会产生碎片)，同样也要避免Survivor设置过大和过小。
-*   选择合适的GC策略。需要根据不同的场景选择合适的gc策略。这里需要说的是，cms并非全能的。除非特别需要再设置，毕竟cms的新生代回收策略parnew并非最快的，且cms会产生碎片。此外，G1直到jdk8的出现也并没有得到广泛应用，并不建议使用。
-*   jvm启动参数配置-XX:+PrintGCDetails -XX:+PrintGCDateStamps -Xloggc:[log_path]，以记录gc日志，便于排查问题。
+**3.6、直接内存参数配置**
 
-其中，对于第一点，具体的还有一点建议：
+直接内存也是Java程序中非常重要的组成部分，特别是广泛用在NIO中，直接内存跳过了Java堆，使用Java程序可以直接访问原生堆空间，因此在一定程度上加快了内存空间的访问速度
 
-*   **年轻代大小选择**：响应时间优先的应用，尽可能设大，直到接近系统的最低响应时间限制（根据实际情况选择）。在此种情况下，年轻代收集发生gc的频率是最小的。同时，也能够减少到达年老代的对象。吞吐量优先的应用，也尽可能的设置大，因为对响应时间没有要求，垃圾收集可以并行进行，建议适合8CPU以上的应用使用。
-*   **年老代大小选择**：响应时间优先的应用，年老代一般都是使用并发收集器，所以其大小需要小心设置，一般要考虑并发会话率和会话持续时间等一些参数。如果堆设置小了，会造成内存碎片、高回收频率以及应用暂停而使用传统的标记清除方式；如果堆大了，则需要较长的收集时间。最优化的方案，一般需要参考以下数据获得：
-    *   并发垃圾收集信息
-    *   持久代并发收集次数
-    *   传统GC信息
-    *   花在年轻代和年老代回收上的时间比例
+但是说直接内存一定就可以提高内存访问速度也不见得，具体情况具体分析
 
-    一般吞吐量优先的应用都应该有一个很大的年轻代和一个较小的年老代。这样可以尽可能回收掉大部分短期对象，减少中期的对象，而年老代存放长期存活对象。
+**相关配置参数：-XX:MaxDirectMemorySize**，如果不设置，默认值为最大堆空间，即-Xmx。直接内存使用达到上限时，就会触发垃圾回收，如果不能有效的释放空间，就会引起系统的OOM
 
-此外，**较小堆引起的碎片问题**：因为年老代的并发收集器使用标记、清除算法，所以不会对堆进行压缩。当收集器回收时，会把相邻的空间进行合并，这样可以分配给较大的对象。但是，当堆空间较小时，运行一段时间以后，就会出现“碎片”，如果并发收集器找不到足够的空间，那么并发收集器将会停止，然后使用传统的标记、清除方式进行回收。如果出现“碎片”，可能需要进行如下配置：-XX:+UseCMSCompactAtFullCollection，使用并发收集器时，开启对年老代的压缩。同时使用-XX:CMSFullGCsBeforeCompaction=xx设置多少次Full GC后，对年老代进行压缩。
+**3.7、对象进入老年代的参数配置**
 
-其余对于jvm的优化问题可见后面**JVM参数进阶**一节。
+一般而言，对象首次创建会被放置在新生代的eden区，如果没有GC介入，则对象不会离开eden区，那么eden区的对象如何进入老年代呢？
 
-代码上，也需要注意：
+通常情况下，只要对象的年龄达到一定的大小，就会自动离开年轻代进入老年代，对象年龄是由对象经历数次GC决定的，在新生代每次GC之后如果对象没有被回收，则年龄加1
 
-*   避免保存重复的String对象，同时也需要小心String.subString()与String.intern()的使用，尤其是后者其底层数据结构为StringTable，当字符串大量不重复时，会使得StringTable非常大(一个固定大小的hashmap，可以由参数-XX:StringTableSize=N设置大小)，从而影响young gc的速度。在jackson和fastjson中使用了此方法，某些场景下会引起gc问题: [YGC越来越慢，为什么](http://hellojava.info/?p=514)。
-*   尽量不要使用finalizer
-*   释放不必要的引用：ThreadLocal使用完记得释放以防止内存泄漏，各种stream使用完也记得close。
-*   使用对象池避免无节制创建对象，造成频繁gc。但不要随便使用对象池，除非像连接池、线程池这种初始化/创建资源消耗较大的场景，
-*   缓存失效算法，可以考虑使用SoftReference、WeakReference保存缓存对象
-*   谨慎热部署/加载的使用，尤其是动态加载类等
-*   不要用Log4j输出文件名、行号，因为Log4j通过打印线程堆栈实现，生成大量String。此外，使用log4j时，建议此种经典用法，先判断对应级别的日志是否打开，再做操作，否则也会生成大量String。
+虚拟机提供了一个参数来控制新生代对象的最大年龄，当超过这个年龄范围就会晋升老年代
 
-    ```
-      if (logger.isInfoEnabled()) {
-          logger.info(msg);
-      }
+**-XX:MaxTenuringThreshold**，默认情况下为15
 
-    ```
+**配置运行时参数：**-Xmx64M -Xms64M -XX:+PrintGCDetails
 
-### IO调优
+**结论**：对象首次创建会被放置在新生代的eden区，因此输出结果中from和to区都为0%
 
-文件IO上需要注意：
+根据设置MaxTenuringThreshold参数，可以指定新生代对象经过多少次回收后进入老年代。另外，大对象新生代eden区无法装入时，也会直接进入老年代。
 
-*   考虑使用异步写入代替同步写入，可以借鉴redis的aof机制。
-*   利用缓存，减少随机读
-*   尽量批量写入，减少io次数和寻址
-*   使用数据库代替文件存储
+JVM里有个参数可以设置对象的大小超过在指定的大小之后，直接晋升老年代 **-XX:PretenureSizeThreshold=15**
 
-网络IO上需要注意：
+参数：-Xmx1024M -Xms1024M -XX:+UseSerialGC -XX:MaxTenuringThreshold=15 -XX:+PrintGCDetails
 
-*   和文件IO类似，使用异步IO、多路复用IO/事件驱动IO代替同步阻塞IO
-*   批量进行网络IO,减少IO次数
-*   使用缓存，减少对网络数据的读取
-*   使用协程: [Quasar](http://colobu.com/2016/07/14/Java-Fiber-Quasar/)
+使用PretenureSizeThreshold可以进行指定进入老年代的对象大小，但是要注意TLAB区域优先分配空间。虚拟机对于体积不大的对象 会优先把数据分配到TLAB区域中，因此就失去了在老年代分配的机会
 
-## 其他优化建议
+参数：-Xmx30M -Xms30M -XX:+UseSerialGC -XX:+PrintGCDetails
+-XX:PretenureSizeThreshold=1000 -XX:-UseTLAB
 
-*   算法、逻辑上是程序性能的首要，遇到性能问题，应该首先优化程序的逻辑处理
-*   优先考虑使用返回值而不是异常表示错误
-*   查看自己的代码是否对内联是友好的: [你的Java代码对JIT编译友好么？](http://www.infoq.com/cn/articles/Java-Application-Hostile-to-JIT-Compilation)
+**3.8、TLAB参数配置**
 
-此外，jdk7、8在jvm的性能上做了一些增强：
+TLAB全称是Thread Local Allocation Buffer，即线程本地分配缓存，从名字上看是一个线程专用的内存分配区域，是为了加速对象分配对象而生的。每一个线程都会产生一个TLAB，该线程独享的工作区域，Java虚拟机使用这种TLAB区来避免多线程冲突问题，提高了对象分配的效率
 
-*   通过-XX:+TieredCompilation开启JDK7的[多层编译（tiered compilation）支持](http://rednaxelafx.iteye.com/blog/1022095)。多层编译结合了客户端C1编译器和服务端C2编译器的优点(客户端编译能够快速启动和及时优化，服务器端编译可以提供更多的高级优化)，是一个非常高效利用资源的切面方案。在开始时先进行低层次的编译，同时收集信息，在后期再进一步进行高层次的编译进行高级优化。**需要注意的一点：**这个参数会消耗比较多的内存资源，因为同一个方法被编译了多次，存在多份native内存拷贝，建议把code cache调大一点儿（-XX:+ReservedCodeCacheSize，InitialCodeCacheSize）。否则有可能由于code cache不足，jit编译的时候不停的尝试清理code cache，丢弃无用方法，消耗大量资源在jit线程上。
-*   Compressed Oops：压缩指针在jdk7中的server模式下已经默认开启。
-*   Zero-Based Compressed Ordinary Object Pointers：当使用了上述的压缩指针时，在64位jvm上，会要求操作系统保留从一个虚拟地址0开始的内存。如果操作系统支持这种请求，那么就开启了Zero-Based Compressed Oops。这样可以使得无须在java堆的基地址添加任何地址补充即可把一个32位对象的偏移解码成64位指针。
-*   逃逸分析(Escape Analysis): Server模式的编译器会根据代码的情况，来判断相关对象的逃逸类型，从而决定是否在堆中分配空间，是否进行标量替换(在栈上分配原子类型局部变量)。此外，也可以根据调用情况来决定是否自动消除同步控制，如StringBuffer。这个特性从Java SE 6u23开始就默认开启。
-*   NUMA Collector Enhancements：这个重要针对的是The Parallel Scavenger垃圾回收器。使其能够利用NUMA (Non Uniform Memory Access，即每一个处理器核心都有本地内存，能够低延迟、高带宽访问) 架构的机器的优势来更快的进行gc。可以通过-XX:+UseNUMA开启支持。
+TLAB空间一般不会太大，当大对象无法在TLAB分配时，则会直接分配到堆上
 
-**此外，网上还有很多过时的建议，不要再盲目跟随**:
+**-XX:+UseTLAB**使用TLAB
 
-*   变量用完设置为null，加快内存回收，这种用法大部分情况下并没有意义。一种情况除外：如果有个Java方法没有被JIT编译但里面仍然有代码会执行比较长时间，那么在那段会执行长时间的代码前显式将不需要的引用类型局部变量置null是可取的。具体的可以见R大的解释：[https://www.zhihu.com/question/48059457/answer/113538171](https://www.zhihu.com/question/48059457/answer/113538171)
-*   方法参数设置为final，这种用法也没有太大的意义，尤其在jdk8中引入了effective final，会自动识别final变量。
+**-XX:+TLABSize**设置TLAB大小
 
-## JVM参数进阶
+**-XX:TLABRefillWasteFraction**设置维护进入TLAB空间的单个对象大小，它是一个比例值，默认为64，即如果对象大于整个空间的1/64，则在堆创建对象
 
-jvm的参数设置一直是比较理不清的地方，很多时候都搞不清都有哪些参数可以配置，参数是什么意思，为什么要这么配置等。这里主要针对这些做一些常识性的说明以及对一些容易让人进入陷阱的参数做一些解释。
+**-XX:+PrintTLAB**查看TLAB信息
 
-**_以下所有都是针对Oracle/Sun JDK 6来讲_**
+**-XX:ResizeTLAB**自调整TLABRefillWasteFraction阈值
 
-1.  启动参数默认值
+参数：-XX:+UseTLAB -XX:+PrintTLAB -XX:+PrintGC -XX:TLABSize=102400 -XX:-ResizeTLAB
+-XX:TLABRefillWasteFraction=100 -XX:-DoEscapeAnalysis -server
 
-    Java有很多的启动参数，而且很多版本都并不一样。但是现在网上充斥着各种资料，如果不加辨别的全部使用，很多是没有效果或者本来就是默认值的。一般的，我们可以通过使用java -XX:+PrintFlagsInitial来查看所有可以设置的参数以及其默认值。也可以在程序启动的时候加入-XX:+PrintCommandLineFlags来查看与默认值不相同的启动参数。如果想查看所有启动参数(包括和默认值相同的)，可以使用-XX:+PrintFlagsFinal。 ![](https://www.rowkey.me/images/blog_images/profile/flags-1.png) ![](https://www.rowkey.me/images/blog_images/profile/flags-2.png)
+内存参数
 
-    输出里“=”表示使用的是初始默认值，而“:=”表示使用的不是初始默认值，可能是命令行传进来的参数、配置文件里的参数或者是[ergonomics](https://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/ergonomics.html)自动选择了别的值。
 
-    此外，还可以使用jinfo命令显示启动的参数。
 
-    *   jinfo -flags [pid] #查看目前启动使用的有效参数
-    *   jinfo -flag [flagName] [pid] #查看对应参数的值
 
-    **这里需要指出的是，当你配置jvm参数时，最好是先通过以上命令查看对应参数的默认值再确定是否需要设置。也最好不要配置你搞不清用途的参数，毕竟默认值的设置是有它的合理之处的。**
 
-2.  动态设置参数
+![](https://pics7.baidu.com/feed/bba1cd11728b47102f9e1e7af46fe7f6fd03237b.png@f_auto?token=ca9d5541411861cfb09e792849a82a06)
 
-    当Java应用启动后，定位到了是GC造成的性能问题，但是你启动的时候并没有加入打印gc的参数，很多时候的做法就是重新加参数然后重启应用。但这样会造成一定时间的服务不可用。最佳的做法是能够在不重启应用的情况下，动态设置参数。使用jinfo可以做到这一点(本质上还是基于jmx的)。
 
-    ```
-     jinfo -flag [+/-][flagName] [pid] #启用/禁止某个参数
-     jinfo -flag [flagName=value] [pid] #设置某个参数
 
-    ```
 
-    对于上述的gc的情况，就可以使用以下命令打开heap dump并设置dump路径。
 
-    ```
-     jinfo -flag +HeapDumpBeforeFullGC [pid] 
-     jinfo -flag +HeapDumpAfterFullGC [pid]
-     jinfo -flag HeapDumpPath=/home/dump/dir [pid]
+### 四．JVM性能调优工具
 
-    ```
+这个篇幅在这里就不过多介绍了，可以参照：
 
-    同样的也可以动态关闭。
+深入理解JVM虚拟机——Java虚拟机的监控及诊断工具大全
 
-    ```
-     jinfo -flag -HeapDumpBeforeFullGC [pid] 
-     jinfo -flag -HeapDumpAfterFullGC [pid]
+### 五．常用调优策略
 
-    ```
+这里还是要提一下，及时确定要进行JVM调优，也不要陷入“知见障”，进行分析之后，发现可以通过优化程序提升性能，仍然首选优化程序。
 
-    其他的参数设置类似。
+**5.1、选择合适的垃圾回收器**
 
-3.  -verbose:gc 与 -XX:+PrintGCDetails
+CPU单核，那么毫无疑问Serial 垃圾收集器是你唯一的选择。
 
-    很多gc推荐设置都同时设置了这两个参数，其实，只要打开了-XX:+PrintGCDetails，前面的选项也会同时打开，无须重复设置。
+CPU多核，关注吞吐量 ，那么选择PS+PO组合。
 
-4.  -XX:+DisableExplicitGC
+CPU多核，关注用户停顿时间，JDK版本1.6或者1.7，那么选择CMS。
 
-    这个参数的作用就是使得system.gc变为空调用，很多推荐设置里面都是建议开启的。但是，如果你用到了NIO或者其他使用到堆外内存的情况，使用此选项会造成oom。可以用XX:+ExplicitGCInvokesConcurrent或XX:+ExplicitGCInvokesConcurrentAndUnloadsClasses(配合CMS使用，使得system.gc触发一次并发gc)代替。
+CPU多核，关注用户停顿时间，JDK1.8及以上，JVM可用内存6G以上，那么选择G1。
 
-    此外，还有一个比较有意思的地方。如果你不设置此选项的话，当你使用了RMI的时候，会周期性地来一次full gc。这个现象是由于分布式gc造成的，为RMI服务。具体的可见此链接内容中与dgc相关的：[http://docs.oracle.com/javase/6/docs/technotes/guides/rmi/sunrmiproperties.html](http://docs.oracle.com/javase/6/docs/technotes/guides/rmi/sunrmiproperties.html)
+参数配置：
 
-5.  MaxDirectMemorySize
+> //设置Serial垃圾收集器（新生代）
+>
+> 开启：-XX:+UseSerialGC
+>
+> //设置PS+PO,新生代使用功能Parallel Scavenge 老年代将会使用Parallel Old收集器
+>
+> 开启 -XX:+UseParallelOldGC
+>
+> //CMS垃圾收集器（老年代）
+>
+> 开启 -XX:+UseConcMarkSweepGC
+>
+> //设置G1垃圾收集器
+>
+> 开启 -XX:+UseG1GC
 
-    此参数是设置的堆外内存的上限值。当不设置的时候为-1，此值为-Xmx减去一个survivor space的预留大小。
+**5.2、调整内存大小**
 
-6.  由于遗留原因，作用相同的参数
+现象：垃圾收集频率非常频繁。
 
-    *   -Xss 与 -XX:ThreadStackSize
-    *   -Xmn 与 -XX:NewSize，此外这里需要注意的是设置了-Xmn的话，NewRatio就没作用了。
-7.  -XX:MaxTenuringThreshold
+原因：如果内存太小，就会导致频繁的需要进行垃圾收集才能释放出足够的空间来创建新的对象，所以增加堆内存大小的效果是非常显而易见的。
 
-    使用工具查看此值默认值为15，但是选择了CMS的时候，此值会变成4。当此值设置为0时，所有eden里的活对象在经历第一次minor GC的时候就会直接晋升到old gen，survivor space直接就没用。**还有值得注意的一点，当使用并行回收器时，此值是没有作用的，并行回收器默认是自动调整这些参数以求达到吞吐量最大的。**此外，即使是使用CMS等回收器，晋升到老年代的age也不是不变的，当某一age的对象的大小达到年轻代的50%时，这个age会被动态调整为晋升年龄。
+注意：如果垃圾收集次数非常频繁，但是每次能回收的对象非常少，那么这个时候并非内存太小，而可能是内存泄露导致对象无法回收，从而造成频繁GC。
 
-8.  -XX:HeapDumpPath
+参数配置：
 
-    使用此参数可以指定-XX:+HeapDumpBeforeFullGC、-XX:+HeapDumpAfterFullGC、-XX:+HeapDumpOnOutOfMemoryError触发heap dump文件的存储位置。
+> //设置堆初始值
+>
+> 指令1：-Xms2g
+>
+> 指令2：-XX:InitialHeapSize=2048m
+>
+> //设置堆区最大值
+>
+> 指令1：`-Xmx2g`
+>
+> 指令2： -XX:MaxHeapSize=2048m
+>
+> //新生代内存配置
+>
+> 指令1：-Xmn512m
+>
+> 指令2：-XX:MaxNewSize=512m
 
-9.  -XX:+UseAdaptiveSizePolicy
+**5.3、设置符合预期的停顿时间**
 
-    此参数在并行回收器时是默认开启的，会根据应用运行状况做自我调整，如MaxTenuringThreshold、survivor区大小等。其中第一次晋升老年代的年龄以InitialTenuringThreshold（默认为7）开始，后续会自动调整。如果希望跟踪每次minor GC后新的存活周期的阈值，可在启动参数上增加：-XX:+PrintTenuringDistribution。如果想要可以配置这些参数，可以关闭此选项，但paralle的性能很难达到最佳。其他垃圾回收期则慎重开启此开关。
+**现象**：程序间接性的卡顿
+
+**原因**：如果没有确切的停顿时间设定，垃圾收集器以吞吐量为主，那么垃圾收集时间就会不稳定。
+
+**注意**：不要设置不切实际的停顿时间，单次时间越短也意味着需要更多的GC次数才能回收完原有数量的垃圾.
+
+**参数配置**：
+
+> //GC停顿时间，垃圾收集器会尝试用各种手段达到这个时间
+>
+> -XX:MaxGCPauseMillis
+
+**5.4、调整内存区域大小比率**
+
+现象：某一个区域的GC频繁，其他都正常。
+
+原因：如果对应区域空间不足，导致需要频繁GC来释放空间，在JVM堆内存无法增加的情况下，可以调整对应区域的大小比率。
+
+注意：也许并非空间不足，而是因为内存泄造成内存无法回收。从而导致GC频繁。
+
+参数配置：
+
+> //survivor区和Eden区大小比率
+>
+> 指令：-XX:SurvivorRatio=6 //S区和Eden区占新生代比率为1:6,两个S区2:6
+>
+> //新生代和老年代的占比
+>
+> -XX:NewRatio=4 //表示新生代:老年代 = 1:4 即老年代占整个堆的4/5；默认值=2
+
+**5.5、调整对象升老年代的年龄**
+
+**现象**：老年代频繁GC，每次回收的对象很多。
+
+**原因**：如果升代年龄小，新生代的对象很快就进入老年代了，导致老年代对象变多，而这些对象其实在随后的很短时间内就可以回收，这时候可以调整对象的升级代年龄，让对象不那么容易进入老年代解决老年代空间不足频繁GC问题。
+
+**注意**：增加了年龄之后，这些对象在新生代的时间会变长可能导致新生代的GC频率增加，并且频繁复制这些对象新生的GC时间也可能变长。
+
+配置参数：
+
+> //进入老年代最小的GC年龄,年轻代对象转换为老年代对象最小年龄值，默认值7
+>
+> -XX:InitialTenuringThreshol=7
+
+**5.6、调整大对象的标准**
+
+**现象**：老年代频繁GC，每次回收的对象很多,而且单个对象的体积都比较大。
+
+**原因**：如果大量的大对象直接分配到老年代，导致老年代容易被填满而造成频繁GC，可设置对象直接进入老年代的标准。
+
+**注意**：这些大对象进入新生代后可能会使新生代的GC频率和时间增加。
+
+配置参数：
+
+> //新生代可容纳的最大对象,大于则直接会分配到老年代，0代表没有限制。
+>
+> -XX:PretenureSizeThreshold=1000000
+
+**5.7、调整GC的触发时机**
+
+**现象**：CMS，G1 经常 Full GC，程序卡顿严重。
+
+**原因**：G1和CMS 部分GC阶段是并发进行的，业务线程和垃圾收集线程一起工作，也就说明垃圾收集的过程中业务线程会生成新的对象，所以在GC的时候需要预留一部分内存空间来容纳新产生的对象，如果这个时候内存空间不足以容纳新产生的对象，那么JVM就会停止并发收集暂停所有业务线程（STW）来保证垃圾收集的正常运行。这个时候可以调整GC触发的时机（比如在老年代占用60%就触发GC），这样就可以预留足够的空间来让业务线程创建的对象有足够的空间分配。
+
+**注意**：提早触发GC会增加老年代GC的频率。
+
+配置参数：
+
+> //使用多少比例的老年代后开始CMS收集，默认是68%，如果频繁发生SerialOld卡顿，应该调小
+>
+> -XX:CMSInitiatingOccupancyFraction
+>
+> //G1混合垃圾回收周期中要包括的旧区域设置占用率阈值。默认占用率为 65%
+>
+> -XX:G1MixedGCLiveThresholdPercent=65
+
+5.8、调整 JVM本地内存大小
+
+**现象**：GC的次数、时间和回收的对象都正常，堆内存空间充足，但是报OOM
+
+**原因**： JVM除了堆内存之外还有一块堆外内存，这片内存也叫本地内存，可是这块内存区域不足了并不会主动触发GC，只有在堆内存区域触发的时候顺带会把本地内存回收了，而一旦本地内存分配不足就会直接报OOM异常。
+
+**注意**： 本地内存异常的时候除了上面的现象之外，异常信息可能是OutOfMemoryError：Direct buffer memory。 解决方式除了调整本地内存大小之外，也可以在出现此异常时进行捕获，手动触发GC（System.gc()）。
+
+配置参数：
+
+> XX:MaxDirectMemorySize
+
+### 六、JVM调优实例
+
+整理的一些JVM调优实例：
+
+**6.1、网站流量浏览量暴增后，网站反应页面响很慢**
+
+> 1、问题推测：在测试环境测速度比较快，但是一到生产就变慢，所以推测可能是因为垃圾收集导致的业务线程停顿。
+>
+> 2、定位：为了确认推测的正确性，在线上通过jstat -gc 指令 看到JVM进行GC 次数频率非常高，GC所占用的时间非常长，所以基本推断就是因为GC频率非常高，所以导致业务线程经常停顿，从而造成网页反应很慢。
+>
+> 3、解决方案：因为网页访问量很高，所以对象创建速度非常快，导致堆内存容易填满从而频繁GC，所以这里问题在于新生代内存太小，所以这里可以增加JVM内存就行了，所以初步从原来的2G内存增加到16G内存。
+>
+> 4、第二个问题：增加内存后的确平常的请求比较快了，但是又出现了另外一个问题，就是不定期的会间断性的卡顿，而且单次卡顿的时间要比之前要长很多。
+>
+> 5、问题推测：练习到是之前的优化加大了内存，所以推测可能是因为内存加大了，从而导致单次GC的时间变长从而导致间接性的卡顿。
+>
+> 6、定位：还是通过jstat -gc 指令 查看到 的确FGC次数并不是很高，但是花费在FGC上的时间是非常高的,根据GC日志 查看到单次FGC的时间有达到几十秒的。
+>
+> 7、解决方案： 因为JVM默认使用的是PS+PO的组合，PS+PO垃圾标记和收集阶段都是STW，所以内存加大了之后，需要进行垃圾回收的时间就变长了，所以这里要想避免单次GC时间过长，所以需要更换并发类的收集器，因为当前的JDK版本为1.7，所以最后选择CMS垃圾收集器，根据之前垃圾收集情况设置了一个预期的停顿的时间，上线后网站再也没有了卡顿问题。
+
+**6.2、后台导出数据引发的OOM**
+
+**问题描述：**公司的后台系统，偶发性的引发OOM异常，堆内存溢出。
+
+> 1、因为是偶发性的，所以第一次简单的认为就是堆内存不足导致，所以单方面的加大了堆内存从4G调整到8G。
+>
+> 2、但是问题依然没有解决，只能从堆内存信息下手，通过开启了-XX:+
+> HeapDumpOnOutOfMemoryError参数 获得堆内存的dump文件。
+>
+> 3、VisualVM 对 堆dump文件进行分析，通过VisualVM查看到占用内存最大的对象是String对象，本来想跟踪着String对象找到其引用的地方，但dump文件太大，跟踪进去的时候总是卡死，而String对象占用比较多也比较正常，最开始也没有认定就是这里的问题，于是就从线程信息里面找突破点。
+>
+> 4、通过线程进行分析，先找到了几个正在运行的业务线程，然后逐一跟进业务线程看了下代码，发现有个引起我注意的方法，导出订单信息。
+>
+> 5、因为订单信息导出这个方法可能会有几万的数据量，首先要从数据库里面查询出来订单信息，然后把订单信息生成excel，这个过程会产生大量的String对象。
+>
+> 6、为了验证自己的猜想，于是准备登录后台去测试下，结果在测试的过程中发现到处订单的按钮前端居然没有做点击后按钮置灰交互事件，结果按钮可以一直点，因为导出订单数据本来就非常慢，使用的人员可能发现点击后很久后页面都没反应，结果就一直点，结果就大量的请求进入到后台，堆内存产生了大量的订单对象和EXCEL对象，而且方法执行非常慢，导致这一段时间内这些对象都无法被回收，所以最终导致内存溢出。
+>
+> 7、知道了问题就容易解决了，最终没有调整任何JVM参数，只是在前端的导出订单按钮上加上了置灰状态，等后端响应之后按钮才可以进行点击，然后减少了查询订单信息的非必要字段来减少生成对象的体积，然后问题就解决了。
+
+**6.3、单个缓存数据过大导致的系统CPU飚高**
+
+> 1、系统发布后发现CPU一直飚高到600%，发现这个问题后首先要做的是定位到是哪个应用占用CPU高，通过top 找到了对应的一个java应用占用CPU资源600%。
+>
+> 2、如果是应用的CPU飚高，那么基本上可以定位可能是锁资源竞争，或者是频繁GC造成的。
+>
+> 3、所以准备首先从GC的情况排查，如果GC正常的话再从线程的角度排查，首先使用jstat -gc PID 指令打印出GC的信息，结果得到得到的GC 统计信息有明显的异常，应用在运行了才几分钟的情况下GC的时间就占用了482秒，那么问这很明显就是频繁GC导致的CPU飚高。
+>
+> 4、定位到了是GC的问题，那么下一步就是找到频繁GC的原因了，所以可以从两方面定位了，可能是哪个地方频繁创建对象，或者就是有内存泄露导致内存回收不掉。
+>
+> 5、根据这个思路决定把堆内存信息dump下来看一下，使用jmap -dump 指令把堆内存信息dump下来（堆内存空间大的慎用这个指令否则容易导致会影响应用，因为我们的堆内存空间才2G所以也就没考虑这个问题了）。
+>
+> 6、把堆内存信息dump下来后，就使用visualVM进行离线分析了，首先从占用内存最多的对象中查找，结果排名第三看到一个业务VO占用堆内存约10%的空间，很明显这个对象是有问题的。
+>
+> 7、通过业务对象找到了对应的业务代码，通过代码的分析找到了一个可疑之处，这个业务对象是查看新闻资讯信息生成的对象，由于想提升查询的效率，所以把新闻资讯保存到了redis缓存里面，每次调用资讯接口都是从缓存里面获取。
+>
+> 8、把新闻保存到redis缓存里面这个方式是没有问题的，有问题的是新闻的50000多条数据都是保存在一个key里面，这样就导致每次调用查询新闻接口都会从redis里面把50000多条数据都拿出来，再做筛选分页拿出10条返回给前端。50000多条数据也就意味着会产生50000多个对象，每个对象280个字节左右，50000个对象就有13.3M，这就意味着只要查看一次新闻信息就会产生至少13.3M的对象，那么并发请求量只要到10，那么每秒钟都会产生133M的对象，而这种大对象会被直接分配到老年代，这样的话一个2G大小的老年代内存，只需要几秒就会塞满，从而触发GC。
+>
+> 9、知道了问题所在后那么就容易解决了，问题是因为单个缓存过大造成的，那么只需要把缓存减小就行了，这里只需要把缓存以页的粒度进行缓存就行了，每个key缓存10条作为返回给前端1页的数据，这样的话每次查询新闻信息只会从缓存拿出10条数据，就避免了此问题的 产生。
+
+**6.4、CPU经常100% 问题定位**
+
+问题分析：CPU高一定是某个程序长期占用了CPU资源。
+
+1、所以先需要找出那个进行占用CPU高。
+
+> top 列出系统各个进程的资源占用情况。
+
+2、然后根据找到对应进行里哪个线程占用CPU高。
+
+> top -Hp 进程ID 列出对应进程里面的线程占用资源情况
+
+3、找到对应线程ID后，再打印出对应线程的堆栈信息
+
+> printf "%x\n" PID 把线程ID转换为16进制。
+>
+> jstack PID 打印出进程的所有线程信息，从打印出来的线程信息中找到上一步转换为16进制的线程ID对应的线程信息。
+
+4、最后根据线程的堆栈信息定位到具体业务方法,从代码逻辑中找到问题所在。
+
+> 查看是否有线程长时间的watting 或blocked
+>
+> 如果线程长期处于watting状态下， 关注watting on xxxxxx，说明线程在等待这把锁，然后根据锁的地址找到持有锁的线程。
+
+**6.5、内存飚高问题定位**
+
+分析： 内存飚高如果是发生在java进程上，一般是因为创建了大量对象所导致，持续飚高说明垃圾回收跟不上对象创建的速度，或者内存泄露导致对象无法回收。
+
+1、先观察垃圾回收的情况
+
+> jstat -gcPID 1000查看GC次数，时间等信息，每隔一秒打印一次。
+>
+> jmap -histo PID | head -20 查看堆内存占用空间最大的前20个对象类型,可初步查看是哪个对象占用了内存。
+
+如果每次GC次数频繁，而且每次回收的内存空间也正常，那说明是因为对象创建速度快导致内存一直占用很高；如果每次回收的内存非常少，那么很可能是因为内存泄露导致内存一直无法被回收。
+
+2、导出堆内存文件快照
+
+> jmap -dump:live,format=b,file=/home/myheapdump.hprof PID dump堆内存信息到文件。
+
+3、使用visualVM对dump文件进行离线分析,找到占用内存高的对象，再找到创建该对象的业务代码位置，从代码和业务场景中定位具体问题。
+
+**6.6、数据分析平台系统频繁 Full GC**
+
+平台主要对用户在 App 中行为进行定时分析统计，并支持报表导出，使用 CMS GC 算法。
+
+数据分析师在使用中发现系统页面打开经常卡顿，通过 jstat 命令发现系统每次 Young GC 后大约有 10% 的存活对象进入老年代。
+
+原来是因为 Survivor 区空间设置过小，每次 Young GC 后存活对象在 Survivor 区域放不下，提前进入老年代。
+
+通过调大 Survivor 区，使得 Survivor 区可以容纳 Young GC 后存活对象，对象在 Survivor 区经历多次 Young GC 达到年龄阈值才进入老年代。
+
+调整之后每次 Young GC 后进入老年代的存活对象稳定运行时仅几百 Kb，Full GC 频率大大降低。
+
+**6.7、业务对接网关 OOM**
+
+网关主要消费 Kafka 数据，进行数据处理计算然后转发到另外的 Kafka 队列，系统运行几个小时候出现 OOM，重启系统几个小时之后又 OOM。
+
+通过 jmap 导出堆内存，在 eclipse MAT 工具分析才找出原因：代码中将某个业务 Kafka 的 topic 数据进行日志异步打印，该业务数据量较大，大量对象堆积在内存中等待被打印，导致 OOM。
+
+**6.8、鉴权系统频繁长时间 Full GC**
+
+系统对外提供各种账号鉴权服务，使用时发现系统经常服务不可用，通过 Zabbix 的监控平台监控发现系统频繁发生长时间 Full GC，且触发时老年代的堆内存通常并没有占满，发现原来是业务代码中调用了
+
+### 七、一个具体的实战案例分析
+
+**7.1 典型调优参数设置**
+
+> 服务器配置： 4cpu,8GB内存 ---- jvm调优实际上是设置一个合理大小的jvm堆内存（既不能太大，也不能太小）
+
+> -Xmx3550m 设置jvm堆内存最大值 (经验值设置： 根据压力测试，根据线上程序运行效果情况)
+>
+> -Xms3550m 设置jvm堆内存初始化大小，一般情况下必须设置此值和最大的最大的堆内存空间保持一致，防止内存抖动，消耗性能
+>
+> -Xmn2g 设置年轻代占用的空间大小
+>
+> -Xss256k 设置线程堆栈的大小；jdk5.0以后默认线程堆栈大小为1MB; 在相同的内存情况下，减小堆栈大小，可以使得操作系统创建更多的业务线程；
+
+jvm堆内存设置:
+
+> nohup java -Xmx3550m -Xms3550m -Xmn2g -Xss256k -jar jshop-web-1.0-SNAPSHOT.jar --spring.addition-location=application.yaml > jshop.log 2>&1 ><
+
+TPS性能曲线：
+
+![](https://pic.rmb.bdstatic.com/bjh/down/ee3949fc51c360330ece8f6729cd0560.png)
+
+**7.2 分析gc日志**
+
+如果需要分析gc日志，就必须使得服务gc输入gc详情到log日志文件中，然后使用相应gc日志分析工具来对日志进行分析即可；
+
+把gc详情输出到一个gc.log日志文件中，便于gc分析
+
+> -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -XX:+PrintHeapAtGC -Xloggc:gc.log
+
+Throughput: 业务线程执行时间 / (gc时间+业务线程时间)
+
+![](https://pic.rmb.bdstatic.com/bjh/down/25529b786b50b8b30067e6f721101369.png)
+
+分析gc日志，发现，一开始就发生了3次fullgc，很明显jvm优化参数的设置是有问题的；
+
+![](https://pic.rmb.bdstatic.com/bjh/down/e70f3ffedc03bc0b387ff860cb8c948b.png)
+
+查看fullgc发生问题原因： jstat -gcutil pid
+
+![](https://pic.rmb.bdstatic.com/bjh/down/0e135e59c1e140aaded9223edd2f0177.png)
+
+Metaspace持久代： 初始化分配大小20m , 当metaspace被占满后，必须对持久代进行扩容，如果metaspace每进行一次扩容，fullgc就需要执行一次；（fullgc回收整个堆空间，非常占用时间）
+
+调整gc配置： 修改永久代空间初始化大小:
+
+> nohup java -Xmx3550m -Xms3550m -Xmn2g -Xss256k -XX:MetaspaceSize=256m -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -XX:+PrintHeapAtGC -Xloggc:gc.log -jar jshop-web-1.0-SNAPSHOT.jar --spring.addition-location=application.yaml > jshop.log 2>&1 ><
+
+经过调优后，fullgc现象已经消失了：
+
+![](https://pic.rmb.bdstatic.com/bjh/down/0f8e8b90a8f9d810759ae43b3b0ed1b9.png)
+
+**7.3 Young&Old比例**
+
+年轻代和老年代比例：1:2 参数：-XX:NewRetio = 4 , 表示年轻代（eden,s0,s1）和老年代所占比值为1:4
+
+1） -XX:NewRetio = 4
+
+![](https://pic.rmb.bdstatic.com/bjh/down/f8353c852a2f65626b5b3a23f9616208.png)
+
+年轻代分配的内存大小变小了，这样YGC次数变多了，虽然fullgc不发生了，但是YGC花费的时间更多了！
+
+2） -XX:NewRetio = 2 YGC发生的次数必然会减少；因为eden区域的大小变大了，因此YGC就会变少；
+
+![](https://pic.rmb.bdstatic.com/bjh/down/11ca145ee5a93f511feda69e749582cb.png)
+
+7.4 Eden&S0S1
+
+为了进一步减少YGC, 可以设置 enden ,s 区域的比值大小； 设置方式： -XX:SurvivorRatio=8
+
+1） 设置比值：8:1:1
+
+![](https://pic.rmb.bdstatic.com/bjh/down/6330cbdd9acd6a5c18e91c5bea13cca2.png)
+
+2） Xmn2g 8:1:1
+
+nohup java -Xmx3550m -Xms3550m -Xmn2g -XX:SurvivorRatio=8 -Xss256k -XX:MetaspaceSize=256m -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -XX:+PrintHeapAtGC -Xloggc:gc.log -jar jshop-web-1.0-SNAPSHOT.jar --spring.addition-location=application.yaml > jshop.log 2>&1 ><
+
+根据gc调优，垃圾回收次数，时间，吞吐量都是一个比较优的一个配置；
+
+![](https://pic.rmb.bdstatic.com/bjh/down/68edd8bfceb7d5e85d18a53e150cad2a.png)
+
+**7.5 吞吐量优先**
+
+使用并行的垃圾回收器，可以充分利用多核心cpu来帮助进行垃圾回收；这样的gc方式，就叫做吞吐量优先的调优方式
+
+垃圾回收器组合： ps(parallel scavenge) + po (parallel old) 此垃圾回收器是Jdk1.8 默认的垃圾回收器组合；
+
+> nohup java -Xmx3550m -Xms3550m -Xmn2g -XX:SurvivorRatio=8 -Xss256k -XX:+UseParallelGC -XX:UseParallelOldGC -XX:MetaspaceSize=256m -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -XX:+PrintHeapAtGC -Xloggc:gc.log -jar jshop-web-1.0-SNAPSHOT.jar --spring.addition-location=application.yaml > jshop.log 2>&1 ><
+
+**7.6 响应时间优先**
+
+使用cms垃圾回收器，就是一个响应时间优先的组合； cms垃圾回收器（垃圾回收和业务线程交叉执行，不会让业务线程进行停顿stw）尽可能的减少stw的时间，因此使用cms垃圾回收器组合，是响应时间优先组合
+
+> nohup java -Xmx3550m -Xms3550m -Xmn2g -XX:SurvivorRatio=8 -Xss256k -XX:+UseParNewGC -XX:UseConcMarkSweepGC -XX:MetaspaceSize=256m -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -XX:+PrintHeapAtGC -Xloggc:gc.log -jar jshop-web-1.0-SNAPSHOT.jar --spring.addition-location=application.yaml > jshop.log 2>&1 ><
+
+可以发现，cms垃圾回收器时间变长；
+
+**7.7 g1**
+
+配置方式如下所示：
+
+> nohup java -Xmx3550m -Xms3550m -Xmn2g -XX:SurvivorRatio=8 -Xss256k -XX:+UseG1GC -XX:MetaspaceSize=256m -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -XX:+PrintHeapAtGC -Xloggc:gc.log -jar jshop-web-1.0-SNAPSHOT.jar --spring.addition-location=application.yaml > jshop.log 2>&1 ><
+
+![](https://pic.rmb.bdstatic.com/bjh/down/4146281952d45f65334e7ba97c6ba873.png)
+
 
 ## 参考资料
 

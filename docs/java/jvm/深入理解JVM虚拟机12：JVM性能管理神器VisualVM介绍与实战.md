@@ -1,5 +1,4 @@
-# Table of Contents
-
+# 目录
   * [一、VisualVM是什么？](#一、visualvm是什么？)
   * [二、如何获取VisualVM？](#二、如何获取visualvm？)
   * [三、获取那个版本？](#三、获取那个版本？)
@@ -12,7 +11,6 @@
   * [微信公众号](#微信公众号)
     * [Java技术江湖](#java技术江湖)
     * [个人公众号：黄小斜](#个人公众号：黄小斜)
-
 
 本文转自互联网，侵删
 
@@ -36,9 +34,6 @@
 
 ## 一、VisualVM是什么？
     VisualVM是一款免费的JAVA虚拟机图形化监控分析工具。
-
- 
-
     1.  拥有图形化的监控界面。
     2. 提供本地、远程的JVM监控分析功能。
     3. 是一款免费的JAVA工具。
@@ -49,13 +44,7 @@
     VisualVM各版本下载页面: http://visualvm.java.net/releases.html
 
      下载VisualVM时也应该注意，不同的JDK版本对应不同版本的VisualVM，具体根据安装的JDK版本来下载第一的VisualVM。
-
- 
-
- 
-
 ## 三、获取那个版本？
- 
 
        下载版本参考：Java虚拟机性能管理神器 - VisualVM（4） - JDK版本与VisualVM版本对应关系
 

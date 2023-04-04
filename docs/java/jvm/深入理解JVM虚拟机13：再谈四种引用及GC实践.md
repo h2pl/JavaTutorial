@@ -1,5 +1,4 @@
-# Table of Contents
-
+# 目录
   * [一、背景](#一、背景)
   * [二、简介](#二、简介)
     * [1.强引用 StrongReference](#1强引用-strongreference)
@@ -42,8 +41,8 @@ Java的内存回收不需要程序员负责，JVM会在必要时启动Java GC完
 ### 1.强引用 StrongReference
 
 StrongReference是Java的默认引用形式，使用时不需要显示定义。任何通过强引用所使用的对象不管系统资源有多紧张，Java GC都不会主动回收具有强引用的对象。
-
-<pre>public class StrongReferenceTest {
+````
+public class StrongReferenceTest {
 
 	public static int M = 1024*1024;
 
@@ -76,17 +75,16 @@ StrongReference是Java的默认引用形式，使用时不需要显示定义。�
 		System.out.println("strongReference : "+strongReference);
 		}
 }
-</pre>
+````
 
 运行结果：
 
-![](https://user-gold-cdn.xitu.io/2018/1/7/160cd0dc536b2384?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404223852.png)
 ### 2.弱引用 WeakReference
 
 如果一个对象只具有弱引用，无论内存充足与否，Java GC后对象如果只有弱引用将会被自动回收。
-
-<pre>public class WeakReferenceTest {
+````
+public class WeakReferenceTest {
 
 	public static int M = 1024*1024;
 
@@ -110,17 +108,16 @@ StrongReference是Java的默认引用形式，使用时不需要显示定义。�
 		System.out.println("weakRerference.get() : "+weakRerference.get());
 	}   
 }
-</pre>
+````
 
 运行结果：
 
-![](https://user-gold-cdn.xitu.io/2018/1/7/160cd0f1ead8184e?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404223905.png)
 ### 3.软引用 SoftReference
 
 软引用和弱引用的特性基本一致， 主要的区别在于软引用在内存不足时才会被回收。如果一个对象只具有软引用，Java GC在内存充足的时候不会回收它，内存不足时才会被回收。
-
-<pre>public class SoftReferenceTest {
+````
+public class SoftReferenceTest {
 
 	public static int M = 1024*1024;
 
@@ -151,17 +148,16 @@ StrongReference是Java的默认引用形式，使用时不需要显示定义。�
 		System.out.println("softRerference2.get() : "+softRerference2.get());  
 	 } 
 }
-</pre>
 
+````
 运行结果：
 
-![](https://user-gold-cdn.xitu.io/2018/1/7/160cd1023a8f3de2?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404223922.png)
 ### 4.虚引用 PhantomReference
 
 从PhantomReference类的源代码可以知道，它的get()方法无论何时返回的都只会是null。所以单独使用虚引用时，没有什么意义，需要和引用队列ReferenceQueue类联合使用。当执行Java GC时如果一个对象只有虚引用，就会把这个对象加入到与之关联的ReferenceQueue中。
-
-<pre>public class PhantomReferenceTest {
+````
+public class PhantomReferenceTest {
 
 	public static int M = 1024*1024;
 
@@ -205,12 +201,11 @@ StrongReference是Java的默认引用形式，使用时不需要显示定义。�
 	    System.out.println("referenceQueue.poll() : "+referenceQueue.poll());	    	
 	}
 }
-</pre>
 
+````
 运行结果：
 
-![](https://user-gold-cdn.xitu.io/2018/1/7/160cd110cba23d84?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404223938.png)
 ## 三、小结
 
 强引用是 Java 的默认引用形式，使用时不需要显示定义，是我们平时最常使用到的引用方式。不管系统资源有多紧张，Java GC都不会主动回收具有强引用的对象。 弱引用和软引用一般在引用对象为非必需对象的时候使用。它们的区别是被弱引用关联的对象在垃圾回收时总是会被回收，被软引用关联的对象只有在内存不足时才会被回收。 虚引用的get()方法获取的永远是null，无法获取对象实例。Java GC会把虚引用的对象放到引用队列里面。可用来在对象被回收时做额外的一些资源清理或事物回滚等处理。 由于无法从虚引获取到引用对象的实例。它的使用情况比较特别，所以这里不把虚引用放入表格进行对比。这里对强引用、弱引用、软引用进行对比：
