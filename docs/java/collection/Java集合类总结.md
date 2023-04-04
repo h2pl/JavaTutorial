@@ -1,5 +1,4 @@
-# Table of Contents
-
+# 目录
   * [Colletion，iterator，comparable](#colletion，iterator，comparable)
   * [List](#list)
   * [Map](#map)
@@ -13,22 +12,7 @@
     * [Java技术江湖](#java技术江湖)
     * [个人公众号：黄小斜](#个人公众号：黄小斜)
 
-
----
-title: Java集合框架学习总结
-date: 2018-07-08 22:03:44
-tags:
-	- Java集合
-categories:
-	- 后端
-	- 技术总结
----
-
-
-
 这篇总结是基于之前博客内容的一个整理和回顾。
-
-
 
 这里先简单地总结一下，更多详细内容请参考我的专栏：深入浅出Java核心技术
 
@@ -39,8 +23,6 @@ https://blog.csdn.net/column/details/21930.html
 
 以下总结不保证全对，如有错误，还望能够指出。谢谢
 <!-- more -->
-
-
 
 ## Colletion，iterator，comparable
 
@@ -55,11 +37,7 @@ List接口下的实现类有ArrayList，linkedlist，vector等等，一般就是
 ArrayList的扩容方式是1.5倍扩容，这样扩容避免2倍扩容可能浪费空间，是一种折中的方案。
 另外他不是线程安全，vector则是线程安全的，它是两倍扩容的。
 
-
 linkedlist没啥好说的，多用于实现链表。
-
-
-
 
 ## Map
 

@@ -1,5 +1,4 @@
-# Table of Contents
-
+# 目录
   * [ArrayList](#arraylist)
     * [ArrayList概述](#arraylist概述)
     * [ArrayList的继承关系](#arraylist的继承关系)
@@ -79,7 +78,7 @@ non-private to simplify nested class access
 
 //总结一下就是只复制数组中有值的位置，其他未赋值的位置不进行序列化，可以节省空间。
 
-
+````
     //        private void writeObject(java.io.ObjectOutputStream s)
     //        throws java.io.IOException{
     //            // Write out element count, and any hidden stuff
@@ -99,7 +98,7 @@ non-private to simplify nested class access
     //            }
     //        }
 
-
+````
 ### 增删改查
 
     //增删改查
@@ -109,13 +108,13 @@ non-private to simplify nested class access
 这个方法无非就是使用System.arraycopy()方法将C集合(先准换为数组)里面的数据复制到elementData数组中。这里就稍微介绍下System.arraycopy()，因为下面还将大量用到该方法
 
 。该方法的原型为：
-
+````
     public static void arraycopy(Object src, int srcPos, Object dest, int destPos, int length)。
-
+````
 它的根本目的就是进行数组元素的复制。即从指定源数组中复制一个数组，复制从指定的位置开始，到目标数组的指定位置结束。
 
 将源数组src从srcPos位置开始复制到dest数组中，复制长度为length，数据从dest的destPos位置开始粘贴。
-
+````
     //        public void add(int index, E element) {
     //            rangeCheckForAdd(index);
     //
@@ -126,9 +125,9 @@ non-private to simplify nested class access
     //            size++;
     //        }
     //
-
+````
 删除元素时，同样判断索引是否和法，删除的方式是把被删除元素右边的元素左移，方法同样是使用System.arraycopy进行拷贝。
-
+````
     //        public E remove(int index) {
     //            rangeCheck(index);
     //
@@ -143,9 +142,9 @@ non-private to simplify nested class access
     //
     //            return oldValue;
     //        }
-
+````
 ArrayList提供一个清空数组的办法，方法是将所有元素置为null，这样就可以让GC自动回收掉没有被引用的元素了。
-
+````
     //
     //        /**
     //         * Removes all of the elements from this list.  The list will
@@ -160,9 +159,9 @@ ArrayList提供一个清空数组的办法，方法是将所有元素置为null�
     //
     //            size = 0;
     //        }
-
+````
 修改元素时，只需要检查下标即可进行修改操作。
-
+````
     //        public E set(int index, E element) {
     //            rangeCheck(index);
     //
@@ -177,18 +176,18 @@ ArrayList提供一个清空数组的办法，方法是将所有元素置为null�
     //            return elementData(index);
     //        }
     //
-
+````
 上述方法都使用了rangeCheck方法，其实就是简单地检查下标而已。
-
+````
     //        private void rangeCheck(int index) {
     //            if (index >= size)
     //                throw new IndexOutOfBoundsException(outOfBoundsMsg(index));
     //        }
-
+````
 ### modCount
-
+````
     //        protected transient int modCount = 0;
-
+````
 由以上代码可以看出，在一个迭代器初始的时候会赋予它调用这个迭代器的对象的mCount，如何在迭代器遍历的过程中，一旦发现这个对象的mcount和迭代器中存储的mcount不一样那就抛异常 
 
 > 好的，下面是这个的完整解释 
@@ -205,10 +204,10 @@ ArrayList提供一个清空数组的办法，方法是将所有元素置为null�
 
 初始容量是10，下面是扩容方法。
 首先先取
-
-    //        private static final int DEFAULT_CAPACITY = 10;
+````
+    //private static final int DEFAULT_CAPACITY = 10;
     
-    扩容发生在add元素时，传入当前元素容量加一
+    // 扩容发生在add元素时，传入当前元素容量加一
        public boolean add(E e) {
         ensureCapacityInternal(size + 1);  // Increments modCount!!
         elementData[size++] = e;
@@ -238,13 +237,13 @@ ArrayList提供一个清空数组的办法，方法是将所有元素置为null�
         if (minCapacity - elementData.length > 0)
             grow(minCapacity);
     }
-
+````
 真正执行扩容的方法grow
                
 扩容方式是让新容量等于旧容量的1.5被。
 
 当新容量大于最大数组容量时，执行大数扩容
-
+````
     //        private void grow(int minCapacity) {
     //            // overflow-conscious code
     //            int oldCapacity = elementData.length;
@@ -256,9 +255,9 @@ ArrayList提供一个清空数组的办法，方法是将所有元素置为null�
     //            // minCapacity is usually close to size, so this is a win:
     //            elementData = Arrays.copyOf(elementData, newCapacity);
     //        }
-
+````
 当新容量大于最大数组长度，有两种情况，一种是溢出，抛异常，一种是没溢出，返回整数的最大值。
-
+````
     private static int hugeCapacity(int minCapacity) {
         if (minCapacity < 0) // overflow
             throw new OutOfMemoryError();
@@ -266,12 +265,12 @@ ArrayList提供一个清空数组的办法，方法是将所有元素置为null�
             Integer.MAX_VALUE :
             MAX_ARRAY_SIZE;
     }
-
+````
 
 在这里有一个疑问，为什么每次扩容处理会是1.5倍，而不是2.5、3、4倍呢？通过google查找，发现1.5倍的扩容是最好的倍数。因为一次性扩容太大(例如2.5倍)可能会浪费更多的内存(1.5倍最多浪费33%，而2.5被最多会浪费60%，3.5倍则会浪费71%……)。但是一次性扩容太小，需要多次对数组重新分配内存，对性能消耗比较严重。所以1.5倍刚刚好，既能满足性能需求，也不会造成很大的内存消耗。
 
   处理这个ensureCapacity()这个扩容数组外，ArrayList还给我们提供了将底层数组的容量调整为当前列表保存的实际元素的大小的功能。它可以通过trimToSize()方法来实现。该方法可以最小化ArrayList实例的存储量。
-
+````
     public void trimToSize() {
         modCount++;
         int oldCapacity = elementData.length;
@@ -279,15 +278,16 @@ ArrayList提供一个清空数组的办法，方法是将所有元素置为null�
             elementData = Arrays.copyOf(elementData, size);
         }
     }
+````
 ### 线程安全
 
 ArrayList是线程不安全的。在其迭代器iteator中，如果有多线程操作导致modcount改变，会执行fastfail。抛出异常。
-
+````
         final void checkForComodification() {
             if (modCount != expectedModCount)
                 throw new ConcurrentModificationException();
         }
-
+````
 ## Vector
 
 ### Vector简介
@@ -301,7 +301,7 @@ Vector实现RandmoAccess接口，即提供了随机访问功能，提供提供�
 Vector 实现了Cloneable接口，支持clone()方法，可以被克隆。
 
 vector底层数组不加transient，序列化时会全部复制
-
+````
      protected Object[] elementData;
 
 
@@ -318,9 +318,9 @@ vector底层数组不加transient，序列化时会全部复制
     //            fields.put("elementData", data);
     //            s.writeFields();
     //        }
-
+````
 Vector除了iterator外还提供Enumeration枚举方法，不过现在比较过时。
-
+````
     //        public Enumeration<E> elements() {
     //            return new Enumeration<E>() {
     //                int count = 0;
@@ -340,13 +340,13 @@ Vector除了iterator外还提供Enumeration枚举方法，不过现在比较过�
     //            };
     //        }
     //
-
+````
 
 ### 增删改查
 
 vector的增删改查既提供了自己的实现，也继承了abstractList抽象类的部分方法。
 下面的方法是vector自己实现的。
-
+````
     //
     //    public synchronized E elementAt(int index) {
     //        if (index >= elementCount) {
@@ -404,11 +404,11 @@ vector的增删改查既提供了自己的实现，也继承了abstractList抽�
     //        ensureCapacityHelper(elementCount + 1);
     //        elementData[elementCount++] = obj;
     //    }
-
+````
 ### 初始容量和扩容  
 扩容方式与ArrayList基本一样，但是扩容时不是1.5倍扩容，而是有一个扩容增量。
 
-
+````
     //    protected int elementCount;
     
     //    protected int capacityIncrement;
@@ -418,11 +418,11 @@ vector的增删改查既提供了自己的实现，也继承了abstractList抽�
     //    public Vector() {
     //        this(10);
     //    }
-
+````
 capacityIncrement：向量的大小大于其容量时，容量自动增加的量。如果在创建Vector时，指定了capacityIncrement的大小；则，每次当Vector中动态数组容量增加时>，增加的大小都是capacityIncrement。如果容量的增量小于等于零，则每次需要增大容量时，向量的容量将增大一倍。
 
 
-
+````
     //        public synchronized void ensureCapacity(int minCapacity) {
     //            if (minCapacity > 0) {
     //                modCount++;
@@ -447,15 +447,15 @@ capacityIncrement：向量的大小大于其容量时，容量自动增加的量
     //            elementData = Arrays.copyOf(elementData, newCapacity);
     //        }
 
-
+````
 下面是扩容过程示意图
 
 
-![](https://img-blog.csdn.net/20180818200637720?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNjM3ODkxNw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404145205.png)
 
-![](https://img-blog.csdn.net/20180818200704724?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNjM3ODkxNw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404145237.png)
 
-![](https://img-blog.csdn.net/20180818200735561?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNjM3ODkxNw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404145305.png)
 
 ### 线程安全
 
@@ -497,10 +497,12 @@ Stack通过五个操作对Vector进行扩展，允许将向量视为堆栈。这
 > 返回对象在堆栈中的位置，以 1 为基数。
 
 Stack继承Vector，他对Vector进行了简单的扩展：
-
+````
 public class Stack<E> extends Vector<E>
-  Stack的实现非常简单，仅有一个构造方法，五个实现方法（从Vector继承而来的方法不算与其中），同时其实现的源码非常简单
+````
 
+  Stack的实现非常简单，仅有一个构造方法，五个实现方法（从Vector继承而来的方法不算与其中），同时其实现的源码非常简单
+````
     /**
      * 构造函数
      */
@@ -563,7 +565,7 @@ public class Stack<E> extends Vector<E>
         }
         return -1;
     }
-
+````
 Stack的源码很多都是基于Vector，所以这里不再累述
 
 ## 三个集合类之间的区别
@@ -589,24 +591,24 @@ ArrayList的优缺点
 ArrayList和Vector的区别
 
 > ArrayList是线程非安全的，这很明显，因为ArrayList中所有的方法都不是同步的，在并发下一定会出现线程安全问题。那么我们想要使用ArrayList并且让它线程安全怎么办？一个方法是用Collections.synchronizedList方法把你的ArrayList变成一个线程安全的List，比如：
->
->     List<String> synchronizedList = Collections.synchronizedList(list);
->     synchronizedList.add("aaa");
->     synchronizedList.add("bbb");
->     for (int i = 0; i < synchronizedList.size(); i++)
->     {
->         System.out.println(synchronizedList.get(i));
->     }
-
+````
+     List<String> synchronizedList = Collections.synchronizedList(list);
+     synchronizedList.add("aaa");
+     synchronizedList.add("bbb");
+     for (int i = 0; i < synchronizedList.size(); i++)
+     {
+         System.out.println(synchronizedList.get(i));
+     }
+````
 另一个方法就是Vector，它是ArrayList的线程安全版本，其实现90%和ArrayList都完全一样，区别在于：
 
 > 1、Vector是线程安全的，ArrayList是线程非安全的
 >
 > 2、Vector可以指定增长因子，如果该增长因子指定了，那么扩容的时候会每次新的数组大小会在原数组的大小基础上加上增长因子；如果不指定增长因子，那么就给原数组大小*2，源代码是这样的：
-
+````
     int newCapacity = oldCapacity + ((capacityIncrement > 0) ?
                                      capacityIncrement : oldCapacity);
-
+````
 
 ## 参考文章
 
@@ -637,7 +639,3 @@ https://www.jianshu.com/p/c4027084ac43
 **程序员3T技术学习资源：** 一些程序员学习技术的资源大礼包，关注公众号后，后台回复关键字 **“资料”** 即可免费无套路获取。	
 
 ![](https://img-blog.csdnimg.cn/20190829222750556.jpg)
-
-
-
-​                     

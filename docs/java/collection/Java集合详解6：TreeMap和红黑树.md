@@ -1,5 +1,4 @@
-# Table of Contents
-
+# 目录
   * [什么是红黑树](#什么是红黑树)
     * [定义](#定义)
     * [实践](#实践)
@@ -35,27 +34,25 @@
 
 首先，什么是红黑树呢？ 红黑树是一种“平衡的”二叉查找树，它是一种经典高效的算法，能够保证在最坏的情况下动态集合操作的时间为O（lgn）。红黑树每个节点包含5个域，分别为color,key,left,right和p。 color是在每个节点上增加的一个存储位表示节点的颜色，可以是RED或者BLACK。key为结点中的value值，left,right为该结点的左右孩子指针，没有的话为NIL，p是一个指针，是指向该节的父节点。如下图（来自维基百科）表示就是一颗红黑树，NIL为指向外结点的指针。（外结点视为没有key的结点）
 
+ 红黑树有什么性质呢？一般称为红黑性质，有以下五点：
 
+ 1）每个结点或者是红的或者是黑的；
 
-       红黑树有什么性质呢？一般称为红黑性质，有以下五点：
+ 2）根结点是黑的；
 
-     1）每个结点或者是红的或者是黑的；
+ 3）每个叶结点（NIL）是黑的；
 
-     2）根结点是黑的；
+ 4）如果一个结点是红的，则它的两个孩子都是黑的；
 
-     3）每个叶结点（NIL）是黑的；
+ 5）对每个结点，从该结点到其他其子孙结点的所有路径上包含相同数目的黑结点。
 
-     4）如果一个结点是红的，则它的两个孩子都是黑的；
+为了后面的分析，我们还得知道以下知识点。
 
-     5）对每个结点，从该结点到其他其子孙结点的所有路径上包含相同数目的黑结点。
+（1）黑高度：从某个结点x出发（不包括该结点）到达一个叶结点的任意一条路径上，黑色结点的个数称为该结点x的黑高度。
 
-       为了后面的分析，我们还得知道以下知识点。
+（2）一颗有n个内结点的红黑树的高度至多为2lg(n+1)。 （内结点视为红黑树中带关键字的结点）
 
-    （1）黑高度：从某个结点x出发（不包括该结点）到达一个叶结点的任意一条路径上，黑色结点的个数称为该结点x的黑高度。
-
-    （2）一颗有n个内结点的红黑树的高度至多为2lg(n+1)。   （内结点视为红黑树中带关键字的结点）
-
-    （3）包含n个内部节点的红黑树的高度是 O(log(n))。
+ （3）包含n个内部节点的红黑树的高度是 O(log(n))。
 
 ### 定义
 
@@ -89,88 +86,35 @@
 
 如图所示，这种情况不会破坏红黑树的特性，即不需要任何处理
 
-
-
-
-
-![](https://upload-images.jianshu.io/upload_images/4761309-5c5b2c2111526b40.png?imageMogr2/auto-orient/strip|imageView2/2/w/317/format/webp)
-
-
-
-
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404155235.png)
 
 2.**红父**
 
 当其父亲为红色时又会存在以下的情况
 
-*   **红叔**
+**红叔**
 
 红叔的情况，其实相对来说比较简单的，如下图所示，只需要通过修改父、叔的颜色为黑色，祖的颜色为红色，而且回去递归的检查祖节点即可
 
-
-
-
-
-![](https://upload-images.jianshu.io/upload_images/4761309-d03b6cc68cd297e5.png?imageMogr2/auto-orient/strip|imageView2/2/w/582/format/webp)
-
-
-
-
-
-
-*   **黑叔**
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404155342.png)
+**黑叔**
 
 黑叔的情况有如下几种，这几种情况下是不能够通过修改颜色达到平衡的效果，因此会通过旋转的操作，红黑树种有两种旋转操作，左旋和右旋(现在存在的疑问，什么时候使用到左旋，什么时候使用到右旋)
 
 *   Case 1:[先右旋，在改变颜色(根节点必须为黑色，其两个子节点为红色，叔节点不用改变)],如下图所示，注意省略黑哨兵节点
 
-    
-
-    
-
-![](https://upload-images.jianshu.io/upload_images/4761309-be4bb2dee4bffd10.png?imageMogr2/auto-orient/strip|imageView2/2/w/870/format/webp)
-
-    
-
-    
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404155411.png)
 
 *   Case 2:[先左旋变成Case1中的情况，再右旋，最后改变颜色(根节点必须为黑色，其两个子节点为红色，叔节点不用改变)],如下图所示，注意省略黑哨兵节点
 
-    
-
-    
-
-![](https://upload-images.jianshu.io/upload_images/4761309-7eed01cd63266976.png?imageMogr2/auto-orient/strip|imageView2/2/w/751/format/webp)
-
-
-    
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404155517.png)
 *   Case 3:[先左旋，最后改变颜色(根节点必须为黑色，其两个子节点为红色，叔节点不用改变)],如下图所示，注意省略黑哨兵节点
 
-    
-
-    
-
-![](https://upload-images.jianshu.io/upload_images/4761309-2885dd45740eb113.png?imageMogr2/auto-orient/strip|imageView2/2/w/831/format/webp)
-
-    
-
-
-    
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404155545.png)
 
 *   Case 4:[先右旋变成Case 3的情况，再左旋，最后改变颜色(根节点必须为黑色，其两个子节点为红色，叔节点不用改变)],如下图所示，注意省略黑哨兵节点
 
-    
-
-    
-
-![](https://upload-images.jianshu.io/upload_images/4761309-db86cb65433a632e.png?imageMogr2/auto-orient/strip|imageView2/2/w/754/format/webp)
-
-    
-
-
-    
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404155622.png)
 
 以上就是红黑树新增节点所有可能的操作，下面会介绍红黑树中的删除操作
 
@@ -188,16 +132,7 @@
 
 1.对于红黑树而言，单支节点的情况只有如下图所示的一种情况，即为当前节点为黑色，其孩子节点为红色,(1.假设当前节点为红色，其两个孩子节点必须为黑色，2.若有孙子节点，则必为黑色，导致黑子数量不等，而红黑树不平衡)
 
-
-
-
-
-![](https://upload-images.jianshu.io/upload_images/4761309-f8b873df1b880922.png?imageMogr2/auto-orient/strip|imageView2/2/w/318/format/webp)
-
-
-
-
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404155656.png)
 
 2.由于红黑树是特殊的二叉查找树，它的删除和二叉查找树类型，真正的删除点即为删除点A的中序遍历的后继(前继也可以)，通过红黑树的特性可知这个后继必然最多只能有一个孩子，其这个孩子节点必然是右孩子节点，从而为单支情况(即这个后继节点只能有一个红色孩子或没有孩子)
 
@@ -205,121 +140,52 @@
 
 *   Case 1:被删除的节点为红色，则这节点必定为叶子节点(首先这里的被删除的节点指的是真正删除的节点，通过上文得知的真正删除的节点要么是节点本身，要么是其后继节点，若是节点本身则必须为叶子节点，不为叶子节点的话其会有左右孩子，则真正删除的是其右孩子树上的最小值，若是后继节点，也必须为叶子节点，若不是则其也会有左右孩子，从而和2中相违背)，这种情况下删除红色叶节点就可以了，不用进行其他的操作了。
 
-
-
-
-
-![](https://upload-images.jianshu.io/upload_images/4761309-ff82fc5e72f98af8.png?imageMogr2/auto-orient/strip|imageView2/2/w/431/format/webp)
-
-
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404155743.png)
 
 *   Case 2:被删除的节点是黑色，其子节点是红色，将其子节点顶替上来并改变其颜色为黑色，如下图所示
 
-
-
-
-
-![](https://upload-images.jianshu.io/upload_images/4761309-66968f353c49fe50.png?imageMogr2/auto-orient/strip|imageView2/2/w/434/format/webp)
-
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404155811.png)
 
 *   Case 3:被删除的节点是黑色，其子节点也是黑色，将其子节点顶替上来，变成了双黑的问题，此时有以下情况
 
-    *   Case 1:新节点的兄弟节点为**红色**，此时若新节点在左边则做左旋操作，否则做右旋操作，之后再将其父节点颜色改变为红色，兄弟节点
+*   Case 1:新节点的兄弟节点为**红色**，此时若新节点在左边则做左旋操作，否则做右旋操作，之后再将其父节点颜色改变为红色，兄弟节点
 
-        
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404155834.png)
 
-
-
-![](https://upload-images.jianshu.io/upload_images/4761309-55eb7590905dbe38.png?imageMogr2/auto-orient/strip|imageView2/2/w/490/format/webp)
-
-
-
-
-
-
-
-![](https://upload-images.jianshu.io/upload_images/4761309-75984ffc3773a040.png?imageMogr2/auto-orient/strip|imageView2/2/w/562/format/webp)
-
-    
-
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404155859.png)
 
 从图中可以看出，操作之后红黑树并未达到平衡状态，而是变成的**黑兄**的情况
 
 *   Case 2:新节点的兄弟节点为**黑色**,此时可能有如下情况
 
-    *   红父二黑侄：将父节点变成黑色，兄弟节点变成红色，新节点变成黑色即可,如下图所示
+*   红父二黑侄：将父节点变成黑色，兄弟节点变成红色，新节点变成黑色即可,如下图所示
 
-        
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404155933.png)
 
-        
-
-![](https://upload-images.jianshu.io/upload_images/4761309-19ad02906c67ff6b.png?imageMogr2/auto-orient/strip|imageView2/2/w/589/format/webp)
-
-
-
-![](https://upload-images.jianshu.io/upload_images/4761309-ed648a6bf4224a10.png?imageMogr2/auto-orient/strip|imageView2/2/w/564/format/webp)
-
-
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404155959.png)
 *   黑父二黑侄：将父节点变成新节点的颜色，新节点变成黑色，兄弟节点染成红色，还需要继续以父节点为判定点继续判断,如下图所示
 
-    
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404160015.png)
 
-
-
-![](https://upload-images.jianshu.io/upload_images/4761309-85819fe812e784f1.png?imageMogr2/auto-orient/strip|imageView2/2/w/603/format/webp)
-
-
-![](https://upload-images.jianshu.io/upload_images/4761309-cc00764b1900a74e.png?imageMogr2/auto-orient/strip|imageView2/2/w/549/format/webp)
-
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404160051.png)
 
 *   红侄：
 
 情况一:新节点在右子树，红侄在兄弟节点左子树，此时的操作为右旋，并将兄弟节点变为父亲的颜色，父亲节点变为黑色，侄节点变为黑色，如下图所示
 
-
-
-
-
 ![](https://upload-images.jianshu.io/upload_images/4761309-62ecd431cc7a3e64.png?imageMogr2/auto-orient/strip|imageView2/2/w/895/format/webp)
-
-
-
 
 情况二:新节点在右子树，红侄在兄弟节点右子树，此时的操作为先左旋，后右旋并将侄节点变为父亲的颜色，父节点变为黑色，如下图所示
 
-
-
-
-
 ![](https://upload-images.jianshu.io/upload_images/4761309-b5e0ada3d870dcf6.png?imageMogr2/auto-orient/strip|imageView2/2/w/879/format/webp)
-
-
 
 情况三：新节点在左子树，红侄在兄弟节点左子树,此时的操作为先右旋在左旋并将侄节点变为父亲的颜色，父亲节点变为黑色，如下图所示
 
-
-
-
-
 ![](https://upload-images.jianshu.io/upload_images/4761309-bd3e2c1efdc7a147.png?imageMogr2/auto-orient/strip|imageView2/2/w/885/format/webp)
-
-
-
 
 情况四：新节点在右子树，红侄在兄弟节点右子树,此时的操作为左旋，并将兄弟节点变为父节点的颜色，父亲节点变为黑色，侄节点变为黑色，如下图所示
 
-
-
-
-
 ![](https://upload-images.jianshu.io/upload_images/4761309-9f34c34f7d02da29.png?imageMogr2/auto-orient/strip|imageView2/2/w/879/format/webp)
-
-
 
 #### 红黑树实现
 
@@ -327,7 +193,7 @@
 
 ##### 插入
 
-```
+````
 /* 插入一个节点
  * @param node
  */
@@ -427,7 +293,7 @@ private void insertFixUp(RBTreeNode<T> node){
     setColorBlack(this.rootNode);
 }
 
-```
+````
 
 插入节点的操作主要分为以下几步：
 
@@ -439,7 +305,7 @@ private void insertFixUp(RBTreeNode<T> node){
 
 如下为删除节点的代码
 
-```
+````
 private void remove(RBTreeNode<T> node){
     RBTreeNode<T> child,parent;
     boolean color;
@@ -522,9 +388,6 @@ private void remove(RBTreeNode<T> node){
     node = null;
 }
 
-```
-
-```
 /**
  * 删除修复
  * @param node
@@ -603,7 +466,7 @@ private void removeFixUp(RBTreeNode<T> node, RBTreeNode<T> parent){
         setColorBlack(node);
 }
 
-```
+````
 
 删除节点主要分为几种情况去做对应的处理：
 
@@ -617,11 +480,7 @@ private void removeFixUp(RBTreeNode<T> node, RBTreeNode<T> parent){
 
 以上主要介绍了红黑树的一些特性，包括一些操作详细的解析了里面的过程，写的时间比较长，感觉确实比较难理清楚。后面会持续的理解更深入，若有存在问题的地方，请指正。
 
-
-
 ## 参考文章
-
-
 
 [红黑树(五)之 Java的实现](https://link.jianshu.com/?t=http://www.cnblogs.com/skywang12345/p/3624343.html/)
 
@@ -650,7 +509,3 @@ private void removeFixUp(RBTreeNode<T> node, RBTreeNode<T> parent){
 **程序员3T技术学习资源：** 一些程序员学习技术的资源大礼包，关注公众号后，后台回复关键字 **“资料”** 即可免费无套路获取。	
 
 ![](https://img-blog.csdnimg.cn/20190829222750556.jpg)
-
-
-
-​                     
