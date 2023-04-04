@@ -1,5 +1,4 @@
-# Table of Contents
-
+# 目录
   * [简介](#简介)
     * [一、Java内存区域（JVM内存区域）](#一、java内存区域（jvm内存区域）)
     * [二、Java内存模型](#二、java内存模型)
@@ -17,7 +16,6 @@
     * [4.4 final域的内存语义](#44-final域的内存语义)
   * [五、JMM是如何处理并发过程中的三大特性](#五、jmm是如何处理并发过程中的三大特性)
   * [参考链接：](#参考链接：)
-
 
 本文转自 https://www.cnblogs.com/kukri/p/9109639.html
 
@@ -52,7 +50,7 @@
 
 ### 一、Java内存区域（JVM内存区域）
 
-![](https://images2018.cnblogs.com/blog/1332556/201805/1332556-20180530105521301-2013126296.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404195526.png)
 
 Java虚拟机在运行程序时会把其自动管理的内存划分为以上几个区域，每个区域都有的用途以及创建销毁的时机，其中蓝色部分代表的是所有线程共享的数据区域，而绿色部分代表的是每个线程的私有数据区域。
 
@@ -72,7 +70,7 @@ Java虚拟机在运行程序时会把其自动管理的内存划分为以上几�
 
     属于线程私有的数据区域，与线程同时创建，总数与线程关联，代表Java方法执行的内存模型。栈中只保存基础数据类型和自定义对象的引用(不是对象)，对象都存放在堆区中。每个方法执行时都会创建一个栈桢来存储方法的的变量表、操作数栈、动态链接方法、返回值、返回地址等信息。每个方法从调用直结束就对于一个栈桢在虚拟机栈中的入栈和出栈过程，如下（图有误，应该为栈桢）：
 
-    ![](https://img-blog.csdn.net/20170608151435751?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvamF2YXplamlhbg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404195609.png)
 
 *   本地方法栈(Native Method Stacks)：
 
@@ -82,14 +80,13 @@ Java虚拟机在运行程序时会把其自动管理的内存划分为以上几�
 
 Java内存模型(即Java Memory Model，简称JMM)本身是一种抽象的概念，并不真实存在。Java线程之间的通信由JMM控制，JMM决定一个线程对共享变量的写入何时对另一个线程可见。从抽象的角度来看，JMM定义了线程和主内存之间的抽象关系。
 
-　　
-　　
+　
 由于JVM运行程序的实体是线程，而每个线程创建时JVM都会为其创建一个工作内存(有些地方称为栈空间)，用于存储线程私有的数据，而Java内存模型中规定所有变量都存储在主内存，主内存是共享内存区域，所有线程都可以访问，但线程对变量的操作(读取赋值等)必须在工作内存中进行。
 
 　　
 首先要将变量从主内存拷贝的自己的工作内存空间，然后对变量进行操作，操作完成后再将变量写回主内存，不能直接操作主内存中的变量，工作内存中存储着主内存中的变量副本拷贝，前面说过，工作内存是每个线程的私有数据区域，因此不同的线程间无法访问对方的工作内存，线程间的通信(传值)必须通过主内存来完成，其简要访问过程如下图
 
-![](https://images2018.cnblogs.com/blog/1332556/201805/1332556-20180530110846270-1135031810.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404195704.png)
 
 图3
 
@@ -108,9 +105,6 @@ Java内存模型(即Java Memory Model，简称JMM)本身是一种抽象的概念
     注意由于工作内存是每个线程的私有数据，线程间无法相互访问工作内存，因此存储在工作内存的数据不存在线程安全问题。注意，工作内存是JMM的一个抽象概念，并不真实存在。
 
 弄清楚主内存和工作内存后，接了解一下主内存与工作内存的数据存储类型以及操作方式，根据虚拟机规范，对于一个实例对象中的成员方法而言，如果方法中包含本地变量是基本数据类型（boolean,byte,short,char,int,long,float,double），将直接存储在工作内存的帧栈结构中，但倘若本地变量是引用类型，那么该变量的引用会存储在功能内存的帧栈中，而对象实例将存储在主内存(共享数据区域，堆)中。
-
-　
-　　
 　　
 但对于实例对象的成员变量，不管它是基本数据类型或者包装类型(Integer、Double等)还是引用类型，都会被存储到堆区。至于static变量以及类本身相关信息将会存储在主内存中。需要注意的是，在主内存中的实例对象可以被多线程共享，倘若两个线程同时调用了同一个对象的同一个方法，那么两条线程会将要操作的数据拷贝一份到自己的工作内存中，执行完成操作后才刷新到主内存，简单示意图如下所示：
 
@@ -147,20 +141,20 @@ JMM也主要是通过控制主内存与每个线程的工作内存之间的交�
 
 但以上两点相互矛盾，所以JSR-133专家组在设计JMM时的核心膜表就是找到一个好的平衡点：一方面，为程序员提高足够强的内存可见性保证；另一方面，对编译器和处理器的限制尽可能地放松。
 
-另外还要一个特别有意思的事情就是关于重排序问题，更简单的说，重排序可以分为两类：1)会改变程序执行结果的重排序。 2) 不会改变程序执行结果的重排序。 
+另外还要一个特别有意思的事情就是关于重排序问题，更简单的说，重排序可以分为两类：1)会改变程序执行结果的重排序。 2)不会改变程序执行结果的重排序。
 
 JMM对这两种不同性质的重排序，采取了不同的策略，如下：
 
-*   对于会改变程序执行结果的重排序，JMM要求编译器和处理器必须禁止这种重排序。 
-*   对于不会改变程序执行结果的重排序，JMM对编译器和处理器不做要求（JMM允许这种 重排序） 
+*   对于会改变程序执行结果的重排序，JMM要求编译器和处理器必须禁止这种重排序。
+*   对于不会改变程序执行结果的重排序，JMM对编译器和处理器不做要求（JMM允许这种 重排序）
 
-JMM的设计图为： 
+JMM的设计图为：
 
-![](https://images2018.cnblogs.com/blog/1332556/201806/1332556-20180611104204152-1569228705.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404195805.png)
 
 JMM设计示意图 从图可以看出：
 
-*   JMM向程序员提供的happens-before规则能满足程序员的需求。JMM的happens-before规则不但简单易懂，而且也向程序员提供了足够强的内存可见性保证（有些内存可见性保证其实并不一定真实存在，比如上面的A happens-before B）。 
+*   JMM向程序员提供的happens-before规则能满足程序员的需求。JMM的happens-before规则不但简单易懂，而且也向程序员提供了足够强的内存可见性保证（有些内存可见性保证其实并不一定真实存在，比如上面的A happens-before B）。
 *   JMM对编译器和处理器的束缚已经尽可能少。从上面的分析可以看出，JMM其实是在遵循一个基本原则：只要不改变程序的执行结果（指的是单线程程序和正确同步的多线程程序），编译器和处理器怎么优化都行。例如，如果编译器经过细致的分析后，认定一个锁只会被单个线程访问，那么这个锁可以被消除。再如，如果编译器经过细致的分析后，认定一个volatile变量只会被单个线程访问，那么编译器可以把这个volatile变量当作一个普通变量来对待。这些优化既不会改变程序的执行结果，又能提高程序的执行效率。
 
 ### 3.3 happens-before定义
@@ -185,14 +179,14 @@ happens-before的概念最初由Leslie Lamport在其一篇影响深远的论文�
 
 *   程序顺序规则：一个线程中的每个操作，happens-before于该线程中的任意后续操作。
 *   监视器锁规则：对一个锁的解锁，happens-before于随后对这个锁的加锁。
-*   volatile变量规则：对一个volatile域的写，happens-before于任意后续对这个volatile域的读。 
+*   volatile变量规则：对一个volatile域的写，happens-before于任意后续对这个volatile域的读。
 *   传递性：如果A happens-before B，且B happens-before C，那么A happens-before C。
 *   start()规则：如果线程A执行操作ThreadB.start()（启动线程B），那么A线程的ThreadB.start()操作happens-before于线程B中的任意操作。
 *   join()规则：如果线程A执行操作ThreadB.join()并成功返回，那么线程B中的任意操作happens-before于线程A从ThreadB.join()操作成功返回。
 
 ### 3.5 happens-before与JMM的关系图
 
-![](https://images2018.cnblogs.com/blog/1332556/201806/1332556-20180611201524034-1587404964.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404195827.png)
 
 一个happens-before规则对应于一个或多个编译器和处理器重排序规则。对于Java程序员来说，happens-before规则简单易懂，它避免Java程序员为了理解JMM提供的内存可见性保证而去学习复杂的重排序规则以及这些规则的具体实现方法
 
@@ -222,20 +216,14 @@ happens-before的概念最初由Leslie Lamport在其一篇影响深远的论文�
     　　2）在进行指令优化时，不能将在对volatile变量访问的语句放在其后面执行，也不能把volatile变量后面的语句放到其前面执行。
 
     　　可能上面说的比较绕，举个简单的例子：
-
-
-
-
-<pre>//x、y为非volatile变量 //flag为volatile变量
+````
+//x、y为非volatile变量 //flag为volatile变量
  x = 2;        //语句1
 y = 0;        //语句2
 flag = true;  //语句3
 x = 4;         //语句4
-y = -1;       //语句5</pre>
-
-
-
-
+y = -1;       //语句5
+````
 由于flag变量为volatile变量，那么在进行指令重排序的过程的时候，不会将语句3放到语句1、语句2前面，也不会讲语句3放到语句4、语句5后面。但是要注意语句1和语句2的顺序、语句4和语句5的顺序是不作任何保证的。
 
 *   原子性。对任意单个volatile变量的读、写具有原子性，但类似于volatile++这种复合操作不具有原子性。
@@ -269,22 +257,21 @@ volatile写和读的内存语义总结总结：
 
 下面是保守策略下，volatile写插入内存屏障后生成的指令序列示意图：
 
-![](https://images2018.cnblogs.com/blog/1332556/201806/1332556-20180627155958330-1026129500.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404195915.png)
 
 上图中的StoreStore屏障可以保证在volatile写之前，其前面的所有普通写操作已经对任意处理器可见了。这是因为StoreStore屏障将保障上面所有的普通写在volatile写之前刷新到主内存。
 
 这里比较有意思的是volatile写后面的StoreLoad屏障。这个屏障的作用是避免volatile写与后面可能有的volatile读/写操作重排序。因为编译器常常无法准确判断在一个volatile写的后面，是否需要插入一个StoreLoad屏障（比如，一个volatile写之后方法立即return）。为了保证能正确实现volatile的内存语义，JMM在这里采取了保守策略：在每个volatile写的后面或在每个volatile读的前面插入一个StoreLoad屏障。从整体执行效率的角度考虑，JMM选择了在每个volatile写的后面插入一个StoreLoad屏障。因为volatile写-读内存语义的常见使用模式是：一个写线程写volatile变量，多个读线程读同一个volatile变量。当读线程的数量大大超过写线程时，选择在volatile写之后插入StoreLoad屏障将带来可观的执行效率的提升。从这里我们可以看到JMM在实现上的一个特点：首先确保正确性，然后再去追求执行效率。下面是在保守策略下，volatile读插入内存屏障后生成的指令序列示意图：
 
-![](https://images2018.cnblogs.com/blog/1332556/201806/1332556-20180627155942083-844958043.png)
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404195934.png)
 上图中的LoadLoad屏障用来禁止处理器把上面的volatile读与下面的普通读重排序。LoadStore屏障用来禁止处理器把上面的volatile读与下面的普通写重排序。
 
 上述volatile写和volatile读的内存屏障插入策略非常保守。在实际执行时，只要不改变volatile写-读的内存语义，编译器可以根据具体情况省略不必要的屏障。下面我们通过具体的示例代码来说明：
 
 
 
-
-<pre>class VolatileBarrierExample { int a; volatile int v1 = 1; volatile int v2 = 2; void readAndWrite() { int i = v1;      //第一个volatile读
+````
+class VolatileBarrierExample { int a; volatile int v1 = 1; volatile int v2 = 2; void readAndWrite() { int i = v1;      //第一个volatile读
     int j = v2;      // 第二个volatile读
     a = i + j;      //普通写
     v1 = i + 1;     // 第一个volatile写
@@ -292,14 +279,11 @@ volatile写和读的内存语义总结总结：
  }
 
   … //其他方法
-}</pre>
-
-
-
-
+}
+````
 针对readAndWrite()方法，编译器在生成字节码时可以做如下的优化：
 
-![](https://images2018.cnblogs.com/blog/1332556/201806/1332556-20180627160549655-1808405069.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404195956.png)
 
 注意，最后的StoreLoad屏障不能省略。因为第二个volatile写之后，方法立即return。此时编译器可能无法准确断定后面是否会有volatile读或写，为了安全起见，编译器常常会在这里插入一个StoreLoad屏障。
 
@@ -312,9 +296,9 @@ volatile写和读的内存语义总结总结：
 当一个变量被定义为volatile之后，就可以保证此变量对所有线程的可见性，即当一个线程修改了此变量的值的时候，变量新的值对于其他线程来说是可以立即得知的。可以理解成：对volatile变量所有的写操作都能立刻被其他线程得知。但是这并不代表基于volatile变量的运算在并发下是安全的，因为volatile只能保证内存可见性，却没有保证对变量操作的原子性。比如下面的代码：
 
 
+````
 
-
-<pre>/ * 
+/ * 
  * 发起20个线程，每个线程对race变量进行10000次自增操作，如果代码能够正确并发，
  * 则最终race的结果应为200000，但实际的运行结果却小于200000。
  * 
@@ -342,9 +326,9 @@ public class Test { public static volatile int race = 0; public static void incr
 
     }
 
-}</pre>
+}
 
-
+````
 
 
 按道理来说结果是10000，但是运行下很可能是个小于10000的值。有人可能会说volatile不是保证了可见性啊，一个线程对race的修改，另外一个线程应该立刻看到啊！可是这里的操作race++是个复合操作啊，包括读取race的值，对其自增，然后再写回主存。
@@ -363,7 +347,7 @@ public class Test { public static volatile int race = 0; public static void incr
 
 要想保证原子性，只能借助于synchronized,Lock以及并发包下的atomic的原子操作类了，即对基本数据类型的 自增（加1操作），自减（减1操作）、以及加法操作（加一个数），减法操作（减一个数）进行了封装，保证这些操作是原子性操作。
 
-[Java 理论与实践: 正确使用 Volatile 变量](http://www.ibm.com/developerworks/cn/java/j-jtp06197.html) 总结了volatile关键的使用场景，
+[Java 理论与实践: 正确使用 Volatile 变量](http://www.ibm.com/developerworks/cn/java/j-jtp06197.html)总结了volatile关键的使用场景，
 
 只能在有限的一些情形下使用 volatile 变量替代锁。要使 volatile 变量提供理想的线程安全，必须同时满足下面两个条件：
 
@@ -374,9 +358,9 @@ public class Test { public static volatile int race = 0; public static void incr
 
 实际上，这些条件表明，可以被写入 volatile 变量的这些有效值独立于任何程序的状态，包括变量的当前状态。
 
-第一个条件的限制使 volatile 变量不能用作线程安全计数器。虽然增量操作（`x++`）看上去类似一个单独操作，实际上它是一个由读取－修改－写入操作序列组成的组合操作，必须以原子方式执行，而 volatile 不能提供必须的原子特性。实现正确的操作需要使`x` 的值在操作期间保持不变，而 volatile 变量无法实现这点。（然而，如果将值调整为只从单个线程写入，那么可以忽略第一个条件。） 
+第一个条件的限制使 volatile 变量不能用作线程安全计数器。虽然增量操作（`x++`）看上去类似一个单独操作，实际上它是一个由读取－修改－写入操作序列组成的组合操作，必须以原子方式执行，而 volatile 不能提供必须的原子特性。实现正确的操作需要使`x`的值在操作期间保持不变，而 volatile 变量无法实现这点。（然而，如果将值调整为只从单个线程写入，那么可以忽略第一个条件。）
 
- volatile一个使用场景是状态位；还有只有一个线程写，其余线程读的场景
+volatile一个使用场景是状态位；还有只有一个线程写，其余线程读的场景
 
 
 
@@ -388,7 +372,7 @@ public class Test { public static volatile int race = 0; public static void incr
 
 当线程获取锁时，JMM会把该线程对应的本地内存置位无效，从而使得被监视器保护的临界区代码必须从主内存中读取共享变量。
 
-不难发现：锁释放与volatile写有相同的内存语音；锁获取与volatile读有相同的内存语义。 
+不难发现：锁释放与volatile写有相同的内存语音；锁获取与volatile读有相同的内存语义。
 
 下面对锁释放和锁获取的内存语义做个总结。
 
@@ -410,8 +394,8 @@ public class Test { public static volatile int race = 0; public static void incr
 
 
 
-
-<pre>public class FinalTest { int i;//普通变量
+````
+public class FinalTest { int i;//普通变量
     final int j; static FinalExample obj; public FinalExample(){
         i = 1;
         j = 2;
@@ -421,9 +405,9 @@ public class Test { public static volatile int race = 0; public static void incr
         FinalExample object = obj;//读对象引用
         int a = object.i; int b = object.j;
     }
-}</pre>
+}
 
-
+````
 
 
 这里假设一个线程A执行writer()方法，随后另一个线程B执行reader()方法。下面我们通过这两个线程的交互来说明这两个规则。
@@ -434,7 +418,7 @@ public class Test { public static volatile int race = 0; public static void incr
 
 2）编译器会在final域的写之后，构造函数return之前，插入一个StoreStore屏障。这个屏障禁止处理器把final域的写重排序到构造函数之外。
 
-现在让我们分析writer方法，writer方法只包含一行代码obj = new FinalTest();这行代码包含两个步骤：
+现在让我们分析writer方法，writer方法只包含一行代码obj =newFinalTest();这行代码包含两个步骤：
 
 1）构造一个FinalTest类型的对象
 
@@ -442,7 +426,7 @@ public class Test { public static volatile int race = 0; public static void incr
 
 假设线程B的读对象引用与读对象的成员域之间没有重排序，下图是一种可能的执行时序
 
-![](https://images2018.cnblogs.com/blog/1332556/201807/1332556-20180702161158925-1636540001.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404200259.png)
 
 在上图中，写普通域的操作被编译器重排序到了构造函数之外，读线程B错误的读取到了普通变量i初始化之前的值。而写final域的操作被写final域重排序的规则限定在了构造函数之内，读线程B正确的读取到了final变量初始化之后的值。
 
@@ -462,7 +446,7 @@ public class Test { public static volatile int race = 0; public static void incr
 
 现在假设写线程A没有发生任何重排序，同时程序在不遵守间接依赖的处理器上执行，下图是一种可能的执行时序：
 
-![](https://images2018.cnblogs.com/blog/1332556/201807/1332556-20180702162017295-865800268.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404200319.png)
 
 在上图中，读对象的普通域操作被处理器重排序到读对象引用之前。在读普通域时，该域还没有被写线程写入，这是一个错误的读取操作，而读final域的重排序规则会把读对象final域的操作“限定”在读对象引用之后，此时该final域已经被A线程初始化过了，这是一个正确的读取操作。
 
@@ -471,9 +455,9 @@ public class Test { public static volatile int race = 0; public static void incr
 final域为引用类型，上面我们看到的final域是基础的数据类型，如果final域是引用类型呢？
 
 
+````
 
-
-<pre>public class FinalReferenceTest { final int[] arrs;//final引用
+public class FinalReferenceTest { final int[] arrs;//final引用
 
     static FinalReferenceTest obj; public FinalReferenceTest(){
         arrs = new int[1];//1
@@ -487,9 +471,9 @@ final域为引用类型，上面我们看到的final域是基础的数据类型�
             int temp =obj.arrs[0];//6
  }
     }
-}</pre>
+}
 
-
+````
 
 
 JMM可以确保读线程C至少能看到写线程A在构造函数中对final引用对象的成员域的写入。即C至少能看到数组下标0的值为1。而写线程B对数组元素的写入，读线程C可能看得到，也可能看不到。JMM不保证线程B的写入对读线程C可见，因为写线程B和读线程C之间存在数据竞争，此时的执行结果不可预知。
@@ -500,8 +484,8 @@ JMM可以确保读线程C至少能看到写线程A在构造函数中对final引�
 
 
 
-
-<pre>public class FinalReferenceEscapeExample {final int i;static FinalReferenceEscapeExample obj;public FinalReferenceEscapeExample () {
+````
+public class FinalReferenceEscapeExample {final int i;static FinalReferenceEscapeExample obj;public FinalReferenceEscapeExample () {
 　　　　i = 1; // 1写final域
 　　　　obj = this; // 2 this引用在此"逸出"
 　　}
@@ -510,9 +494,9 @@ JMM可以确保读线程C至少能看到写线程A在构造函数中对final引�
 　　　　　　int temp = obj.i; // 4
 　　　　}
 　　}
-}</pre>
+}
 
-
+````
 
 
 假设一个线程A执行writer()方法，另一个线程B执行reader()方法。这里的操作2使得对象还未完成构造前就为线程B可见。即使这里的操作2是构造函数的最后一步，且在程序中操作2排在操作1后面，执行read()方法的线程仍然可能无法看到final域被初始化后的值，因为这里的操作1和操作2之间可能被重排序。
@@ -523,7 +507,7 @@ JSR-133为什么要增强final的语义：
 
 ## 五、JMM是如何处理并发过程中的三大特性
 
- JMM是围绕这在并发过程中如何处理原子性、可见性和有序性这3个特性来建立的。
+JMM是围绕这在并发过程中如何处理原子性、可见性和有序性这3个特性来建立的。
 
 *   原子性：
 
@@ -551,7 +535,7 @@ JSR-133为什么要增强final的语义：
 
 [https://www.cnblogs.com/_popc/p/6096517.html](https://www.cnblogs.com/_popc/p/6096517.html)
 
-[https://blog.csdn.net/liu_dong_liang/article/details/80391040 ](https://blog.csdn.net/liu_dong_liang/article/details/80391040)
+[https://blog.csdn.net/liu_dong_liang/article/details/80391040](https://blog.csdn.net/liu_dong_liang/article/details/80391040)
 
 [https://www.jb51.net/article/76006.htm](https://www.jb51.net/article/76006.htm)
 

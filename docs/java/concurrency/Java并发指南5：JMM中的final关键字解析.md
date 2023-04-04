@@ -1,15 +1,3 @@
-# Table of Contents
-
-  * [前言](#前言)
-  * [写final域的重排序规则](#写final域的重排序规则)
-  * [读final域的重排序规则](#读final域的重排序规则)
-  * [如果final域是引用类型](#如果final域是引用类型)
-  * [为什么final引用不能从构造函数内“逸出”](#为什么final引用不能从构造函数内逸出)
-  * [final语义在处理器中的实现](#final语义在处理器中的实现)
-  * [JSR-133为什么要增强final的语义](#jsr-133为什么要增强final的语义)
-  * [参考文献](#参考文献)
-
-
 **本文转载自互联网，侵删**
 
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看
@@ -29,189 +17,202 @@
 如果对本系列文章有什么建议，或者是有什么疑问的话，也可以关注公众号【Java技术江湖】联系作者，欢迎你参与本系列博文的创作和修订。
 
 <!-- more -->
-## 前言
 
-与前面介绍的锁和volatile相比较，对final域的读和写更像是普通的变量访问。对于final域，编译器和处理器要遵守两个重排序规则：
+## 一、properly constructed / this对象逸出
+在开始讲之前final之前，先了解一个概念，叫做 “properly constructed”。其含义是：在构造器创建对象的过程中，正在被创建的对象的引用没有发生 “逸出(escape)” 。
+````
+public Test {
+private final int x;
+private int y;
+private static Test instance;
 
-1.  在构造函数内对一个final域的写入，与随后把这个被构造对象的引用赋值给一个引用变量，这两个操作之间不能重排序。
-2.  初次读一个包含final域的对象的引用，与随后初次读这个final域，这两个操作之间不能重排序。
+	public Test(int x, int y) {
+		this.x = x;
+		this.y = y;
+		instance = this;
+	}
+}
+````
+在上面的例子中，在构造器中把正在创建的对象赋值给了一个静态变量instance，这种行为就叫“逸出”。
 
-下面，我们通过一些示例性的代码来分别说明这两个规则：
+## 二、对象的安全发布
+所谓对象的安全发布，意思就是构建一个被完整初始化的对象，防止一个未完全初始化的对象被访问。
+
+看下面的例子：
+````
+public class Test {
+static MyObj obj;
+
+	static class MyObj {
+		int a, b, c, d;
+		MyObj() {
+			a = 1;
+			b = 1;
+			c = 1;
+			d = 1;
+		}
+	}
+	
+	// Thread 1
+	public static void init() {
+		obj = new MyObj();
+	}
+	
+	// Thread 2
+	public static void f() {
+		if (obj == null) return;
+		if (obj != null) {
+			System.out.println(obj.a + obj.b + obj.c + obj.d);
+		}
+	}
+
+}
+````
+
+上述代码中，Thread 2 打印出的数将会是几呢？事实上，可能是0, 1, 2, 3, 4 中的任意一个值。
+
+如果打印出的数不是4，那么就说明线程2读到了未完全初始化的MyObj对象。
+
+为什么会出现这种情况呢？是因为 obj = new MyObj() 这个操作底层实际上分为以下3个步骤：
+
+在堆上给MyObj对象分配空间，对象的字段置为默认值
+执行构造器中的初始化语句进行初始化
+将堆上的MyObj对象的引用赋值给obj
+其中，步骤2和3是可能发生重排序的 (StoreStore重排序)，因此就Thread 2就可能看到 obj != null，但是a,b,c,d还没全部赋值完成的情况，也就是 Thread 1 不安全的发布了 MyObj 对象。
+
+扩展一下，在实现单例模式时，会什么要double checked且加上volatile，正是这个原因，防止不安全的发布。
+
+笔者在 x86 平台的 HotSpot 虚拟机中使用 jcstress 工具对不安全发布现象进行了测试，发现类似于上述的代码在 x86 平台的 HotSpot 虚拟机中并不会出现为完全初始化的情况，出现这种情况就说明，x86 平台的 HotSpot 虚拟机实现中，编译器没有对上述步骤2和3进行重排序，而x86的内存模型又保证了x86不会发生StoreStore重排序，因此上述步骤2和3不会发生重排序，进而始终可以读到完全初始化过的对象。但是，在其他硬件平台或其他JVM中就未必如此了。 我们的Java代码不应该基于特定硬件平台或虚拟机实现之上，而是应该遵循JLS和JMM的规范！
+
+## 三、 final 关键字的内存语义
+
+1. 可见性
+   摘自[1]：
+
+The values for an object’s final fields are set in its constructor. Assuming the object is constructed “correctly”, once an object is constructed, the values assigned to the final fields in the constructor will be visible to all other threads without synchronization. In addition, the visible values for any other object or array referenced by those final fields will be at least as up-to-date as the final fields.
+
+在JMM中规定，如果我们在构造器中对final字段进行初始化，并且构造器中没有发生this对象的逸出，那么无需任何同步措施，即可确保其他线程可以看到构造器中初始化给final字段的值。此外，如果这个final字段是一个引用类型，那么可以确保该引用类型对象引用到的对象或数组的内容都是至少和final字段一样新的值。
+
+这里的“至少和final字段一样新的值”，意思也就是 up to date as of the end of the object’s constructor ([1])，也就是说，对于引用类型的final变量，其他线程至少能够读到构造器结束时，这个final类型引用变量的成员的状态。
+
+实际上，final 关键字对可见性的影响在Java语言规范的 17.5.1. Semantics of final Fields 一节也作出了正式规范。针对final关键字，引入了两个偏序关系——Dereference Chain和Memory Chain，借助这两个偏序关系，可以在不同线程之间的 w ww 和 r 2 r2r2 操作之间建立 happens before 关系，如下图所示：
 
 
+而 happens before 关系又隐含着可见性，所以 w ww 写的内容对于 r 2 r2r2 是可见的。结合上图 w ww 到 r 2 r2r2 的关系链，我们也不难理解为什么之前说 “对于引用类型的final变量，其他线程至少能够读到构造器结束时，这个final类型引用变量的成员的状态” 了，借助上述关系同样可以建立修改final字段成员 和 读取final字段成员之间的happens before 关系。
 
-```
-public class FinalExample {
-    int i;                            //普通变量
-    final int j;                      //final变量
-    static FinalExample obj;
+2. 有序性
 
-    public void FinalExample () {     //构造函数
-        i = 1;                        //写普通域
-        j = 2;                        //写final域
-    }
+注意：重排序是针对单个线程（单个CPU）而言的。
 
-    public static void writer () {    //写线程A执行
-        obj = new FinalExample ();
-    }
+以下摘自文档 [2]：
 
-    public static void reader () {       //读线程B执行
-        FinalExample object = obj;       //读对象引用
-        int a = object.i;                //读普通域
-        int b = object.j;                //读final域
-    }
+Loads and Stores of final fields act as “normal” accesses with respect to locks and volatiles, but impose two additional reordering rules:
+
+对final字段的load和store操作和对普通字段的load和store操作几乎一样，只不过针对final字段存在下面两条额外的重排序规则：
+
+规则1
+
+【① A store of a final field】 (inside a constructor) and, 【② if the field is a reference, any store that this final can reference】, cannot be reordered with 【③ a subsequent store (outside that constructor) of the reference to the object holding that field into a variable accessible to other threads】. For example, you cannot reorder
+x.finalField = v; ... ; sharedRef = x;
+
+This comes into play for example when inlining constructors, where “...” spans the logical end of the constructor. You cannot move stores of finals within constructors down below a store outside of the constructor that might make the object visible to other threads. (As seen below, this may also require issuing a barrier). Similarly, you cannot reorder either of the first two with the third assignment in:
+v.afield = 1; x.finalField = v; ... ; sharedRef = x;
+
+直接看上面的话有点难懂，下面举一个例子：
+````
+class Apple {
+private String color;
+
+	public Apple(String color) { this.color = color; }
 }
 
-```
+public class Test {
+static Test instance;
+final int a;
+final Apple apple;
 
-![](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw== "点击并拖拽以移动")
-
-这里假设一个线程A执行writer ()方法，随后另一个线程B执行reader ()方法。下面我们通过这两个线程的交互来说明这两个规则。
-
-## 写final域的重排序规则
-
-写final域的重排序规则禁止把final域的写重排序到构造函数之外。这个规则的实现包含下面2个方面：
-
-*   JMM禁止编译器把final域的写重排序到构造函数之外。
-*   编译器会在final域的写之后，构造函数return之前，插入一个StoreStore屏障。这个屏障禁止处理器把final域的写重排序到构造函数之外。
-
-现在让我们分析writer ()方法。writer ()方法只包含一行代码：finalExample = new FinalExample ()。这行代码包含两个步骤：
-
-1.  构造一个FinalExample类型的对象；
-2.  把这个对象的引用赋值给引用变量obj。
-
-假设线程B读对象引用与读对象的成员域之间没有重排序（马上会说明为什么需要这个假设），下图是一种可能的执行时序：
-
-在上图中，写普通域的操作被编译器重排序到了构造函数之外，读线程B错误的读取了普通变量i初始化之前的值。而写final域的操作，被写final域的重排序规则“限定”在了构造函数之内，读线程B正确的读取了final变量初始化之后的值。
-
-写final域的重排序规则可以确保：在对象引用为任意线程可见之前，对象的final域已经被正确初始化过了，而普通域不具有这个保障。以上图为例，在读线程B“看到”对象引用obj时，很可能obj对象还没有构造完成（对普通域i的写操作被重排序到构造函数外，此时初始值2还没有写入普通域i）。
-
-## 读final域的重排序规则
-
-读final域的重排序规则如下：
-
-*   在一个线程中，初次读对象引用与初次读该对象包含的final域，JMM禁止处理器重排序这两个操作（注意，这个规则仅仅针对处理器）。编译器会在读final域操作的前面插入一个LoadLoad屏障。
-
-初次读对象引用与初次读该对象包含的final域，这两个操作之间存在间接依赖关系。由于编译器遵守间接依赖关系，因此编译器不会重排序这两个操作。大多数处理器也会遵守间接依赖，大多数处理器也不会重排序这两个操作。但有少数处理器允许对存在间接依赖关系的操作做重排序（比如alpha处理器），这个规则就是专门用来针对这种处理器。
-
-reader()方法包含三个操作：
-
-1.  初次读引用变量obj;
-2.  初次读引用变量obj指向对象的普通域j。
-3.  初次读引用变量obj指向对象的final域i。
-
-现在我们假设写线程A没有发生任何重排序，同时程序在不遵守间接依赖的处理器上执行，下面是一种可能的执行时序：
-
-在上图中，读对象的普通域的操作被处理器重排序到读对象引用之前。读普通域时，该域还没有被写线程A写入，这是一个错误的读取操作。而读final域的重排序规则会把读对象final域的操作“限定”在读对象引用之后，此时该final域已经被A线程初始化过了，这是一个正确的读取操作。
-
-读final域的重排序规则可以确保：在读一个对象的final域之前，一定会先读包含这个final域的对象的引用。在这个示例程序中，如果该引用不为null，那么引用对象的final域一定已经被A线程初始化过了。
-
-## 如果final域是引用类型
-
-上面我们看到的final域是基础数据类型，下面让我们看看如果final域是引用类型，将会有什么效果？
-
-请看下列示例代码：
-
-
-
-```
-public class FinalReferenceExample {
-final int[] intArray;                     //final是引用类型
-static FinalReferenceExample obj;
-
-public FinalReferenceExample () {        //构造函数
-    intArray = new int[1];              //1
-    intArray[0] = 1;                   //2
+	public Test() { 
+		a = 10;
+		apple = new Apple("red"); 
+	}
+	
+	public static void init() {
+		instance = new Test();
+	}
 }
+````
 
-public static void writerOne () {          //写线程A执行
-    obj = new FinalReferenceExample ();  //3
+其实， x.finalField = v; ... ; sharedRef = x; 中的 x 在构造器中可以理解为 this，在 init() 方法中可以理解为new Test() 返回的对象。
+
+上述英文文档中：
+
+操作①是在构造器中对final字段 (基本类型和引用类型) 的赋值操作，对应a = 10，它不能和操作③进行重排序
+操作②也是指构造器中的操作，在①的基础上，如果final字段是一个引用类型，那么所有这个final字段引用到的store操作，都不能和操作③重排序。例如上面代码中的 apple 就是一个 final 类型应用变量，那么通过apple可以引用到color，则对apple.color的赋值操作不能和③进行重排序。
+操作③是在构造器外，将包含final字段的对象赋值给一个其他线程可以访问到的变量。在上述代码中，也就对应init()方法中的instance = new Test()，因为new Test()对象包含final字段a，且字段instance可以被其他线程访问到。
+实现这一条重排序规则可以通过在构造器结束位置插入StoreStore屏障来实现。
+
+规则2
+The initial load (i.e., the very first encounter by a thread) of a final field cannot be reordered with the initial load of the reference to the object containing the final field. This comes into play in:
+x = sharedRef; ... ; i = x.finalField;
+A compiler would never reorder these since they are dependent, but there can be consequences of this rule on some processors.
+
+再看个例子：
+````
+public class Test {
+static Test instance;
+final int a;
+
+	public Test() { a = 10; }
+	
+	public static void init() {
+		instance = new Test();
+	}
+	
+	public static void read() {
+		if (obj != null) {
+			System.out.println(obj.a);
+		}
+	}
 }
+````
+这条规则的意思是，通过对象访问其final字段(obj.a)这一操作 和 该操作之前第一次访问该对象的操作 (if (obj != null)中读取obj的操作) 是不能重排序的。
 
-public static void writerTwo () {          //写线程B执行
-    obj.intArray[0] = 2;                 //4
-}
+Java编译器不会对不会对上述两个操作进行重排序，因为对编译器来说这两个操作(load(x)和load(x.field))之间存在依赖。但是对于处理器来说，它俩都是load操作，所以在允许LoadLoad重排序的处理器上，这两个操作是可能被重排序的，此时就需要加上LoadLoad屏障。
 
-public static void reader () {              //读线程C执行
-    if (obj != null) {                    //5
-        int temp1 = obj.intArray[0];       //6
-    }
-}
-}
+总结
+final字段的重排序规则总结如下：
 
-```
+构造器内final字段的写 和 构造器外将包含该final字段的对象赋值给一个其他线程能访问到的变量 这两个操作不能重排序
+加入final字段是一个引用类型，那么构造器内对该final引用类型字段的成员的写 和 构造器外将包含该final字段的对象赋值给一个其他线程能访问到的变量 这两个操作之间不能重排序
+构造器外，对于包含final字段的对象的读 和 对final字段的成员的读 不能重排序
 
-![](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw== "点击并拖拽以移动")
+## 四、HotSpot VM中对final内存语义的实现
+[3] 在HotSpot源码的 parse1.cpp 中：
+````
+//------------------------------do_exits---------------------------------------
+void Parse::do_exits() {
+// ...
+if (method()->is_initializer() &&
+(wrote_final() ||
+PPC64_ONLY(wrote_volatile() ||)
+(AlwaysSafeConstructors && wrote_fields()))) {
+_exits.insert_mem_bar(Op_MemBarRelease, alloc_with_final());
+// ...
+do_exists() 函数在构造器退出时会执行，显然它会使用 wrote_final() 判断构造器内是不是存在final类型的写，如果是的话，则插入一个内存屏障 Op_MemBarRelease，这个屏障实际上对应 LoadStore 和 StoreStore。插入 LoadStore 屏障是为了照顾这样一种特殊情况：final 字段的值依赖于另外的字段。例如x.finalField = x.normalField + 1; ...; sharedRef = x;，这里插入LoadStore 就是为了防止对 x.normalField 的读操作和sharedRef = x 发生重排序。
+````
 
-这里final域为一个引用类型，它引用一个int型的数组对象。对于引用类型，写final域的重排序规则对编译器和处理器增加了如下约束：
+ 总结
+final关键字的内存语义相较于volatile等关键字还是很难理解的，以上的内容如有表述不恰当之处还请指正。
 
-1.  在构造函数内对一个final引用的对象的成员域的写入，与随后在构造函数外把这个被构造对象的引用赋值给一个引用变量，这两个操作之间不能重排序。
+总结
+final关键字的内存语义相较于volatile等关键字还是很难理解的，以上的内容如有表述不恰当之处还请指正。
 
-对上面的示例程序，我们假设首先线程A执行writerOne()方法，执行完后线程B执行writerTwo()方法，执行完后线程C执行reader ()方法。下面是一种可能的线程执行时序：
+# 参考文献
+Java Concurrency in Practice
 
-在上图中，1是对final域的写入，2是对这个final域引用的对象的成员域的写入，3是把被构造的对象的引用赋值给某个引用变量。这里除了前面提到的1不能和3重排序外，2和3也不能重排序。
+JSR 133 (Java Memory Model) FAQ
 
-JMM可以确保读线程C至少能看到写线程A在构造函数中对final引用对象的成员域的写入。即C至少能看到数组下标0的值为1。而写线程B对数组元素的写入，读线程C可能看的到，也可能看不到。JMM不保证线程B的写入对读线程C可见，因为写线程B和读线程C之间存在数据竞争，此时的执行结果不可预知。
+Java Concurrency in Practice
 
-如果想要确保读线程C看到写线程B对数组元素的写入，写线程B和读线程C之间需要使用同步原语（lock或volatile）来确保内存可见性。
-
-## 为什么final引用不能从构造函数内“逸出”
-
-前面我们提到过，写final域的重排序规则可以确保：在引用变量为任意线程可见之前，该引用变量指向的对象的final域已经在构造函数中被正确初始化过了。其实要得到这个效果，还需要一个保证：在构造函数内部，不能让这个被构造对象的引用为其他线程可见，也就是对象引用不能在构造函数中“逸出”。为了说明问题，让我们来看下面示例代码：
-
-
-
-```
-public class FinalReferenceEscapeExample {
-final int i;
-static FinalReferenceEscapeExample obj;
-
-public FinalReferenceEscapeExample () {
-    i = 1;                              //1写final域
-    obj = this;                          //2 this引用在此“逸出”
-}
-
-public static void writer() {
-    new FinalReferenceEscapeExample ();
-}
-
-public static void reader {
-    if (obj != null) {                     //3
-        int temp = obj.i;                 //4
-    }
-}
-}
-
-```
-
-![](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw== "点击并拖拽以移动")
-
-假设一个线程A执行writer()方法，另一个线程B执行reader()方法。这里的操作2使得对象还未完成构造前就为线程B可见。即使这里的操作2是构造函数的最后一步，且即使在程序中操作2排在操作1后面，执行read()方法的线程仍然可能无法看到final域被初始化后的值，因为这里的操作1和操作2之间可能被重排序。实际的执行时序可能如下图所示：
-
-从上图我们可以看出：在构造函数返回前，被构造对象的引用不能为其他线程可见，因为此时的final域可能还没有被初始化。在构造函数返回后，任意线程都将保证能看到final域正确初始化之后的值。
-
-## final语义在处理器中的实现
-
-现在我们以x86处理器为例，说明final语义在处理器中的具体实现。
-
-上面我们提到，写final域的重排序规则会要求译编器在final域的写之后，构造函数return之前，插入一个StoreStore障屏。读final域的重排序规则要求编译器在读final域的操作前面插入一个LoadLoad屏障。
-
-由于x86处理器不会对写-写操作做重排序，所以在x86处理器中，写final域需要的StoreStore障屏会被省略掉。同样，由于x86处理器不会对存在间接依赖关系的操作做重排序，所以在x86处理器中，读final域需要的LoadLoad屏障也会被省略掉。也就是说在x86处理器中，final域的读/写不会插入任何内存屏障！
-
-## JSR-133为什么要增强final的语义
-
-在旧的Java内存模型中 ，最严重的一个缺陷就是线程可能看到final域的值会改变。比如，一个线程当前看到一个整形final域的值为0（还未初始化之前的默认值），过一段时间之后这个线程再去读这个final域的值时，却发现值变为了1（被某个线程初始化之后的值）。最常见的例子就是在旧的Java内存模型中，String的值可能会改变（参考文献2中有一个具体的例子，感兴趣的读者可以自行参考，这里就不赘述了）。
-
-为了修补这个漏洞，JSR-133专家组增强了final的语义。通过为final域增加写和读重排序规则，可以为java程序员提供初始化安全保证：只要对象是正确构造的（被构造对象的引用在构造函数中没有“逸出”），那么不需要使用同步（指lock和volatile的使用），就可以保证任意线程都能看到这个final域在构造函数中被初始化之后的值。
-
-## 参考文献
-
-1.  [ Java Concurrency in Practice](http://www.amazon.com/Java-Concurrency-Practice-Brian-Goetz/dp/0321349601/ref=pd_sim_b_1)
-
-2.  [ JSR 133 (Java Memory Model) FAQ](http://www.cs.umd.edu/users/pugh/java/memoryModel/jsr-133-faq.html)
-
-3.  [ Java Concurrency in Practice](http://www.amazon.com/Java-Concurrency-Practice-Brian-Goetz/dp/0321349601/ref=pd_sim_b_1)
-
-4.  [ The JSR-133 Cookbook for Compiler Writers](http://gee.cs.oswego.edu/dl/jmm/cookbook.html)
-
-[Intel® 64 and IA-32 ArchitecturesvSoftware Developer’s Manual Volume 3A: System Programming Guide, Part 1](http://download.intel.com/products/processor/manual/253668.pdf)
+The JSR-133 Cookbook for Compiler Writers
+Intel® 64 and IA-32 ArchitecturesvSoftware Developer’s Manual Volume 3A: System Programming Guide, Part 1

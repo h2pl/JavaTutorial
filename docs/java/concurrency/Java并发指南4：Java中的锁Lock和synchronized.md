@@ -1,10 +1,8 @@
-# Table of Contents
-
+# 目录
   * [Java中的锁机制及Lock类](#java中的锁机制及lock类)
     * [锁的释放-获取建立的happens before 关系](#锁的释放-获取建立的happens-before-关系)
     * [锁释放和获取的内存语义](#锁释放和获取的内存语义)
     * [锁内存语义的实现](#锁内存语义的实现)
-            * [LOCK_IF_MP(mp) __asm cmp mp, 0  \](#lock_if_mpmp-__asm-cmp-mp-0--)
   * [concurrent包的实现](#concurrent包的实现)
   * [synchronized实现原理](#synchronized实现原理)
     * [****1、实现原理****](#1、实现原理)
@@ -19,7 +17,6 @@
     * [**10、偏向锁**](#10、偏向锁)
   * [**11、重量级锁**](#11、重量级锁)
   * [参考资料](#参考资料)
-
 
 **本文转载自并发编程网，侵删**
 
@@ -47,6 +44,7 @@
 锁是java并发编程中最重要的同步机制。锁除了让临界区互斥执行外，还可以让释放锁的线程向获取同一个锁的线程发送消息。
 
 下面是锁释放-获取的示例代码：
+````
     class MonitorExample {
         int a = 0;
      
@@ -59,6 +57,7 @@
             ……
         }                                    //6
     }
+````
 根据程序次序规则，1 happens before 2, 2 happens before 3; 4 happens before 5, 5 happens before 6。假设线程A执行writer()方法，随后线程B执行reader()方法。根据happens before规则，这个过程包含的happens before 关系可以分为两类：
 
 1.  根据监视器锁规则，3 happens before 4。
@@ -95,7 +94,7 @@
 本文将借助ReentrantLock的源代码，来分析锁内存语义的具体实现机制。
 
 请看下面的示例代码：
-
+````
     class ReentrantLockExample {
     int a = 0;
     ReentrantLock lock = new ReentrantLock();
@@ -119,7 +118,7 @@
         }
     }
     }
-    
+````    
 在ReentrantLock中，调用lock()方法获取锁；调用unlock()方法释放锁。
 
 ReentrantLock的实现依赖于java同步器框架AbstractQueuedSynchronizer（本文简称之为AQS）。AQS使用一个整型的volatile变量（命名为state）来维护同步状态，马上我们会看到，这个volatile变量是ReentrantLock内存语义实现的关键。 下面是ReentrantLock的类图（仅画出与本文相关的部分）：
@@ -137,27 +136,27 @@ ReentrantLock分为公平锁和非公平锁，我们首先分析公平锁。
 
 在第4步真正开始加锁，下面是该方法的源代码：
 
-
-    protected final boolean tryAcquire(int acquires) {
-        final Thread current = Thread.currentThread();
-        int c = getState();   //获取锁的开始，首先读volatile变量state
-        if (c == 0) {
-            if (isFirst(current) &&
-                compareAndSetState(0, acquires)) {
-                setExclusiveOwnerThread(current);
-                return true;
-            }
-        }
-        else if (current == getExclusiveOwnerThread()) {
-            int nextc = c + acquires;
-            if (nextc < 0)  
-                throw new Error("Maximum lock count exceeded");
-            setState(nextc);
+````
+protected final boolean tryAcquire(int acquires) {
+    final Thread current = Thread.currentThread();
+    int c = getState();   //获取锁的开始，首先读volatile变量state
+    if (c == 0) {
+        if (isFirst(current) &&
+            compareAndSetState(0, acquires)) {
+            setExclusiveOwnerThread(current);
             return true;
         }
-        return false;
     }
-
+    else if (current == getExclusiveOwnerThread()) {
+        int nextc = c + acquires;
+        if (nextc < 0)  
+            throw new Error("Maximum lock count exceeded");
+        setState(nextc);
+        return true;
+    }
+    return false;
+}
+````
 
 从上面源代码中我们可以看出，加锁方法首先读volatile变量state。
 
@@ -169,20 +168,20 @@ ReentrantLock分为公平锁和非公平锁，我们首先分析公平锁。
 
 在第3步真正开始释放锁，下面是该方法的源代码：
 
-
-    protected final boolean tryRelease(int releases) {
-        int c = getState() - releases;
-        if (Thread.currentThread() != getExclusiveOwnerThread())
-            throw new IllegalMonitorStateException();
-        boolean free = false;
-        if (c == 0) {
-            free = true;
-            setExclusiveOwnerThread(null);
-        }
-        setState(c);           //释放锁的最后，写volatile变量state
-        return free;
+````
+protected final boolean tryRelease(int releases) {
+    int c = getState() - releases;
+    if (Thread.currentThread() != getExclusiveOwnerThread())
+        throw new IllegalMonitorStateException();
+    boolean free = false;
+    if (c == 0) {
+        free = true;
+        setExclusiveOwnerThread(null);
     }
-
+    setState(c);           //释放锁的最后，写volatile变量state
+    return free;
+}
+````
 
 从上面的源代码我们可以看出，在释放锁的最后写volatile变量state。
 
@@ -199,9 +198,11 @@ ReentrantLock分为公平锁和非公平锁，我们首先分析公平锁。
 3.  AbstractQueuedSynchronizer : compareAndSetState(int expect, int update)
 
 在第3步真正开始加锁，下面是该方法的源代码：
-
-<pre name="code">protected final boolean compareAndSetState(int expect, int update) {return unsafe.compareAndSwapInt(this, stateOffset, expect, update);}</pre>
-
+````
+protected final boolean compareAndSetState(int expect, int update){
+    return unsafe.compareAndSwapInt(this, stateOffset, expect, update);
+}
+````
 该方法以原子操作的方式更新state变量，本文把java的compareAndSet()方法调用简称为CAS。JDK文档对该方法的说明如下：如果当前状态值等于预期值，则以原子方式将同步状态设置为给定的更新值。此操作具有 volatile 读和写的内存语义。
 
 这里我们分别从编译器和处理器的角度来分析,CAS如何同时具有volatile读和volatile写的内存语义。
@@ -211,13 +212,13 @@ ReentrantLock分为公平锁和非公平锁，我们首先分析公平锁。
 下面我们来分析在常见的intel x86处理器中，CAS是如何同时具有volatile读和volatile写的内存语义的。
 
 下面是sun.misc.Unsafe类的compareAndSwapInt()方法的源代码：
-
+````
     protected final boolean compareAndSetState(int expect, int update) {
         return unsafe.compareAndSwapInt(this, stateOffset, expect, update);
     }
-
+````
 可以看到这是个本地方法调用。这个本地方法在openjdk中依次调用的c++代码为：unsafe.cpp，atomic.cpp和atomicwindowsx86.inline.hpp。这个本地方法的最终实现在openjdk的如下位置：openjdk-7-fcs-src-b147-27jun2011\openjdk\hotspot\src\oscpu\windowsx86\vm\ atomicwindowsx86.inline.hpp（对应于windows操作系统，X86处理器）。下面是对应于intel x86处理器的源代码的片段：
-
+````
     // Adding a lock prefix to an instruction on MP machine
     // VC++ doesn't like the lock prefix to be on a single line
     // so we can't insert a label after the lock prefix.
@@ -238,6 +239,7 @@ ReentrantLock分为公平锁和非公平锁，我们首先分析公平锁。
         cmpxchg dword ptr [edx], ecx
       }
     }
+````
 
 如上面源代码所示，程序会根据当前处理器的类型来决定是否为cmpxchg指令添加lock前缀。如果程序是在多处理器上运行，就为cmpxchg指令加上lock前缀（lock cmpxchg）。反之，如果程序是在单处理器上运行，就省略lock前缀（单处理器自身会维护单处理器内的顺序一致性，不需要lock前缀提供的内存屏障效果）。
 
@@ -292,15 +294,15 @@ AQS，非阻塞数据结构和原子变量类（java.util.concurrent.atomic包�
 转自：https://blog.csdn.net/chenssy/article/details/54883355
 
 
-记得刚刚开始学习Java的时候，一遇到多线程情况就是synchronized。对于当时的我们来说，synchronized是如此的神奇且强大。我们赋予它一个名字“同步”，也成为我们解决多线程情况的良药，百试不爽。但是，随着学习的深入，我们知道synchronized是一个重量级锁，相对于Lock，它会显得那么笨重，以至于我们认为它不是那么的高效，并慢慢抛弃它。 
+记得刚刚开始学习Java的时候，一遇到多线程情况就是synchronized。对于当时的我们来说，synchronized是如此的神奇且强大。我们赋予它一个名字“同步”，也成为我们解决多线程情况的良药，百试不爽。但是，随着学习的深入，我们知道synchronized是一个重量级锁，相对于Lock，它会显得那么笨重，以至于我们认为它不是那么的高效，并慢慢抛弃它。
 
-　　诚然，随着Javs SE 1.6对synchronized进行各种优化后，synchronized不会显得那么重。
+诚然，随着Javs SE 1.6对synchronized进行各种优化后，synchronized不会显得那么重。
 
- 　　下面跟随LZ一起来探索**synchronized的实现机制、Java是如何对它进行了优化、锁优化机制、锁的存储结构和升级过程。**
+下面跟随LZ一起来探索**synchronized的实现机制、Java是如何对它进行了优化、锁优化机制、锁的存储结构和升级过程。**
 
 ### ****1、实现原理****
 
- 　　synchronized可以保证方法或者代码块在运行时，同一时刻只有一个方法可以进入到临界区，同时它还可以保证共享变量的内存可见性。
+synchronized可以保证方法或者代码块在运行时，同一时刻只有一个方法可以进入到临界区，同时它还可以保证共享变量的内存可见性。
 
 Java中每一个对象都可以作为锁，这是synchronized实现同步的基础：
 
@@ -310,26 +312,24 @@ Java中每一个对象都可以作为锁，这是synchronized实现同步的基�
 
 3.  **同步方法块，锁是括号里面的对象。**
 
-　　当一个线程访问同步代码块时，它首先是需要得到锁才能执行同步代码，**当退出或者抛出异常时必须要释放锁，那么它是如何来实现这个机制的呢？**
+当一个线程访问同步代码块时，它首先是需要得到锁才能执行同步代码，**当退出或者抛出异常时必须要释放锁，那么它是如何来实现这个机制的呢？**
 
- 我们先看一段简单的代码：
-
-
-
-<pre>public class SynchronizedTest{ public synchronized void test1(){
+我们先看一段简单的代码：
+````
+public class SynchronizedTest{ public synchronized void test1(){
 
 　　} public void test2(){
 　　　　synchronized(this){
 
        }
     }
-}</pre>
+}
 
-
+````
 
 **利用Javap工具查看生成的class文件信息来分析Synchronize的实现：**
 
-![](https://images2018.cnblogs.com/blog/1169376/201807/1169376-20180726111452385-496687429.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404192352.png)
 
 　　从上面可以看出，同步代码块是使用monitorenter和monitorexit指令实现的，同步方法（在这看不出来需要看JVM底层实现）依靠的是方法修饰符上的ACCSYNCHRONIZED实现。
 
@@ -345,7 +345,7 @@ Java中每一个对象都可以作为锁，这是synchronized实现同步的基�
 
 下面我们来继续分析，但是在深入之前我们需要了解两个重要的概念：**Java对象头、Monitor。**
 
- **Java对象头、monitor：Java对象头和monitor是实现synchronized的基础！下面就这两个概念来做详细介绍。**
+**Java对象头、monitor：Java对象头和monitor是实现synchronized的基础！下面就这两个概念来做详细介绍。**
 
 ### **2、Java对象头**
 
@@ -355,15 +355,15 @@ Hotspot虚拟机的对象头主要包括两部分数据：**Mark Word（标记�
 
 所以下面将重点阐述。
 
-*   **Mark Word**
+**Mark Word**
 
     Mark Word用于存储对象自身的运行时数据，如哈希码（HashCode）、GC分代年龄、锁状态标志、线程持有的锁、偏向线程 ID、偏向时间戳等等。Java对象头一般占有两个机器码（在32位虚拟机中，1个机器码等于4字节，也就是32bit），但是如果对象是数组类型，则需要三个机器码，因为JVM虚拟机可以通过Java对象的元数据信息确定Java对象的大小，但是无法从数组的元数据来确认数组的大小，所以用一块来记录数组长度。
 
-　　下图是Java对象头的存储结构（32位虚拟机）：
+下图是Java对象头的存储结构（32位虚拟机）：
 
-　　![](https://images2018.cnblogs.com/blog/1169376/201807/1169376-20180726111729662-408733474.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404192459.png)
 
-　　对象头信息是与对象自身定义的数据无关的额外存储成本，但是考虑到虚拟机的空间效率，Mark Word被设计成一个非固定的数据结构以便在极小的空间内存存储尽量多的数据，它会根据对象的状态复用自己的存储空间，也就是说，Mark Word会随着程序的运行发生变化，变化状态如下（32位虚拟机）：
+对象头信息是与对象自身定义的数据无关的额外存储成本，但是考虑到虚拟机的空间效率，Mark Word被设计成一个非固定的数据结构以便在极小的空间内存存储尽量多的数据，它会根据对象的状态复用自己的存储空间，也就是说，Mark Word会随着程序的运行发生变化，变化状态如下（32位虚拟机）：
 
 ![](https://images2018.cnblogs.com/blog/1169376/201807/1169376-20180726111757632-1279497345.png)
 
@@ -373,25 +373,25 @@ Hotspot虚拟机的对象头主要包括两部分数据：**Mark Word（标记�
 
 什么是Monitor？
 
-　　我们可以把它理解为一个同步工具，也可以描述为一种同步机制，它通常被描述为一个对象。 
+我们可以把它理解为一个同步工具，也可以描述为一种同步机制，它通常被描述为一个对象。
 
-　　与一切皆对象一样，所有的Java对象是天生的Monitor，**每一个Java对象都有成为Monitor的潜质**，因为在Java的设计中 ，每一个Java对象自打娘胎里出来**就带了一把看不见的锁，它叫做内部锁或者Monitor锁**。 
+与一切皆对象一样，所有的Java对象是天生的Monitor，**每一个Java对象都有成为Monitor的潜质**，因为在Java的设计中 ，每一个Java对象自打娘胎里出来**就带了一把看不见的锁，它叫做内部锁或者Monitor锁**。
 
-　　Monitor 是线程私有的数据结构，每一个线程都有一个可用monitor record列表，同时还有一个全局的可用列表。每一个被锁住的对象都会和一个monitor关联（对象头的MarkWord中的LockWord指向monitor的起始地址），**同时monitor中有一个Owner字段存放拥有该锁的线程的唯一标识，表示该锁被这个线程占用**。　　
+Monitor 是线程私有的数据结构，每一个线程都有一个可用monitor record列表，同时还有一个全局的可用列表。每一个被锁住的对象都会和一个monitor关联（对象头的MarkWord中的LockWord指向monitor的起始地址），**同时monitor中有一个Owner字段存放拥有该锁的线程的唯一标识，表示该锁被这个线程占用**。　　
 
 其结构如下：
 
- ![](https://images2018.cnblogs.com/blog/1169376/201807/1169376-20180726111912718-1995783204.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404192639.png)
 
-*   **Owner：**初始时为NULL表示当前没有任何线程拥有该monitor record，当线程成功拥有该锁后保存线程唯一标识，当锁被释放时又设置为NULL。
+*   Owner：初始时为NULL表示当前没有任何线程拥有该monitor record，当线程成功拥有该锁后保存线程唯一标识，当锁被释放时又设置为NULL。
 
-*   **EntryQ：**关联一个系统互斥锁（semaphore），阻塞所有试图锁住monitor record失败的线程。
+*   EntryQ：关联一个系统互斥锁（semaphore），阻塞所有试图锁住monitor record失败的线程。
 
-*   **RcThis：**表示blocked或waiting在该monitor record上的所有线程的个数。
+*   RcThis：表示blocked或waiting在该monitor record上的所有线程的个数。
 
-*   **Nest：**用来实现重入锁的计数。HashCode:保存从对象头拷贝过来的HashCode值（可能还包含GC age）。
+*   Nest：用来实现重入锁的计数。HashCode:保存从对象头拷贝过来的HashCode值（可能还包含GC age）。
 
-*   **Candidate：用来避免不必要的阻塞或等待线程唤醒**，因为每一次只有一个线程能够成功拥有锁，如果每次前一个释放锁的线程唤醒所有正在阻塞或等待的线程，会引起不必要的上下文切换（从阻塞到就绪然后因为竞争锁失败又被阻塞）从而导致性能严重下降。
+*   Candidate：用来避免不必要的阻塞或等待线程唤醒**，因为每一次只有一个线程能够成功拥有锁，如果每次前一个释放锁的线程唤醒所有正在阻塞或等待的线程，会引起不必要的上下文切换（从阻塞到就绪然后因为竞争锁失败又被阻塞）从而导致性能严重下降。
 
     Candidate只有两种可能的值0表示没有需要唤醒的线程1表示要唤醒一个继任线程来竞争锁。
 
@@ -399,7 +399,7 @@ Hotspot虚拟机的对象头主要包括两部分数据：**Mark Word（标记�
 
 ### **4、锁优化**
 
-　　JDK1.6对锁的实现引入了大量的优化，如自旋锁、适应性自旋锁、锁消除、锁粗化、偏向锁、轻量级锁等技术来减少锁操作的开销。 
+　　JDK1.6对锁的实现引入了大量的优化，如自旋锁、适应性自旋锁、锁消除、锁粗化、偏向锁、轻量级锁等技术来减少锁操作的开销。
 
 **　　锁主要存在四中状态，依次是：无锁状态、偏向锁状态、轻量级锁状态、重量级锁状态。**他们会随着竞争的激烈而逐渐升级。注意锁可以升级不可降级，这种策略是为了提高获得锁和释放锁的效率。
 
@@ -407,7 +407,7 @@ Hotspot虚拟机的对象头主要包括两部分数据：**Mark Word（标记�
 
 　　线程的阻塞和唤醒需要CPU从用户态转为核心态，频繁的阻塞和唤醒对CPU来说是一件负担很重的工作，势必会给系统的并发性能带来很大的压力。同时我们发现在许多应用上面，**对象锁的锁状态只会持续很短一段时间**，**为了这一段很短的时间频繁地阻塞和唤醒线程**是非常不值得的。
 
-所以引入自旋锁。 
+所以引入自旋锁。
 
 何谓自旋锁？
 
@@ -429,11 +429,11 @@ Hotspot虚拟机的对象头主要包括两部分数据：**Mark Word（标记�
 
 　　它怎么做呢？
 
-　　线程如果自旋成功了，那么下次自旋的次数会更加多，因为虚拟机认为既然上次成功了，那么此次自旋也很有可能会再次成功，那么它就会允许自旋等待持续的次数更多。反之，如果对于某个锁，很少有自旋能够成功的，那么在以后要或者这个锁的时候自旋的次数会减少甚至省略掉自旋过程，以免浪费处理器资源。**有了自适应自旋锁，随着程序运行和性能监控信息的不断完善，虚拟机对程序锁的状况预测会越来越准确，虚拟机会变得越来越聪明。** 
+　　线程如果自旋成功了，那么下次自旋的次数会更加多，因为虚拟机认为既然上次成功了，那么此次自旋也很有可能会再次成功，那么它就会允许自旋等待持续的次数更多。反之，如果对于某个锁，很少有自旋能够成功的，那么在以后要或者这个锁的时候自旋的次数会减少甚至省略掉自旋过程，以免浪费处理器资源。**有了自适应自旋锁，随着程序运行和性能监控信息的不断完善，虚拟机对程序锁的状况预测会越来越准确，虚拟机会变得越来越聪明。**
 
 ### **7、锁消除**
 
-　　为了保证数据的完整性，我们在进行操作时需要对这部分操作进行同步控制，但是在有些情况下，JVM检测到不可能存在共享数据竞争，这是JVM会对这些同步锁进行锁消除。锁消除的依据是逃逸分析的数据支持。 
+　　为了保证数据的完整性，我们在进行操作时需要对这部分操作进行同步控制，但是在有些情况下，JVM检测到不可能存在共享数据竞争，这是JVM会对这些同步锁进行锁消除。锁消除的依据是逃逸分析的数据支持。
 
 **　　如果不存在竞争，为什么还需要加锁呢？**
 
@@ -443,23 +443,23 @@ Hotspot虚拟机的对象头主要包括两部分数据：**Mark Word（标记�
 
 **　　比如StringBuffer的append()方法，Vector的add()方法：**
 
-
-<pre>public void vectorTest(){
+````
+public void vectorTest(){
     Vector<String> vector = new Vector<String>(); for(int i = 0 ; i < 10 ; i++){
         vector.add(i + "");
      } 
 
     System.out.println(vector);
-}</pre>
-
+}
+````
 
 在运行这段代码时，JVM可以明显检测到变量vector没有逃逸出方法vectorTest()之外，所以JVM可以大胆地将vector内部的加锁操作消除。
 
 ### **8、锁粗化**
 
-　　我们知道在使用同步锁的时候，需要让同步块的作用范围尽可能小，仅在共享数据的实际作用域中才进行同步。这样做的目的是为了使需要同步的操作数量尽可能缩小，如果存在锁竞争，那么等待锁的线程也能尽快拿到锁。 
+　　我们知道在使用同步锁的时候，需要让同步块的作用范围尽可能小，仅在共享数据的实际作用域中才进行同步。这样做的目的是为了使需要同步的操作数量尽可能缩小，如果存在锁竞争，那么等待锁的线程也能尽快拿到锁。
 
-　　在大多数的情况下，上述观点是正确的，LZ也一直坚持着这个观点。但是如果一系列的连续加锁解锁操作，可能会导致不必要的性能损耗，所以引入锁粗化的概念。 
+　　在大多数的情况下，上述观点是正确的，LZ也一直坚持着这个观点。但是如果一系列的连续加锁解锁操作，可能会导致不必要的性能损耗，所以引入锁粗化的概念。
 
 　　**那什么是锁粗化？**
 
@@ -477,7 +477,7 @@ Hotspot虚拟机的对象头主要包括两部分数据：**Mark Word（标记�
 
 2.  JVM利用CAS操作尝试将对象的Mark Word更新为指向Lock Record的指正，如果成功表示竞争到锁，则将锁标志位变成00（表示此对象处于轻量级锁状态），执行同步操作；如果失败则执行步骤（3）；
 
-3.  判断当前对象的Mark Word是否指向当前线程的栈帧，如果是则表示当前线程已经持有当前对象的锁，则直接执行同步代码块；否则只能说明该锁对象已经被其他线程抢占了，这时轻量级锁需要膨胀为重量级锁，锁标志位变成10，后面等待的线程将会进入阻塞状态； 
+3.  判断当前对象的Mark Word是否指向当前线程的栈帧，如果是则表示当前线程已经持有当前对象的锁，则直接执行同步代码块；否则只能说明该锁对象已经被其他线程抢占了，这时轻量级锁需要膨胀为重量级锁，锁标志位变成10，后面等待的线程将会进入阻塞状态；
 
 **释放锁轻量级锁的释放也是通过CAS操作来进行的，主要步骤如下：**
 
@@ -499,7 +499,7 @@ https://blog.csdn.net/qq_35357656/article/details/78657373
 
 下图是轻量级锁的获取和释放过程：
 
-![](https://images2018.cnblogs.com/blog/1169376/201807/1169376-20180726104054182-532040033.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404192732.png)
 
 ### **10、偏向锁**
 
@@ -515,7 +515,7 @@ https://blog.csdn.net/qq_35357656/article/details/78657373
 
 4.  通过CAS竞争锁失败，证明当前存在多线程竞争情况，当到达全局安全点，获得偏向锁的线程被挂起，偏向锁升级为轻量级锁，然后被阻塞在安全点的线程继续往下执行同步代码块；
 
-5.  执行同步代码块。 
+5.  执行同步代码块。
 
 释放锁偏向锁的释放采用了一种只有竞争才会释放锁的机制，线程是不会主动去释放偏向锁，需要等待其他线程来竞争。偏向锁的撤销需要等待全局安全点（这个时间点是上没有正在执行的代码）。
 
@@ -525,9 +525,9 @@ https://blog.csdn.net/qq_35357656/article/details/78657373
 
 2.  **撤销偏向苏，恢复到无锁状态（01）或者轻量级锁的状态。**
 
- 下图是偏向锁的获取和释放流程：
+下图是偏向锁的获取和释放流程：
 
-![](https://images2018.cnblogs.com/blog/1169376/201807/1169376-20180726110935396-89753255.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404192911.png)
 
 ## **11、重量级锁**
 

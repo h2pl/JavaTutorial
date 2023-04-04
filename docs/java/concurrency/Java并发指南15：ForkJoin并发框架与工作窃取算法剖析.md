@@ -1,9 +1,7 @@
-# Table of Contents
-
+# 目录
   * [Fork/Join框架介绍](#forkjoin框架介绍)
   * [简介](#简介)
   * [工作窃取算法介绍](#工作窃取算法介绍)
-
 
 本文转自：https://www.imooc.com/article/24822
 
@@ -37,7 +35,7 @@ Fork/Join框架是Java7提供的一个用于并行执行任务的框架， 是�
 
 **Fork/Join框架**是用来解决能够通过**分治技术（Divide and Conquer Technique）**将问题拆分成小任务的问题。在一个任务中，先检查将要解决的问题的大小，如果大于一个设定的大小，那就将问题拆分成可以通过框架来执行的小任务。如果问题的大小比设定的大小要小，就可以直接在任务里解决这个问题，然后，根据需要返回任务的结果。下面的图形总结了这个原理。
 
-[![Java Concurrency Cook Book 5.1](http://ifeve.com/wp-content/uploads/2014/02/Java-Concurrency-Cook-Book-5.1-300x141.png)](http://ifeve.com/wp-content/uploads/2014/02/Java-Concurrency-Cook-Book-5.1.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404203219.png)
 
 没有固定的公式来决定问题的**参考大小（Reference Size）**，从而决定一个任务是需要进行拆分或不需要拆分，拆分与否仍是依赖于任务本身的特性。可以使用在任务中将要处理的元素的数目和任务执行所需要的时间来决定参考大小。测试不同的参考大小来决定解决问题最好的一个方案，将**ForkJoinPool**类看作一个特殊的 **Executor** 执行器类型。这个框架基于以下两种操作。
 
@@ -66,7 +64,7 @@ Fork/Join框架是Java7提供的一个用于并行执行任务的框架， 是�
 
 工作窃取（work-stealing）算法优点是充分利用线程进行并行计算，并减少了线程间的竞争，其缺点是在某些情况下还是存在竞争，比如双端队列里只有一个任务时。并且消耗了更多的系统资源，比如创建多个线程和多个双端队列。
 
-![图片描述](https://img.mukewang.com/5abf3c33000156c304140358.png "并发之Fork/Join框架使用及注意点_")
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404203237.png)
 
 **Fork/Join框架基础类**
 
@@ -157,14 +155,14 @@ public class ForkJoinTaskExample extends RecursiveTask<Integer> {
 2.  这里继承的是RecursiveTask，还可以继承RecursiveAction。前者适用于有返回值的场景，而后者适合于没有返回值的场景
 3.  这一点是最容易忽略的地方，其实这里执行子任务调用fork方法并不是最佳的选择，最佳的选择是invokeAll方法。
 
-    ```
-    leftTask.fork();  
-    rightTask.fork();
+```
+leftTask.fork();  
+rightTask.fork();
 
-    替换为
+替换为
 
-    invokeAll(leftTask, rightTask);
-    ```
+invokeAll(leftTask, rightTask);
+```
 
 具体说一下原理：对于Fork/Join模式，假如Pool里面线程数量是固定的，那么调用子任务的fork方法相当于A先分工给B，然后A当监工不干活，B去完成A交代的任务。所以上面的模式相当于浪费了一个线程。那么如果使用invokeAll相当于A分工给B后，A和B都去完成工作。这样可以更好的利用线程池，缩短执行的时间。
 

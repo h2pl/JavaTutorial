@@ -1,5 +1,4 @@
-# Table of Contents
-
+# 目录
   * [1多线程的优点](#1多线程的优点)
     * [1.1资源利用率更好案例](#11资源利用率更好案例)
     * [1.2程序响应更快](#12程序响应更快)
@@ -31,8 +30,8 @@
 
 ## 1多线程的优点
 
-1.  - 资源利用率更好 
-2.  - 程序设计在某些情况下更简单 
+1.  - 资源利用率更好
+2.  - 程序设计在某些情况下更简单
 3.  - 程序响应更快
 
 ### 1.1资源利用率更好案例
@@ -41,14 +40,14 @@
 从磁盘读取一个文件需要5秒，处理一个文件需要2秒。处理两个文件则需要14秒
 
 ```
-1    5秒读取文件A2    2秒处理文件A3    5秒读取文件B4    2秒处理文件B5    ---------------------6    总共需要14秒
+1 5秒读取文件A2 2秒处理文件A3 5秒读取文件B4 2秒处理文件B5 ---------------------6 总共需要14秒
 ```
 
 **方式2**
 从磁盘中读取文件的时候，大部分的CPU非常的空闲。它可以做一些别的事情。通过改变操作的顺序，就能够更好的使用CPU资源。看下面的顺序：
 
 ```
-1    5秒读取文件A2    5秒读取文件B + 2秒处理文件A3    2秒处理文件B4    ---------------------5    总共需要12秒
+1 5秒读取文件A2 5秒读取文件B + 2秒处理文件A3 2秒处理文件B4 ---------------------5 总共需要12秒
 ```
 
 **总结：多线程并发效率提高2秒**
@@ -57,12 +56,12 @@
 ### 1.2程序响应更快
 
 设想一个服务器应用，它在某一个端口监听进来的请求。当一个请求到来时，它把请求传递给工作者线程(worker thread)，然后立刻返回去监听。而工作者线程则能够处理这个请求并发送一个回复给客户端。
-
-     while(server is active){
-            listenThread for request
-           hand request to workerThread
-        }
-
+````
+while(server is active){
+    listenThread for request
+   hand request to workerThread
+}
+````
 
 这种方式，服务端线程迅速地返回去监听。因此，更多的客户端能够发送请求给服务端。这个服务也变得响应更快。
 
@@ -84,7 +83,7 @@ CPU会在一个上下文中执行一个线程，然后切换到另外一个上�
 
 **每个线程需要消耗的资源：**
 
-CPU，内存（维持它本地的堆栈），操作系统资源（管理线程） 
+CPU，内存（维持它本地的堆栈），操作系统资源（管理线程）
 
 ## 3竞态条件与临界区
 
@@ -92,14 +91,15 @@ CPU，内存（维持它本地的堆栈），操作系统资源（管理线程�
 
 **多线程同时执行下面的代码可能会出错：**
 
-
-    public class Counter {
-    	protected long count = 0;
-     
-    	public void add(long value) {
-    		this.count = this.count + value;
-    	}
+````
+public class Counter {
+    protected long count = 0;
+ 
+    public void add(long value) {
+        this.count = this.count + value;
     }
+}
+````
 想象下线程A和B同时执行同一个Counter对象的add()方法，我们无法知道操作系统何时会在两个线程之间切换。JVM并不是将这段代码视为单条指令来执行的，而是按照下面的顺序
 
 
@@ -132,11 +132,10 @@ CPU，内存（维持它本地的堆栈），操作系统资源（管理线程�
 
 在java中，每次程序运行至少启动2个线程。一个是main线程，一个是垃圾收集线程。因为每当使用java命令执行一个类的时候，实际上都会启动一个jvm，每一个jvm实际上就是在操作系统中启动了一个进程。
 
-![](https://img-blog.csdnimg.cn/20181031104947230.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3pob3U5MjA3ODYzMTI=,size_16,color_FFFFFF,t_70)
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404183859.png)
 ## 5线程的状态和优先级
 
-**线程优先级**1 到 10 ，其中 1 是最低优先级，10 是最高优先级。 
+**线程优先级**1 到 10 ，其中 1 是最低优先级，10 是最高优先级。
 
 **状态**
 
@@ -149,8 +148,7 @@ CPU，内存（维持它本地的堆栈），操作系统资源（管理线程�
 
 **状态转换**
 
-**![](https://img-blog.csdnimg.cn/20181031105627437.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3pob3U5MjA3ODYzMTI=,size_16,color_FFFFFF,t_70)**
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404183924.png)
 **线程状态流程如下：**
 
 *   线程创建后，进入 new 状态
@@ -161,7 +159,7 @@ CPU，内存（维持它本地的堆栈），操作系统资源（管理线程�
 
 **代码**
 
-
+````
     public class MyThreadInfo extends Thread {
      
     	@Override // 可以省略
@@ -180,7 +178,7 @@ CPU，内存（维持它本地的堆栈），操作系统资源（管理线程�
     		System.out.println("线程优先级：" + thread.getPriority());
     	}
     }
-     
+````     
     结果：
     线程唯一标识符：9
     线程名称：Thread-0

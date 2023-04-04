@@ -1,5 +1,4 @@
-# Table of Contents
-
+# 目录
   * [前言](#前言)
   * [CountDownLatch](#countdownlatch)
     * [使用例子](#使用例子)

@@ -1,12 +1,10 @@
-# Table of Contents
-
+# 目录
   * [简介](#简介)
   * [AQS 结构](#aqs-结构)
   * [线程抢锁](#线程抢锁)
   * [解锁操作](#解锁操作)
   * [总结](#总结)
   * [示例图解析](#示例图解析)
-
 
 本文转自：https://www.javadoop.com/post/AbstractQueuedSynchronizer#toc4
 
@@ -26,6 +24,7 @@
 
 如果对本系列文章有什么建议，或者是有什么疑问的话，也可以关注公众号【Java技术江湖】联系作者，欢迎你参与本系列博文的创作和修订。
 <!--more -->
+
 ## 简介
 
 在分析 Java 并发包 java.util.concurrent 源码的时候，少不了需要了解 AbstractQueuedSynchronizer（以下简写AQS）这个抽象类，因为它是 Java 并发包的基础工具类，是实现 ReentrantLock、CountDownLatch、Semaphore、FutureTask 等类的基础。
@@ -68,7 +67,7 @@ private transient Thread exclusiveOwnerThread; //继承自AbstractOwnableSynchro
 
 AbstractQueuedSynchronizer 的等待队列示意如下所示，注意了，之后分析过程中所说的 queue，也就是阻塞队列**不包含 head，不包含 head，不包含 head**。
 
-![aqs-0](https://www.javadoop.com/blogimages/AbstractQueuedSynchronizer/aqs-0.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404200412.png)
 
 等待队列中每个线程被包装成一个 Node 实例，数据结构是链表，一起看看源码吧：
 
@@ -424,11 +423,11 @@ static final class FairSync extends Sync {
 }
 ```
 
-说到这里，也就明白了，多看几遍 `final boolean acquireQueued(final Node node, int arg)` 这个方法吧。自己推演下各个分支怎么走，哪种情况下会发生什么，走到哪里。
+说到这里，也就明白了，多看几遍`final boolean acquireQueued(final Node node, int arg)`这个方法吧。自己推演下各个分支怎么走，哪种情况下会发生什么，走到哪里。
 
 ## 解锁操作
 
-最后，就是还需要介绍下唤醒的动作了。我们知道，正常情况下，如果线程没获取到锁，线程会被 `LockSupport.park(this);` 挂起停止，等待被唤醒。
+最后，就是还需要介绍下唤醒的动作了。我们知道，正常情况下，如果线程没获取到锁，线程会被`LockSupport.park(this);`挂起停止，等待被唤醒。
 
 ```
 // 唤醒的代码还是比较简单的，你如果上面加锁的都看懂了，下面都不需要看就知道怎么回事了
@@ -554,11 +553,11 @@ private Node enq(final Node node) {
 
 首先，是线程 2 初始化 head 节点，此时 head==tail, waitStatus==0
 
-![aqs-1](https://www.javadoop.com/blogimages/AbstractQueuedSynchronizer/aqs-1.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404200724.png)
 
 然后线程 2 入队：
 
-![aqs-2](https://www.javadoop.com/blogimages/AbstractQueuedSynchronizer/aqs-2.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404200745.png)
 
 同时我们也要看此时节点的 waitStatus，我们知道 head 节点是线程 2 初始化的，此时的 waitStatus 没有设置， java 默认会设置为 0，但是到 shouldParkAfterFailedAcquire 这个方法的时候，线程 2 会把前驱节点，也就是 head 的waitStatus设置为 -1。
 
@@ -566,6 +565,5 @@ private Node enq(final Node node) {
 
 如果线程 3 此时再进来，直接插到线程 2 的后面就可以了，此时线程 3 的 waitStatus 是 0，到 shouldParkAfterFailedAcquire 方法的时候把前驱节点线程 2 的 waitStatus 设置为 -1。
 
-![aqs-3](https://www.javadoop.com/blogimages/AbstractQueuedSynchronizer/aqs-3.png)
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404200816.png)
 这里可以简单说下 waitStatus 中 SIGNAL(-1) 状态的意思，Doug Lea 注释的是：代表后继节点需要被唤醒。也就是说这个 waitStatus 其实代表的不是自己的状态，而是后继节点的状态，我们知道，每个 node 在入队的时候，都会把前驱节点的状态改为 SIGNAL，然后阻塞，等待被前驱唤醒。这里涉及的是两个问题：有线程取消了排队、唤醒操作。其实本质是一样的，读者也可以顺着 “waitStatus代表后继节点的状态” 这种思路去看一遍源码。

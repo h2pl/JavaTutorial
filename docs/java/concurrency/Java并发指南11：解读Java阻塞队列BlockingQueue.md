@@ -1,5 +1,4 @@
-# Table of Contents
-
+# 目录
   * [前言](#前言)
   * [BlockingQueue](#blockingqueue)
   * [BlockingQueue 实现之 ArrayBlockingQueue](#blockingqueue-实现之-arrayblockingqueue)
@@ -7,7 +6,6 @@
   * [BlockingQueue 实现之 SynchronousQueue](#blockingqueue-实现之-synchronousqueue)
   * [BlockingQueue 实现之 PriorityBlockingQueue](#blockingqueue-实现之-priorityblockingqueue)
   * [总结](#总结)
-
 
 本文转自：https://www.javadoop.com/
 
@@ -67,7 +65,7 @@ BlockingQueue 不接受 null 值的插入，相应的方法在碰到 null 的插
 
 BlockingQueue 是设计用来实现生产者-消费者队列的，当然，你也可以将它当做普通的 Collection 来用，前面说了，它实现了 java.util.Collection 接口。例如，我们可以用 remove(x) 来删除任意一个元素，但是，这类操作通常并不高效，所以尽量只在少数的场合使用，比如一条消息已经入队，但是需要做取消操作的时候。
 
-BlockingQueue 的实现都是线程安全的，但是批量的集合操作如 `addAll`, `containsAll`, `retainAll` 和 `removeAll` 不一定是原子操作。如 addAll(c) 有可能在添加了一些元素后中途抛出异常，此时 BlockingQueue 中已经添加了部分元素，这个是允许的，取决于具体的实现。
+BlockingQueue 的实现都是线程安全的，但是批量的集合操作如`addAll`,`containsAll`,`retainAll`和`removeAll`不一定是原子操作。如 addAll(c) 有可能在添加了一些元素后中途抛出异常，此时 BlockingQueue 中已经添加了部分元素，这个是允许的，取决于具体的实现。
 
 BlockingQueue 不支持 close 或 shutdown 等**关闭**操作，因为开发者可能希望不会有新的元素添加进去，此特性取决于具体的实现，不做强制约束。
 
@@ -103,8 +101,7 @@ private final Condition notFull;
 
 我们用个示意图来描述其同步机制：
 
-![array-blocking-queue](https://www.javadoop.com/blogimages/java-concurrent-queue/array-blocking-queue.png)
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404201844.png)
 ArrayBlockingQueue 实现并发同步的原理就是，读操作和写操作都需要获取到 AQS 独占锁才能进行操作。如果队列为空，这个时候读操作的线程进入到**读线程队列**排队，等待写线程写入新的元素，然后唤醒读线程队列的第一个等待线程。如果队列已满，这个时候写操作的线程进入到**写线程队列**排队，等待读线程将队列元素移除腾出空间，然后唤醒写线程队列的第一个等待线程。
 
 对于 ArrayBlockingQueue，我们可以在构造的时候指定以下三个参数：
@@ -171,8 +168,7 @@ private final Condition notFull = putLock.newCondition();
 
 首先，这里用一个示意图来看看 LinkedBlockingQueue 的并发读写控制，然后再开始分析源码：
 
-![linked-blocking-queue](https://www.javadoop.com/blogimages/java-concurrent-queue/linked-blocking-queue.png)
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404201927.png)
 看懂这个示意图，源码也就简单了，读操作是排好队的，写操作也是排好队的，唯一的并发问题在于一个写操作和一个读操作同时进行，只要控制好这个就可以了。
 
 先上构造方法：
@@ -334,7 +330,7 @@ abstract static class Transferer {
 
 Transferer 有两个内部实现类，是因为构造 SynchronousQueue 的时候，我们可以指定公平策略。公平模式意味着，所有的读写线程都遵守先来后到，FIFO 嘛，对应 TransferQueue。而非公平模式则对应 TransferStack。
 
-![synchronous-queue](https://www.javadoop.com/blogimages/java-concurrent-queue/synchronous-queue.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404202000.png)
 
 我们先采用公平模式分析源码，然后再说说公平模式和非公平模式的区别。
 
@@ -569,12 +565,11 @@ private PriorityQueue q;
 
 PriorityBlockingQueue 使用了基于数组的**二叉堆**来存放元素，所有的 public 方法采用同一个 lock 进行并发控制。
 
-二叉堆：一颗完全二叉树，它非常适合用数组进行存储，对于数组中的元素 `a[i]`，其左子节点为 `a[2*i+1]`，其右子节点为 `a[2*i + 2]`，其父节点为 `a[(i-1)/2]`，其堆序性质为，每个节点的值都小于其左右子节点的值。二叉堆中最小的值就是根节点，但是删除根节点是比较麻烦的，因为需要调整树。
+二叉堆：一颗完全二叉树，它非常适合用数组进行存储，对于数组中的元素`a[i]`，其左子节点为`a[2*i+1]`，其右子节点为`a[2*i + 2]`，其父节点为`a[(i-1)/2]`，其堆序性质为，每个节点的值都小于其左右子节点的值。二叉堆中最小的值就是根节点，但是删除根节点是比较麻烦的，因为需要调整树。
 
 简单用个图解释一下二叉堆，我就不说太多专业的严谨的术语了，这种数据结构的优点是一目了然的，最小的元素一定是根元素，它是一棵满的树，除了最后一层，最后一层的节点从左到右紧密排列。
 
-![priority-blocking-queue-1](https://www.javadoop.com/blogimages/java-concurrent-queue/priority-blocking-queue-1.png)
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404202057.png)
 下面开始 PriorityBlockingQueue 的源码分析，首先我们来看看构造方法:
 
 ```
@@ -737,9 +732,9 @@ private static <T> void siftUpComparable(int k, T x, Object[] array) {
 }
 ```
 
-我们用图来示意一下，我们接下来要将 **11** 插入到队列中，看看 siftUp 是怎么操作的。
+我们用图来示意一下，我们接下来要将**11**插入到队列中，看看 siftUp 是怎么操作的。
 
-![priority-blocking-queue-2](https://www.javadoop.com/blogimages/java-concurrent-queue/priority-blocking-queue-2.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404202125.png)
 
 我们再看看 take 方法：
 
@@ -822,14 +817,13 @@ private static <T> void siftDownComparable(int k, T x, Object[] array,
 }
 ```
 
-![priority-blocking-queue-3](https://www.javadoop.com/blogimages/java-concurrent-queue/priority-blocking-queue-3.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404202147.png)
 
 记住二叉堆是一棵完全二叉树，那么根节点 10 拿掉后，最后面的元素 17 必须找到合适的地方放置。首先，17 和 10 不能直接交换，那么先将根节点 10 的左右子节点中较小的节点往上滑，即 12 往上滑，然后原来 12 留下了一个空节点，然后再把这个空节点的较小的子节点往上滑，即 13 往上滑，最后，留出了位子，17 补上即可。
 
 我稍微调整下这个树，以便读者能更明白：
 
-![priority-blocking-queue-4](https://www.javadoop.com/blogimages/java-concurrent-queue/priority-blocking-queue-4.png)
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404202208.png)
 好了， PriorityBlockingQueue 我们也说完了。
 
 ## 总结

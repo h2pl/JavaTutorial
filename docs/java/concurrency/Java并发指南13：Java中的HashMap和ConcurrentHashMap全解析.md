@@ -1,5 +1,4 @@
-# Table of Contents
-
+# 目录
   * [前言](#前言)
   * [Java7 HashMap](#java7-hashmap)
     * [put 过程分析](#put-过程分析)

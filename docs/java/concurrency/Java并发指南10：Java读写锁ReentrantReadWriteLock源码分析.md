@@ -1,5 +1,4 @@
-# Table of Contents
-
+# 目录
   * [使用示例](#使用示例)
   * [ReentrantReadWriteLock 总览](#reentrantreadwritelock-总览)
   * [源码分析](#源码分析)
@@ -9,7 +8,6 @@
     * [写锁释放](#写锁释放)
   * [锁降级](#锁降级)
   * [总结](#总结)
-
 
 本文转自：https://www.javadoop.com/
 

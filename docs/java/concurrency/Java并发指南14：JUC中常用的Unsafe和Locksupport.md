@@ -1,5 +1,4 @@
-# Table of Contents
-
+# 目录
   * [前言](#前言)
   * [Unsafe类是啥？](#unsafe类是啥？)
   * [为什么叫Unsafe？](#为什么叫unsafe？)
@@ -28,21 +27,15 @@
 
 最近在看Java并发包的源码，发现了神奇的Unsafe类，仔细研究了一下，在这里跟大家分享一下。
 
-![](http://p1.pstatp.com/large/c5e00061c7c63b28923)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404202919.png)
 
 Unsafe类是在sun.misc包下，不属于Java标准。但是很多Java的基础类库，包括一些被广泛使用的高性能开发库都是基于Unsafe类开发的，比如Netty、Cassandra、Hadoop、Kafka等。Unsafe类在提升Java运行效率，增强Java语言底层操作能力方面起了很大的作用。
 
-![](http://p3.pstatp.com/large/ca4000030d1f375caf1)
-
-![](http://p3.pstatp.com/large/ca4000030319e3adb8f)
-
 Unsafe类使Java拥有了像C语言的指针一样操作内存空间的能力，同时也带来了指针的问题。过度的使用Unsafe类会使得出错的几率变大，因此Java官方并不建议使用的，官方文档也几乎没有。Oracle正在计划从Java 9中去掉Unsafe类，如果真是如此影响就太大了。
-
-![](http://p3.pstatp.com/large/c5e00061cf0b59ac2ac)
 
 通常我们最好也不要使用Unsafe类，除非有明确的目的，并且也要对它有深入的了解才行。要想使用Unsafe类需要用一些比较tricky的办法。Unsafe类使用了单例模式，需要通过一个静态方法getUnsafe()来获取。但Unsafe类做了限制，如果是普通的调用的话，它会抛出一个SecurityException异常；只有由主类加载器加载的类才能调用这个方法。其源码如下：
 
-
+````
     1 public static Unsafe getUnsafe() {
     2     Class var0 = Reflection.getCallerClass();
     3     if(!VM.isSystemDomainLoader(var0.getClassLoader())) {
@@ -51,13 +44,13 @@ Unsafe类使Java拥有了像C语言的指针一样操作内存空间的能力，
     6         return theUnsafe;
     7     }
     8 }
-
+````
 网上也有一些办法来用主类加载器加载用户代码，比如设置bootclasspath参数。但更简单方法是利用Java反射，方法如下：
-
+````
     1 Field f = Unsafe.class.getDeclaredField("theUnsafe");
     2 f.setAccessible(true);
     3 Unsafe unsafe = (Unsafe) f.get(null);
-
+````
 获取到Unsafe实例之后，我们就可以为所欲为了。Unsafe类提供了以下这些功能：
 
 一、内存管理。包括分配内存、释放内存等。
@@ -114,23 +107,23 @@ Java官方不推荐使用Unsafe类，因为官方认为，这个类别人很难�
 
 
 1、简单介绍
-   LockSupport是JDK中比较底层的类，用来创建锁和其他同步工具类的基本线程阻塞原语。可以做到与join() 、wait()/notifyAll() 功能一样，使线程自由的阻塞、释放。
-   Java锁和同步器框架的核心AQS(AbstractQueuedSynchronizer 抽象队列同步器)，就是通过调用LockSupport.park()和LockSupport.unpark()实现线程的阻塞和唤醒的。
+ LockSupport是JDK中比较底层的类，用来创建锁和其他同步工具类的基本线程阻塞原语。可以做到与join() 、wait()/notifyAll() 功能一样，使线程自由的阻塞、释放。
+ Java锁和同步器框架的核心AQS(AbstractQueuedSynchronizer 抽象队列同步器)，就是通过调用LockSupport.park()和LockSupport.unpark()实现线程的阻塞和唤醒的。
 
 补充：AQS定义了一套多线程访问共享资源的同步器框架，许多同步类实现都依赖于它，
 如常用的ReentrantLock/Semaphore/CountDownLatch...。
 
 2、简单原理
-  LockSupport方法底层都是调用Unsafe的方法实现。全名sun.misc.Unsafe，该类可以直接操控内存，被JDK广泛用于自己的包中，如java.nio和java.util.concurrent。但是不建议在生产环境中使用这个类。因为这个API十分不安全、不轻便、而且不稳定。
+LockSupport方法底层都是调用Unsafe的方法实现。全名sun.misc.Unsafe，该类可以直接操控内存，被JDK广泛用于自己的包中，如java.nio和java.util.concurrent。但是不建议在生产环境中使用这个类。因为这个API十分不安全、不轻便、而且不稳定。
 
-   LockSupport提供park()和unpark()方法实现阻塞线程和解除线程阻塞，LockSupport和每个使用它的线程都与一个许可(permit)关联。permit是相当于1，0的开关，默认是0，调用一次unpark就加1变成1，调用一次park会消费permit, 也就会将1变成0，同时park立即返回。
+ LockSupport提供park()和unpark()方法实现阻塞线程和解除线程阻塞，LockSupport和每个使用它的线程都与一个许可(permit)关联。permit是相当于1，0的开关，默认是0，调用一次unpark就加1变成1，调用一次park会消费permit, 也就会将1变成0，同时park立即返回。
 
-   再次调用park会变成block（因为permit为0了，会阻塞在这里，直到permit变为1）, 这时调用unpark会把permit置为1。每个线程都有一个相关的permit, permit最多只有一个，重复调用unpark也不会积累。意思就是说unpark 之后，如果permit 已经变为1，之后，再执行unpark ,permit 依旧是1。下边有例子会说到。
+ 再次调用park会变成block（因为permit为0了，会阻塞在这里，直到permit变为1）, 这时调用unpark会把permit置为1。每个线程都有一个相关的permit, permit最多只有一个，重复调用unpark也不会积累。意思就是说unpark 之后，如果permit 已经变为1，之后，再执行unpark ,permit 依旧是1。下边有例子会说到。
 
 3、简单例子
-  以下边的做饭例子，正常来说，做饭 之前，要有锅、有菜才能开始做饭 。具体如下：
+以下边的做饭例子，正常来说，做饭 之前，要有锅、有菜才能开始做饭 。具体如下：
 （1）先假设已经有了锅 ，那只需要买菜就可以做饭。如下，即注释掉了买锅的步骤：
-
+````
       public class LockSupportTest {
           public static void main(String[] args) throws InterruptedException {
             //买锅
@@ -172,7 +165,7 @@ Java官方不推荐使用Unsafe类，因为官方认为，这个类别人很难�
               LockSupport.unpark((Thread)threadObj);
           }
       }
-  
+````  
 
 执行后，可出现下面的结果：
 
@@ -180,18 +173,18 @@ Java官方不推荐使用Unsafe类，因为官方认为，这个类别人很难�
 菜买回来了...
 开始做饭
 
-   如上所述，可以达到阻塞主线程等到买完菜之后才开始做饭。这即是park()、unpark() 的用法。简单解释一下上述的步骤：
+ 如上所述，可以达到阻塞主线程等到买完菜之后才开始做饭。这即是park()、unpark() 的用法。简单解释一下上述的步骤：
 
 main 方法启动后，主线程 和 买菜线程 同时开始执行。
 因为两者同时进行，当主线程 走到park() 时，发现permit 还为0 ，即会等待在这里。
 当买菜线程执行进去后，走到unpark() 会将permit 变为1 。
 主线程 park() 处发现permit 已经变成1 ，就可以继续往下执行了，同时消费掉permit ，重新变成0 。
-   以上permit 只是park/unpark 执行的一种逻辑开关，执行的步骤大致如此。
+ 以上permit 只是park/unpark 执行的一种逻辑开关，执行的步骤大致如此。
 
 4、注意点及思考
 （1）必须将park()与uppark() 配对使用才更高效。
-  如果上边也把买锅的线程放开，main 方法改为如下：
-
+如果上边也把买锅的线程放开，main 方法改为如下：
+````
        //买锅
       Thread t1 = new Thread(new BuyGuo(Thread.currentThread()));
        t1.start();
@@ -203,9 +196,9 @@ main 方法启动后，主线程 和 买菜线程 同时开始执行。
         LockSupport.park();
         System.out.println("菜买回来了...");
         System.out.println("开始做饭");
-
-  即调用了两次park() 和unpark() ，发现有时候可以，有时候会使线程卡在那里，然后我又换了下顺序，如下：
-
+````
+即调用了两次park() 和unpark() ，发现有时候可以，有时候会使线程卡在那里，然后我又换了下顺序，如下：
+````
        //买锅
       Thread t1 = new Thread(new BuyGuo(Thread.currentThread()));
        t1.start();
@@ -217,13 +210,13 @@ main 方法启动后，主线程 和 买菜线程 同时开始执行。
         LockSupport.park();
         System.out.println("菜买回来了...");
         System.out.println("开始做饭");
+````
+原理没有详细去研究,不过想了想，上边两种其实并无区别，只是执行顺序有了影响，park() 和unpark() 既然是成对配合使用，通过标识permit 来控制，如果像前边那个例子那样，出现阻塞的情况原因，我分析可能是这么个原因：
 
-  原理没有详细去研究,不过想了想，上边两种其实并无区别，只是执行顺序有了影响，park() 和unpark() 既然是成对配合使用，通过标识permit 来控制，如果像前边那个例子那样，出现阻塞的情况原因，我分析可能是这么个原因：
-
-  当买锅的时候，通过unpark()将permit 置为1，但是还没等到外边的main方法执行第一个park() ,买菜的线程又调了一次unpark(),但是这时候permit 还是从1变成了1，等回到主线程调用park()的时候，因为还有两个park()需要执行，也就是需要两个消费permit ,因为permit 只有1个，所以，可能会剩下一个park()卡在那里了。
+当买锅的时候，通过unpark()将permit 置为1，但是还没等到外边的main方法执行第一个park() ,买菜的线程又调了一次unpark(),但是这时候permit 还是从1变成了1，等回到主线程调用park()的时候，因为还有两个park()需要执行，也就是需要两个消费permit ,因为permit 只有1个，所以，可能会剩下一个park()卡在那里了。
 
 （2）使用park(Object blocker) 方法更能明确问题
-  其实park() 有个重载方法park(Object blocker) ,这俩方法效果差不多，但是有blocker的可以传递给开发人员更多的现场信息，可以查看到当前线程的阻塞对象，方便定位问题。所以java6新增加带blocker入参的系列park方法，替代原有的park方法。
+其实park() 有个重载方法park(Object blocker) ,这俩方法效果差不多，但是有blocker的可以传递给开发人员更多的现场信息，可以查看到当前线程的阻塞对象，方便定位问题。所以java6新增加带blocker入参的系列park方法，替代原有的park方法。
 
 5、与wait()/notifyAll() 的比较
 LockSupport 的 park/unpark 方法，虽然与平时Object 中wait/notify 同样达到阻塞线程的效果。但是它们之间还是有区别的。
@@ -235,27 +228,27 @@ wait/notify 需要获取对象的监视器，即synchronized修饰，而park/unp
 
 ## JAVA高并发—LockSupport的学习及简单使用
 1、简单介绍
-   LockSupport是JDK中比较底层的类，用来创建锁和其他同步工具类的基本线程阻塞原语。可以做到与join() 、wait()/notifyAll() 功能一样，使线程自由的阻塞、释放。
-   
+ LockSupport是JDK中比较底层的类，用来创建锁和其他同步工具类的基本线程阻塞原语。可以做到与join() 、wait()/notifyAll() 功能一样，使线程自由的阻塞、释放。
+ 
 
-   Java锁和同步器框架的核心AQS(AbstractQueuedSynchronizer 抽象队列同步器)，就是通过调用LockSupport.park()和LockSupport.unpark()实现线程的阻塞和唤醒的。
+ Java锁和同步器框架的核心AQS(AbstractQueuedSynchronizer 抽象队列同步器)，就是通过调用LockSupport.park()和LockSupport.unpark()实现线程的阻塞和唤醒的。
 
 补充：AQS定义了一套多线程访问共享资源的同步器框架，许多同步类实现都依赖于它，
 如常用的ReentrantLock/Semaphore/CountDownLatch...。
 
 2、简单原理
-  LockSupport方法底层都是调用Unsafe的方法实现。全名sun.misc.Unsafe，该类可以直接操控内存，被JDK广泛用于自己的包中，如java.nio和java.util.concurrent。但是不建议在生产环境中使用这个类。因为这个API十分不安全、不轻便、而且不稳定。
+LockSupport方法底层都是调用Unsafe的方法实现。全名sun.misc.Unsafe，该类可以直接操控内存，被JDK广泛用于自己的包中，如java.nio和java.util.concurrent。但是不建议在生产环境中使用这个类。因为这个API十分不安全、不轻便、而且不稳定。
 
-   LockSupport提供park()和unpark()方法实现阻塞线程和解除线程阻塞，LockSupport和每个使用它的线程都与一个许可(permit)关联。
+ LockSupport提供park()和unpark()方法实现阻塞线程和解除线程阻塞，LockSupport和每个使用它的线程都与一个许可(permit)关联。
 
 permit是相当于1，0的开关，默认是0，调用一次unpark就加1变成1，调用一次park会消费permit, 也就会将1变成0，同时park立即返回。再次调用park会变成block（因为permit为0了，会阻塞在这里，直到permit变为1）, 这时调用unpark会把permit置为1。
 
-   每个线程都有一个相关的permit, permit最多只有一个，重复调用unpark也不会积累。意思就是说unpark 之后，如果permit 已经变为1，之后，再执行unpark ,permit 依旧是1。下边有例子会说到。
+ 每个线程都有一个相关的permit, permit最多只有一个，重复调用unpark也不会积累。意思就是说unpark 之后，如果permit 已经变为1，之后，再执行unpark ,permit 依旧是1。下边有例子会说到。
 
 3、简单例子
-  以下边的做饭例子，正常来说，做饭 之前，要有锅、有菜才能开始做饭 。具体如下：
+以下边的做饭例子，正常来说，做饭 之前，要有锅、有菜才能开始做饭 。具体如下：
 （1）先假设已经有了锅 ，那只需要买菜就可以做饭。如下，即注释掉了买锅的步骤：
-    
+````    
     public class LockSupportTest {
         public static void main(String[] args) throws InterruptedException {
           //买锅
@@ -297,57 +290,57 @@ permit是相当于1，0的开关，默认是0，调用一次unpark就加1变成1
             LockSupport.unpark((Thread)threadObj);
         }
     }
-    
-  执行后，可出现下面的结果：
+````    
+执行后，可出现下面的结果：
 
 买菜去...
 菜买回来了...
 开始做饭
 
-   如上所述，可以达到阻塞主线程等到买完菜之后才开始做饭。这即是park()、unpark() 的用法。简单解释一下上述的步骤：
+ 如上所述，可以达到阻塞主线程等到买完菜之后才开始做饭。这即是park()、unpark() 的用法。简单解释一下上述的步骤：
 
 main 方法启动后，主线程 和 买菜线程 同时开始执行。
 因为两者同时进行，当主线程 走到park() 时，发现permit 还为0 ，即会等待在这里。
 当买菜线程执行进去后，走到unpark() 会将permit 变为1 。
 主线程 park() 处发现permit 已经变成1 ，就可以继续往下执行了，同时消费掉permit ，重新变成0 。
-   以上permit 只是park/unpark 执行的一种逻辑开关，执行的步骤大致如此。
+ 以上permit 只是park/unpark 执行的一种逻辑开关，执行的步骤大致如此。
 
 4、注意点及思考
 （1）必须将park()与uppark() 配对使用才更高效。
-  如果上边也把买锅的线程放开，main 方法改为如下：
+如果上边也把买锅的线程放开，main 方法改为如下：
+````
+   //买锅
+  Thread t1 = new Thread(new BuyGuo(Thread.currentThread()));
+   t1.start();
+  //买菜
+    Thread t2 = new Thread(new BuyCai(Thread.currentThread()));
+    t2.start();
+    LockSupport.park();
+    System.out.println("锅买回来了...");
+    LockSupport.park();
+    System.out.println("菜买回来了...");
+    System.out.println("开始做饭");
+````
+即调用了两次park() 和unpark() ，发现有时候可以，有时候会使线程卡在那里，然后我又换了下顺序，如下：
+````
+   //买锅
+  Thread t1 = new Thread(new BuyGuo(Thread.currentThread()));
+   t1.start();
+      LockSupport.park();
+    System.out.println("锅买回来了...");
+  //买菜
+    Thread t2 = new Thread(new BuyCai(Thread.currentThread()));
+    t2.start();
+    LockSupport.park();
+    System.out.println("菜买回来了...");
+    System.out.println("开始做饭");
+````
+原理没有详细去研究,不过想了想，上边两种其实并无区别，只是执行顺序有了影响，park() 和unpark() 既然是成对配合使用，通过标识permit 来控制，如果像前边那个例子那样，出现阻塞的情况原因，我分析可能是这么个原因：
 
-       //买锅
-      Thread t1 = new Thread(new BuyGuo(Thread.currentThread()));
-       t1.start();
-      //买菜
-        Thread t2 = new Thread(new BuyCai(Thread.currentThread()));
-        t2.start();
-        LockSupport.park();
-        System.out.println("锅买回来了...");
-        LockSupport.park();
-        System.out.println("菜买回来了...");
-        System.out.println("开始做饭");
-
-  即调用了两次park() 和unpark() ，发现有时候可以，有时候会使线程卡在那里，然后我又换了下顺序，如下：
-
-       //买锅
-      Thread t1 = new Thread(new BuyGuo(Thread.currentThread()));
-       t1.start();
-          LockSupport.park();
-        System.out.println("锅买回来了...");
-      //买菜
-        Thread t2 = new Thread(new BuyCai(Thread.currentThread()));
-        t2.start();
-        LockSupport.park();
-        System.out.println("菜买回来了...");
-        System.out.println("开始做饭");
-
-  原理没有详细去研究,不过想了想，上边两种其实并无区别，只是执行顺序有了影响，park() 和unpark() 既然是成对配合使用，通过标识permit 来控制，如果像前边那个例子那样，出现阻塞的情况原因，我分析可能是这么个原因：
-
-  当买锅的时候，通过unpark()将permit 置为1，但是还没等到外边的main方法执行第一个park() ,买菜的线程又调了一次unpark(),但是这时候permit 还是从1变成了1，等回到主线程调用park()的时候，因为还有两个park()需要执行，也就是需要两个消费permit ,因为permit 只有1个，所以，可能会剩下一个park()卡在那里了。
+当买锅的时候，通过unpark()将permit 置为1，但是还没等到外边的main方法执行第一个park() ,买菜的线程又调了一次unpark(),但是这时候permit 还是从1变成了1，等回到主线程调用park()的时候，因为还有两个park()需要执行，也就是需要两个消费permit ,因为permit 只有1个，所以，可能会剩下一个park()卡在那里了。
 
 （2）使用park(Object blocker) 方法更能明确问题
-  其实park() 有个重载方法park(Object blocker) ,这俩方法效果差不多，但是有blocker的可以传递给开发人员更多的现场信息，可以查看到当前线程的阻塞对象，方便定位问题。所以java6新增加带blocker入参的系列park方法，替代原有的park方法。
+其实park() 有个重载方法park(Object blocker) ,这俩方法效果差不多，但是有blocker的可以传递给开发人员更多的现场信息，可以查看到当前线程的阻塞对象，方便定位问题。所以java6新增加带blocker入参的系列park方法，替代原有的park方法。
 
 5、与wait()/notifyAll() 的比较
 LockSupport 的 park/unpark 方法，虽然与平时Object 中wait/notify 同样达到阻塞线程的效果。但是它们之间还是有区别的。
