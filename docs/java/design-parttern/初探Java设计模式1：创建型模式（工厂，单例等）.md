@@ -1,5 +1,4 @@
-# Table of Contents
-
+# 目录
   * [创建型模式](#创建型模式)
     * [简单工厂模式](#简单工厂模式)
     * [工厂模式](#工厂模式)
@@ -30,7 +29,7 @@ Java 设计模式
 
 一直想写一篇介绍设计模式的文章，让读者可以很快看完，而且一看就懂，看懂就会用，同时不会将各个模式搞混。自认为本文还是写得不错的，花了不少心思来写这文章和做图，力求让读者真的能看着简单同时有所收获。
 
-设计模式是对大家实际工作中写的各种代码进行高层次抽象的总结，其中最出名的当属 _Gang of Four_ (_GoF_) 的分类了，他们将设计模式分类为 23 种经典的模式，根据用途我们又可以分为三大类，分别为创建型模式、结构型模式和行为型模式。是的，我不善于扯这些有的没的，还是少点废话吧~~~
+设计模式是对大家实际工作中写的各种代码进行高层次抽象的总结，其中最出名的当属_Gang of Four_(_GoF_) 的分类了，他们将设计模式分类为 23 种经典的模式，根据用途我们又可以分为三大类，分别为创建型模式、结构型模式和行为型模式。是的，我不善于扯这些有的没的，还是少点废话吧~~~
 
 有一些重要的设计原则在开篇和大家分享下，这些原则将贯通全文：
 
@@ -144,8 +143,7 @@ public class APP {
 
 虽然简单，不过我也把所有的构件都画到一张图上，这样读者看着比较清晰：
 
-![](https://javadoop.com/blogimages/design-pattern/factory-1.png)![](https://csdnimg.cn/release/phoenix/write/assets/uploading.gif)转存失败重新上传取消![factory-1](https://javadoop.com/blogimages/design-pattern/factory-1.png)![](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw== "点击并拖拽以移动")​
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404211801.png)
 ### 抽象工厂模式
 
 当涉及到**产品族**的时候，就需要引入抽象工厂模式了。
@@ -154,7 +152,7 @@ public class APP {
 
 因为电脑是由许多的构件组成的，我们将 CPU 和主板进行抽象，然后 CPU 由 CPUFactory 生产，主板由 MainBoardFactory 生产，然后，我们再将 CPU 和主板搭配起来组合在一起，如下图：
 
-![](https://javadoop.com/blogimages/design-pattern/abstract-factory-1.png)![](https://csdnimg.cn/release/phoenix/write/assets/uploading.gif)转存失败重新上传取消![factory-1](https://javadoop.com/blogimages/design-pattern/abstract-factory-1.png)![](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw== "点击并拖拽以移动")​
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404211822.png)
 
 这个时候的客户端调用是这样的：
 
@@ -174,20 +172,15 @@ Computer computer = new Computer(cpu, mainBoard);
 
 单独看 CPU 工厂和主板工厂，它们分别是前面我们说的**工厂模式**。这种方式也容易扩展，因为要给电脑加硬盘的话，只需要加一个 HardDiskFactory 和相应的实现即可，不需要修改现有的工厂。
 
-但是，这种方式有一个问题，那就是如果 **Intel 家产的 CPU 和 AMD 产的主板不能兼容使用**，那么这代码就容易出错，因为客户端并不知道它们不兼容，也就会错误地出现随意组合。
+但是，这种方式有一个问题，那就是如果**Intel 家产的 CPU 和 AMD 产的主板不能兼容使用**，那么这代码就容易出错，因为客户端并不知道它们不兼容，也就会错误地出现随意组合。
 
 下面就是我们要说的**产品族**的概念，它代表了组成某个产品的一系列附件的集合：
 
-![](https://javadoop.com/blogimages/design-pattern/abstract-factory-2.png)
-
-![abstract-factory-2](https://javadoop.com/blogimages/design-pattern/abstract-factory-2.png)
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404211846.png)
 
 当涉及到这种产品族的问题的时候，就需要抽象工厂模式来支持了。我们不再定义 CPU 工厂、主板工厂、硬盘工厂、显示屏工厂等等，我们直接定义电脑工厂，每个电脑工厂负责生产所有的设备，这样能保证肯定不存在兼容问题。
 
-![](https://javadoop.com/blogimages/design-pattern/abstract-factory-3.png)
-
-![abstract-factory-3](https://javadoop.com/blogimages/design-pattern/abstract-factory-3.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404212006.png)
 
 这个时候，对于客户端来说，不再需要单独挑选 CPU厂商、主板厂商、硬盘厂商等，直接选择一家品牌工厂，品牌工厂会负责生产所有的东西，而且能保证肯定是兼容可用的。
 
@@ -390,7 +383,7 @@ public class APP {
 
 ```
 
-说实话，建造者模式的**链式**写法很吸引人，但是，多写了很多“无用”的 builder 的代码，感觉这个模式没什么用。不过，当属性很多，而且有些必填，有些选填的时候，这个模式会使代码清晰很多。我们可以在 **Builder 的构造方法**中强制让调用者提供必填字段，还有，在 build() 方法中校验各个参数比在 User 的构造方法中校验，代码要优雅一些。
+说实话，建造者模式的**链式**写法很吸引人，但是，多写了很多“无用”的 builder 的代码，感觉这个模式没什么用。不过，当属性很多，而且有些必填，有些选填的时候，这个模式会使代码清晰很多。我们可以在**Builder 的构造方法**中强制让调用者提供必填字段，还有，在 build() 方法中校验各个参数比在 User 的构造方法中校验，代码要优雅一些。
 
 > 题外话，强烈建议读者使用 lombok，用了 lombok 以后，上面的一大堆代码会变成如下这样:
 
@@ -407,7 +400,7 @@ class User {
 
 > 怎么样，省下来的时间是不是又可以干点别的了。
 
-当然，如果你只是想要链式写法，不想要建造者模式，有个很简单的办法，User 的 getter 方法不变，所有的 setter 方法都让其 **return this** 就可以了，然后就可以像下面这样调用：
+当然，如果你只是想要链式写法，不想要建造者模式，有个很简单的办法，User 的 getter 方法不变，所有的 setter 方法都让其**return this**就可以了，然后就可以像下面这样调用：
 
 ```
 User user = new User().setName("").setPassword("").setAge(20);

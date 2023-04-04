@@ -1,5 +1,4 @@
-# Table of Contents
-
+# 目录
   * [行为型模式](#行为型模式)
     * [策略模式](#策略模式)
     * [观察者模式](#观察者模式)
@@ -44,6 +43,7 @@
 文章也将发表在我的个人博客，阅读体验更佳：
 
 > www.how2playlife.com
+<!-- more -->
 
 ## 行为型模式
 
@@ -117,11 +117,10 @@ public static void main(String[] args) {
 
 放到一张图上，让大家看得清晰些：
 
-![](https://javadoop.com/blogimages/design-pattern/strategy-1.png)![](https://csdnimg.cn/release/phoenix/write/assets/uploading.gif)转存失败重新上传取消![strategy-1](https://javadoop.com/blogimages/design-pattern/strategy-1.png)![](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw== "点击并拖拽以移动")​
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404212514.png)
 这个时候，大家有没有联想到结构型模式中的桥梁模式，它们其实非常相似，我把桥梁模式的图拿过来大家对比下：
 
-![](https://javadoop.com/blogimages/design-pattern/bridge-1.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404212533.png)
 
 要我说的话，它们非常相似，桥梁模式在左侧加了一层抽象而已。桥梁模式的耦合更低，结构更复杂一些。
 
@@ -587,8 +586,9 @@ foodService.makeChicken();
 
 ```
 
-![](https://javadoop.com/blogimages/design-pattern/proxy-1.png)
-我们发现没有，代理模式说白了就是做 **“方法包装”** 或做 **“方法增强”**。在面向切面编程中，算了还是不要吹捧这个名词了，在 AOP 中，其实就是动态代理的过程。比如 Spring 中，我们自己不定义代理类，但是 Spring 会帮我们动态来定义代理，然后把我们定义在 @Before、@After、@Around 中的代码逻辑动态添加到代理中。
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404212608.png)
+
+我们发现没有，代理模式说白了就是做**“方法包装”**或做**“方法增强”**。在面向切面编程中，算了还是不要吹捧这个名词了，在 AOP 中，其实就是动态代理的过程。比如 Spring 中，我们自己不定义代理类，但是 Spring 会帮我们动态来定义代理，然后把我们定义在 @Before、@After、@Around 中的代码逻辑动态添加到代理中。
 
 说到动态代理，又可以展开说 …… Spring 中实现动态代理有两种，一种是如果我们的类定义了接口，如 UserService 接口和 UserServiceImpl 实现，那么采用 JDK 的动态代理，感兴趣的读者可以去看看 java.lang.reflect.Proxy 类的源码；另一种是我们自己没有定义接口的，Spring 会采用 CGLIB 进行动态代理，它是一个 jar 包，性能还不错。
 
@@ -743,17 +743,15 @@ public static void main(String[] args) {
 
 我们用一个图来简单说明下：
 
-![](https://javadoop.com/blogimages/design-pattern/adapter-1.png)
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404212635.png)
 上图应该还是很容易理解的，我就不做更多的解释了。下面，我们看看类适配模式怎么样的。
 
 类适配器模式
 
 废话少说，直接上图：
 
-![](https://javadoop.com/blogimages/design-pattern/adapter-2.png)
-
-看到这个图，大家应该很容易理解的吧，通过继承的方法，适配器自动获得了所需要的大部分方法。这个时候，客户端使用更加简单，直接 `Target t = new SomeAdapter();` 就可以了。
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404212648.png)
+看到这个图，大家应该很容易理解的吧，通过继承的方法，适配器自动获得了所需要的大部分方法。这个时候，客户端使用更加简单，直接`Target t = new SomeAdapter();`就可以了。
 
 适配器模式总结
 
@@ -769,8 +767,7 @@ public static void main(String[] args) {
 
     比较这两种模式，其实是比较对象适配器模式和代理模式，在代码结构上，它们很相似，都需要一个具体的实现类的实例。但是它们的目的不一样，代理模式做的是增强原方法的活；适配器做的是适配的活，为的是提供“把鸡包装成鸭，然后当做鸭来使用”，而鸡和鸭它们之间原本没有继承关系。
 
-![](https://javadoop.com/blogimages/design-pattern/adapter-5.png)
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404212702.png)
 ### 桥梁模式
 
 理解桥梁模式，其实就是理解代码抽象和解耦。
@@ -870,8 +867,7 @@ public static void main(String[] args) {
 
 可能大家看上面一步步还不是特别清晰，我把所有的东西整合到一张图上：
 
-![](https://javadoop.com/blogimages/design-pattern/bridge-1.png)
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404212721.png)
 这回大家应该就知道抽象在哪里，怎么解耦了吧。桥梁模式的优点也是显而易见的，就是非常容易进行扩展。
 
 > 本节引用了[这里](https://www.tutorialspoint.com/design_pattern/bridge_pattern.htm)的例子，并对其进行了修改。
@@ -882,13 +878,12 @@ public static void main(String[] args) {
 
 首先，我们先看一个简单的图，看这个图的时候，了解下层次结构就可以了：
 
-![](https://javadoop.com/blogimages/design-pattern/decorator-1.png)
-
-我们来说说装饰模式的出发点，从图中可以看到，接口 `Component` 其实已经有了 `ConcreteComponentA` 和 `ConcreteComponentB` 两个实现类了，但是，如果我们要**增强**这两个实现类的话，我们就可以采用装饰模式，用具体的装饰器来**装饰**实现类，以达到增强的目的。
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230404212733.png)
+我们来说说装饰模式的出发点，从图中可以看到，接口`Component`其实已经有了`ConcreteComponentA`和`ConcreteComponentB`两个实现类了，但是，如果我们要**增强**这两个实现类的话，我们就可以采用装饰模式，用具体的装饰器来**装饰**实现类，以达到增强的目的。
 
 > 从名字来简单解释下装饰器。既然说是装饰，那么往往就是**添加小功能**这种，而且，我们要满足可以添加多个小功能。最简单的，代理模式就可以实现功能的增强，但是代理不容易实现多个功能的增强，当然你可以说用代理包装代理的方式，但是那样的话代码就复杂了。
 
-首先明白一些简单的概念，从图中我们看到，所有的具体装饰者们 ConcreteDecorator_ 都可以作为 Component 来使用，因为它们都实现了 Component 中的所有接口。它们和 Component 实现类 ConcreteComponent_ 的区别是，它们只是装饰者，起**装饰**作用，也就是即使它们看上去牛逼轰轰，但是它们都只是在具体的实现中**加了层皮来装饰**而已。
+首先明白一些简单的概念，从图中我们看到，所有的具体装饰者们 ConcreteDecorator_都可以作为 Component 来使用，因为它们都实现了 Component 中的所有接口。它们和 Component 实现类 ConcreteComponent_的区别是，它们只是装饰者，起**装饰**作用，也就是即使它们看上去牛逼轰轰，但是它们都只是在具体的实现中**加了层皮来装饰**而已。
 
 > 注意这段话中混杂在各个名词中的 Component 和 Decorator，别搞混了。
 
