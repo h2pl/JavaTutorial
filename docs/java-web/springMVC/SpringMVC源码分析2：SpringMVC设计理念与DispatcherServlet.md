@@ -1,5 +1,4 @@
-# Table of Contents
-
+# 目录
   * [SpringMVC简介](#springmvc简介)
   * [HandlerMapping接口](#handlermapping接口)
   * [DispatcherServlet接受请求并找到对应Handler](#dispatcherservlet接受请求并找到对应handler)

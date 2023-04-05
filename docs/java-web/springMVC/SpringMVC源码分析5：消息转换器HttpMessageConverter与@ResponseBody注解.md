@@ -1,17 +1,15 @@
-# Table of Contents
+# 目录
+* [目录](#目录)
+* [前言](#前言)
+* [现象](#现象)
+* [源码分析](#源码分析)
+* [实例讲解](#实例讲解)
+* [关于配置](#关于配置)
+* [总结](#总结)
+* [详解RequestBody和@ResponseBody注解](#详解requestbody和responsebody注解)
+* [参考资料](#参考资料)
 
-  * [目录](#目录)
-  * [前言](#前言)
-  * [现象](#现象)
-  * [源码分析](#源码分析)
-  * [实例讲解](#实例讲解)
-  * [关于配置](#关于配置)
-  * [总结](#总结)
-  * [详解RequestBody和@ResponseBody注解](#详解requestbody和responsebody注解)
-  * [参考资料](#参考资料)
-
-
-转自 [SpringMVC关于json、xml自动转换的原理研究[附带源码分析]](https://www.cnblogs.com/fangjian0423/p/springMVC-xml-json-convert.html)
+转自[SpringMVC关于json、xml自动转换的原理研究[附带源码分析]](https://www.cnblogs.com/fangjian0423/p/springMVC-xml-json-convert.html)
 
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看
 > https://github.com/h2pl/Java-Tutorial
@@ -31,7 +29,7 @@
 
 如果对本系列文章有什么建议，或者是有什么疑问的话，也可以关注公众号【Java技术江湖】联系作者，欢迎你参与本系列博文的创作和修订。
 
-<!-- more -->
+<!-- more -->  
 
 ## 目录
 
@@ -45,7 +43,7 @@
 
 ## 前言
 
-SpringMVC是目前主流的Web MVC框架之一。 
+SpringMVC是目前主流的Web MVC框架之一。
 
 如果有同学对它不熟悉，那么请参考它的入门blog：[http://www.cnblogs.com/fangjian0423/p/springMVC-introduction.html](http://www.cnblogs.com/fangjian0423/p/springMVC-introduction.html)
 
@@ -57,43 +55,37 @@ SpringMVC是目前主流的Web MVC框架之一。 
 
 (视图配置省略)
 
-```
-<mvc:resources location="/static/" mapping="/static/**"/>
-<mvc:annotation-driven/>
-<context:component-scan base-package="org.format.demo.controller"/>
-```
+```  
+<mvc:resources location="/static/" mapping="/static/**"/>  
+<mvc:annotation-driven/>  
+<context:component-scan base-package="org.format.demo.controller"/>  
+```  
 
 pom中需要有以下依赖(Spring依赖及其他依赖不显示)：
 
-```
-<dependency>
-  <groupId>org.codehaus.jackson</groupId>
-  jackson-core-asl
-  <version>1.9.13</version>
-</dependency>
-<dependency>
-  <groupId>org.codehaus.jackson</groupId>
-  jackson-mapper-asl
-  <version>1.9.13</version>
-</dependency>
-
-```
+```  
+<dependency>  
+  <groupId>org.codehaus.jackson</groupId>  jackson-core-asl  <version>1.9.13</version></dependency>  
+<dependency>  
+  <groupId>org.codehaus.jackson</groupId>  jackson-mapper-asl  <version>1.9.13</version></dependency>  
+  
+```  
 
 这个依赖是json序列化的依赖。
 
 ok。我们在Controller中添加一个method：
 
-
-<pre>@RequestMapping("/xmlOrJson")
-@ResponseBody public Map <string, object="">xmlOrJson() {
-    Map <string, object="">map = new HashMap<string, object="">();
-    map.put("list", employeeService.list()); return map;
-}</string,></string,></string,></pre>
-
+````
+@RequestMapping("/xmlOrJson")  
+@ResponseBody public Map <string, object="">xmlOrJson() {  
+    Map <string, object="">map = new HashMap<string, object="">();  
+    map.put("list", employeeService.list()); return map;  
+}</string,></string,></string,> 
+````
 
 直接访问地址：
 
-![](https://images0.cnblogs.com/i/411512/201405/101449596675807.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/101449596675807.png)
 
 我们看到，短短几行配置。使用@ResponseBody注解之后，Controller返回的对象 自动被转换成对应的json数据，在这里不得不感叹SpringMVC的强大。
 
@@ -109,13 +101,13 @@ ok。我们在Controller中添加一个method：
 
 HttpMessageConverter接口就是Spring提供的http消息转换接口。有关这方面的知识大家可以参考"参考资料"中的[第二条链接](http://my.oschina.net/lichhao/blog/172562)，里面讲的很清楚。
 
-![](https://images0.cnblogs.com/i/411512/201405/101510002604230.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/101510002604230.png)
 
 下面开始分析<mvc:annotation-driven>这句配置:</mvc:annotation-driven>
 
 这句代码在spring中的解析类是：
 
-![](https://images0.cnblogs.com/i/411512/201405/101606162131470.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/101606162131470.png)
 
 在AnnotationDrivenBeanDefinitionParser源码的152行parse方法中：
 
@@ -127,11 +119,11 @@ RequestMappingHandlerMapping处理请求映射的，处理@RequestMapping跟请�
 
 RequestMappingHandlerAdapter是请求处理的适配器，也就是请求之后处理具体逻辑的执行，关系到哪个类的哪个方法以及转换器等工作，这个类是我们讲的重点，其中它的属性messageConverters是本文要讲的重点。
 
-![](https://images0.cnblogs.com/i/411512/201405/101611179016436.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/101611179016436.png)
 
 私有方法:getMessageConverters
 
-![](https://images0.cnblogs.com/i/411512/201405/101630232136603.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/101630232136603.png)
 
 从代码中我们可以，RequestMappingHandlerAdapter设置messageConverters的逻辑：
 
@@ -139,28 +131,24 @@ RequestMappingHandlerAdapter是请求处理的适配器，也就是请求之后�
 
 message-converters的子节点配置如下：
 
-```
-<mvc:annotation-driven>
-  <mvc:message-converters>
-    <bean class="org.example.MyHttpMessageConverter"/>
-    <bean class="org.example.MyOtherHttpMessageConverter"/>
-  </mvc:message-converters>
-</mvc:annotation-driven>
-```
+```  
+<mvc:annotation-driven>  
+  <mvc:message-converters>    <bean class="org.example.MyHttpMessageConverter"/>    <bean class="org.example.MyOtherHttpMessageConverter"/>  </mvc:message-converters></mvc:annotation-driven>  
+```  
 
 2.message-converters子节点不存在或它的属性register-defaults为true的话，加入其他的转换器：ByteArrayHttpMessageConverter、StringHttpMessageConverter、ResourceHttpMessageConverter等。
 
 我们看到这么一段：
 
-![](https://images0.cnblogs.com/i/411512/201405/101640298384297.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/101640298384297.png)
 
 这些boolean属性是哪里来的呢，它们是AnnotationDrivenBeanDefinitionParser的静态变量。
 
-![](https://images0.cnblogs.com/i/411512/201405/101641297132356.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/101641297132356.png)
 
- 其中ClassUtils中的isPresent方法如下：
+其中ClassUtils中的isPresent方法如下：
 
-![](https://images0.cnblogs.com/i/411512/201405/101643277139672.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/101643277139672.png)
 
 看到这里，读者应该明白了为什么本文一开始在pom文件中需要加入对应的jackson依赖，为了让json转换器jackson成为默认转换器之一。
 
@@ -176,23 +164,22 @@ HandlerMethodReturnValueHandlerComposite维护了一个HandlerMethodReturnValueH
 
 RequestResponseBodyMethodProcessor的supportsReturnType方法：
 
-![](https://images0.cnblogs.com/i/411512/201405/101803027605809.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/101803027605809.png)
 
 然后使用handleReturnValue方法进行处理：
 
-![](https://images0.cnblogs.com/i/411512/201405/101803105889900.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/101803105889900.png)
 
-我们看到，这里使用了转换器。　　
-
+我们看到，这里使用了转换器。　　  
 具体的转换方法：
 
-![](https://images0.cnblogs.com/i/411512/201405/101809037135949.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/101809037135949.png)
 
-![](https://images0.cnblogs.com/i/411512/201405/102031439173571.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/102031439173571.png)
 
 至于为何是请求头部的**Accept**数据，读者可以进去debug这个**getAcceptableMediaTypes**方法看看。 我就不罗嗦了～～～
 
- ok。至此，我们走遍了所有的流程。
+ok。至此，我们走遍了所有的流程。
 
 现在，回过头来看。为什么一开始的demo输出了json数据？
 
@@ -200,19 +187,19 @@ RequestResponseBodyMethodProcessor的supportsReturnType方法：
 
 由于我们只配置了<mvc:annotation-driven>，因此使用spring默认的那些转换器。</mvc:annotation-driven>
 
-![](https://images0.cnblogs.com/i/411512/201405/101816581047144.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/101816581047144.png)
 
-很明显，我们看到了2个xml和1个json转换器。 **要看能不能转换，得看HttpMessageConverter接口的public boolean canWrite(Class<?> clazz, MediaType mediaType)方法是否返回true来决定的。**
+很明显，我们看到了2个xml和1个json转换器。**要看能不能转换，得看HttpMessageConverter接口的public boolean canWrite(Class<?> clazz, MediaType mediaType)方法是否返回true来决定的。**
 
 我们先分析SourceHttpMessageConverter：
 
 它的canWrite方法被父类AbstractHttpMessageConverter重写了。
 
-![](https://images0.cnblogs.com/i/411512/201405/101830573234896.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/101830573234896.png)
 
-![](https://images0.cnblogs.com/i/411512/201405/101832284176592.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/101832284176592.png)
 
-![](https://images0.cnblogs.com/i/411512/201405/101832352929525.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/101832352929525.png)
 
 发现SUPPORTED_CLASSES中没有Map类(本文demo返回的是Map类)，因此不支持。
 
@@ -220,7 +207,7 @@ RequestResponseBodyMethodProcessor的supportsReturnType方法：
 
 这个类直接重写了canWrite方法。
 
-![](https://images0.cnblogs.com/i/411512/201405/101838053851073.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/101838053851073.png)
 
 需要有XmlRootElement注解。 很明显，Map类当然没有。
 
@@ -228,7 +215,7 @@ RequestResponseBodyMethodProcessor的supportsReturnType方法：
 
 ## 实例讲解
 
- 我们分析了转换器的转换过程之后，下面就通过实例来验证我们的结论吧。
+我们分析了转换器的转换过程之后，下面就通过实例来验证我们的结论吧。
 
 首先，我们先把xml转换器实现。
 
@@ -237,18 +224,18 @@ RequestResponseBodyMethodProcessor的supportsReturnType方法：
 由于Map是jdk源码中的部分，因此我们用Employee来做demo。
 
 因此，Controller加上一个方法：
-
-<pre>@RequestMapping("/xmlOrJsonSimple")
-@ResponseBody public Employee xmlOrJsonSimple() { return employeeService.getById(1);
-}</pre>
-
+````
+@RequestMapping("/xmlOrJsonSimple")  
+@ResponseBody public Employee xmlOrJsonSimple() { return employeeService.getById(1);  
+} 
+````
 实体中加上@XmlRootElement注解
 
-![](https://images0.cnblogs.com/i/411512/201405/101903141989122.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/101903141989122.png)
 
 
 
-![](https://images0.cnblogs.com/i/411512/201405/101904598389030.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/101904598389030.png)
 
 我们发现，解析成了xml。
 
@@ -258,29 +245,29 @@ RequestResponseBodyMethodProcessor的supportsReturnType方法：
 
 我们使用firebug看到：
 
-![](https://images0.cnblogs.com/i/411512/201405/102222464019898.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/102222464019898.png)
 
 我们发现Accept有xml，没有json。因此解析成xml了。
 
 我们再来验证，同一地址，HTTP头部不同Accept。看是否正确。
 
+````
+$.ajax({  
+    url: "${request.contextPath}/employee/xmlOrJsonSimple",  
+    success: function(res) {  
+        console.log(res);  
+    },  
+    headers: { "Accept": "application/xml" }  
+}); 
 
-<pre>$.ajax({
-    url: "${request.contextPath}/employee/xmlOrJsonSimple",
-    success: function(res) {
-        console.log(res);
-    },
-    headers: { "Accept": "application/xml" }
-});</pre>
-
-<pre>$.ajax({
-    url: "${request.contextPath}/employee/xmlOrJsonSimple",
-    success: function(res) {
-        console.log(res);
-    },
-    headers: { "Accept": "application/json" }
-});</pre>
-
+$.ajax({  
+    url: "${request.contextPath}/employee/xmlOrJsonSimple",  
+    success: function(res) {  
+        console.log(res);  
+    },  
+    headers: { "Accept": "application/json" }  
+}); 
+````
 
 验证成功。
 
@@ -290,23 +277,19 @@ RequestResponseBodyMethodProcessor的supportsReturnType方法：
 
 为何会覆盖，请参考楼主的另外一篇博客：[http://www.cnblogs.com/fangjian0423/p/spring-Ordered-interface.html](http://www.cnblogs.com/fangjian0423/p/spring-Ordered-interface.html)
 
-<pre>    ` <bean><property name="messageConverters"><list><bean><bean><bean></bean></bean></bean></list></property></bean> ` </pre>
+    ` <bean><property name="messageConverters"><list><bean><bean><bean></bean></bean></bean></list></property></bean> `  
 
 或者如果只想换messageConverters的话。
 
-```
-<mvc:annotation-driven>
-  <mvc:message-converters>
-    <bean class="org.example.MyHttpMessageConverter"/>
-    <bean class="org.example.MyOtherHttpMessageConverter"/>
-  </mvc:message-converters>
-</mvc:annotation-driven>
-
-```
+```  
+<mvc:annotation-driven>  
+  <mvc:message-converters>    <bean class="org.example.MyHttpMessageConverter"/>    <bean class="org.example.MyOtherHttpMessageConverter"/>  </mvc:message-converters></mvc:annotation-driven>  
+  
+```  
 
 如果还想用其他converters的话。
 
-![](https://images0.cnblogs.com/i/411512/201405/102311480731629.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/102311480731629.png)
 
 以上是spring-mvc jar包中的converters。
 
@@ -314,13 +297,12 @@ RequestResponseBodyMethodProcessor的supportsReturnType方法：
 
 这个converter里面使用了marshaller进行转换
 
-![](https://images0.cnblogs.com/i/411512/201405/102313161827280.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/102313161827280.png)
 
-我们这里使用XStreamMarshaller。　　
+我们这里使用XStreamMarshaller。　　  
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/102319292603758.png)
 
-![](https://images0.cnblogs.com/i/411512/201405/102319292603758.png)
-
-![](https://images0.cnblogs.com/i/411512/201405/102319412294581.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/102319412294581.png)
 
 json没有转换器，返回406.
 
@@ -328,17 +310,14 @@ json没有转换器，返回406.
 
 使用这种方式，pom别忘记了加入xstream的依赖：
 
-```
-<dependency>
-  <groupId>com.thoughtworks.xstream</groupId>
-  xstream
-  <version>1.4.7</version>
-</dependency>
-```
+```  
+<dependency>  
+  <groupId>com.thoughtworks.xstream</groupId>  xstream  <version>1.4.7</version></dependency>  
+```  
 
 ## 总结
 
- 写了这么多，可能读者觉得有点罗嗦。 毕竟这也是自己的一些心得，希望都能说出来与读者共享。
+写了这么多，可能读者觉得有点罗嗦。 毕竟这也是自己的一些心得，希望都能说出来与读者共享。
 
 刚接触SpringMVC的时候，发现这种自动转换机制很牛逼，但是一直没有研究它的原理，目前，算是了了一个小小心愿吧，SpringMVC还有很多内容，以后自己研究其他内容的时候还会与大家一起共享的。
 
@@ -350,17 +329,16 @@ json没有转换器，返回406.
 
 Http请求的抽象 还是回到请求-响应，也就是解析请求体，然后返回响应报文这个最基本的Http请求过程中来。我们知道，在servlet标准中，可以用javax.servlet.ServletRequest接口中的以下方法：
 
-```
-public ServletInputStream getInputStream() throws IOException; 
-
-```
+```  
+public ServletInputStream getInputStream() throws IOException;   
+```  
 
 来得到一个ServletInputStream。这个ServletInputStream中，可以读取到一个原始请求报文的所有内容。同样的，在javax.servlet.ServletResponse接口中，可以用以下方法：
 
-```
-public ServletOutputStream getOutputStream() throws IOException;
-
-```
+```  
+public ServletOutputStream getOutputStream() throws IOException;  
+  
+```  
 
 来得到一个ServletOutputStream，这个ServletOutputSteam，继承自java中的OutputStream，可以让你输出Http的响应报文内容。
 
@@ -370,75 +348,65 @@ public ServletOutputStream getOutputStream() throws IOException;
 
 HttpInputMessage 这个类是SpringMVC内部对一次Http请求报文的抽象，在HttpMessageConverter的read()方法中，有一个HttpInputMessage的形参，它正是SpringMVC的消息转换器所作用的受体“请求消息”的内部抽象，消息转换器从“请求消息”中按照规则提取消息，转换为方法形参中声明的对象。
 
-```
-package org.springframework.http;
-
-import java.io.IOException;
-import java.io.InputStream;
-
-public interface HttpInputMessage extends HttpMessage {
-
-    InputStream getBody() throws IOException;
-
-}
-
-```
+```  
+package org.springframework.http;  
+  
+import java.io.IOException;  
+import java.io.InputStream;  
+  
+public interface HttpInputMessage extends HttpMessage {  
+  
+    InputStream getBody() throws IOException;  
+}  
+  
+```  
 
 HttpOutputMessage 这个类是SpringMVC内部对一次Http响应报文的抽象，在HttpMessageConverter的write()方法中，有一个HttpOutputMessage的形参，它正是SpringMVC的消息转换器所作用的受体“响应消息”的内部抽象，消息转换器将“响应消息”按照一定的规则写到响应报文中。
 
-```
-package org.springframework.http;
-
-import java.io.IOException;
-import java.io.OutputStream;
-
-public interface HttpOutputMessage extends HttpMessage {
-
-    OutputStream getBody() throws IOException;
-
-}
-
-```
+```  
+package org.springframework.http;  
+  
+import java.io.IOException;  
+import java.io.OutputStream;  
+  
+public interface HttpOutputMessage extends HttpMessage {  
+  
+    OutputStream getBody() throws IOException;  
+}  
+  
+```  
 
 HttpMessageConverter 对消息转换器最高层次的接口抽象，描述了一个消息转换器的一般特征，我们可以从这个接口中定义的方法，来领悟Spring3.x的设计者对这一机制的思考过程。
 
-```
-package org.springframework.http.converter;
-
-import java.io.IOException;
-import java.util.List;
-
-import org.springframework.http.HttpInputMessage;
-import org.springframework.http.HttpOutputMessage;
-import org.springframework.http.MediaType;
-
-public interface HttpMessageConverter<T> {
-
-    boolean canRead(Class<?> clazz, MediaType mediaType);
-
-    boolean canWrite(Class<?> clazz, MediaType mediaType);
-
-    List<MediaType> getSupportedMediaTypes();
-
-    T read(Class<? extends T> clazz, HttpInputMessage inputMessage)
-            throws IOException, HttpMessageNotReadableException;
-
-    void write(T t, MediaType contentType, HttpOutputMessage outputMessage)
-            throws IOException, HttpMessageNotWritableException;
-
-}
-
-```
+```  
+package org.springframework.http.converter;  
+  
+import java.io.IOException;  
+import java.util.List;  
+  
+import org.springframework.http.HttpInputMessage;  
+import org.springframework.http.HttpOutputMessage;  
+import org.springframework.http.MediaType;  
+  
+public interface HttpMessageConverter<T> {  
+  
+    boolean canRead(Class<?> clazz, MediaType mediaType);  
+    boolean canWrite(Class<?> clazz, MediaType mediaType);  
+    List<MediaType> getSupportedMediaTypes();  
+    T read(Class<? extends T> clazz, HttpInputMessage inputMessage)            throws IOException, HttpMessageNotReadableException;  
+    void write(T t, MediaType contentType, HttpOutputMessage outputMessage)            throws IOException, HttpMessageNotWritableException;  
+}  
+  
+```  
 
 HttpMessageConverter接口的定义出现了成对的canRead()，read()和canWrite()，write()方法，MediaType是对请求的Media Type属性的封装。举个例子，当我们声明了下面这个处理方法。
 
-```
-@RequestMapping(value="/string", method=RequestMethod.POST)
-public @ResponseBody String readString(@RequestBody String string) {
-    return "Read string '" + string + "'";
-}
-
-```
+```  
+@RequestMapping(value="/string", method=RequestMethod.POST)  
+public @ResponseBody String readString(@RequestBody String string) {  
+    return "Read string '" + string + "'";}  
+  
+```  
 
 在SpringMVC进入readString方法前，会根据@RequestBody注解选择适当的HttpMessageConverter实现类来将请求参数解析到string变量中，具体来说是使用了StringHttpMessageConverter类，它的canRead()方法返回true，然后它的read()方法会从请求中读出请求参数，绑定到readString()方法的string变量中。
 
@@ -446,93 +414,65 @@ public @ResponseBody String readString(@RequestBody String string) {
 
 我们可以用下面的图，简单描述一下这个过程。
 
-![消息转换图](https://img2018.cnblogs.com/blog/1092007/201908/1092007-20190825151641382-1716038917.png)
+![消息转换图](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/1092007-20190825151641382-1716038917.png)
 
 RequestResponseBodyMethodProcessor 将上述过程集中描述的一个类是org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor，这个类同时实现了HandlerMethodArgumentResolver和HandlerMethodReturnValueHandler两个接口。前者是将请求报文绑定到处理方法形参的策略接口，后者则是对处理方法返回值进行处理的策略接口。两个接口的源码如下：
 
-```
-package org.springframework.web.method.support;
-
-import org.springframework.core.MethodParameter;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.support.WebDataBinderFactory;
-import org.springframework.web.context.request.NativeWebRequest;
-
-public interface HandlerMethodArgumentResolver {
-
-    boolean supportsParameter(MethodParameter parameter);
-
-    Object resolveArgument(MethodParameter parameter,
-                           ModelAndViewContainer mavContainer,
-                           NativeWebRequest webRequest,
-                           WebDataBinderFactory binderFactory) throws Exception;
-
-}
-
-package org.springframework.web.method.support;
-
-import org.springframework.core.MethodParameter;
-import org.springframework.web.context.request.NativeWebRequest;
-
-public interface HandlerMethodReturnValueHandler {
-
-    boolean supportsReturnType(MethodParameter returnType);
-
-    void handleReturnValue(Object returnValue,
-                           MethodParameter returnType,
-                           ModelAndViewContainer mavContainer,
-                           NativeWebRequest webRequest) throws Exception;
-
-}
-
-```
+```  
+package org.springframework.web.method.support;  
+  
+import org.springframework.core.MethodParameter;  
+import org.springframework.web.bind.WebDataBinder;  
+import org.springframework.web.bind.support.WebDataBinderFactory;  
+import org.springframework.web.context.request.NativeWebRequest;  
+  
+public interface HandlerMethodArgumentResolver {  
+  
+    boolean supportsParameter(MethodParameter parameter);  
+    Object resolveArgument(MethodParameter parameter,                           ModelAndViewContainer mavContainer,                           NativeWebRequest webRequest,                           WebDataBinderFactory binderFactory) throws Exception;  
+}  
+  
+package org.springframework.web.method.support;  
+  
+import org.springframework.core.MethodParameter;  
+import org.springframework.web.context.request.NativeWebRequest;  
+  
+public interface HandlerMethodReturnValueHandler {  
+  
+    boolean supportsReturnType(MethodParameter returnType);  
+    void handleReturnValue(Object returnValue,                           MethodParameter returnType,                           ModelAndViewContainer mavContainer,                           NativeWebRequest webRequest) throws Exception;  
+}  
+  
+```  
 
 RequestResponseBodyMethodProcessor这个类，同时充当了方法参数解析和返回值处理两种角色。我们从它的源码中，可以找到上面两个接口的方法实现。
 
 对HandlerMethodArgumentResolver接口的实现：
 
-```
-public boolean supportsParameter(MethodParameter parameter) {
-    return parameter.hasParameterAnnotation(RequestBody.class);
-}
-
-public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
-        NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-
-    Object argument = readWithMessageConverters(webRequest, parameter, parameter.getGenericParameterType());
-
-    String name = Conventions.getVariableNameForParameter(parameter);
-    WebDataBinder binder = binderFactory.createBinder(webRequest, argument, name);
-
-    if (argument != null) {
-        validate(binder, parameter);
-    }
-
-    mavContainer.addAttribute(BindingResult.MODEL_KEY_PREFIX + name, binder.getBindingResult());
-
-    return argument;
-}
-
-```
+```  
+public boolean supportsParameter(MethodParameter parameter) {  
+    return parameter.hasParameterAnnotation(RequestBody.class);}  
+  
+public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,  
+        NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {  
+    Object argument = readWithMessageConverters(webRequest, parameter, parameter.getGenericParameterType());  
+    String name = Conventions.getVariableNameForParameter(parameter);    WebDataBinder binder = binderFactory.createBinder(webRequest, argument, name);  
+    if (argument != null) {        validate(binder, parameter);    }  
+    mavContainer.addAttribute(BindingResult.MODEL_KEY_PREFIX + name, binder.getBindingResult());  
+    return argument;}  
+  
+```  
 
 对HandlerMethodReturnValueHandler接口的实现
 
-```
-public boolean supportsReturnType(MethodParameter returnType) {
-    return returnType.getMethodAnnotation(ResponseBody.class) != null;
-}
-
-    public void handleReturnValue(Object returnValue, MethodParameter returnType,
-        ModelAndViewContainer mavContainer, NativeWebRequest webRequest)
-        throws IOException, HttpMediaTypeNotAcceptableException {
-
-    mavContainer.setRequestHandled(true);
-    if (returnValue != null) {
-        writeWithMessageConverters(returnValue, returnType, webRequest);
-    }
-}
-
-```
+```  
+public boolean supportsReturnType(MethodParameter returnType) {  
+    return returnType.getMethodAnnotation(ResponseBody.class) != null;}  
+  
+    public void handleReturnValue(Object returnValue, MethodParameter returnType,        ModelAndViewContainer mavContainer, NativeWebRequest webRequest)        throws IOException, HttpMediaTypeNotAcceptableException {  
+    mavContainer.setRequestHandled(true);    if (returnValue != null) {        writeWithMessageConverters(returnValue, returnType, webRequest);    }}  
+  
+```  
 
 看完上面的代码，整个HttpMessageConverter消息转换的脉络已经非常清晰。因为两个接口的实现，分别是以是否有@RequestBody和@ResponseBody为条件，然后分别调用HttpMessageConverter来进行消息的读写。
 
