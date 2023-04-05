@@ -1,16 +1,15 @@
-# Table of Contents
-
-  * [字段](#字段)
-  * [索引](#索引)
-  * [查询SQL](#查询sql)
-  * [引擎](#引擎)
+# 目录
+* [字段](#字段)
+* [索引](#索引)
+* [查询SQL](#查询sql)
+* [引擎](#引擎)
     * [MyISAM](#myisam)
     * [InnoDB](#innodb)
     * [0、自己写的海量数据sql优化实践](#0、自己写的海量数据sql优化实践)
-  * [mysql百万级分页优化](#mysql百万级分页优化)
+* [mysql百万级分页优化](#mysql百万级分页优化)
     * [　　普通分页](#　　普通分页)
     * [　　 优化分页](#　　-优化分页)
-  * [　　总结](#　　总结)
+* [　　总结](#　　总结)
 
 
 本文转自互联网
@@ -30,8 +29,6 @@
 该系列博文会告诉你如何从入门到进阶，从sql基本的使用方法，从MySQL执行引擎再到索引、事务等知识，一步步地学习MySQL相关技术的实现原理，更好地了解如何基于这些知识来优化sql，减少SQL执行时间，通过执行计划对SQL性能进行分析，再到MySQL的主从复制、主备部署等内容，以便让你更完整地了解整个MySQL方面的技术体系，形成自己的知识框架。
 
 如果对本系列文章有什么建议，或者是有什么疑问的话，也可以关注公众号【Java技术江湖】联系作者，欢迎你参与本系列博文的创作和修订。
-
-<!-- more -->
 
 <!-- more -->
 
@@ -240,11 +237,11 @@ SELECT * FROM vote_record；
 
 SET timestamp=1529034398; select * from vote_record;
 
- Time: 2018-06-15T03:52:58.804850Z
+Time: 2018-06-15T03:52:58.804850Z
 
- User[@Host](https://my.oschina.net/u/116016): root[root] @ localhost [::1]  Id:    74
+User[@Host](https://my.oschina.net/u/116016): root[root] @ localhost [::1] Id:  74
 
- Query_time: 3.166424  Lock_time: 0.000000 Rows_sent: 900500  Rows_examined: 999999
+Query_time: 3.166424 Lock_time: 0.000000 Rows_sent: 900500 Rows_examined: 999999
 
 耗时3秒，我设置的门槛是一秒。所以记录了下来。
 
@@ -262,7 +259,7 @@ id select_type table partitions type possible_keys key key_len ref rows filtered
 
 **3 select * from vote_record where vote_num > 1000**
 
-**加索引create **
+**加索引create**
 
 **CREATE INDEX vote ON vote_record(vote_num);**
 
@@ -312,27 +309,27 @@ id select_type table partitions type possible_keys key key_len ref rows filtered
 
 步骤1：设置慢查询日志的超时时间，先查看日志存放路径查询慢日志的地址，因为有慢查询的内容，就会到这个日志中：
 
-<pre>show global variables like "%slow%";</pre>
+show global variables like "%slow%";
 
 ![](https://oscimg.oschina.net/oscnet/318ac710c3fcf1b293f4a280bbb4642a951.jpg)
 
 2.开启慢查询日志
 
-<pre>set global slow_query_log=on;</pre>
+set global slow_query_log=on;
 
 3.查看慢查询日志的设置时间，是否是自己需要的
 
-<pre>show global variables like "%long%";</pre>
+show global variables like "%long%";
 
 ![](https://oscimg.oschina.net/oscnet/25c18a8fbb6cc43a48b554bde844191d75d.jpg)
 
 4.如果不是自己想的时间，修改慢查询时间，只要超过了以下的设置时间，查询的日志就会到刚刚的日志中，我设置查询时间超过1S就进入到慢查询日志中
 
-<pre>set global long_query_time=1;</pre>
+set global long_query_time=1;
 
 5.大数据已准备，进行数据的查询，xshell最好开两个窗口，一个查看日志，一个执行内容
 
-<pre>Sql查询语句：select sql_no_cache * from employees_tmp where first_name='Duangkaew' and gender='M'</pre>
+Sql查询语句：select sql_no_cache * from employees_tmp where first_name='Duangkaew' and gender='M'
 
 ![](https://oscimg.oschina.net/oscnet/19fa580673fef04c767680a8010c444b786.jpg)
 
@@ -358,7 +355,7 @@ id select_type table partitions type possible_keys key key_len ref rows filtered
 
 6.执行打印计划，主要是查看是否使用了索引等其他内容,主要就是在sql前面加上explain 关键字
 
-<pre>explain select sql_no_cache * from employees_tmp where first_name='Duangkaew' and gender='M';</pre>
+explain select sql_no_cache * from employees_tmp where first_name='Duangkaew' and gender='M';
 
 ![](https://oscimg.oschina.net/oscnet/c15fd4c1db312050661a019557401f4b1cf.jpg)
 
@@ -366,33 +363,33 @@ id select_type table partitions type possible_keys key key_len ref rows filtered
 
 7.进行sql优化，建一个fist_name的索引，索引就是将你需要的数据先给筛选出来，这样就可以节省很多扫描时间
 
-<pre>create index firstname on employees_tmp(first_name);</pre>
+create index firstname on employees_tmp(first_name);
 
- ![](https://oscimg.oschina.net/oscnet/325f92967bec30c8fcec3376725d21ea9ad.jpg)
+![](https://oscimg.oschina.net/oscnet/325f92967bec30c8fcec3376725d21ea9ad.jpg)
 
 注：创建索引时会很慢，是对整个表做了一个复制功能，并进行数据的一些分类（我猜是这样，所以会很慢）
 
 8.查看建立的索引
 
-<pre>show index from employees_tmp;</pre>
+show index from employees_tmp;
 
- ![](https://oscimg.oschina.net/oscnet/240bdc203ec8db9c4e2f9a1715816dcf928.jpg)
+![](https://oscimg.oschina.net/oscnet/240bdc203ec8db9c4e2f9a1715816dcf928.jpg)
 
 9.在执行查询语句，查看语句的执行时间
 
-<pre>select sql_no_cache * from employees_tmp where first_name='Duangkaew' and gender='M'</pre>
+select sql_no_cache * from employees_tmp where first_name='Duangkaew' and gender='M'
 
 ![](https://oscimg.oschina.net/oscnet/addc98d4a52648e09b8c29f773865cf00ba.jpg)
 
-   发现时间已经有所提升了，其实选择索引也不一开始就知道，我们在试试使用性别，gender进行索引
+发现时间已经有所提升了，其实选择索引也不一开始就知道，我们在试试使用性别，gender进行索引
 
 10.删除已经有的索引，删除索引：
 
-<pre>drop index first_name on employees_tmp;</pre>
+drop index first_name on employees_tmp;
 
 11.创建性别的索引(性别是不怎么好的索引方式，因为有很多重复数据)
 
-<pre>create index index_gendar on employees_tmp(gender);</pre>
+create index index_gendar on employees_tmp(gender);
 
 在执行sql语句查询数据，查看查询执行时间，没有创建比较优秀的索引，导致查询时间还变长了，
 
@@ -402,11 +399,11 @@ id select_type table partitions type possible_keys key key_len ref rows filtered
 
 12.我们在试试使用创建组合索引，使用性别和姓名
 
-<pre>alter table employees_tmp add index idx_union (first_name,gender);</pre>
+alter table employees_tmp add index idx_union (first_name,gender);
 
 在执行sql查看sql数据的执行时间
 
-<pre>select sql_no_cache * from employees_tmp where first_name='Duangkaew' and gender='M'</pre>
+select sql_no_cache * from employees_tmp where first_name='Duangkaew' and gender='M'
 
 速度提升了N多倍啊
 
@@ -414,13 +411,13 @@ id select_type table partitions type possible_keys key key_len ref rows filtered
 
 查看创建的索引
 
-<pre>show index from employees_tmp;</pre>
+show index from employees_tmp;
 
 ![](https://oscimg.oschina.net/oscnet/9704ee337b205ce64e31dbe4c12af495c5b.jpg)
 
 索引建的好真的一个好帮手，建不好就是费时的一个操作
 
- 目前还不知道为什么建立性别的索引会这么慢
+目前还不知道为什么建立性别的索引会这么慢
 
 二：sql优化注意要点，比如索引是否用到，查询优化是否改变了执行计划，以及一些细节
 
@@ -495,7 +492,6 @@ CREATE index sc_score_index on SC(score);
 
 但是1s的时间还是太长了，还能进行优化吗，仔细看执行计划：
 
-![image](http://static.codeceo.com/images/2015/04/5f5a2cffb3c1f46725c97891f38de796.png "image")
 
 查看优化后的sql:
 
@@ -507,11 +503,7 @@ SELECT    `YSB`.`s`.`s_id` AS `s_id`,    `YSB`.`s`.`name` AS `name`FROM    `YSB`
 
 方法如下：
 
-在命令窗口执行 
-
-![image](http://static.codeceo.com/images/2015/04/0e19723574e5c7933c06775b4ddc288c.png "image")
-
-![image](http://static.codeceo.com/images/2015/04/077cd791216230276824fa4fdff5f965.png "image")
+在命令窗口执行
 
 有type=all
 
@@ -523,10 +515,6 @@ select s_id from SC sc where sc.c_id = 0 and sc.score = 100
 ```
 
 耗时：0.001s
-
-得到如下结果：
-
-![image](http://static.codeceo.com/images/2015/04/18f95079548bd3f27aaa0a335cf07a52.png "image")
 
 然后再执行
 
@@ -553,21 +541,15 @@ SELECT s.* from  Student s INNER JOIN SC sc on sc.s_id = s.s_id where sc.c_id=0 
 
 效率有所提高，看看执行计划：
 
-![image](http://static.codeceo.com/images/2015/04/bd52af34bf50067236e4857ce214ecff.png "image")
-
 这里有连表的情况出现，我猜想是不是要给sc表的s_id建立个索引
 
 CREATE index sc_s_id_index on SC(s_id);
 
 show index from SC
 
-![image](http://static.codeceo.com/images/2015/04/729e4844ae44553d1422d480dc8c0e0a.png "image")
-
 在执行连接查询
 
 时间: 1.076s，竟然时间还变长了，什么原因？查看执行计划：
-
-![image](http://static.codeceo.com/images/2015/04/ac1b338ea87df2dba5577abf413833cb.png "image")
 
 优化后的查询语句为：
 
@@ -579,11 +561,8 @@ SELECT    `YSB`.`s`.`s_id` AS `s_id`,    `YSB`.`s`.`name` AS `name`FROM    `YSB`
 
 回到前面的执行计划：
 
-![image](http://static.codeceo.com/images/2015/04/7d46786578e5b88a00b59c4ebab098d9.png "image")
-
 这里是先做的where过滤，再做连表，执行计划还不是固定的，那么我们先看下标准的sql执行顺序：
 
-![image](http://static.codeceo.com/images/2015/04/9ca2a9a19c797c4e6d6d8c6959433b92.png "image")
 
 正常情况下是先join再where过滤，但是我们这里的情况，如果先join，将会有70w条数据发送join做操，因此先执行where
 
@@ -598,8 +577,6 @@ SELECT    s.*FROM    (        SELECT            *        FROM            SC sc  
 和之前没有建s_id索引的时间差不多
 
 查看执行计划：
-
-![image](http://static.codeceo.com/images/2015/04/570a833e7153af710a59b9da940d56d9.png "image")
 
 先提取sc再连表，这样效率就高多了，现在的问题是提取sc的时候出现了扫描表，那么现在可以明确需要建立相关索引
 
@@ -623,8 +600,6 @@ SELECT    s.*FROM    (        SELECT            *        FROM            SC sc  
 
 执行计划：
 
-![image](http://static.codeceo.com/images/2015/04/0c66c0f779dcecfda9c69039a0fe3751.png "image")
-
 我们会看到，先提取sc，再连表，都用到了索引。
 
 那么再来执行下sql
@@ -636,8 +611,6 @@ SELECT s.* from  Student s INNER JOIN SC sc on sc.s_id = s.s_id where sc.c_id=0 
 执行时间0.001s
 
 执行计划：
-
-![image](http://static.codeceo.com/images/2015/04/0fd83ae9e1fae07ad9d55c2f5b15e259.png "image")
 
 这里是mysql进行了查询语句优化，先执行了where过滤，再执行连接操作，且都用到了索引。
 
@@ -659,33 +632,33 @@ SELECT s.* from  Student s INNER JOIN SC sc on sc.s_id = s.s_id where sc.c_id=0 
 
 ### 　　普通分页
 
- 　　数据分页在网页中十分多见，分页一般都是limit start,offset,然后根据页码page计算start
+数据分页在网页中十分多见，分页一般都是limit start,offset,然后根据页码page计算start
 
 <pre>　select * from user limit **1**,**20**</pre>
 
-　　 这种分页在几十万的时候分页效率就会比较低了，MySQL需要从头开始一直往后计算，这样大大影响效率
+这种分页在几十万的时候分页效率就会比较低了，MySQL需要从头开始一直往后计算，这样大大影响效率
 
 <pre>SELECT * from user limit **100001**,**20**; //time **0**.151s explain SELECT * from user limit **100001**,**20**;</pre>
 
-　　我们可以用explain分析下语句，没有用到任何索引，MySQL执行的行数是16W+，于是我们可以想用到索引去实现分页
+我们可以用explain分析下语句，没有用到任何索引，MySQL执行的行数是16W+，于是我们可以想用到索引去实现分页
 
-　　![](https://oscimg.oschina.net/oscnet/d327669b28bc017d62dfe25833ba98245cf.jpg)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/d327669b28bc017d62dfe25833ba98245cf.jpg)
 
 ### 　　 优化分页
 
-　　 使用主键索引来优化数据分页
+使用主键索引来优化数据分页
 
 <pre> select * from user where id>(select id from user where id>=**100000** limit **1**) limit **20**; //time **0**.003s</pre>
 
-　　使用explain分析语句，MySQL这次扫描的行数是8W+，时间也大大缩短。
+使用explain分析语句，MySQL这次扫描的行数是8W+，时间也大大缩短。
 
 <pre> explain select * from user where id>(select id from user where id>=**100000** limit **1**) limit **20**;</pre>
 
-     ![](https://oscimg.oschina.net/oscnet/05fffbffc5e3ef9add4719846ad53f25099.jpg)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/05fffbffc5e3ef9add4719846ad53f25099.jpg)
 
 ## 　　总结
 
-　　在数据量比较大的时候，我们尽量去利用索引来优化语句。上面的优化方法如果id不是主键索引，查询效率比第一种还要低点。我们可以先使用explain来分析语句，查看语句的执行顺序和执行性能。
+在数据量比较大的时候，我们尽量去利用索引来优化语句。上面的优化方法如果id不是主键索引，查询效率比第一种还要低点。我们可以先使用explain来分析语句，查看语句的执行顺序和执行性能。
 
 
 

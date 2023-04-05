@@ -1,37 +1,39 @@
-# Table of Contents
+# 目录
 
-  * [二、分表实现策略](#二、分表实现策略)
-  * [三、分库实现策略](#三、分库实现策略)
-  * [四、分库与分表实现策略](#四、分库与分表实现策略)
-  * [五、分库分表总结](#五、分库分表总结)
-  * [六、总结](#六、总结)
-  * [Mycat实现主从复制，读写分离，以及分库分表的实践](#mycat实现主从复制，读写分离，以及分库分表的实践)
+* [二、分表实现策略](#二、分表实现策略)
+* [三、分库实现策略](#三、分库实现策略)
+* [四、分库与分表实现策略](#四、分库与分表实现策略)
+* [五、分库分表总结](#五、分库分表总结)
+* [六、总结](#六、总结)
+* [Mycat实现主从复制，读写分离，以及分库分表的实践](#mycat实现主从复制，读写分离，以及分库分表的实践)
     * [Mycat是什么](#mycat是什么)
     * [一、分区分表](#一、分区分表)
     * [二、Mycat 数据分片的种类](#二、mycat-数据分片的种类)
     * [三、Mycat 垂直切分、水平切分实战](#三、mycat-垂直切分、水平切分实战)
-      * [1、垂直切分](#1、垂直切分)
-      * [2、水平切分](#2、水平切分)
+        * [1、垂直切分](#1、垂直切分)
+        * [2、水平切分](#2、水平切分)
 * [range start-end ,data node index](#range-start-end-data-node-index)
 * [K=1000,M=10000.](#k1000m10000)
-      * [为什么需要读写分离](#为什么需要读写分离)
-      * [MySQL主从复制](#mysql主从复制)
-      * [Mycat读写分离设置](#mycat读写分离设置)
-        * [配置Mycat用户](#配置mycat用户)
-        * [配置Mycat逻辑库](#配置mycat逻辑库)
-          * [schema](#schema)
-          * [dataNode](#datanode)
-          * [dataHost](#datahost)
+  * [为什么需要读写分离](#为什么需要读写分离)
+  * [MySQL主从复制](#mysql主从复制)
+  * [Mycat读写分离设置](#mycat读写分离设置)
+  * [配置Mycat用户](#配置mycat用户)
+  * [配置Mycat逻辑库](#配置mycat逻辑库)
+  * [schema](#schema)
+  * [dataNode](#datanode)
+  * [dataHost](#datahost)
 
 
 本文转自互联网
 
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看
+
 > https://github.com/h2pl/Java-Tutorial
 
 喜欢的话麻烦点下Star哈
 
 本也将整理到我的个人博客：
+
 > www.how2playlife.com
 
 更多Java技术文章将陆续在微信公众号【Java技术江湖】更新，敬请关注。
@@ -44,9 +46,6 @@
 
 <!-- more -->
 
-<!-- more -->
-
-
 一、MySQL扩展具体的实现方式
 
 随着业务规模的不断扩大，需要选择合适的方案去应对数据规模的增长，以应对逐渐增长的访问压力和数据量。
@@ -55,7 +54,7 @@
 
 （1）业务拆分
 
-在 [大型网站应用之海量数据和高并发解决方案总结一二](http://blog.csdn.net/xlgen157387/article/details/53230138) 一篇文章中也具体讲述了为什么要对业务进行拆分。
+在[大型网站应用之海量数据和高并发解决方案总结一二](http://blog.csdn.net/xlgen157387/article/details/53230138)一篇文章中也具体讲述了为什么要对业务进行拆分。
 
 业务起步初始，为了加快应用上线和快速迭代，很多应用都采用集中式的架构。随着业务系统的扩大，系统变得越来越复杂，越来越难以维护，开发效率变得越来越低，并且对资源的消耗也变得越来越大，通过硬件提高系统性能的方式带来的成本也越来越高。
 
@@ -63,11 +62,11 @@
 
 例如：电商平台，包含了用户、商品、评价、订单等几大模块，最简单的做法就是在一个数据库中分别创建users、shops、comment、order四张表。
 
-![这里写图片描述](https://img2018.cnblogs.com/blog/1092007/201908/1092007-20190824171414385-1549042254.png)
+![这里写图片描述](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/1092007-20190824171414385-1549042254.png)
 
 但是，随着业务规模的增大，访问量的增大，我们不得不对业务进行拆分。每一个模块都使用单独的数据库来进行存储，不同的业务访问不同的数据库，将原本对一个数据库的依赖拆分为对4个数据库的依赖，这样的话就变成了4个数据库同时承担压力，系统的吞吐量自然就提高了。
 
-![这里写图片描述](https://img2018.cnblogs.com/blog/1092007/201908/1092007-20190824171414592-1710110308.png)
+![这里写图片描述](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/1092007-20190824171414592-1710110308.png)
 
 （2）主从复制
 
@@ -81,7 +80,7 @@
 
 上述三篇文章中，讲述了如何配置主从数据库，以及如何实现数据库的读写分离，这里不再赘述，有需要的选择性点击查看。
 
-![这里写图片描述](https://img2018.cnblogs.com/blog/1092007/201908/1092007-20190824171415114-995239105.png)
+![这里写图片描述](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/1092007-20190824171415114-995239105.png)
 
 上图是网上的一张关于MySQL的Master和Slave之间数据同步的过程图。
 
@@ -111,17 +110,17 @@ CREATE TABLE `order` (
 
 当数据比较大的时候，对数据进行分表操作，首先要确定需要将数据平均分配到多少张表中，也就是：表容量。
 
-这里假设有100张表进行存储，则我们在进行存储数据的时候，首先对用户ID进行取模操作，根据 `user_id%100` 获取对应的表进行存储查询操作，示意图如下：
+这里假设有100张表进行存储，则我们在进行存储数据的时候，首先对用户ID进行取模操作，根据`user_id%100`获取对应的表进行存储查询操作，示意图如下：
 
-![这里写图片描述](https://img2018.cnblogs.com/blog/1092007/201908/1092007-20190824171415339-1589002733.png)
+![这里写图片描述](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/1092007-20190824171415339-1589002733.png)
 
-例如，`user_id = 101` 那么，我们在获取值的时候的操作，可以通过下边的sql语句：
+例如，`user_id = 101`那么，我们在获取值的时候的操作，可以通过下边的sql语句：
 
 ```
 select * from order_1 where user_id= 101
 ```
 
-其中，`order_1`是根据 `101%100` 计算所得，表示分表之后的第一章order表。
+其中，`order_1`是根据`101%100`计算所得，表示分表之后的第一章order表。
 
 注意：
 
@@ -130,7 +129,6 @@ select * from order_1 where user_id= 101
 接口定义：
 
 ```
-
 /**
   * 获取用户相关的订单详细信息
   * @param tableNum 具体某一个表的编号
@@ -149,7 +147,7 @@ xml配置映射文件：
   </select>
 ```
 
-其中`${tableNum}` 含义是直接让参数加入到sql中，这是MyBatis支持的特性。
+其中`${tableNum}`含义是直接让参数加入到sql中，这是MyBatis支持的特性。
 
 注意：
 
@@ -171,7 +169,7 @@ xml配置映射文件：
 
 路由的示意图如下：
 
-![这里写图片描述](https://img2018.cnblogs.com/blog/1092007/201908/1092007-20190824171415519-516549009.png)
+![这里写图片描述](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/1092007-20190824171415519-516549009.png)
 
 上图中库容量为100。
 
@@ -203,7 +201,7 @@ xml配置映射文件：
 
 示意图如下：
 
-![这里写图片描述](https://img2018.cnblogs.com/blog/1092007/201908/1092007-20190824171416563-1109228018.png)
+![这里写图片描述](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/1092007-20190824171416563-1109228018.png)
 
 ## 五、分库分表总结
 
@@ -301,7 +299,10 @@ Mycat 的分片其实和分表差不多意思，就是当数据库过于庞大�
 
 上面说到，垂直切分主要是根据具体业务来进行拆分的，那么，我们可以想象这么一个场景，假设我们有一个非常大的电商系统，那么我们需要将订单表、流水表、用户表、用户评论表等分别分不到不同的数据库中来提高吞吐量，架构图大概如下：
 
-<embed src="https://img2018.cnblogs.com/blog/1092007/201908/1092007-20190824171417040-1009330909.webp">
+
+
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/1092007-20190824171417040-1009330909.webp)
+
 
 由于小编是在一台机器上测试，因此就只有host1这个节点，但不同的表还是依旧对应不同的数据库，只不过是所有数据库属于同一个数据库实例（主机）而已，后期不同主机只需增加`<dataHost>`节点即可。
 
@@ -361,17 +362,20 @@ create database database4 character set utf8;
 
 执行`bin`目录下的`startup_nowrap.bat`文件，如果输出下面内容，则说明已经启动mycat成功，如果没有，请检查`order,trade,user,comment`4个数据库是否已经创建。
 
-<embed src="https://img2018.cnblogs.com/blog/1092007/201908/1092007-20190824171417782-1932957742.webp">
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/1092007-20190824171417782-1932957742.webp)
+
 
 采用下面语句登陆Mycat服务器：
 
 `mysql -uroot -proot -P8066 -h127.0.0.1`
 
-<embed src="https://img2018.cnblogs.com/blog/1092007/201908/1092007-20190824171418203-391358451.webp">
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/1092007-20190824171418203-391358451.webp)
+
 
 在`comment`数据库中创建`Comment`表，并插入一条数据
 
-<embed src="https://img2018.cnblogs.com/blog/1092007/201908/1092007-20190824171418351-1853467698.webp">
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/1092007-20190824171418351-1853467698.webp)
+
 
 上图1处新建一个`Comment`表，2处插入一条记录，3处查看记录插入到哪个数据节点中，即`database4`。
 
@@ -526,13 +530,13 @@ Mycat的配置有很多，不过因为我们只是使用Mycat的读写分类的�
 
 ###### schema
 
-`schema` 标签是用来定义逻辑库的，`schema`有四个属性`dataNode`,`checkSQLschema`,`sqlMaxLimit`,`name`
+`schema`标签是用来定义逻辑库的，`schema`有四个属性`dataNode`,`checkSQLschema`,`sqlMaxLimit`,`name`
 
-`dataNode` 标签属性用于绑定逻辑库到某个具体的 database 上，1.3 版本如果配置了 dataNode，则不可以配置分片表，1.4 可以配置默认分片，只需要配置需要分片的表即可
+`dataNode`标签属性用于绑定逻辑库到某个具体的 database 上，1.3 版本如果配置了 dataNode，则不可以配置分片表，1.4 可以配置默认分片，只需要配置需要分片的表即可
 
 `name`是定义当前逻辑库的名字的，方便`server.xml`中定义用户时的引用
 
-`checkSQLschema`当该值设置为 true 时，如果我们执行语句select * from separate.users;则 MyCat 会把语句修改 为select * from users;。即把表示 schema 的字符去掉，避免发送到后端数据库执行时报（ERROR 1146 (42S02): Table ‘separate.users’ doesn’t exist）。 不过，即使设置该值为 true ，如果语句所带的是并非是 schema 指定的名字，例如：select * from db1.users; 那么 MyCat 并不会删除 db1 这个字段，如果没有定义该库的话则会报错，所以在提供 SQL语句的最好是不带这个字段。
+`checkSQLschema`当该值设置为 true 时，如果我们执行语句select * from separate.users;则 MyCat 会把语句修改 为select * from users;。即把表示 schema 的字符去掉，避免发送到后端数据库执行时报（ERROR 1146 (42S02): Table ‘separate.users’ doesn’t exist）。不过，即使设置该值为 true ，如果语句所带的是并非是 schema 指定的名字，例如：select * from db1.users;那么 MyCat 并不会删除 db1 这个字段，如果没有定义该库的话则会报错，所以在提供 SQL语句的最好是不带这个字段。
 
 `sqlMaxLimit`当该值设置为某个数值时。每条执行的 SQL 语句，如果没有加上 limit 语句，MyCat 也会自动的加上所对应的值。例如设置值为 100，执行select * from users;的效果为和执行select * from users limit 100;相同。设置该值的话，MyCat 默认会把查询到的信息全部都展示出来，造成过多的输出。所以，在正常使用中，还是建议加上一个值，用于减少过多的数据返回。当然 SQL 语句中也显式的指定 limit 的大小，不受该属性的约束。需要注意的是，如果运行的 schema 为非拆分库的，那么该属性不会生效。需要手动添加 limit 语句。
 
@@ -558,7 +562,7 @@ Mycat的配置有很多，不过因为我们只是使用Mycat的读写分类的�
 
 `minCon`指定每个读写实例连接池的最小连接，初始化连接池的大小
 
-`balance` 读取负载均衡类型
+`balance`读取负载均衡类型
 
 1.  balance="0", 不开启读写分离机制，所有读操作都发送到当前可用的 writeHost 上。
 
@@ -574,7 +578,7 @@ Mycat的配置有很多，不过因为我们只是使用Mycat的读写分类的�
 
 2.  writeType="1"，所有写操作都随机的发送到配置的 writeHost
 
-`dbType` 指定后端连接的数据库类型，目前支持二进制的 mysql 协议，还有其他使用 JDBC 连接的数据库。例如：mongodb、oracle、spark 等
+`dbType`指定后端连接的数据库类型，目前支持二进制的 mysql 协议，还有其他使用 JDBC 连接的数据库。例如：mongodb、oracle、spark 等
 
 `dbDriver`指定连接后端数据库使用的 Driver，目前可选的值有 native 和 JDBC。使用 native 的话，因为这个值执行的 是二进制的 mysql 协议，所以可以使用 mysql 和 maridb。其他类型的数据库则需要使用 JDBC 驱动来支持。从 1.6 版本开始支持 postgresql 的 native 原始协议。 如果使用 JDBC 的话需要将符合 JDBC 4 标准的驱动 JAR 包放到 MYCAT\lib 目录下，并检查驱动 JAR 包中包括如下目录结构的文件：META-INF\services\java.sql.Driver。在这个文件内写上具体的 Driver 类名，例如： com.mysql.jdbc.Driver。
 

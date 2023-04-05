@@ -1,6 +1,6 @@
-# Table of Contents
+# 目录
 
-  * [三类常见引擎：](#三类常见引擎：)
+* [三类常见引擎：](#三类常见引擎：)
     * [如何选择存储引擎：](#如何选择存储引擎：)
     * [Mysql中的锁](#mysql中的锁)
     * [MyISAM的锁机制：](#myisam的锁机制：)
@@ -16,11 +16,13 @@
 本文转自互联网
 
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看
+
 > https://github.com/h2pl/Java-Tutorial
 
 喜欢的话麻烦点下Star哈
 
 本也将整理到我的个人博客：
+
 > www.how2playlife.com
 
 更多Java技术文章将陆续在微信公众号【Java技术江湖】更新，敬请关注。
@@ -32,21 +34,19 @@
 如果对本系列文章有什么建议，或者是有什么疑问的话，也可以关注公众号【Java技术江湖】联系作者，欢迎你参与本系列博文的创作和修订。
 
 <!-- more -->
-
-<!-- more -->
-
+`
 
 说到锁机制之前，先来看看Mysql的存储引擎，毕竟不同的引擎的锁机制也随着不同。
 
 ## 三类常见引擎：
 
-MyIsam ：不支持事务，不支持外键，所以访问速度快。锁机制是表锁，支持全文索引
+MyIsam：不支持事务，不支持外键，所以访问速度快。锁机制是表锁，支持全文索引
 
-InnoDB ：支持事务、支持外键，所以对比MyISAM，InnoDB的处理效率差一些，并要占更多的磁盘空间保留数据和索引。锁机制是行锁，不支持全文索引
+InnoDB：支持事务、支持外键，所以对比MyISAM，InnoDB的处理效率差一些，并要占更多的磁盘空间保留数据和索引。锁机制是行锁，不支持全文索引
 
 Memory：数据是存放在内存中的，默认哈希索引，非常适合存储临时数据，服务器关闭后，数据会丢失掉。
 
-  
+
 
 
 
@@ -80,7 +80,7 @@ Mysql中的锁分为表锁和行锁：
 
 写锁是：当某一进程对某种表某张表的写时（insert，update，，delete），其他线程不能写也不能读。可以理解为，我写的时候，你不能读，也不能写。
 
-因此MyISAM的读操作和写操作，以及写操作之间是串行的！MyISAM在执行读写操作的时候会自动给表加相应的锁（也就是说不用显示的使用lock table命令），MyISAM总是一次获得SQL语句所需要的全部锁，这也是MyISAM不会出现死锁的原因。
+因此MyISAM的读操作和写操作，以及写操作之间是串行的！MyISAM在执行读写操作的时候会自动给表加相应的锁（也就是说不用显示的使用locktable命令），MyISAM总是一次获得SQL语句所需要的全部锁，这也是MyISAM不会出现死锁的原因。
 
 下面分别举关于写锁和读锁的例子：
 
@@ -88,12 +88,12 @@ Mysql中的锁分为表锁和行锁：
 
 
 
-| 事务1 | 事务2 |
-| --- | --- |
-| 取得first_test表的写锁：mysql> lock table first_test write;Query OK, 0 rows affected (0.00 sec) |  |
-| 当前事务对查询、更新和插入操作都可以执行mysql> select * from first_test ;+----+------+| id  | age   |+----+------+|  1   |   10  ||  2   |   11  ||  3   |   12  ||  4   |   13  |+----+------+4 rows in set (0.00 sec)mysql> insert into first_test(age) values(14);Query OK, 1 row affected (0.11 sec) | 其他事务对锁定表的查询被阻塞，需要等到锁被释放，才可以执行mysql> select * from first_test;等待...... |
-| mysql> unlock table;Query OK, 0 rows affected (0.00 sec) | 等待 |
-|   | mysql> select * from first_test;+----+------+| id  | age  |+----+------+|  1  |   10  ||  2  |    11 ||  3  |    12 ||  4  |    13 ||  5  |    14 |+----+------+5 rows in set (9 min 45.02 sec) |
+| 事务1                                                        | 事务2                                     |
+| ------------------------------------------------------------ | ----------------------------------------- |
+| 取得first_test表的写锁：mysql>locktablefirst_testwrite;QueryOK,0rowsaffected(0.00sec) |                                           |
+| 当前事务对查询、更新和插入操作都可以执行mysql>select*fromfirst_test;+----+------+ | id                                        |
+| mysql>unlocktable;QueryOK,0rowsaffected(0.00sec)             | 等待                                      |
+|                                                              | mysql>select*fromfirst_test;+----+------+ |
 
 
 
@@ -101,13 +101,13 @@ Mysql中的锁分为表锁和行锁：
 
 
 
-| 事务1 | 事务2 |
-| --- | --- |
-| 获得表first_read的锁定mysql> lock table first_test read;Query OK, 0 rows affected (0.00 sec) |   |
-| 当前事务可以查询该表记录：mysql> select * from first_test;+----+------+| id   |  age |+----+------+|  1   |    10 ||  2   |    11 ||  3   |    12 ||  4   |    13 ||  5   |    14 |+----+------+5 rows in set (0.00 sec) | 其他事务也可以查到该表信息mysql> select * from first_test;+----+------+| id   |  age  |+----+------+|  1   |    10 ||  2   |    11 ||  3   |    12 ||  4   |    13 ||  5   |    14 |+----+------+5 rows in set (0.00 sec) |
-| 但是当前事务不能查询没有锁定的表：mysql> select * from goods;ERROR 1100 (HY000): Table 'goods' was not locked with LOCK TABLES | 其他事务可以查询或更新未锁定的表：mysql> select * from goods;+----+------------+------+| id   | name     | num |+----+------------+------+|  1  | firstGoods  |   11 ||  3 | ThirdGoods |   11 ||  4 | fourth            |   11 |+----+------------+------+10 rows in set (0.00 sec) |
-| 而且插入更新锁定的表都会报错：mysql> insert into first_test(age) values(15);ERROR 1099 (HY000): Table 'first_test' was locked with a READ lock and can't be updatedmysql> update first_test set age=100 where id =1;ERROR 1099 (HY000): Table 'first_test' was locked with a READ lock and can't be updated | 当更新被锁定的表时会等待：mysql> update first_test set age=100 where id =1;等待...... |
-| mysql> unlock table;Query OK, 0 rows affected (0.00 sec) | mysql> update first_test set age=100 where id =1;Query OK, 1 row affected (38.82 sec)Rows matched: 1  Changed: 1  Warnings: 0 |
+| 事务1                                                        | 事务2                                                        |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| 获得表first_read的锁定mysql>locktablefirst_testread;QueryOK,0rowsaffected(0.00sec) |                                                              |
+| 当前事务可以查询该表记录：mysql>select*fromfirst_test;+----+------+ | id                                                           |
+| 但是当前事务不能查询没有锁定的表：mysql>select*fromgoods;ERROR1100(HY000):Table'goods'wasnotlockedwithLOCKTABLES | 其他事务可以查询或更新未锁定的表：mysql>select*fromgoods;+----+------------+------+ |
+| 而且插入更新锁定的表都会报错：mysql>insertintofirst_test(age)values(15);ERROR1099(HY000):Table'first_test'waslockedwithaREADlockandcan'tbe updatedmysql>updatefirst_testsetage=100whereid=1;ERROR1099(HY000):Table'first_test'waslockedwithaREADlockandcan'tbe updated | 当更新被锁定的表时会等待：mysql>updatefirst_testsetage=100whereid=1;等待...... |
+| mysql>unlocktable;QueryOK,0rowsaffected(0.00sec)             | mysql>updatefirst_testsetage=100whereid=1;QueryOK,1rowaffected(38.82sec)Rowsmatched:1Changed:1Warnings:0 |
 
 
 
@@ -125,13 +125,13 @@ MyISAM中有一个系统变量concurrent_insert（默认为1），用以控制�
 
 
 
-| 事务1    | 事务2 |
-| --- | --- |
-| mysql> lock table first_test read local;Query OK, 0 rows affected (0.00 sec)--加入local选项是说明，在表满足并发插入的前提下，允许在末尾插入数据 |   |
-| 当前进程不能进行插入和更新操作mysql> insert into first_test(age) values(15);ERROR 1099 (HY000): Table 'first_test' was locked with a READ lock and can't be updatedmysql> update first_test set age=200 where id =1;ERROR 1099 (HY000): Table 'first_test' was locked with a READ lock and can't be updated | 其他进程可以进行插入，但是更新会等待：mysql> insert into first_test(age) values(15);Query OK, 1 row affected (0.00 sec)mysql> update first_test set age=200 where id =2;等待..... |
-| 当前进程不能不能访问其他进程插入的数据mysql> select * from first_test;+----+------+| id | age  |+----+------+|  1 |  100 ||  2 |   11 ||  3 |   12 ||  4 |   13 ||  5 |   14 ||  6 |   14 |+----+------+6 rows in set (0.00 sec) |   |
-| 释放锁以后皆大欢喜mysql> unlock table;Query OK, 0 rows affected (0.00 sec) | 等待 |
-| 插入的和更新的都出来的：mysql> select * from first_test;+----+------+| id | age  |+----+------+|  1 |  100 ||  2 |  200 ||  3 |   12 ||  4 |   13 ||  5 |   14 ||  6 |   14 ||  7 |   15 |+----+------+7 rows in set (0.00 sec) | mysql> update first_test set age=200 where id =2;Query OK, 1 row affected (1 min 39.75 sec)Rows matched: 1  Changed: 1  Warnings: 0 |
+| 事务1                                                        | 事务2                                                        |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| mysql>locktablefirst_testreadlocal;QueryOK,0rowsaffected(0.00sec)--加入local选项是说明，在表满足并发插入的前提下，允许在末尾插入数据 |                                                              |
+| 当前进程不能进行插入和更新操作mysql>insertintofirst_test(age)values(15);ERROR1099(HY000):Table'first_test'waslockedwithaREADlockandcan'tbeupdatedmysql>updatefirst_testsetage=200whereid=1;ERROR1099(HY000):Table'first_test'waslockedwithaREADlockandcan'tbeupdated | 其他进程可以进行插入，但是更新会等待：mysql>insertintofirst_test(age)values(15);QueryOK,1rowaffected(0.00sec)mysql>updatefirst_testsetage=200whereid=2;等待..... |
+| 当前进程不能不能访问其他进程插入的数据mysql>select*fromfirst_test;+----+------+ | id                                                           |
+| 释放锁以后皆大欢喜mysql>unlocktable;QueryOK,0rowsaffected(0.00sec) | 等待                                                         |
+| 插入的和更新的都出来的：mysql>select*fromfirst_test;+----+------+ | id                                                           |
 
 
 
@@ -139,7 +139,7 @@ MyISAM中有一个系统变量concurrent_insert（默认为1），用以控制�
 
 并发插入是解决对同一表中的查询和插入的锁争用。
 
-如果对有空洞的表进行并发插入会产生碎片，所以在空闲时可以利用optimize table命令回收因删除记录产生的空洞。
+如果对有空洞的表进行并发插入会产生碎片，所以在空闲时可以利用optimizetable命令回收因删除记录产生的空洞。
 
 ### 锁调度
 
@@ -153,7 +153,7 @@ MyISAM中有一个系统变量concurrent_insert（默认为1），用以控制�
 
 2、指定启动参数low-priority-updates，使得MyISAM默认给读请求优先的权利。
 
-3、执行命令set low_priority_updates=1，使该连接发出的请求降低。
+3、执行命令setlow_priority_updates=1，使该连接发出的请求降低。
 
 4、指定max_write_lock_count设置一个合适的值，当写锁达到这个值后，暂时降低写请求的优先级，让读请求获取锁。
 
@@ -185,7 +185,7 @@ InnoDB实现了两种类型的行锁。
 
 InnoDB行锁模式兼容列表：
 
-![](https://img-blog.csdn.net/20150809115556064?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405210259.png)
 
 
 注意：
@@ -196,19 +196,21 @@ InnoDB行锁模式兼容列表：
 
 对于insert、update、delete，InnoDB会自动给涉及的数据加排他锁（X）；对于一般的Select语句，InnoDB不会加任何锁，事务可以通过以下语句给显示加共享锁或排他锁。
 
-共享锁：select * from table_name where .....lock in share mode
+共享锁：select*fromtable_namewhere.....lockinsharemode
 
-排他锁：select * from table_name where .....for update
+排他锁：select*fromtable_namewhere.....forupdate
 
 加入共享锁的例子：
 
-![](https://blog.csdn.net/u014307117/article/details/47374531)
 
-![](https://img-blog.csdn.net/20150809115652652)
 
-利用select ....for update加入排他锁
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405210309.png)
 
-![](https://blog.csdn.net/u014307117/article/details/47374531)![](https://img-blog.csdn.net/20150809115737527)
+利用select....forupdate加入排他锁
+
+
+
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405210359.png)
 
 ### 锁的实现方式：
 
@@ -218,19 +220,19 @@ InnoDB行锁是通过给索引项加锁实现的，如果没有索引，InnoDB�
 
 行锁分为三种情形：
 
-Record lock ：对索引项加锁，即锁定一条记录。
+Recordlock：对索引项加锁，即锁定一条记录。
 
-Gap lock：对索引项之间的‘间隙’、对第一条记录前的间隙或最后一条记录后的间隙加锁，即锁定一个范围的记录，不包含记录本身
+Gaplock：对索引项之间的‘间隙’、对第一条记录前的间隙或最后一条记录后的间隙加锁，即锁定一个范围的记录，不包含记录本身
 
-Next-key Lock：锁定一个范围的记录并包含记录本身（上面两者的结合）。
+Next-keyLock：锁定一个范围的记录并包含记录本身（上面两者的结合）。
 
 注意：InnoDB默认级别是repeatable-read级别，所以下面说的都是在RR级别中的。
 
-  
 
-之前一直搞不懂Gap Lock和Next-key Lock的区别，直到在网上看到一句话豁然开朗，希望对各位有帮助。
 
-Next-Key Lock是行锁与间隙锁的组合，这样，当InnoDB扫描索引记录的时候，会首先对选中的索引记录加上行锁（Record Lock），再对索引记录两边的间隙加上间隙锁（Gap Lock）。如果一个间隙被事务T1加了锁，其它事务是不能在这个间隙插入记录的。
+之前一直搞不懂GapLock和Next-keyLock的区别，直到在网上看到一句话豁然开朗，希望对各位有帮助。
+
+Next-KeyLock是行锁与间隙锁的组合，这样，当InnoDB扫描索引记录的时候，会首先对选中的索引记录加上行锁（RecordLock），再对索引记录两边的间隙加上间隙锁（GapLock）。如果一个间隙被事务T1加了锁，其它事务是不能在这个间隙插入记录的。
 
 干巴巴的说没意思，我们来看看具体实例：
 
@@ -238,38 +240,38 @@ Next-Key Lock是行锁与间隙锁的组合，这样，当InnoDB扫描索引记
 
 +----+------+
 
-| id | age  |
+|id|age|
 
 +----+------+
 
-|  1 |    3 |
+|1|3|
 
-|  2 |    6 |
+|2|6|
 
-|  3 |    9 |
+|3|9|
 
 +----+------+
 
 表结构如下：
 
 CREATE TABLE `test` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `age` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `keyname` (`age`)
+`id` int(11) NOT NULL AUTO_INCREMENT,
+`age` int(11) DEFAULT NULL,
+PRIMARY KEY (`id`),
+KEY `keyname` (`age`)
 ) ENGINE=InnoDB AUTO_INCREMENT=302 DEFAULT CHARSET=gbk ;
 
 这样我们age段的索引就分为
 
-(negative infinity, 3],
+(negativeinfinity,3],
 
 (3,6],
 
 (6,9],
 
-(9,positive infinity)；
+(9,positiveinfinity)；
 
-  
+
 
 
 
@@ -277,23 +279,23 @@ CREATE TABLE `test` (
 
 1、当事务A执行以下语句：
 
-mysql> select * from fenye where age=6for update ;
+mysql>select*fromfenyewhereage=6forupdate;
 
-不仅使用行锁锁住了相应的数据行，同时也在两边的区间，（5,6]和（6，9] 都加入了gap锁。
+不仅使用行锁锁住了相应的数据行，同时也在两边的区间，（5,6]和（6，9]都加入了gap锁。
 
 这样事务B就无法在这个两个区间insert进新数据,但是事务B可以在两个区间外的区间插入数据。
 
 2、当事务A执行
 
-select * from fenye where age=7 for update ;
+select*fromfenyewhereage=7 forupdate;
 
 那么就会给(6,9]这个区间加锁，别的事务无法在此区间插入或更新数据。
 
 3、如果查询的数据不再范围内，
 
-比如事务A执行 select * from fenye where age=100 for update ;
+比如事务A执行select*fromfenyewhereage=100forupdate;
 
-那么加锁区间就是(9,positive infinity)。
+那么加锁区间就是(9,positiveinfinity)。
 
 小结：
 

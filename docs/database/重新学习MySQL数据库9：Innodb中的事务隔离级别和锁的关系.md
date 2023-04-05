@@ -1,5 +1,4 @@
-# Table of Contents
-
+# 目录
   * [Innodb中的事务隔离级别和锁的关系](#innodb中的事务隔离级别和锁的关系)
   * [事务中的加锁方式](#事务中的加锁方式)
                                                                                                                                             * [](#)
@@ -12,9 +11,6 @@
   * [MVCC在MySQL的InnoDB中的实现](#mvcc在mysql的innodb中的实现)
   * [“读”与“读”的区别](#读与读的区别)
                                                                                                                                                                                                                                     * [](#-2)
-                                                                                                                        * [](#-3)
-                                                                                                                                                                                                                                                    * [](#-4)
-
 
 本文转自互联网
 
@@ -36,8 +32,6 @@
 
 <!-- more -->
 
-<!-- more -->
-
 
 ## Innodb中的事务隔离级别和锁的关系
 
@@ -45,7 +39,7 @@
 > 
 > 我们都知道事务的几种性质，数据库为了维护这些性质，尤其是一致性和隔离性，一般使用加锁这种方式。同时数据库又是个高并发的应用，同一时间会有大量的并发访问，如果加锁过度，会极大的降低并发处理能力。所以对于加锁的处理，可以说就是数据库对于事务处理的精髓所在。这里通过分析MySQL中InnoDB引擎的加锁机制，来抛砖引玉，让读者更好的理解，在事务处理中数据库到底做了什么。
 
-一次封锁or两段锁？ 因为有大量的并发访问，为了预防死锁，一般应用中推荐使用**一次封锁法**，就是**在方法的开始阶段，已经预先知道会用到哪些数据，然后全部锁住，在方法运行之后，再全部解锁**。这种方式可以有效的避免循环死锁，但在数据库中却不适用，因为在事务开始阶段，**数据库并不知道会用到哪些数据**。 数据库遵循的是两段锁协议，将事务分成两个阶段，加锁阶段和解锁阶段（所以叫两段锁）
+一次封锁or两段锁？因为有大量的并发访问，为了预防死锁，一般应用中推荐使用**一次封锁法**，就是**在方法的开始阶段，已经预先知道会用到哪些数据，然后全部锁住，在方法运行之后，再全部解锁**。这种方式可以有效的避免循环死锁，但在数据库中却不适用，因为在事务开始阶段，**数据库并不知道会用到哪些数据**。数据库遵循的是两段锁协议，将事务分成两个阶段，加锁阶段和解锁阶段（所以叫两段锁）
 
 *   加锁阶段：在该阶段可以进行加锁操作。在对任何数据进行读操作之前要申请并获得S锁（共享锁，其它事务可以继续加共享锁，但不能加排它锁），在进行写操作之前要申请并获得X锁（排它锁，其它事务不能再获得任何锁）。**加锁不成功，则事务进入等待状态，直到加锁成功才继续执行。**
 
@@ -53,7 +47,7 @@
 
 | 事务 | 加锁/解锁处理 |
 | --- | --- |
-| begin； |   |
+| begin； |  |
 | insert into test ..... | 加insert对应的锁 |
 | update test set... | 加update对应的锁 |
 | delete from test .... | 加delete对应的锁 |
@@ -63,7 +57,7 @@
 
 ## 事务中的加锁方式
 
-##事务的四种隔离级别 在数据库操作中，为了有效保证并发读取数据的正确性，提出的事务隔离级别。我们的数据库锁，也是为了构建这些隔离级别存在的。
+##事务的四种隔离级别在数据库操作中，为了有效保证并发读取数据的正确性，提出的事务隔离级别。我们的数据库锁，也是为了构建这些隔离级别存在的。
 
 | 隔离级别 | 脏读（Dirty Read） | 不可重复读（NonRepeatable Read） | 幻读（Phantom Read） |
 | --- | --- | --- | --- |
@@ -92,94 +86,94 @@ MySQL中锁的种类很多，有常见的表锁和行锁，也有新加入的Met
 
 在RC级别中，数据的读取都是不加锁的，但是数据的写入、修改和删除是需要加锁的。效果如下
 
-<pre>MySQL> show create table class_teacher \G\
-​
-​
-​
+MySQL> show create table class_teacher \G\
+
+
+
 Table: class_teacher
-​
-​
-​
+
+
+
 Create Table: CREATE TABLE `class_teacher` (
-​
-​
-​
+
+
+
  `id` int(11) NOT NULL AUTO_INCREMENT,
-​
-​
-​
+
+
+
  `class_name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-​
-​
-​
+
+
+
  `teacher_id` int(11) NOT NULL,
-​
-​
-​
+
+
+
  PRIMARY KEY (`id`),
-​
-​
-​
+
+
+
  KEY `idx_teacher_id` (`teacher_id`)
-​
-​
-​
+
+
+
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-​
-​
-​
+
+
+
 1 row in set (0.02 sec)
-​
-​
-​
+
+
+
 MySQL> select * from class_teacher;
-​
-​
-​
+
+
+
 +----+--------------+------------+
-​
-​
-​
-| id | class_name   | teacher_id |
-​
-​
-​
+
+
+
+| id | class_name  | teacher_id |
+
+
+
 +----+--------------+------------+
-​
-​
-​
-|  1 | 初三一班     |          1 |
-​
-​
-​
-|  3 | 初二一班     |          2 |
-​
-​
-​
-|  4 | 初二二班     |          2 |
-​
-​
-​
+
+
+
+| 1 | 初三一班   |     1 |
+
+
+
+| 3 | 初二一班   |     2 |
+
+
+
+| 4 | 初二二班   |     2 |
+
+
+
 +----+--------------+------------+</pre>
 
 由于MySQL的InnoDB默认是使用的RR级别，所以我们先要将该session开启成RC级别，并且设置binlog的模式
 
-<pre>SET session transaction isolation level read committed;
-​
-​
-​
+SET session transaction isolation level read committed;
+
+
+
 SET SESSION binlog_format = 'ROW';（或者是MIXED）</pre>
 
 | 事务A | 事务B |
 | --- | --- |
 | begin; | begin; |
 | update class_teacher set class_name='初三二班' where teacher_id=1; | update class_teacher set class_name='初三三班' where teacher_id=1; |
-|   | ERROR 1205 (HY000): Lock wait timeout exceeded; try restarting transaction |
-| commit; |   |
+|  | ERROR 1205 (HY000): Lock wait timeout exceeded; try restarting transaction |
+| commit; |  |
 
 为了防止并发过程中的修改冲突，事务A中MySQL给teacher_id=1的数据行加锁，并一直不commit（释放锁），那么事务B也就一直拿不到该行锁，wait直到超时。
 
-这时我们要注意到，teacher_id是有索引的，如果是没有索引的class_name呢？update class_teacher set teacher_id=3 where class_name = '初三一班'; 那么MySQL会给整张表的所有数据行的加行锁。这里听起来有点不可思议，但是当sql运行的过程中，MySQL并不知道哪些数据行是 class_name = '初三一班'的（没有索引嘛），如果一个条件无法通过索引快速过滤，存储引擎层面就会将所有记录加锁后返回，再由MySQL Server层进行过滤。
+这时我们要注意到，teacher_id是有索引的，如果是没有索引的class_name呢？update class_teacher set teacher_id=3 where class_name = '初三一班';那么MySQL会给整张表的所有数据行的加行锁。这里听起来有点不可思议，但是当sql运行的过程中，MySQL并不知道哪些数据行是 class_name = '初三一班'的（没有索引嘛），如果一个条件无法通过索引快速过滤，存储引擎层面就会将所有记录加锁后返回，再由MySQL Server层进行过滤。
 
 但在实际使用过程当中，MySQL做了一些改进，在MySQL Server过滤条件，发现不满足后，会调用unlock_row方法，把不满足条件的记录释放锁 (违背了二段锁协议的约束)。这样做，保证了最后只会持有满足条件记录上的锁，但是每条记录的加锁操作还是不能省略的。可见即使是MySQL，为了效率也是会违反规范的。（参见《高性能MySQL》中文第三版p181）
 
@@ -189,29 +183,29 @@ SET SESSION binlog_format = 'ROW';（或者是MIXED）</pre>
 
 这是MySQL中InnoDB默认的隔离级别。我们姑且分“读”和“写”两个模块来讲解。
 
-####读 读就是可重读，可重读这个概念是一事务的多个实例在并发读取数据时，会看到同样的数据行，有点抽象，我们来看一下效果。
+####读读就是可重读，可重读这个概念是一事务的多个实例在并发读取数据时，会看到同样的数据行，有点抽象，我们来看一下效果。
 
 RC（不可重读）模式下的展现
 
 | 事务A | 事务B |
 | --- | --- |
 | begin; | begin; |
-| select id,class_name,teacher_id from class_teacher where teacher_id=1; idclass_name,teacher_id1初三二班12初三一班1 |   |
-|   | update class_teacher set class_name='初三三班' where id=1; |
-|   | commit; |
-| select id,class_name,teacher_id from class_teacher where teacher_id=1; idclass_name,teacher_id1初三三班12初三一班1 读到了事务B修改的数据，和第一次查询的结果不一样，是不可重读的。 |   |
-| commit; |   |
+| select id,class_name,teacher_id from class_teacher where teacher_id=1; idclass_name,teacher_id1初三二班12初三一班1 |  |
+|  | update class_teacher set class_name='初三三班' where id=1; |
+|  | commit; |
+| select id,class_name,teacher_id from class_teacher where teacher_id=1; idclass_name,teacher_id1初三三班12初三一班1 读到了事务B修改的数据，和第一次查询的结果不一样，是不可重读的。 |  |
+| commit; |  |
 
 事务B修改id=1的数据提交之后，事务A同样的查询，后一次和前一次的结果不一样，这就是不可重读（重新读取产生的结果不一样）。这就很可能带来一些问题，那么我们来看看在RR级别中MySQL的表现：
 
 | 事务A | 事务B | 事务C |
 | --- | --- | --- |
 | begin; | begin; | begin; |
-| select id,class_name,teacher_id from class_teacher where teacher_id=1;idclass_nameteacher_id1初三二班12初三一班1 |   |   |
-|   | update class_teacher set class_name='初三三班' where id=1;commit; |   |
-|   |   | insert into class_teacher values (null,'初三三班',1); commit; |
-| select id,class_name,teacher_id from class_teacher where teacher_id=1;idclass_nameteacher_id1初三二班12初三一班1 没有读到事务B修改的数据，和第一次sql读取的一样，是可重复读的。没有读到事务C新添加的数据。 |   |   |
-| commit; |   |   |
+| select id,class_name,teacher_id from class_teacher where teacher_id=1;idclass_nameteacher_id1初三二班12初三一班1 |  |  |
+|  | update class_teacher set class_name='初三三班' where id=1;commit; |  |
+|  |  | insert into class_teacher values (null,'初三三班',1); commit; |
+| select id,class_name,teacher_id from class_teacher where teacher_id=1;idclass_nameteacher_id1初三二班12初三一班1 没有读到事务B修改的数据，和第一次sql读取的一样，是可重复读的。没有读到事务C新添加的数据。 |  |  |
+| commit; |  |  |
 
 我们注意到，当teacher_id=1时，事务A先做了一次读取，事务B中间修改了id=1的数据，并commit之后，事务A第二次读到的数据和第一次完全相同。所以说它是可重读的。那么MySQL是怎么做到的呢？这里姑且卖个关子，我们往下看。
 
@@ -285,9 +279,9 @@ RC（不可重读）模式下的展现
 
 事务的隔离级别实际上都是定义了当前读的级别，MySQL为了减少锁处理（包括等待其它锁）的时间，提升并发能力，引入了快照读的概念，使得select不用加锁。而update、insert这些“当前读”，就需要另外的模块来解决了。
 
-###写（"当前读"） 事务的隔离级别中虽然只定义了读数据的要求，实际上这也可以说是写数据的要求。上文的“读”，实际是讲的快照读；而这里说的“写”就是当前读了。 为了解决当前读中的幻读问题，MySQL事务使用了Next-Key锁。
+###写（"当前读"）事务的隔离级别中虽然只定义了读数据的要求，实际上这也可以说是写数据的要求。上文的“读”，实际是讲的快照读；而这里说的“写”就是当前读了。为了解决当前读中的幻读问题，MySQL事务使用了Next-Key锁。
 
-####Next-Key锁 Next-Key锁是行锁和GAP（间隙锁）的合并，行锁上文已经介绍了，接下来说下GAP间隙锁。
+####Next-Key锁Next-Key锁是行锁和GAP（间隙锁）的合并，行锁上文已经介绍了，接下来说下GAP间隙锁。
 
 行锁可以防止不同事务版本的数据修改提交时造成数据冲突的情况。但如何避免别的事务插入数据就成了问题。我们可以看看RR级别和RC级别的对比
 
@@ -296,20 +290,20 @@ RC级别：
 | 事务A | 事务B |
 | --- | --- |
 | begin; | begin; |
-| select id,class_name,teacher_id from class_teacher where teacher_id=30;idclass_nameteacher_id2初三二班30 |   |
-| update class_teacher set class_name='初三四班' where teacher_id=30; |   |
-|   | insert into class_teacher values (null,'初三二班',30);commit; |
-| select id,class_name,teacher_id from class_teacher where teacher_id=30;idclass_nameteacher_id2初三四班3010初三二班30 |   |
+| select id,class_name,teacher_id from class_teacher where teacher_id=30;idclass_nameteacher_id2初三二班30 |  |
+| update class_teacher set class_name='初三四班' where teacher_id=30; |  |
+|  | insert into class_teacher values (null,'初三二班',30);commit; |
+| select id,class_name,teacher_id from class_teacher where teacher_id=30;idclass_nameteacher_id2初三四班3010初三二班30 |  |
 
 RR级别：
 
 | 事务A | 事务B |
 | --- | --- |
 | begin; | begin; |
-| select id,class_name,teacher_id from class_teacher where teacher_id=30;idclass_nameteacher_id2初三二班30 |   |
-| update class_teacher set class_name='初三四班' where teacher_id=30; |   |
-|   | insert into class_teacher values (null,'初三二班',30);waiting.... |
-| select id,class_name,teacher_id from class_teacher where teacher_id=30;idclass_nameteacher_id2初三四班30 |   |
+| select id,class_name,teacher_id from class_teacher where teacher_id=30;idclass_nameteacher_id2初三二班30 |  |
+| update class_teacher set class_name='初三四班' where teacher_id=30; |  |
+|  | insert into class_teacher values (null,'初三二班',30);waiting.... |
+| select id,class_name,teacher_id from class_teacher where teacher_id=30;idclass_nameteacher_id2初三四班30 |  |
 | commit; | 事务Acommit后，事务B的insert执行。 |
 
 通过对比我们可以发现，在RC级别中，事务A修改了所有teacher_id=30的数据，但是当事务B insert进新数据后，事务A发现莫名其妙多了一行teacher_id=30的数据，而且没有被之前的update语句所修改，这就是“当前读”的幻读。
@@ -337,11 +331,11 @@ update class_teacher set class_name='初三四班' where teacher_id=30;不仅用
 | 事务A | 事务B | 事务C |
 | --- | --- | --- |
 | begin; | begin; | begin; |
-| select id,class_name,teacher_id from class_teacher;idclass_nameteacher_id1初三一班52初三二班30 |   |   |
-| update class_teacher set class_name='初一一班' where teacher_id=20; |   |   |
-|   | insert into class_teacher values (null,'初三五班',10);waiting ..... | insert into class_teacher values (null,'初三五班',40); |
+| select id,class_name,teacher_id from class_teacher;idclass_nameteacher_id1初三一班52初三二班30 |  |  |
+| update class_teacher set class_name='初一一班' where teacher_id=20; |  |  |
+|  | insert into class_teacher values (null,'初三五班',10);waiting ..... | insert into class_teacher values (null,'初三五班',40); |
 | commit; | 事务A commit之后，这条语句才插入成功 | commit; |
-|   | commit; |   |
+|  | commit; |  |
 
 update的teacher_id=20是在(5，30]区间，即使没有修改任何数据，Innodb也会在这个区间加gap锁，而其它区间不会影响，事务C正常插入。
 
@@ -349,6 +343,6 @@ update的teacher_id=20是在(5，30]区间，即使没有修改任何数据，In
 
 行锁防止别的事务修改或删除，GAP锁防止别的事务新增，行锁和GAP锁结合形成的的Next-Key锁共同解决了RR级别在写数据时的幻读问题。
 
-###Serializable 这个级别很简单，**读加共享锁，写加排他锁，读写互斥**。使用的**悲观锁的理论**，实现简单，数据更加安全，但是并发能力非常差。如果你的业务并发的特别少或者没有并发，同时又要求数据及时可靠的话，可以使用这种模式。
+###Serializable这个级别很简单，**读加共享锁，写加排他锁，读写互斥**。使用的**悲观锁的理论**，实现简单，数据更加安全，但是并发能力非常差。如果你的业务并发的特别少或者没有并发，同时又要求数据及时可靠的话，可以使用这种模式。
 
 这里要吐槽一句，**不要看到select就说不会加锁了，在Serializable这个级别，还是会加锁的**！

@@ -1,5 +1,4 @@
-# Table of Contents
-
+# 目录
 * [数据库原理](#数据库原理)
   * [范式 反范式](#范式-反范式)
   * [主键 外键](#主键-外键)
@@ -25,16 +24,6 @@
     * [Java技术江湖](#java技术江湖)
     * [个人公众号：黄小斜](#个人公众号：黄小斜)
 
-
----
-title: Mysql原理与实践总结
-date: 2018-07-08 22:15:04
-tags:
-	- Mysql
-categories:
-	- 后端
-	- 技术总结
----
 
 本文根据自己对MySQL的学习和实践以及各类文章与书籍总结而来。
 囊括了MySQL数据库的基本原理和技术。本文主要是我的一个学习总结，基于之前的系列文章做了一个概括，如有错误，还望指出，谢谢。
@@ -98,8 +87,7 @@ MySQL数据库的架构可以分为客户端，服务端，存储引擎和文件
 
     最高层的客户端，通过tcp连接mysql的服务器，然后执行sql语句，其中涉及了查询缓存，执行计划处理和优化，接下来再到存储引擎层执行查询，底层实际上访问的是主机的文件系统。
 
-![image](http://image20.it168.com/201611_670x502/2701/39b96aa41090f9bb.png)
-
+![image](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/39b96aa41090f9bb.png)
 ## mysql常用语法
 
 1 登录mysql
@@ -172,14 +160,12 @@ mysql使用两个文件分别存储数据库的元数据和数据库的真正数
 数据页结构
 页是 InnoDB 存储引擎管理数据的最小磁盘单位，而 B-Tree 节点就是实际存放表中数据的页面，我们在这里将要介绍页是如何组织和存储记录的；首先，一个 InnoDB 页有以下七个部分：
 
-![InnoDB-B-Tree-Node](https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/InnoDB-B-Tree-Node.jpg)
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405195759.png)
 每一个页中包含了两对 header/trailer：内部的 Page Header/Page Directory 关心的是页的状态信息，而 Fil Header/Fil Trailer 关心的是记录页的头信息。
 
     也就是说，外部的h-t对用来和其他页形成联系，而内部的h-t用来是保存内部记录的状态。
 
-![https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/Infimum-Rows-Supremum.jpg](https://raw.githubusercontent.com/Draveness/Analyze/master/contents/Database/images/mysql/Infimum-Rows-Supremum.jpg)
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405195900.png)
 User Records 就是整个页面中真正用于存放行记录的部分，而 Free Space 就是空余空间了，它是一个链表的数据结构，为了保证插入和删除的效率，整个页面并不会按照主键顺序对所有记录进行排序，它会自动从左侧向右寻找空白节点进行插入，行记录在物理存储上并不是按照顺序的，它们之间的顺序是由 next_record 这一指针控制的。
     
     也就是说，一个页中存了非常多行的数据，而每一行数据和相邻行使用指针进行链表连接。
@@ -211,13 +197,13 @@ mysql慢查询日志可以在mysql的,my.cnf文件中配置开启，然后执行
     1	SIMPLE	vote_record	\N	ALL	votenum,vote	\N	\N	\N	996507	50.00	Using where
 
 
-​    
-​    
+    
+    
     还是没用到索引，因为不符合最左前缀匹配。查询需要3.5秒左右
 
 
-​    
-​    
+    
+    
     最后修改一下sql语句
     
     EXPLAIN SELECT * FROM vote_record WHERE id > 0 AND vote_num > 1000;
@@ -227,25 +213,25 @@ mysql慢查询日志可以在mysql的,my.cnf文件中配置开启，然后执行
     1	SIMPLE	vote_record	\N	range	PRIMARY,votenum,vote	PRIMARY	4	\N	498253	50.00	Using where
 
 
-​    
-​    
+    
+    
     用到了索引，但是只用到了主键索引。再修改一次
 
 
-​    
-​    
+    
+    
     EXPLAIN SELECT * FROM vote_record WHERE id > 0 AND vote_num = 1000;
 
 
-​    
-​    
+    
+    
     id	select_type	table	partitions	type	possible_keys	key	key_len	ref	rows	filtered	Extra
     
     1	SIMPLE	vote_record	\N	index_merge	PRIMARY,votenum,vote	votenum,PRIMARY	8,4	\N	51	100.00	Using intersect(votenum,PRIMARY); Using where
 
 
-​    
-​    
+    
+    
     用到了两个索引，votenum,PRIMARY。
 
 ## mysql的binlog,redo log和undo log。
@@ -334,8 +320,8 @@ innodb支持行级锁和事务，而myisam只支持表锁，它的所有操作�
 实现的原理是next-key lock。是gap lock的加强版。不会锁住全表，只会锁住被读取行前后的间隙行。
 
 
-​    
-​    
+    
+    
 ## 分库分表
 
 分库分表的方案比较多，首先看下分表。
@@ -350,7 +336,7 @@ innodb支持行级锁和事务，而myisam只支持表锁，它的所有操作�
 
 我们需要考虑扩展性，所以需要使用分布式的数据库。
 
-==分布式数据库解决方案mycat==
+分布式数据库解决方案mycat
     
     mycat是一款支持分库分表的数据库中间件，支持单机也支持分布式。
     

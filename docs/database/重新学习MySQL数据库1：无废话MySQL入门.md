@@ -1,5 +1,4 @@
-# Table of Contents
-
+# 目录
   * [前言](#前言)
     * [登录MySQL](#登录mysql)
     * [创建数据库](#创建数据库)

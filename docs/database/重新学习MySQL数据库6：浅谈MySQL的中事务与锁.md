@@ -1,5 +1,4 @@
-# Table of Contents
-
+# 目录
   * [『浅入深出』MySQL 中事务的实现](#『浅入深出』mysql-中事务的实现)
     * [原子性](#原子性)
     * [回滚日志](#回滚日志)
@@ -79,9 +78,9 @@
 
 这个过程其实非常好理解，为了能够在发生错误时撤销之前的全部操作，肯定是需要将之前的操作都记录下来的，这样在发生错误时才可以回滚。
 
-回滚日志除了能够在发生错误或者用户执行 ROLLBACK 时提供回滚相关的信息，它还能够在整个系统发生崩溃、数据库进程直接被杀死后，当用户再次启动数据库进程时，还能够立刻通过查询回滚日志将之前未完成的事务进行回滚，这也就需要回滚日志必须先于数据持久化到磁盘上，是我们需要先写日志后写数据库的主要原因。
+回滚日志除了能够在发生错误或者用户执行ROLLBACK时提供回滚相关的信息，它还能够在整个系统发生崩溃、数据库进程直接被杀死后，当用户再次启动数据库进程时，还能够立刻通过查询回滚日志将之前未完成的事务进行回滚，这也就需要回滚日志必须先于数据持久化到磁盘上，是我们需要先写日志后写数据库的主要原因。
 
-回滚日志并不能将数据库物理地恢复到执行语句或者事务之前的样子；它是逻辑日志，当回滚日志被使用时，它只会按照日志逻辑地将数据库中的修改撤销掉看，可以理解为，我们在事务中使用的每一条 INSERT 都对应了一条 DELETE，每一条 UPDATE 也都对应一条相反的 UPDATE 语句。
+回滚日志并不能将数据库物理地恢复到执行语句或者事务之前的样子；它是逻辑日志，当回滚日志被使用时，它只会按照日志逻辑地将数据库中的修改撤销掉看，可以理解为，我们在事务中使用的每一条INSERT都对应了一条DELETE，每一条UPDATE也都对应一条相反的UPDATE语句。
 
 在这里，我们并不会介绍回滚日志的格式以及它是如何被管理的，本文重点关注在它到底是一个什么样的东西，究竟解决了、如何解决了什么样的问题，如果想要了解具体实现细节的读者，相信网络上关于回滚日志的文章一定不少。
 
@@ -91,7 +90,7 @@
 
 但是如果放大来看，我们会发现事务不再是原子的，其中包括了很多中间状态，比如部分提交，事务的状态图也变得越来越复杂。
 
-> 事务的状态图以及状态的描述取自 [Database System Concepts](https://www.amazon.com/Database-System-Concepts-Computer-Science/dp/0073523321 "按住 Ctrl 点击访问 https://www.amazon.com/Database-System-Concepts-Computer-Science/dp/0073523321") 一书中第 14 章的内容。
+> 事务的状态图以及状态的描述取自[Database System Concepts](https://www.amazon.com/Database-System-Concepts-Computer-Science/dp/0073523321 "按住 Ctrl 点击访问 https://www.amazon.com/Database-System-Concepts-Computer-Science/dp/0073523321")一书中第 14 章的内容。
 
 *   Active：事务的初始状态，表示事务正在执行；
 
@@ -111,7 +110,7 @@
 
 到目前为止，所有的事务都只是串行执行的，一直都没有考虑过并行执行的问题；然而在实际工作中，并行执行的事务才是常态，然而并行任务下，却可能出现非常复杂的问题：
 
-当 Transaction1 在执行的过程中对 id = 1 的用户进行了读写，但是没有将修改的内容进行提交或者回滚，在这时 Transaction2 对同样的数据进行了读操作并提交了事务；也就是说 Transaction2 是依赖于 Transaction1 的，当 Transaction1 由于一些错误需要回滚时，因为要保证事务的原子性，需要对 Transaction2 进行回滚，但是由于我们已经提交了 Transaction2，所以我们已经没有办法进行回滚操作，在这种问题下我们就发生了问题，[Database System Concepts](https://www.amazon.com/Database-System-Concepts-Computer-Science/dp/0073523321 "按住 Ctrl 点击访问 https://www.amazon.com/Database-System-Concepts-Computer-Science/dp/0073523321") 一书中将这种现象称为不可恢复安排（Nonrecoverable Schedule），那什么情况下是可以恢复的呢？
+当 Transaction1 在执行的过程中对id = 1的用户进行了读写，但是没有将修改的内容进行提交或者回滚，在这时 Transaction2 对同样的数据进行了读操作并提交了事务；也就是说 Transaction2 是依赖于 Transaction1 的，当 Transaction1 由于一些错误需要回滚时，因为要保证事务的原子性，需要对 Transaction2 进行回滚，但是由于我们已经提交了 Transaction2，所以我们已经没有办法进行回滚操作，在这种问题下我们就发生了问题，[Database System Concepts](https://www.amazon.com/Database-System-Concepts-Computer-Science/dp/0073523321 "按住 Ctrl 点击访问 https://www.amazon.com/Database-System-Concepts-Computer-Science/dp/0073523321")一书中将这种现象称为不可恢复安排（Nonrecoverable Schedule），那什么情况下是可以恢复的呢？
 
 > A recoverable schedule is one where, for each pair of transactions Ti and Tj such that Tj reads a data item previously written by Ti , the commit operation of Ti appears before the commit operation of Tj .
 
@@ -151,15 +150,15 @@
 
 ### 隔离性
 
-其实作者在之前的文章 [『浅入浅出』MySQL 和 InnoDB](http://draveness.me/mysql-innodb.html "按住 Ctrl 点击访问 http://draveness.me/mysql-innodb.html") 就已经介绍过数据库事务的隔离性，不过为了保证文章的独立性和完整性，我们还会对事务的隔离性进行介绍，介绍的内容可能稍微有所不同。
+其实作者在之前的文章[『浅入浅出』MySQL 和 InnoDB](http://draveness.me/mysql-innodb.html "按住 Ctrl 点击访问 http://draveness.me/mysql-innodb.html")就已经介绍过数据库事务的隔离性，不过为了保证文章的独立性和完整性，我们还会对事务的隔离性进行介绍，介绍的内容可能稍微有所不同。
 
-事务的隔离性是数据库处理数据的几大基础之一，如果没有数据库的事务之间没有隔离性，就会发生在 [并行事务的原子性](https://draveness.me/mysql-transaction#%E5%B9%B6%E8%A1%8C%E4%BA%8B%E5%8A%A1%E7%9A%84%E5%8E%9F%E5%AD%90%E6%80%A7 "按住 Ctrl 点击访问 https://draveness.me/mysql-transaction#%E5%B9%B6%E8%A1%8C%E4%BA%8B%E5%8A%A1%E7%9A%84%E5%8E%9F%E5%AD%90%E6%80%A7") 一节中提到的级联回滚等问题，造成性能上的巨大损失。如果所有的事务的执行顺序都是线性的，那么对于事务的管理容易得多，但是允许事务的并行执行却能能够提升吞吐量和资源利用率，并且可以减少每个事务的等待时间。
+事务的隔离性是数据库处理数据的几大基础之一，如果没有数据库的事务之间没有隔离性，就会发生在[并行事务的原子性](https://draveness.me/mysql-transaction#%E5%B9%B6%E8%A1%8C%E4%BA%8B%E5%8A%A1%E7%9A%84%E5%8E%9F%E5%AD%90%E6%80%A7 "按住 Ctrl 点击访问 https://draveness.me/mysql-transaction#%E5%B9%B6%E8%A1%8C%E4%BA%8B%E5%8A%A1%E7%9A%84%E5%8E%9F%E5%AD%90%E6%80%A7")一节中提到的级联回滚等问题，造成性能上的巨大损失。如果所有的事务的执行顺序都是线性的，那么对于事务的管理容易得多，但是允许事务的并行执行却能能够提升吞吐量和资源利用率，并且可以减少每个事务的等待时间。
 
 当多个事务同时并发执行时，事务的隔离性可能就会被违反，虽然单个事务的执行可能没有任何错误，但是从总体来看就会造成数据库的一致性出现问题，而串行虽然能够允许开发者忽略并行造成的影响，能够很好地维护数据库的一致性，但是却会影响事务执行的性能。
 
 ### 事务的隔离级别
 
-所以说数据库的隔离性和一致性其实是一个需要开发者去权衡的问题，为数据库提供什么样的隔离性层级也就决定了数据库的性能以及可以达到什么样的一致性；在 SQL 标准中定义了四种数据库的事务的隔离级别：READ UNCOMMITED、READ COMMITED、REPEATABLE READ 和 SERIALIZABLE；每个事务的隔离级别其实都比上一级多解决了一个问题：
+所以说数据库的隔离性和一致性其实是一个需要开发者去权衡的问题，为数据库提供什么样的隔离性层级也就决定了数据库的性能以及可以达到什么样的一致性；在 SQL 标准中定义了四种数据库的事务的隔离级别：READ UNCOMMITED、READ COMMITED、REPEATABLE READ和SERIALIZABLE；每个事务的隔离级别其实都比上一级多解决了一个问题：
 
 *   RAED UNCOMMITED：使用查询语句不会加锁，可能会读到未提交的行（Dirty Read）；
 
@@ -173,7 +172,7 @@
 
 对于数据库的使用者，从理论上说，并不需要知道事务的隔离级别是如何实现的，我们只需要知道这个隔离级别解决了什么样的问题，但是不同数据库对于不同隔离级别的是实现细节在很多时候都会让我们遇到意料之外的坑。
 
-如果读者不了解脏读、不可重复读和幻读究竟是什么，可以阅读之前的文章 [『浅入浅出』MySQL 和 InnoDB](http://draveness.me/mysql-innodb.html "按住 Ctrl 点击访问 http://draveness.me/mysql-innodb.html")，在这里我们仅放一张图来展示各个隔离层级对这几个问题的解决情况。
+如果读者不了解脏读、不可重复读和幻读究竟是什么，可以阅读之前的文章[『浅入浅出』MySQL 和 InnoDB](http://draveness.me/mysql-innodb.html "按住 Ctrl 点击访问 http://draveness.me/mysql-innodb.html")，在这里我们仅放一张图来展示各个隔离层级对这几个问题的解决情况。
 
 ### 隔离级别的实现
 
@@ -199,7 +198,7 @@
 
 在这里就需要简单提一下在在原子性一节中遇到的级联回滚等问题了，如果一个事务对数据进行了写入，这时就会获取一个互斥锁，其他的事务就想要获得改行数据的读锁就必须等待写锁的释放，自然就不会发生级联回滚等问题了。
 
-不过在大多数的数据库，比如 MySQL 中都使用了 MVCC 等特性，也就是正常的读方法是不需要获取锁的，在想要对读取的数据进行更新时需要使用 SELECT ... FOR UPDATE 尝试获取对应行的互斥锁，以保证不同事务可以正常工作。
+不过在大多数的数据库，比如 MySQL 中都使用了 MVCC 等特性，也就是正常的读方法是不需要获取锁的，在想要对读取的数据进行更新时需要使用SELECT ... FOR UPDATE尝试获取对应行的互斥锁，以保证不同事务可以正常工作。
 
 ### 一致性
 
@@ -217,7 +216,7 @@
 
 而第二层意思其实是指逻辑上的对于开发者的要求，我们要在代码中写出正确的事务逻辑，比如银行转账，事务中的逻辑不可能只扣钱或者只加钱，这是应用层面上对于数据库一致性的要求。
 
-> Ensuring consistency for an individual transaction is the responsibility of the application programmer who codes the transaction. - [Database System Concepts](https://www.amazon.com/Database-System-Concepts-Computer-Science/dp/0073523321 "按住 Ctrl 点击访问 https://www.amazon.com/Database-System-Concepts-Computer-Science/dp/0073523321")
+> Ensuring consistency for an individual transaction is the responsibility of the application programmer who codes the transaction. -[Database System Concepts](https://www.amazon.com/Database-System-Concepts-Computer-Science/dp/0073523321 "按住 Ctrl 点击访问 https://www.amazon.com/Database-System-Concepts-Computer-Science/dp/0073523321")
 
 数据库 ACID 中的一致性对事务的要求不止包含对数据完整性以及合法性的检查，还包含应用层面逻辑的正确。
 
@@ -299,7 +298,7 @@ CAP 定理中的数据一致性，其实是说分布式系统中的各个节点�
 
 在上一节中我们其实提到死锁的检测可以通过一个有向的等待图来进行判断，如果一个事务依赖于另一个事务正在处理的数据，那么当前事务就会等待另一个事务的结束，这也就是整个等待图中的一条边：
 
-如上图所示，如果在这个有向图中出现了环，就说明当前数据库进入了死锁的状态 TransB -> TransE -> TransF -> TransD -> TransB，在这时就需要死锁恢复机制接入了。
+如上图所示，如果在这个有向图中出现了环，就说明当前数据库进入了死锁的状态TransB -> TransE -> TransF -> TransD -> TransB，在这时就需要死锁恢复机制接入了。
 
 如何从死锁中恢复其实非常简单，最常见的解决办法就是选择整个环中一个事务进行回滚，以打破整个等待图中的环，在整个恢复的过程中有三个事情需要考虑：
 
@@ -351,7 +350,7 @@ CAP 定理中的数据一致性，其实是说分布式系统中的各个节点�
 
 到目前为止我们介绍的并发控制机制其实都是通过延迟或者终止相应的事务来解决事务之间的竞争条件（Race condition）来保证事务的可串行化；虽然前面的两种并发控制机制确实能够从根本上解决并发事务的可串行化的问题，但是在实际环境中数据库的事务大都是只读的，读请求是写请求的很多倍，如果写请求和读请求之前没有并发控制机制，那么最坏的情况也是读请求读到了已经写入的数据，这对很多应用完全是可以接受的。
 
-在这种大前提下，数据库系统引入了另一种并发控制机制 - 多版本并发控制（Multiversion Concurrency Control），每一个写操作都会创建一个新版本的数据，读操作会从有限多个版本的数据中挑选一个最合适的结果直接返回；在这时，读写操作之间的冲突就不再需要被关注，而管理和快速挑选数据的版本就成了 MVCC 需要解决的主要问题。
+在这种大前提下，数据库系统引入了另一种并发控制机制 -多版本并发控制（Multiversion Concurrency Control），每一个写操作都会创建一个新版本的数据，读操作会从有限多个版本的数据中挑选一个最合适的结果直接返回；在这时，读写操作之间的冲突就不再需要被关注，而管理和快速挑选数据的版本就成了 MVCC 需要解决的主要问题。
 
 MVCC 并不是一个与乐观和悲观并发控制对立的东西，它能够与两者很好的结合以增加事务的并发量，在目前最流行的 SQL 数据库 MySQL 和 PostgreSQL 中都对 MVCC 进行了实现；但是由于它们分别实现了悲观锁和乐观锁，所以 MVCC 实现的方式也不同。
 
@@ -359,7 +358,7 @@ MVCC 并不是一个与乐观和悲观并发控制对立的东西，它能够与
 
 MySQL 中实现的多版本两阶段锁协议（Multiversion 2PL）将 MVCC 和 2PL 的优点结合了起来，每一个版本的数据行都具有一个唯一的时间戳，当有读事务请求时，数据库程序会直接从多个版本的数据项中具有最大时间戳的返回。
 
-更新操作就稍微有些复杂了，事务会先读取最新版本的数据计算出数据更新后的结果，然后创建一个新版本的数据，新数据的时间戳是目前数据行的最大版本 ＋1：
+更新操作就稍微有些复杂了，事务会先读取最新版本的数据计算出数据更新后的结果，然后创建一个新版本的数据，新数据的时间戳是目前数据行的最大版本＋1：
 
 数据版本的删除也是根据时间戳来选择的，MySQL 会将版本最低的数据定时从数据库中清除以保证不会出现大量的遗留内容。
 
@@ -395,21 +394,21 @@ MVCC是通过保存数据在某个时间点的快照来实现的. 不同存储�
 
 2.MVCC 具体实现分析
 
-下面,我们通过InnoDB的MVCC实现来分析MVCC使怎样进行并发控制的.  InnoDB的MVCC,是通过在每行记录后面保存两个隐藏的列来实现的,这两个列，分别保存了这个行的创建时间，一个保存的是行的删除时间。这里存储的并不是实际的时间值,而是系统版本号(可以理解为事务的ID)，没开始一个新的事务，系统版本号就会自动递增，事务开始时刻的系统版本号会作为事务的ID.下面看一下在REPEATABLE READ隔离级别下,MVCC具体是如何操作的.
+下面,我们通过InnoDB的MVCC实现来分析MVCC使怎样进行并发控制的. InnoDB的MVCC,是通过在每行记录后面保存两个隐藏的列来实现的,这两个列，分别保存了这个行的创建时间，一个保存的是行的删除时间。这里存储的并不是实际的时间值,而是系统版本号(可以理解为事务的ID)，没开始一个新的事务，系统版本号就会自动递增，事务开始时刻的系统版本号会作为事务的ID.下面看一下在REPEATABLE READ隔离级别下,MVCC具体是如何操作的.
 
 2.1简单的小例子
 
-create table yang(  id int primary key auto_increment,  name varchar(20));
+create table yang( id int primary key auto_increment, name varchar(20));
 
 > 假设系统的版本号从1开始.
 
 INSERT
 
-InnoDB为新插入的每一行保存当前系统版本号作为版本号.  第一个事务ID为1；
+InnoDB为新插入的每一行保存当前系统版本号作为版本号. 第一个事务ID为1；
 
-<pre>start transaction; insert into yang values(NULL,'yang')  ; insert into yang values(NULL,'long'); insert into yang values(NULL,'fei'); commit;
+start transaction; insert into yang values(NULL,'yang')  ; insert into yang values(NULL,'long'); insert into yang values(NULL,'fei'); commit;
 
-</pre>
+
 
 
 对应在数据中的表如下(后面两列是隐藏列,我们通过查询语句并看不到)
@@ -422,24 +421,24 @@ InnoDB为新插入的每一行保存当前系统版本号作为版本号.  第�
 
 SELECT
 
-InnoDB会根据以下两个条件检查每行记录:  a.InnoDB只会查找版本早于当前事务版本的数据行(也就是,行的系统版本号小于或等于事务的系统版本号)，这样可以确保事务读取的行，要么是在事务开始前已经存在的，要么是事务自身插入或者修改过的.  b.行的删除版本要么未定义,要么大于当前事务版本号,这可以确保事务读取到的行，在事务开始之前未被删除.  只有a,b同时满足的记录，才能返回作为查询结果.
+InnoDB会根据以下两个条件检查每行记录: a.InnoDB只会查找版本早于当前事务版本的数据行(也就是,行的系统版本号小于或等于事务的系统版本号)，这样可以确保事务读取的行，要么是在事务开始前已经存在的，要么是事务自身插入或者修改过的. b.行的删除版本要么未定义,要么大于当前事务版本号,这可以确保事务读取到的行，在事务开始之前未被删除. 只有a,b同时满足的记录，才能返回作为查询结果.
 
 DELETE
 
-InnoDB会为删除的每一行保存当前系统的版本号(事务的ID)作为删除标识.  看下面的具体例子分析:  第二个事务,ID为2;
+InnoDB会为删除的每一行保存当前系统的版本号(事务的ID)作为删除标识. 看下面的具体例子分析: 第二个事务,ID为2;
 
-<pre>start transaction; select *  from yang;  //(1) select *  from yang;  //(2) commit;  
+start transaction; select *  from yang;  //(1) select *  from yang;  //(2) commit;  
 
-</pre>
+
 
 
 假设1
 
-假设在执行这个事务ID为2的过程中,刚执行到(1),这时,有另一个事务ID为3往这个表里插入了一条数据;  第三个事务ID为3;
+假设在执行这个事务ID为2的过程中,刚执行到(1),这时,有另一个事务ID为3往这个表里插入了一条数据; 第三个事务ID为3;
 
-<pre>start transaction; insert into yang values(NULL,'tian'); commit;
+start transaction; insert into yang values(NULL,'tian'); commit;
 
-</pre>
+
 
 
 这时表中的数据如下:
@@ -461,11 +460,11 @@ InnoDB会为删除的每一行保存当前系统的版本号(事务的ID)作为�
 
 假设2
 
-假设在执行这个事务ID为2的过程中,刚执行到(1),假设事务执行完事务3后，接着又执行了事务4;  第四个事务:
+假设在执行这个事务ID为2的过程中,刚执行到(1),假设事务执行完事务3后，接着又执行了事务4; 第四个事务:
 
-<pre>start   transaction;  delete  from yang where id=1; commit;  
+start   transaction;  delete  from yang where id=1; commit;  
 
-</pre>
+
 
 
 此时数据库中的表如下:
@@ -491,11 +490,11 @@ InnoDB执行UPDATE，实际上是新插入了一行记录，并保存其创建�
 
 假设3
 
-假设在执行完事务2的(1)后又执行,其它用户执行了事务3,4,这时，又有一个用户对这张表执行了UPDATE操作:  第5个事务:
+假设在执行完事务2的(1)后又执行,其它用户执行了事务3,4,这时，又有一个用户对这张表执行了UPDATE操作: 第5个事务:
 
-<pre>start  transaction; update yang set name='Long' where id=2; commit;
+start  transaction; update yang set name='Long' where id=2; commit;
 
-</pre>
+
 
 
 根据update的更新原则:会生成新的一行,并在原来要修改的列的删除时间列上添加本事务ID,得到表如下:
