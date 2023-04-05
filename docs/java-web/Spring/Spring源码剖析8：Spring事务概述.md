@@ -1,5 +1,4 @@
-# Table of Contents
-
+# 目录
   * [数据库事务概述](#数据库事务概述)
     * [事务类型](#事务类型)
     * [Spring提供的事务管理](#spring提供的事务管理)
@@ -15,8 +14,7 @@
     * [声明式实现事务管理](#声明式实现事务管理)
     * [@Transactional实现事务管理](#transactional实现事务管理)
 
-
-原文出处： [张开涛](http://sishuok.com/forum/blogPost/list/0/2508.html)
+原文出处：[张开涛](http://sishuok.com/forum/blogPost/list/0/2508.html)
 
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看
 > https://github.com/h2pl/Java-Tutorial
@@ -104,7 +102,7 @@ spring所有的事务管理策略类都继承自org.springframework.transaction.
 
 ## 事务隔离级别
 
-  隔离级别是指若干个并发的事务之间的隔离程度。TransactionDefinition 接口中定义了五个表示隔离级别的常量：
+ 隔离级别是指若干个并发的事务之间的隔离程度。TransactionDefinition 接口中定义了五个表示隔离级别的常量：
 
 *   TransactionDefinition.ISOLATION_DEFAULT：这是默认值，表示使用底层数据库的默认隔离级别。对大部分数据库而言，通常这值就是TransactionDefinition.ISOLATION_READ_COMMITTED。
 *   TransactionDefinition.ISOLATION_READ_UNCOMMITTED：该隔离级别表示一个事务可以读取另一个事务修改但还没有提交的数据。该级别不能防止脏读，不可重复读和幻读，因此很少使用该隔离级别。比如PostgreSQL实际上并没有此级别。
@@ -114,7 +112,7 @@ spring所有的事务管理策略类都继承自org.springframework.transaction.
 
 ## 事务传播行为
 
-      所谓事务的传播行为是指，如果在开始当前事务之前，一个事务上下文已经存在，此时有若干选项可以指定一个事务性方法的执行行为。在TransactionDefinition定义中包括了如下几个表示传播行为的常量：
+   所谓事务的传播行为是指，如果在开始当前事务之前，一个事务上下文已经存在，此时有若干选项可以指定一个事务性方法的执行行为。在TransactionDefinition定义中包括了如下几个表示传播行为的常量：
 
 *   TransactionDefinition.PROPAGATION_REQUIRED：如果当前存在事务，则加入该事务；如果当前没有事务，则创建一个新的事务。这是默认值。
 *   TransactionDefinition.PROPAGATION_REQUIRES_NEW：创建一个新的事务，如果当前存在事务，则把当前事务挂起。
@@ -126,13 +124,13 @@ spring所有的事务管理策略类都继承自org.springframework.transaction.
 
 ### 事务超时
 
-      所谓事务超时，就是指一个事务所允许执行的最长时间，如果超过该时间限制但事务还没有完成，则自动回滚事务。在 TransactionDefinition 中以 int 的值来表示超时时间，其单位是秒。
+  所谓事务超时，就是指一个事务所允许执行的最长时间，如果超过该时间限制但事务还没有完成，则自动回滚事务。在 TransactionDefinition 中以 int 的值来表示超时时间，其单位是秒。
 
-  默认设置为底层事务系统的超时值，如果底层数据库事务系统没有设置超时值，那么就是none，没有超时限制。
+ 默认设置为底层事务系统的超时值，如果底层数据库事务系统没有设置超时值，那么就是none，没有超时限制。
 
 ### 事务只读属性
 
-      只读事务用于客户代码只读但不修改数据的情形，只读事务用于特定情景下的优化，比如使用Hibernate的时候。
+  只读事务用于客户代码只读但不修改数据的情形，只读事务用于特定情景下的优化，比如使用Hibernate的时候。
 
 默认为读写事务。
 
@@ -215,8 +213,7 @@ Spring提供了许多内置事务管理器实现：
 *   WebLogicJtaTransactionManager：位于org.springframework.transaction.jta包中，Spring提供的对WebLogic 8.1+应用服务器事务管理器的适配器，此适配器用于对应用服务器提供的高级事务的支持。
 
 Spring不仅提供这些事务管理器，还提供对如JMS事务管理的管理器等，Spring提供一致的事务抽象如图9-1所示。
-![](https://segmentfault.com/img/remote/1460000020178870?w=816&h=435)
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405190404.png)
 图9-1 Spring事务管理器
 
 接下来让我们学习一下如何在Spring配置文件中定义事务管理器：
@@ -614,3 +611,34 @@ Spring提供的@Transactional 注解事务管理内部同样利用环绕通知Tr
 
 在使用Spring代理时，默认只有在public可见度的方法的@Transactional 注解才是有效的，其它可见度（protected、private、包可见）的方法上即使有@Transactional
 注解也不会应用这些事务属性的，Spring也不会报错，如果你非要使用非公共方法注解事务管理的话，可考虑使用AspectJ。
+
+
+## 微信公众号
+
+### 个人公众号：黄小斜
+
+黄小斜是跨考软件工程的 985 硕士，自学 Java 两年，拿到了 BAT 等近十家大厂 offer，从技术小白成长为阿里工程师。
+
+作者专注于 JAVA 后端技术栈，热衷于分享程序员干货、学习经验、求职心得和程序人生，目前黄小斜的CSDN博客有百万+访问量，知乎粉丝2W+，全网已有10W+读者。
+
+黄小斜是一个斜杠青年，坚持学习和写作，相信终身学习的力量，希望和更多的程序员交朋友，一起进步和成长！
+
+**原创电子书:**
+关注公众号【黄小斜】后回复【原创电子书】即可领取我原创的电子书《菜鸟程序员修炼手册：从技术小白到阿里巴巴Java工程师》
+
+**程序员3T技术学习资源：** 一些程序员学习技术的资源大礼包，关注公众号后，后台回复关键字 **“资料”** 即可免费无套路获取。
+
+**考研复习资料：**
+计算机考研大礼包，都是我自己考研复习时用的一些复习资料,包括公共课和专业的复习视频，这里也推荐给大家，关注公众号后，后台回复关键字 **“考研”** 即可免费获取。
+
+![](https://img-blog.csdnimg.cn/20190829222750556.jpg)
+
+
+### 技术公众号：Java技术江湖
+
+如果大家想要实时关注我更新的文章以及分享的干货的话，可以关注我的公众号【Java技术江湖】一位阿里 Java 工程师的技术小站，作者黄小斜，专注 Java 相关技术：SSM、SpringBoot、MySQL、分布式、中间件、集群、Linux、网络、多线程，偶尔讲点Docker、ELK，同时也分享技术干货和学习经验，致力于Java全栈开发！
+
+**Java工程师必备学习资源:** 一些Java工程师常用学习资源，关注公众号后，后台回复关键字 **“Java”** 即可免费无套路获取。
+
+![我的公众号](https://img-blog.csdnimg.cn/20190805090108984.jpg)
+ 

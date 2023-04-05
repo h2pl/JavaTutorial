@@ -1,21 +1,22 @@
-# Table of Contents
-
-  * [前言](#前言)
-  * [准备](#准备)
-  * [读取](#读取)
-  * [解析](#解析)
-  * [注册](#注册)
+# 目录
+* [前言](#前言)
+* [准备](#准备)
+* [读取](#读取)
+* [解析](#解析)
+* [注册](#注册)
     * [注入依赖](#注入依赖)
 
 
 本文转载自互联网，侵删
 
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看
+
 > https://github.com/h2pl/Java-Tutorial
 
 喜欢的话麻烦点下Star哈
 
 文章将同步到我的个人博客：
+
 > www.how2playlife.com
 
 本文是微信公众号【Java技术江湖】的《Spring和SpringMVC源码分析》其中一篇，本文部分内容来源于网络，为了把本文主题讲得清晰透彻，也整合了很多我认为不错的技术博客内容，引用其中了一些比较好的博客文章，如有侵权，请联系作者。
@@ -42,7 +43,7 @@
 
 大致单步跟了下Spring IOC的初始化过程，整个脉络很庞大，初始化的过程主要就是读取XML资源，并解析，最终注册到Bean Factory中：
 
-[![](https://cloud.githubusercontent.com/assets/1736354/7897341/032179be-070b-11e5-9ecf-d7befc804e9d.png "flow")](https://cloud.githubusercontent.com/assets/1736354/7897341/032179be-070b-11e5-9ecf-d7befc804e9d.png "flow")
+[![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/032179be-070b-11e5-9ecf-d7befc804e9d.png "flow")](https://cloud.githubusercontent.com/assets/1736354/7897341/032179be-070b-11e5-9ecf-d7befc804e9d.png "flow")
 
 在完成初始化的过程后，Bean们就在BeanFactory中蓄势以待地等调用了。下面通过一个具体的例子，来详细地学习一下初始化过程，例如当加载下面一个bean：
 
@@ -58,7 +59,7 @@
 ```
 
 加载时需要读取、解析、注册bean，这个过程具体的调用栈如下所示：
-[![](https://cloud.githubusercontent.com/assets/1736354/7896285/8a488060-06e6-11e5-9ad9-4ddd3375984f.png "load")](https://cloud.githubusercontent.com/assets/1736354/7896285/8a488060-06e6-11e5-9ad9-4ddd3375984f.png "load")
+[![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/8a488060-06e6-11e5-9ad9-4ddd3375984f.png "load")](https://cloud.githubusercontent.com/assets/1736354/7896285/8a488060-06e6-11e5-9ad9-4ddd3375984f.png "load")
 
 下面对每一步的关键的代码进行详细分析：
 
@@ -222,7 +223,7 @@ protected void processBeanDefinition(Element ele, BeanDefinitionParserDelegate d
 
 ## 解析
 
-[![](https://cloud.githubusercontent.com/assets/1736354/7896302/eae02bc6-06e6-11e5-941a-d1f59e3b363f.png "process")](https://cloud.githubusercontent.com/assets/1736354/7896302/eae02bc6-06e6-11e5-941a-d1f59e3b363f.png "process")
+[![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/eae02bc6-06e6-11e5-941a-d1f59e3b363f.png "process")](https://cloud.githubusercontent.com/assets/1736354/7896302/eae02bc6-06e6-11e5-941a-d1f59e3b363f.png "process")
 
 处理每个Bean的元素
 
@@ -352,7 +353,7 @@ public void registerBeanDefinition(String beanName, BeanDefinition beanDefinitio
 
 理解了以上两个过程，我们就可以自己实现一个简单的Spring框架了。于是，我根据自己的理解实现了一个简单的IOC框架Simple Spring，有兴趣可以看看。
 
-​
+
 
 注册过程中，最核心的一句就是：`this.beanDefinitionMap.put(beanName, beanDefinition)`，也就是说注册的实质就是以beanName为key，以beanDefinition为value，将其put到HashMap中。
 
@@ -363,11 +364,11 @@ public void registerBeanDefinition(String beanName, BeanDefinition beanDefinitio
 
 创建bean的实例
 创建bean的实例过程函数调用栈如下所示：
-[![](https://cloud.githubusercontent.com/assets/1736354/7929379/cec01bcc-092f-11e5-81ad-88c285f33845.png "create_bean")](https://cloud.githubusercontent.com/assets/1736354/7929379/cec01bcc-092f-11e5-81ad-88c285f33845.png "create_bean")
+[![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/cec01bcc-092f-11e5-81ad-88c285f33845.png "create_bean")](https://cloud.githubusercontent.com/assets/1736354/7929379/cec01bcc-092f-11e5-81ad-88c285f33845.png "create_bean")
 
 注入bean的属性
 注入bean的属性过程函数调用栈如下所示：
-[![](https://cloud.githubusercontent.com/assets/1736354/7929381/db58350e-092f-11e5-82a4-caaf349291ea.png "inject_property")](https://cloud.githubusercontent.com/assets/1736354/7929381/db58350e-092f-11e5-82a4-caaf349291ea.png "inject_property")
+[![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/db58350e-092f-11e5-82a4-caaf349291ea.png "inject_property")](https://cloud.githubusercontent.com/assets/1736354/7929381/db58350e-092f-11e5-82a4-caaf349291ea.png "inject_property")
 
 在创建bean和注入bean的属性时，都是在doCreateBean函数中进行的，我们重点看下：
 
@@ -403,5 +404,36 @@ protected Object doCreateBean(final String beanName, final RootBeanDefinition mb
 
 理解了以上两个过程，我们就可以自己实现一个简单的Spring框架了。于是，我根据自己的理解实现了一个简单的IOC框架[Simple Spring](https://github.com/Yikun/simple-spring)，有兴趣可以看看。
 
+
+
+## 微信公众号
+
+### 个人公众号：黄小斜
+
+黄小斜是跨考软件工程的 985 硕士，自学 Java 两年，拿到了 BAT 等近十家大厂 offer，从技术小白成长为阿里工程师。
+
+作者专注于 JAVA 后端技术栈，热衷于分享程序员干货、学习经验、求职心得和程序人生，目前黄小斜的CSDN博客有百万+访问量，知乎粉丝2W+，全网已有10W+读者。
+
+黄小斜是一个斜杠青年，坚持学习和写作，相信终身学习的力量，希望和更多的程序员交朋友，一起进步和成长！
+
+**原创电子书:**
+关注公众号【黄小斜】后回复【原创电子书】即可领取我原创的电子书《菜鸟程序员修炼手册：从技术小白到阿里巴巴Java工程师》
+
+**程序员3T技术学习资源：** 一些程序员学习技术的资源大礼包，关注公众号后，后台回复关键字 **“资料”** 即可免费无套路获取。
+
+**考研复习资料：**
+计算机考研大礼包，都是我自己考研复习时用的一些复习资料,包括公共课和专业的复习视频，这里也推荐给大家，关注公众号后，后台回复关键字 **“考研”** 即可免费获取。
+
+![](https://img-blog.csdnimg.cn/20190829222750556.jpg)
+
+
+### 技术公众号：Java技术江湖
+
+如果大家想要实时关注我更新的文章以及分享的干货的话，可以关注我的公众号【Java技术江湖】一位阿里 Java 工程师的技术小站，作者黄小斜，专注 Java 相关技术：SSM、SpringBoot、MySQL、分布式、中间件、集群、Linux、网络、多线程，偶尔讲点Docker、ELK，同时也分享技术干货和学习经验，致力于Java全栈开发！
+
+**Java工程师必备学习资源:** 一些Java工程师常用学习资源，关注公众号后，后台回复关键字 **“Java”** 即可免费无套路获取。
+
+![我的公众号](https://img-blog.csdnimg.cn/20190805090108984.jpg)
+ 
 
 
