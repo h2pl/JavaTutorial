@@ -1,5 +1,4 @@
-# Table of Contents
-
+# 目录
   * [什么是 Java Web](#什么是-java-web)
     * [Web开发的历史](#web开发的历史)
     * [开源框架时代](#开源框架时代)
@@ -48,8 +47,7 @@ web开发的历史其实并不久远，要搞清楚java web开发的特点（主
 
 
 
-![](https://img2018.cnblogs.com/blog/1813823/201910/1813823-20191020130358732-639047052.webp)
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405151003.png)
 
 
 
@@ -62,8 +60,7 @@ web开发的历史其实并不久远，要搞清楚java web开发的特点（主
 
 
 
-![](https://img2018.cnblogs.com/blog/1813823/201910/1813823-20191020130358904-1951595187.webp)
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405151021.png)
 
 
 
@@ -76,8 +73,7 @@ web开发的历史其实并不久远，要搞清楚java web开发的特点（主
 
 
 
-![](https://img2018.cnblogs.com/blog/1813823/201910/1813823-20191020130359318-309106335.webp)
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405151039.png)
 
 
 
@@ -88,8 +84,7 @@ CGI的推出，使得web开发正式进入了动态处理时代，服务器能�
 
 
 
-![](https://img2018.cnblogs.com/blog/1813823/201910/1813823-20191020130359489-1405737926.webp)
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405151104.png)
 
 
 
@@ -100,8 +95,7 @@ CGI的推出，使得web开发正式进入了动态处理时代，服务器能�
 
 
 
-![](https://img2018.cnblogs.com/blog/1813823/201910/1813823-20191020130359667-1843065714.webp)
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405151117.png)
 
 
 
@@ -114,8 +108,7 @@ CGI的推出，使得web开发正式进入了动态处理时代，服务器能�
 
 
 
-![](https://img2018.cnblogs.com/blog/1813823/201910/1813823-20191020130359840-877994653.webp)
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405151132.png)
 
 
 
@@ -126,8 +119,7 @@ CGI的推出，使得web开发正式进入了动态处理时代，服务器能�
 
 
 
-![](https://img2018.cnblogs.com/blog/1813823/201910/1813823-20191020130400036-383481569.webp)
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405151210.png)
 
 
 
@@ -138,8 +130,7 @@ java web开发的技术体系还包括javabean和jsp，采用MVC结构来组合�
 
 
 
-![](https://img2018.cnblogs.com/blog/1813823/201910/1813823-20191020130400263-672191254.webp)
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405151230.png)
 
 
 
@@ -150,8 +141,7 @@ java web开发的技术体系还包括javabean和jsp，采用MVC结构来组合�
 
 
 
-![](https://img2018.cnblogs.com/blog/1813823/201910/1813823-20191020130400442-2098958889.webp)
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405151248.png)
 
 
 
@@ -197,7 +187,7 @@ HTTP是基于请求（request）和响应（response）的模型
 
 注意：C/S架构可选的协议有多种，例如：TCP/IP,UDP,HTTP
 
-​ 而B/S架构通常只支持HTTP协议
+ 而B/S架构通常只支持HTTP协议
 
 ### 二、服务器
 
@@ -221,15 +211,15 @@ web服务器是提供服务端程序运行的一个环境，它本身也是一�
 
 ### 三、JavaWeb项目结构
 
-| 项目根目录，例如：myweb、ch01 |   |   | 通常存放静态资源文件（如：html等等） |
+| 项目根目录，例如：myweb、ch01 |  |  | 通常存放静态资源文件（如：html等等） |
 | --- | --- | --- | --- |
-|   | WEB-INF |   | 这个目录是当前项目私有的一个文件夹，只能提供给项目内部访问，对于客户端来说是访问不到了，通常这个目录下存放的是Java源代码、编译后的字节码文件以及Servlet的核心配置文件web.xml |
-|   |   | src | 存放java源代码的目录 |
-|   |   | classes | 存放编译后的字节码文件 |
-|   |   | lib | lib目录存放当前项目所需要的jar文件 |
-|   |   | JSP | 用于存放JSP动态页面 |
-|   |   | web.xml | 项目的配置文件，用于配置Servlet的请求映射、过滤器、监听器等等信息。每一个web项目都对应一个web.xml配置文件 |
-|   | META-INF |   | 配置应用程序、扩展程序、类加载服务等等 |
+|  | WEB-INF |  | 这个目录是当前项目私有的一个文件夹，只能提供给项目内部访问，对于客户端来说是访问不到了，通常这个目录下存放的是Java源代码、编译后的字节码文件以及Servlet的核心配置文件web.xml |
+|  |  | src | 存放java源代码的目录 |
+|  |  | classes | 存放编译后的字节码文件 |
+|  |  | lib | lib目录存放当前项目所需要的jar文件 |
+|  |  | JSP | 用于存放JSP动态页面 |
+|  |  | web.xml | 项目的配置文件，用于配置Servlet的请求映射、过滤器、监听器等等信息。每一个web项目都对应一个web.xml配置文件 |
+|  | META-INF |  | 配置应用程序、扩展程序、类加载服务等等 |
 
 
 
@@ -245,11 +235,11 @@ https://blog.csdn.net/qq_41911570/article/details/83279327
 
 ### 个人公众号：程序员黄小斜
 
-​
+
 黄小斜是 985 硕士，阿里巴巴Java工程师，在自学编程、技术求职、Java学习等方面有丰富经验和独到见解，希望帮助到更多想要从事互联网行业的程序员们。
-​
+
 作者专注于 JAVA 后端技术栈，热衷于分享程序员干货、学习经验、求职心得，以及自学编程和Java技术栈的相关干货。
-​
+
 黄小斜是一个斜杠青年，坚持学习和写作，相信终身学习的力量，希望和更多的程序员交朋友，一起进步和成长！
 
 **原创电子书:**
@@ -274,4 +264,4 @@ https://blog.csdn.net/qq_41911570/article/details/83279327
 
 ![我的公众号](https://img-blog.csdnimg.cn/20190805090108984.jpg)
 
-​                     
+                     

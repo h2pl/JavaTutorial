@@ -1,5 +1,4 @@
-# Table of Contents
-
+# 目录
   * [Overview](#overview)
   * [Connector Init and Start](#connector-init-and-start)
   * [Request Process](#request-process)
@@ -46,7 +45,7 @@ Tomcat-9.0.0.M22 是 Tomcat 目前最新的版本，但尚未发布，它实现�
 
 ## Overview
 
-![](https://img-blog.csdnimg.cn/20190808094540456.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0FsYmVuWGll,size_16,color_FFFFFF,t_70)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405154006.png)
 
 Connector 启动以后会启动一组线程用于不同阶段的请求处理过程。
 
@@ -60,7 +59,7 @@ Acceptor、Poller、worker 所在的 ThreadPoolExecutor 都维护在 NioEndpoint
 
 ## Connector Init and Start
 
-![](https://img-blog.csdnimg.cn/20190808094650927.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0FsYmVuWGll,size_16,color_FFFFFF,t_70)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405154024.png)
 
 1.  initServerSocket()，通过 ServerSocketChannel.open() 打开一个 ServerSocket，默认绑定到 8080 端口，默认的连接等待队列长度是 100， 当超过 100 个时会拒绝服务。我们可以通过配置 conf/server.xml 中 Connector 的 acceptCount 属性对其进行定制。
 
@@ -74,7 +73,7 @@ Acceptor、Poller、worker 所在的 ThreadPoolExecutor 都维护在 NioEndpoint
 
 ### Acceptor
 
-![](https://img-blog.csdnimg.cn/20190808094725483.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0FsYmVuWGll,size_16,color_FFFFFF,t_70)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405154041.png)
 
 1.  Acceptor 在启动后会阻塞在 ServerSocketChannel.accept(); 方法处，当有新连接到达时，该方法返回一个 SocketChannel。
 
@@ -84,8 +83,7 @@ Acceptor、Poller、worker 所在的 ThreadPoolExecutor 都维护在 NioEndpoint
 
 ### Poller
 
-![](https://img-blog.csdnimg.cn/20190808094749113.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0FsYmVuWGll,size_16,color_FFFFFF,t_70)
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405154054.png)
 1.  selector.select(1000)。当 Poller 启动后因为 selector 中并没有已注册的 Channel，所以当执行到该方法时只能阻塞。所有的 Poller 共用一个 Selector，其实现类是 sun.nio.ch.EPollSelectorImpl
 
 2.  events() 方法会将通过 addEvent() 方法添加到事件队列中的 Socket 注册到 EPollSelectorImpl，当 Socket 可读时，Poller 才对其进行处理
@@ -114,7 +112,7 @@ Acceptor、Poller、worker 所在的 ThreadPoolExecutor 都维护在 NioEndpoint
 
 ### Container
 
-![](https://img-blog.csdnimg.cn/20190808094835789.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0FsYmVuWGll,size_16,color_FFFFFF,t_70)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405154120.png)
 
 *   需要注意的是，基本上每一个容器的 StandardPipeline 上都会有多个已注册的 Valve，我们只关注每个容器的 Basic Valve。其他 Valve 都是在 Basic Valve 前执行。
 
@@ -160,11 +158,11 @@ Acceptor、Poller、worker 所在的 ThreadPoolExecutor 都维护在 NioEndpoint
 
 ### 个人公众号：程序员黄小斜
 
-​
+
 黄小斜是 985 硕士，阿里巴巴Java工程师，在自学编程、技术求职、Java学习等方面有丰富经验和独到见解，希望帮助到更多想要从事互联网行业的程序员们。
-​
+
 作者专注于 JAVA 后端技术栈，热衷于分享程序员干货、学习经验、求职心得，以及自学编程和Java技术栈的相关干货。
-​
+
 黄小斜是一个斜杠青年，坚持学习和写作，相信终身学习的力量，希望和更多的程序员交朋友，一起进步和成长！
 
 **原创电子书:**
@@ -189,4 +187,4 @@ Acceptor、Poller、worker 所在的 ThreadPoolExecutor 都维护在 NioEndpoint
 
 ![我的公众号](https://img-blog.csdnimg.cn/20190805090108984.jpg)
 
-​                     
+                     

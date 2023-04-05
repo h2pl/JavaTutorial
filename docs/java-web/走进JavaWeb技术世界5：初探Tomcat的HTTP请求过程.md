@@ -1,13 +1,9 @@
-# Table of Contents
-
-* [[走进JavaWeb技术世界5：初探Tomcat的HTTP请求过程](https://www.cnblogs.com/xll1025/p/11366264.html)](#[走进javaweb技术世界5：初探tomcat的http请求过程]httpswwwcnblogscomxll1025p11366264html)
+# 目录
   * [初探Tomcat的HTTP请求过程](#初探tomcat的http请求过程)
   * [Tomcat的组织结构](#tomcat的组织结构)
     * [由Server.xml的结构看Tomcat的体系结构](#由serverxml的结构看tomcat的体系结构)
   * [Tomcat Server处理一个HTTP请求的过程](#tomcat-server处理一个http请求的过程)
   * [参考文章](#参考文章)
-
-
 
 本文转载自互联网，侵删
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看
@@ -29,22 +25,14 @@
 **文末赠送8000G的Java架构师学习资料，需要的朋友可以到文末了解领取方式，资料包括Java基础、进阶、项目和架构师等免费学习资料，更有数据库、分布式、微服务等热门技术学习视频，内容丰富，兼顾原理和实践，另外也将赠送作者原创的Java学习指南、Java程序员面试指南等干货资源）**
 <!-- more -->
 
-# [走进JavaWeb技术世界5：初探Tomcat的HTTP请求过程](https://www.cnblogs.com/xll1025/p/11366264.html)
-
-
-
-
-
 ## 初探Tomcat的HTTP请求过程
-
-![图片描述](https://img.mukewang.com/5a26678e0001e76d03630101.png)
 
 前言：
 1.作为Java开发人员，大多都对Tomcat不陌生，由Apache基金会提供技术支持与维护，因为其免费开源且易用，作为Web服务器深受市场欢迎，所以有必要对其进行深入的研究，本系列皆以Tomcat 8.5为研究课题，下载地址：[https://tomcat.apache.org/download-80.cgi](https://tomcat.apache.org/download-80.cgi)
 
 2.下图为 apache-tomcat-8.5.23.zip 在windows解压后的目录。
 
-![图片描述](https://img.mukewang.com/5a26681100015daf10210411.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405152548.png)
 
 下面是解压后的一些关键目录:
 
@@ -81,264 +69,266 @@ Resource模块: 这个子模块包含一些资源文件，如Server.xml及Web.xm
 
 ## Tomcat的组织结构
 
-*   Tomcat是一个基于组件的服务器，它的构成组件都是可配置的，其中最外层的是Catalina servlet容器，其他组件按照一定的格式要求配置在这个顶层容器中。 
+*   Tomcat是一个基于组件的服务器，它的构成组件都是可配置的，其中最外层的是Catalina servlet容器，其他组件按照一定的格式要求配置在这个顶层容器中。
     Tomcat的各种组件都是在Tomcat安装目录下的/conf/server.xml文件中配置的。
 
 ### 由Server.xml的结构看Tomcat的体系结构
+````
+<Server>                                                //顶层类元素，可以包括多个Service   
 
-    <Server>                                                //顶层类元素，可以包括多个Service   
-    
-        <Service>                                           //顶层类元素，可包含一个Engine，多个Connecter
-    
-            <Connector>                                     //连接器类元素，代表通信接口
-    
-                    <Engine>                                //容器类元素，为特定的Service组件处理客户请求，要包含多个Host
-    
-                            <Host>                          //容器类元素，为特定的虚拟主机组件处理客户请求，可包含多个Context
-    
-                                    <Context>               //容器类元素，为特定的Web应用处理所有的客户请求
-    
-                                    </Context>
-    
-                            </Host>
-    
-                    </Engine>
-    
-            </Connector>
-    
-        </Service>
-    
-    </Server>
+    <Service>                                           //顶层类元素，可包含一个Engine，多个Connecter
 
+        <Connector>                                     //连接器类元素，代表通信接口
+
+                <Engine>                                //容器类元素，为特定的Service组件处理客户请求，要包含多个Host
+
+                        <Host>                          //容器类元素，为特定的虚拟主机组件处理客户请求，可包含多个Context
+
+                                <Context>               //容器类元素，为特定的Web应用处理所有的客户请求
+
+                                </Context>
+
+                        </Host>
+
+                </Engine>
+
+        </Connector>
+
+    </Service>
+
+</Server>
+````
 实际源码如下：
+````
+<?xml version='1.0' encoding='utf-8'?>
 
-    <?xml version='1.0' encoding='utf-8'?>
-    
-    <Server port="8005" shutdown="SHUTDOWN">
-    
-      <Listener className="org.apache.catalina.startup.VersionLoggerListener" />
-    
-      <!-- Security listener. Documentation at /docs/config/listeners.html
-    
-      <Listener className="org.apache.catalina.security.SecurityListener" />
-    
-      -->
-    
-      <!--APR library loader. Documentation at /docs/apr.html -->
-    
-      <Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on" />
-    
-      <!--Initialize Jasper prior to webapps are loaded. Documentation at /docs/jasper-howto.html -->
-    
-      <Listener className="org.apache.catalina.core.JasperListener" />
-    
-      <!-- Prevent memory leaks due to use of particular java/javax APIs-->
-    
-      <Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener" />
-    
-      <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener" />
-    
-      <Listener className="org.apache.catalina.core.ThreadLocalLeakPreventionListener" />
-    
-      <!-- Global JNDI resources
-    
-           Documentation at /docs/jndi-resources-howto.html
-    
-      -->
-    
-      <GlobalNamingResources>
-    
-        <!-- Editable user database that can also be used by
-    
-             UserDatabaseRealm to authenticate users
-    
-        -->
-    
-        <Resource name="UserDatabase" auth="Container"
-    
-                  type="org.apache.catalina.UserDatabase"
-    
-                  description="User database that can be updated and saved"
-    
-                  factory="org.apache.catalina.users.MemoryUserDatabaseFactory"
-    
-                  pathname="conf/tomcat-users.xml" />
-    
-      </GlobalNamingResources>
-    
-      <!-- A "Service" is a collection of one or more "Connectors" that share
-    
-           a single "Container" Note:  A "Service" is not itself a "Container",
-    
-           so you may not define subcomponents such as "Valves" at this level.
-    
-           Documentation at /docs/config/service.html
-    
-       -->
-    
-      <Service name="Catalina">
-    
-        <!--The connectors can use a shared executor, you can define one or more named thread pools-->
-    
-        <!--
-    
-        <Executor name="tomcatThreadPool" namePrefix="catalina-exec-"
-    
-            maxThreads="150" minSpareThreads="4"/>
-    
-        -->
-    
-        <!-- A "Connector" represents an endpoint by which requests are received
-    
-             and responses are returned. Documentation at :
-    
-             Java HTTP Connector: /docs/config/http.html (blocking & non-blocking)
-    
-             Java AJP  Connector: /docs/config/ajp.html
-    
-             APR (HTTP/AJP) Connector: /docs/apr.html
-    
-             Define a non-SSL HTTP/1.1 Connector on port 8080
-    
-        -->
-    
-        <Connector port="8080" protocol="HTTP/1.1"
-    
-                   connectionTimeout="20000"
-    
-                   redirectPort="8443" />
-    
-        <!-- A "Connector" using the shared thread pool-->
-    
-        <!--
-    
-        <Connector executor="tomcatThreadPool"
-    
-                   port="8080" protocol="HTTP/1.1"
-    
-                   connectionTimeout="20000"
-    
-                   redirectPort="8443" />
-    
-        -->
-    
-        <!-- Define a SSL HTTP/1.1 Connector on port 8443
-    
-             This connector uses the BIO implementation that requires the JSSE
-    
-             style configuration. When using the APR/native implementation, the
-    
-             OpenSSL style configuration is required as described in the APR/native
-    
-             documentation -->
-    
-        <!--
-    
-        <Connector port="8443" protocol="org.apache.coyote.http11.Http11Protocol"
-    
-                   maxThreads="150" SSLEnabled="true" scheme="https" secure="true"
-    
-                   clientAuth="false" sslProtocol="TLS" />
-    
-        -->
-    
-        <!-- Define an AJP 1.3 Connector on port 8009 -->
-    
-        <Connector port="8009" protocol="AJP/1.3" redirectPort="8443" />
-    
-        <!-- An Engine represents the entry point (within Catalina) that processes
-    
-             every request.  The Engine implementation for Tomcat stand alone
-    
-             analyzes the HTTP headers included with the request, and passes them
-    
-             on to the appropriate Host (virtual host).
-    
-             Documentation at /docs/config/engine.html -->
-    
-        <!-- You should set jvmRoute to support load-balancing via AJP ie :
-    
-        <Engine name="Catalina" defaultHost="localhost" jvmRoute="jvm1">
-    
-        -->
-    
-        <Engine name="Catalina" defaultHost="localhost">
-    
-          <!--For clustering, please take a look at documentation at:
-    
-              /docs/cluster-howto.html  (simple how to)
-    
-              /docs/config/cluster.html (reference documentation) -->
-    
-          <!--
-    
-          <Cluster className="org.apache.catalina.ha.tcp.SimpleTcpCluster"/>
-    
-          -->
-    
-          <!-- Use the LockOutRealm to prevent attempts to guess user passwords
-    
-               via a brute-force attack -->
-    
-          <Realm className="org.apache.catalina.realm.LockOutRealm">
-    
-            <!-- This Realm uses the UserDatabase configured in the global JNDI
-    
-                 resources under the key "UserDatabase".  Any edits
-    
-                 that are performed against this UserDatabase are immediately
-    
-                 available for use by the Realm.  -->
-    
-            <Realm className="org.apache.catalina.realm.UserDatabaseRealm"
-    
-                   resourceName="UserDatabase"/>
-    
-          </Realm>
-    
-          <Host name="localhost"  appBase="webapps"
-    
-                unpackWARs="true" autoDeploy="true">
-    
-            <!-- SingleSignOn valve, share authentication between web applications
-    
-                 Documentation at: /docs/config/valve.html -->
-    
-            <!--
-    
-            <Valve className="org.apache.catalina.authenticator.SingleSignOn" />
-    
-            -->
-    
-            <!-- Access log processes all example.
-    
-                 Documentation at: /docs/config/valve.html
-    
-                 Note: The pattern used is equivalent to using pattern="common" -->
-    
-            <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
-    
-                   prefix="localhost_access_log." suffix=".txt"
-    
-                   pattern="%h %l %u %t "%r" %s %b" />
-    
-          </Host>
-    
-        </Engine>
-    
-      </Service>
-    
-    </Server>
+<Server port="8005" shutdown="SHUTDOWN">
 
-由上可得出Tomcat的体系结构： 
-![](https://images2015.cnblogs.com/blog/665375/201601/665375-20160119185045031-1958903281.jpg) 
+  <Listener className="org.apache.catalina.startup.VersionLoggerListener" />
+
+  <!-- Security listener. Documentation at /docs/config/listeners.html
+
+  <Listener className="org.apache.catalina.security.SecurityListener" />
+
+  -->
+
+  <!--APR library loader. Documentation at /docs/apr.html -->
+
+  <Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on" />
+
+  <!--Initialize Jasper prior to webapps are loaded. Documentation at /docs/jasper-howto.html -->
+
+  <Listener className="org.apache.catalina.core.JasperListener" />
+
+  <!-- Prevent memory leaks due to use of particular java/javax APIs-->
+
+  <Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener" />
+
+  <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener" />
+
+  <Listener className="org.apache.catalina.core.ThreadLocalLeakPreventionListener" />
+
+  <!-- Global JNDI resources
+
+       Documentation at /docs/jndi-resources-howto.html
+
+  -->
+
+  <GlobalNamingResources>
+
+    <!-- Editable user database that can also be used by
+
+         UserDatabaseRealm to authenticate users
+
+    -->
+
+    <Resource name="UserDatabase" auth="Container"
+
+              type="org.apache.catalina.UserDatabase"
+
+              description="User database that can be updated and saved"
+
+              factory="org.apache.catalina.users.MemoryUserDatabaseFactory"
+
+              pathname="conf/tomcat-users.xml" />
+
+  </GlobalNamingResources>
+
+  <!-- A "Service" is a collection of one or more "Connectors" that share
+
+       a single "Container" Note:  A "Service" is not itself a "Container",
+
+       so you may not define subcomponents such as "Valves" at this level.
+
+       Documentation at /docs/config/service.html
+
+   -->
+
+  <Service name="Catalina">
+
+    <!--The connectors can use a shared executor, you can define one or more named thread pools-->
+
+    <!--
+
+    <Executor name="tomcatThreadPool" namePrefix="catalina-exec-"
+
+        maxThreads="150" minSpareThreads="4"/>
+
+    -->
+
+    <!-- A "Connector" represents an endpoint by which requests are received
+
+         and responses are returned. Documentation at :
+
+         Java HTTP Connector: /docs/config/http.html (blocking & non-blocking)
+
+         Java AJP  Connector: /docs/config/ajp.html
+
+         APR (HTTP/AJP) Connector: /docs/apr.html
+
+         Define a non-SSL HTTP/1.1 Connector on port 8080
+
+    -->
+
+    <Connector port="8080" protocol="HTTP/1.1"
+
+               connectionTimeout="20000"
+
+               redirectPort="8443" />
+
+    <!-- A "Connector" using the shared thread pool-->
+
+    <!--
+
+    <Connector executor="tomcatThreadPool"
+
+               port="8080" protocol="HTTP/1.1"
+
+               connectionTimeout="20000"
+
+               redirectPort="8443" />
+
+    -->
+
+    <!-- Define a SSL HTTP/1.1 Connector on port 8443
+
+         This connector uses the BIO implementation that requires the JSSE
+
+         style configuration. When using the APR/native implementation, the
+
+         OpenSSL style configuration is required as described in the APR/native
+
+         documentation -->
+
+    <!--
+
+    <Connector port="8443" protocol="org.apache.coyote.http11.Http11Protocol"
+
+               maxThreads="150" SSLEnabled="true" scheme="https" secure="true"
+
+               clientAuth="false" sslProtocol="TLS" />
+
+    -->
+
+    <!-- Define an AJP 1.3 Connector on port 8009 -->
+
+    <Connector port="8009" protocol="AJP/1.3" redirectPort="8443" />
+
+    <!-- An Engine represents the entry point (within Catalina) that processes
+
+         every request.  The Engine implementation for Tomcat stand alone
+
+         analyzes the HTTP headers included with the request, and passes them
+
+         on to the appropriate Host (virtual host).
+
+         Documentation at /docs/config/engine.html -->
+
+    <!-- You should set jvmRoute to support load-balancing via AJP ie :
+
+    <Engine name="Catalina" defaultHost="localhost" jvmRoute="jvm1">
+
+    -->
+
+    <Engine name="Catalina" defaultHost="localhost">
+
+      <!--For clustering, please take a look at documentation at:
+
+          /docs/cluster-howto.html  (simple how to)
+
+          /docs/config/cluster.html (reference documentation) -->
+
+      <!--
+
+      <Cluster className="org.apache.catalina.ha.tcp.SimpleTcpCluster"/>
+
+      -->
+
+      <!-- Use the LockOutRealm to prevent attempts to guess user passwords
+
+           via a brute-force attack -->
+
+      <Realm className="org.apache.catalina.realm.LockOutRealm">
+
+        <!-- This Realm uses the UserDatabase configured in the global JNDI
+
+             resources under the key "UserDatabase".  Any edits
+
+             that are performed against this UserDatabase are immediately
+
+             available for use by the Realm.  -->
+
+        <Realm className="org.apache.catalina.realm.UserDatabaseRealm"
+
+               resourceName="UserDatabase"/>
+
+      </Realm>
+
+      <Host name="localhost"  appBase="webapps"
+
+            unpackWARs="true" autoDeploy="true">
+
+        <!-- SingleSignOn valve, share authentication between web applications
+
+             Documentation at: /docs/config/valve.html -->
+
+        <!--
+
+        <Valve className="org.apache.catalina.authenticator.SingleSignOn" />
+
+        -->
+
+        <!-- Access log processes all example.
+
+             Documentation at: /docs/config/valve.html
+
+             Note: The pattern used is equivalent to using pattern="common" -->
+
+        <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
+
+               prefix="localhost_access_log." suffix=".txt"
+
+               pattern="%h %l %u %t "%r" %s %b" />
+
+      </Host>
+
+    </Engine>
+
+  </Service>
+
+</Server>
+````
+由上可得出Tomcat的体系结构：
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405152741.png)
+
 图一：Tomcat的体系结构
 
 由上图可看出Tomca的心脏是两个组件：Connecter和Container。一个Container可以选择多个Connecter，多个Connector和一个Container就形成了一个Service。Service可以对外提供服务，而Server服务器控制整个Tomcat的生命周期。
 
 ## Tomcat Server处理一个HTTP请求的过程
 
-![](https://images2015.cnblogs.com/blog/665375/201601/665375-20160119184923890-1995839223.png) 
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405152756.png)
+
 图三：Tomcat Server处理一个HTTP请求的过程
 
 Tomcat Server处理一个HTTP请求的过程

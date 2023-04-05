@@ -1,5 +1,4 @@
-# Table of Contents
-
+# 目录
   * [Tomcat和物理服务器的区别](#tomcat和物理服务器的区别)
     * [Tomcat：](#tomcat：)
     * [物理服务器：](#物理服务器：)
@@ -46,11 +45,11 @@
 
 ### Tomcat：
 
-1.     本质：软件 Web 应用服务器----一个免费的开放源代码的Web 应用服务器，属于轻量级应用服务器，在中小型系统和并发访问用户不是很多的场合下被普遍使用，是开发和调试JSP 程序的首选。
+1.本质：软件 Web 应用服务器----一个免费的开放源代码的Web 应用服务器，属于轻量级应用服务器，在中小型系统和并发访问用户不是很多的场合下被普遍使用，是开发和调试JSP 程序的首选。
 
-2.     用途：
+2.用途：
 
-a．  当在一台机器（即物理服务器，也就是物理机）上配置好Apache 服务器，可利用它响应HTML页面的访问请求。实际上Tomcat是Apache 服务器的扩展，但运行时它是独立运行的，所以当你运行tomcat 时，它实际上作为一个与Apache 独立的进程单独运行的，Tomcat 实际上运行JSP 页面和Servlet
+a． 当在一台机器（即物理服务器，也就是物理机）上配置好Apache 服务器，可利用它响应HTML页面的访问请求。实际上Tomcat是Apache 服务器的扩展，但运行时它是独立运行的，所以当你运行tomcat 时，它实际上作为一个与Apache 独立的进程单独运行的，Tomcat 实际上运行JSP 页面和Servlet
 
 b． Tomcat和IIS等Web服务器一样，具有处理HTML页面的功能，另外它还是一个Servlet和JSP容器，独立的Servlet容器是Tomcat的默认模式。
 
@@ -66,33 +65,29 @@ b． Tomcat和IIS等Web服务器一样，具有处理HTML页面的功能，另�
 
 ### 定义：
 
-1\. Apache
+1. Apache
 
 Apache HTTP服务器是一个模块化的服务器，可以运行在几乎所有广泛使用的计算机平台上。其属于应用服务器。Apache支持支持模块多，性能稳定，Apache本身是静态解析，适合静态HTML、图片等，但可以通过扩展脚本、模块等支持动态页面等。
 
 (Apche可以支持PHPcgiperl,但是要使用Java的话，你需要Tomcat在Apache后台支撑，将Java请求由Apache转发给Tomcat处理。) 缺点：配置相对复杂，自身不支持动态页面。
 
-2\. Tomcat：
+2. Tomcat：
 
 Tomcat是应用(Java)服务器，它只是一个Servlet(JSP也翻译成Servlet)容器，可以认为是Apache的扩展，但是可以独立于Apache运行。
 
-3\. Nginx
+3. Nginx
 
 Nginx是俄罗斯人编写的十分轻量级的HTTP服务器,Nginx，它的发音为“engine X”，是一个高性能的HTTP和反向代理服务器，同时也是一个IMAP/POP3/SMTP 代理服务器。
 
-[![](https://server.zzidc.com/uploads/allimg/181211/1-1Q211140I2H2.jpg)](http://s1.51cto.com/oss/201812/11/0b70cbd49f22c2bfd4bf6cd5da29335f.jpg-wh_651x-s_227048833.jpg)
-
 ### 区别
 
-1\. Apache与Tomcat的比较
+Apache与Tomcat的比较
 
 相同点：
 
 两者都是Apache组织开发的两者都有HTTP服务的功能两者都是免费的 不同点：
 
 Apache是专门用了提供HTTP服务的，以及相关配置的(例如虚拟主机、URL转发等等)，而Tomcat是Apache组织在符合Java EE的JSP、Servlet标准下开发的一个JSP服务器.
-
-[![](https://server.zzidc.com/uploads/allimg/181211/140P921b-0.jpg)](https://server.zzidc.com/uploads/allimg/181211/140P921b-0.jpg)
 
 Apache是一个Web服务器环境程序,启用他可以作为Web服务器使用,不过只支持静态网页如(ASP,PHP,CGI,JSP)等动态网页的就不行。如果要在Apache环境下运行JSP的话就需要一个解释器来执行JSP网页,而这个JSP解释器就是Tomcat。
 
@@ -156,11 +151,11 @@ Apache在处理动态有优势，Nginx并发性比较好，CPU内存占用低，
 
 ### 个人公众号：程序员黄小斜
 
-​
+
 黄小斜是 985 硕士，阿里巴巴Java工程师，在自学编程、技术求职、Java学习等方面有丰富经验和独到见解，希望帮助到更多想要从事互联网行业的程序员们。
-​
+
 作者专注于 JAVA 后端技术栈，热衷于分享程序员干货、学习经验、求职心得，以及自学编程和Java技术栈的相关干货。
-​
+
 黄小斜是一个斜杠青年，坚持学习和写作，相信终身学习的力量，希望和更多的程序员交朋友，一起进步和成长！
 
 **原创电子书:**
@@ -185,4 +180,4 @@ Apache在处理动态有优势，Nginx并发性比较好，CPU内存占用低，
 
 ![我的公众号](https://img-blog.csdnimg.cn/20190805090108984.jpg)
 
-​                     
+                     

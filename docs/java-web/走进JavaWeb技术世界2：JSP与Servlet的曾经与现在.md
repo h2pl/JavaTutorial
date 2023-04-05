@@ -1,5 +1,4 @@
-# Table of Contents
-
+# 目录
   * [servlet和jsp的区别](#servlet和jsp的区别)
   * [servlet和jsp各自的特点](#servlet和jsp各自的特点)
   * [通过MVC双剑合璧](#通过mvc双剑合璧)
@@ -8,7 +7,7 @@
     * [二、Servlet的生命周期](#二、servlet的生命周期)
       * [init() 方法](#init-方法)
       * [service() 方法](#service-方法)
-      * [ destroy() 方法](# destroy-方法)
+      * [destroy() 方法](#destroy-方法)
   * [相关面试题](#相关面试题)
     * [怎样理解Servlet的单实例多线程？**](#怎样理解servlet的单实例多线程？)
     * [JSP的中存在的多线程问题：](#jsp的中存在的多线程问题：)
@@ -66,7 +65,7 @@ Model——业务功能编写（例如算法实现）、数据库设计以及数
 
 在JSP/Servlet开发的软件系统中，这三个部分的描述如下所示：
 
-![229cf9ff5b1729eaf408fac56238eeb3_hd](https://atts.w3cschool.cn/attachments/image/20180428/1524895758222687.jpg)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405151458.png)
 
 1、Web浏览器发送HTTP请求到服务端，然后被Controller(Servlet)获取并进行处理（例如参数解析、请求转发）
 
@@ -82,11 +81,11 @@ MVC模式在Web开发中有很大的优势，它完美规避了JSP与Servlet各�
 
 ### 一、Servlet 是什么？
 
-[Java ](http://lib.csdn.net/base/java "Java 知识库")Servlet 是运行在 Web 服务器或应用服务器上的程序，它是作为来自 Web 浏览器或其他 HTTP 客户端的请求和 HTTP 服务器上的[数据库](http://lib.csdn.net/base/mysql "MySQL知识库")或应用程序之间的中间层。
+[Java](http://lib.csdn.net/base/java "Java 知识库")Servlet 是运行在 Web 服务器或应用服务器上的程序，它是作为来自 Web 浏览器或其他 HTTP 客户端的请求和 HTTP 服务器上的[数据库](http://lib.csdn.net/base/mysql "MySQL知识库")或应用程序之间的中间层。
 
 使用 Servlet，您可以收集来自网页表单的用户输入，呈现来自数据库或者其他源的记录，还可以动态创建网页。
 
-[Java](http://lib.csdn.net/base/javase "Java SE知识库") Servlet 通常情况下与使用 CGI（Common Gateway Interface，公共网关接口）实现的程序可以达到异曲同工的效果。但是相比于 CGI，Servlet 有以下几点优势：
+[Java](http://lib.csdn.net/base/javase "Java SE知识库")Servlet 通常情况下与使用 CGI（Common Gateway Interface，公共网关接口）实现的程序可以达到异曲同工的效果。但是相比于 CGI，Servlet 有以下几点优势：
 
 *   **1、性能明显更好。**
 *   **2、Servlet 在 Web 服务器的地址空间内执行。这样它就没有必要再创建一个单独的进程来处理每个客户端请求。**
@@ -96,13 +95,11 @@ MVC模式在Web开发中有很大的优势，它完美规避了JSP与Servlet各�
 
 ### 二、Servlet的生命周期
 
-
-
 Servlet 生命周期可被定义为从创建直到毁灭的整个过程。以下是 Servlet 遵循的过程：
 
-*   **1、Servlet 通过调用 init () 方法进行初始化。**
-*   **2、Servlet 调用 service() 方法来处理客户端的请求。**
-*   **3、Servlet 通过调用 destroy() 方法终止（结束）。**
+*   **1、Servlet 通过调用init ()方法进行初始化。**
+*   **2、Servlet 调用service()方法来处理客户端的请求。**
+*   **3、Servlet 通过调用destroy()方法终止（结束）。**
 *   **4、最后，Servlet 是由 JVM 的垃圾回收器进行垃圾回收的。**
 
 #### init() 方法
@@ -117,21 +114,19 @@ service() 方法是执行实际任务的主要方法。Servlet 容器（即 Web 
 
 每次服务器接收到一个 Servlet 请求时，服务器会产生一个新的线程并调用服务。service() 方法检查 HTTP 请求类型（GET、POST、PUT、DELETE 等），并在适当的时候调用 doGet、doPost、doPut，doDelete 等方法。
 
-####  destroy() 方法
+#### destroy() 方法
 
 destroy() 方法只会被调用一次，在 Servlet 生命周期结束时被调用。destroy() 方法可以让您的 Servlet 关闭数据库连接、停止后台线程、把 Cookie 列表或点击计数器写入到磁盘，并执行其他类似的清理活动。
 
 在调用 destroy() 方法之后，servlet 对象被标记为垃圾回收。
 
-![](https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif) 示例
-
 执行后：
 
-![](https://images2015.cnblogs.com/blog/920105/201705/920105-20170514031238707-1640484760.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405151559.png)
 
 以后继续请求时：
 
-![](https://images2015.cnblogs.com/blog/920105/201705/920105-20170514031335051-175078972.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405151623.png)
 
 可见，就绪请求时只有service()方法执行！
 ## 相关面试题
@@ -169,7 +164,7 @@ Servlet采用多线程来处理多个请求同时访问。servlet依赖于一个
 
 当这个线程正在执行的时候,容器收到另外一个请求,调度线程同样从线程池中选出另一个工作者线程来服务新的请求,容器并不关心这个请求是否访问的是同一个Servlet.当容器同时收到对同一个Servlet的多个请求的时候，那么这个Servlet的service()方法将在多线程中并发执行。
 
-Servlet容器默认采用单实例多线程的方式来处理请求，这样减少产生Servlet实例的开销，提升了对请求的响应时间，对于Tomcat可以在server.xml中通过<Connector>元素设置线程池中线程的数目。 
+Servlet容器默认采用单实例多线程的方式来处理请求，这样减少产生Servlet实例的开销，提升了对请求的响应时间，对于Tomcat可以在server.xml中通过<Connector>元素设置线程池中线程的数目。
 
 ### 如何开发线程安全的Servlet
 
@@ -177,17 +172,12 @@ Servlet容器默认采用单实例多线程的方式来处理请求，这样减�
 
 该接口指定了系统如何处理对同一个Servlet的调用。如果一个Servlet被这个接口指定,那么在这个Servlet中的service方法将不会有两个线程被同时执行，当然也就不存在线程安全的问题。这种方法只要将前面的Concurrent Test类的类头定义更改为：
 
+````
 
-
-<pre>Public class Concurrent Test extends HttpServlet implements SingleThreadModel { 
+Public class Concurrent Test extends HttpServlet implements SingleThreadModel { 
 ………… 
-}  </pre>
-
-
-
-
-
-
+}  
+````
 
 ## 同步对共享数据的操作
 使用synchronized 关键字能保证一次只有一个线程可以访问被保护的区段
@@ -211,7 +201,6 @@ Struts2 Action对象为每一个请求产生一个实例，因此没有线程安
 当Spring管理Struts2的Action时，bean默认是单实例的，可以通过配置参数将其设置为原型。(scope="prototype ）
 
 ## 五、servlet与jsp的区别
-
 
 
 1.jsp经编译后就变成了Servlet.(JSP的本质就是Servlet，JVM只能识别java的类，不能识别JSP的代码,Web容器将JSP的代码编译成JVM能够识别的java类)

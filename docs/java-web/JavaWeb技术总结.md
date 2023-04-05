@@ -1,5 +1,4 @@
-# Table of Contents
-
+# 目录
   * [Servlet及相关类](#servlet及相关类)
   * [Jsp和ViewResolver](#jsp和viewresolver)
   * [filter，listener](#filter，listener)
@@ -17,18 +16,7 @@
     * [Java技术江湖](#java技术江湖)
     * [个人公众号：黄小斜](#个人公众号：黄小斜)
 
-
----
-title: JavaWeb技术总结
-date: 2018-07-08 22:13:33
-tags:
-	- JavaWeb
-categories:
-	- 后端
-	- 技术总结
----
-
-
+    
 这篇总结主要是基于我之前两个系列的文章而来。主要是把重要的知识点用自己的话说了一遍，可能会有一些错误，还望见谅和指点。谢谢
 
 更多详细内容可以查看我的专栏文章：
@@ -69,7 +57,7 @@ JAVA WEB工程，都是打成WAR包进行发布。
 典型的war包内部结构如下：
 
 webapp.war
-
+````
   |    index.jsp
 
   |
@@ -95,7 +83,7 @@ webapp.war
                     other.jar             // 依赖的jar包
     
                     share.jar
-
+````
 ## tomcat基础
 
 上一篇文章关于网络编程和NIO已经讲过了，这里按住不表。

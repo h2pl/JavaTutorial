@@ -1,5 +1,4 @@
-# Table of Contents
-
+# 目录
   * [Java日志系统的演变史](#java日志系统的演变史)
     * [阶段一](#阶段一)
     * [阶段二](#阶段二)
@@ -49,15 +48,6 @@
 ### 阶段二
 此时小B被借调到其他项目，小C加入到了项目组中。此时项目经理A要求改造日志系统，要求能把日志写到一个文件中，方便以后分析用户行为。小C在查看了以前的日志方式之后，感觉特别low，于是自己写了一个日志框架，命名为xiaoC-logging.jar，此举收到了项目经理A的好评。
 
-
-
-
-
-![](https://upload-images.jianshu.io/upload_images/11968147-7072fc51b9dfc62d.png?imageMogr2/auto-orient/strip|imageView2/2/w/472/format/webp)
-
-
-
-
 ### 阶段三
 项目组中加入了一个大牛老D，老D发现xiaoC-logging.jar这个日志框架虽然可以满足基本的日志要求，但是还不够高大上，没有一些诸如自动归档，异步写入文件，把日志文件写入NoSQL数据库中等功能。于是老D开发了一个更高级的日志框架叫oldD-logging.jar。
 
@@ -65,19 +55,10 @@
 oldD-logging.jar开发完成之后，需要把原来的xiaoC-logging.jar中的日志API做修改，把之前的日志实现写下来，换上高大上的oldD-logging.jar。
 
 ### 阶段五
-在这个卸载与上新的过程中，老D的工作量陡增，他感觉很累。不过姜还是老的辣，他参考了JDBC和spring中面向接口的编程方式，制定了一个日志的门面（一系列的接口），以后所有的日志的记录，都只面向接口编程，至于今后怎么去实现，都要遵循这个接口就可以了。 
+在这个卸载与上新的过程中，老D的工作量陡增，他感觉很累。不过姜还是老的辣，他参考了JDBC和spring中面向接口的编程方式，制定了一个日志的门面（一系列的接口），以后所有的日志的记录，都只面向接口编程，至于今后怎么去实现，都要遵循这个接口就可以了。
 
 
 那么在JAVA开发中，这正的日志系统是怎么演变的呢？简短地描述下日志发展，最先出现的是apache开源社区的log4j，这个日志确实是应用最广泛的日志工具，成为了java日志的事实上的标准。然而，当时Sun公司在jdk1.4中增加了JUL日志实现，企图对抗log4j，但是却造成了混乱，这个也是被人诟病的一点。当然也有其他日志工具的出现，这样必然造成开发者的混乱，因为这些日志系统互相没有关联，替换和统一也就变成了比较棘手的一件事。想象下你的应用使用log4j，然后使用了一个其他团队的库，他们使用了JUL，你的应用就得使用两个日志系统了，然后又有第二个库出现了，使用了simplelog。
-
-
-
-
-
-![](https://upload-images.jianshu.io/upload_images/11968147-b042d013f85e993f.png?imageMogr2/auto-orient/strip|imageView2/2/w/441/format/webp)
-
-
-
 
 
 这个时候估计让你崩溃了，这是要闹哪样？这个状况交给你来想想办法，你该如何解决呢？进行抽象，抽象出一个接口层，对每个日志实现都适配或者转接，这样这些提供给别人的库都直接使用抽象层即可。不错，开源社区提供了commons-logging抽象，被称为JCL，也就是日志框架了，确实出色地完成了兼容主流的日志实现（log4j、JUL、simplelog），基本一统江湖，就连顶顶大名的spring也是依赖了JCL。
@@ -94,22 +75,16 @@ oldD-logging.jar开发完成之后，需要把原来的xiaoC-logging.jar中的�
 *   门面型日志框架：
 
 1.  JCL：　　Apache基金会所属的项目，是一套Java日志接口，之前叫Jakarta Commons Logging，后更名为Commons Logging
-2.  SLF4J：  是一套简易Java日志门面，**本身并无日志的实现**。（Simple Logging Facade for Java，缩写Slf4j）
+2.  SLF4J： 是一套简易Java日志门面，**本身并无日志的实现**。（Simple Logging Facade for Java，缩写Slf4j）
 
 *   记录型日志框架:
 
 1.  JUL：　　JDK中的日志记录工具，也常称为JDKLog、jdk-logging，自Java1.4以来的官方日志实现。
 2.  Log4j：　 一个具体的日志实现框架。
-3.  Log4j2：   一个具体的日志实现框架，是LOG4J1的下一个版本，与Log4j 1发生了很大的变化，Log4j 2不兼容Log4j 1。
+3.  Log4j2：  一个具体的日志实现框架，是LOG4J1的下一个版本，与Log4j 1发生了很大的变化，Log4j 2不兼容Log4j 1。
 4.  Logback：一个具体的日志实现框架，和Slf4j是同一个作者，但其性能更好。
 
-　　　　　　　　　　　　　　![](https://img2018.cnblogs.com/blog/1577453/201908/1577453-20190801222005588-1535811596.png)
-
-
-
-
-
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405154329.png)
 
 ## 二、发展历程
 
@@ -132,11 +107,7 @@ oldD-logging.jar开发完成之后，需要把原来的xiaoC-logging.jar中的�
 不过，commons-logging对Log4j和j.u.l的配置问题兼容的并不好，使用commons-loggings还可能会遇到类加载问题，导致NoClassDefFoundError的错误出现。
 
 
-
-　　　　　　　　　　　　　　　　　　　　　　　　![](https://img2018.cnblogs.com/blog/1577453/201908/1577453-20190801215840541-1005764017.png)
-
-
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405154402.png)
 
 
 到这个时候一切看起来都很简单，很美好。接口和实现做了良好的分离，在统一的JCL之下，不改变任何代码，就可以通过配置就换用功能更强大，或者性能更好的日志库实现。
@@ -177,13 +148,7 @@ Logback相较于log4j有更多的优点：
 
 现在事情就变复杂了。我们有了两个流行的 Log Facade，以及三个流行的 Log Implementation。Gülcü 是个追求完美的人，他决定让这些Log之间都能够方便的互相替换，所以做了各种 Adapter 和 Bridge 来连接:
 
-
-
-　　　　　　　　　　　　　　![](https://img2018.cnblogs.com/blog/1577453/201908/1577453-20190801220018444-1557580371.png)
-
-
-
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405154425.png)
 
 可以看到甚至 Log4j 和 JUL 都可以桥接到SLF4J，再通过 SLF4J 适配到到 Logback！需要注意的是不能有循环的桥接，比如下面这些依赖就不能同时存在:
 
@@ -201,18 +166,9 @@ Log4j2 和 Log4j1.x 并不兼容，设计上很大程度上模仿了 SLF4J/Logba
 
 现在好了，我们有了三个流行的Log 接口和四个流行的Log实现，如果画出桥接关系的图来回事什么样子呢?
 
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405154503.png)
 
-
-　　　　　　　　　　　　![](https://img2018.cnblogs.com/blog/1577453/201908/1577453-20190801220108556-715466336.png)
 看到这里是不是感觉有点晕呢？是的，我也有这种感觉。同样，在添加依赖的时候，要小心不要有循环依赖。
-
-
-
-
-
-
-
-
 
 ## 参考文章
 
@@ -230,11 +186,10 @@ https://blog.csdn.net/android_hl/article/details/53228348
 
 ### 个人公众号：程序员黄小斜
 
-​
 黄小斜是 985 硕士，阿里巴巴Java工程师，在自学编程、技术求职、Java学习等方面有丰富经验和独到见解，希望帮助到更多想要从事互联网行业的程序员们。
-​
+
 作者专注于 JAVA 后端技术栈，热衷于分享程序员干货、学习经验、求职心得，以及自学编程和Java技术栈的相关干货。
-​
+
 黄小斜是一个斜杠青年，坚持学习和写作，相信终身学习的力量，希望和更多的程序员交朋友，一起进步和成长！
 
 **原创电子书:**
@@ -259,4 +214,4 @@ https://blog.csdn.net/android_hl/article/details/53228348
 
 ![我的公众号](https://img-blog.csdnimg.cn/20190805090108984.jpg)
 
-​                     
+                     

@@ -1,36 +1,37 @@
-# Table of Contents
-
-  * [前言](#前言)
-  * [Mybatis是什么](#mybatis是什么)
+# 目录
+* [前言](#前言)
+* [Mybatis是什么](#mybatis是什么)
     * [特点](#特点)
     * [核心类介绍](#核心类介绍)
     * [功能架构：我们把Mybatis的功能架构分为三层](#功能架构：我们把mybatis的功能架构分为三层)
     * [框架结构：](#框架结构：)
     * [执行流程：](#执行流程：)
-  * [与Hibernate的异同](#与hibernate的异同)
-  * [参考文章](#参考文章)
-  * [微信公众号](#微信公众号)
+* [与Hibernate的异同](#与hibernate的异同)
+* [参考文章](#参考文章)
+* [微信公众号](#微信公众号)
     * [个人公众号：黄小斜](#个人公众号：黄小斜)
 * [mybatis新手上路](#mybatis新手上路)
-  * [MyBatis简介](#mybatis简介)
-  * [MyBatis整体架构及运行流程](#mybatis整体架构及运行流程)
-    * [1.数据源配置文件](#1数据源配置文件)
-    * [2.Sql映射文件](#2sql映射文件)
-    * [3.会话工厂与会话](#3会话工厂与会话)
-    * [4.运行流程](#4运行流程)
-  * [测试工程搭建](#测试工程搭建)
-  * [微信公众号](#微信公众号-1)
-    * [个人公众号：程序员黄小斜](#个人公众号：程序员黄小斜)
-    * [技术公众号：Java技术江湖](#技术公众号：java技术江湖)
+    * [MyBatis简介](#mybatis简介)
+    * [MyBatis整体架构及运行流程](#mybatis整体架构及运行流程)
+        * [1.数据源配置文件](#1数据源配置文件)
+        * [2.Sql映射文件](#2sql映射文件)
+        * [3.会话工厂与会话](#3会话工厂与会话)
+        * [4.运行流程](#4运行流程)
+    * [测试工程搭建](#测试工程搭建)
+    * [微信公众号](#微信公众号-1)
+        * [个人公众号：程序员黄小斜](#个人公众号：程序员黄小斜)
+        * [技术公众号：Java技术江湖](#技术公众号：java技术江湖)
 
 
 本文转载自互联网，侵删
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看
+
 > https://github.com/h2pl/Java-Tutorial
 
 喜欢的话麻烦点下Star哈
 
 本系列文章将同步到我的个人博客：
+
 > www.how2playlife.com
 
 更多Java技术文章将陆续在微信公众号【Java技术江湖】更新，敬请关注。
@@ -52,20 +53,12 @@ _PS:文末有参考列表_
 
 Mybatis是一个持久层框架，用于数据的持久化。主要表现为将SQL与POJO进行一个映射，将SQL从代码中解耦。基本概念如图：
 
-
-
-
-
-![](https://upload-images.jianshu.io/upload_images/4226917-700b83c25876d6d0.png?imageMogr2/auto-orient/strip|imageView2/2/w/462/format/webp)
-
-
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/4226917-700b83c25876d6d0.png)
 
 
 使用时，以User为例，UserMapper定义了`findById`接口，该接口返回一个User对象，接口的实现为一个xml配置文件。该xml文件中定义对应接口中的实现所需要的SQL。从而达到将SQL与代码解耦的目标。
 
 ```
-
 <?xml version="1.0" encoding="UTF-8"?>  
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
@@ -79,7 +72,8 @@ Mybatis是一个持久层框架，用于数据的持久化。主要表现为将S
 </mapper> 
 
 ```
-        MyBatis 是Apache的一个Java开源项目，是一款优秀的持久层框架，它支持定制化 SQL、存储过程以及高级映射。Mybatis可以将Sql语句配置在XML文件中，避免将Sql语句硬编码在Java类中。
+
+MyBatis 是Apache的一个Java开源项目，是一款优秀的持久层框架，它支持定制化 SQL、存储过程以及高级映射。Mybatis可以将Sql语句配置在XML文件中，避免将Sql语句硬编码在Java类中。
 
 ### 特点
 
@@ -97,13 +91,13 @@ Mybatis是一个持久层框架，用于数据的持久化。主要表现为将S
 
 3.SqlSession ：SqlSession 相当于一个会话, 每次访问数据库都需要这样一个会话, 大家可能会想起了 JDBC 中的 Connection, 很类似, 但还是有区别的, 何况现在几乎所有的连接都是使用的连接池技术, 用完后直接归还而不会像 Session 一样销毁. 注意: 他是一个线程不安全的对象, 在设计多线程的时候我们需要特别的当心, 操作数据库需要注意其隔离级别, 数据库锁等高级特性, 此外, 每次创建的 SqlSession 都必须及时关闭它, 它长期存在就会使数据库连接池的活动资源减少, 对系统性能的影响很大, 我们一般在 finally 块中将其关闭. 还有, SqlSession 存活于一个应用的请求和操作, 可以执行多条 Sql, 保证事务的一致性。SqlSession在执行过程中，有包含了几大对象：
 
-         3.1.Executor ：执行器，由它调度 StatementHandler、ParameterHandler、ResultSetHandler 等来执行对应的 SQL。其中 StatementHandler 是最重要的。
+3.1.Executor ：执行器，由它调度 StatementHandler、ParameterHandler、ResultSetHandler 等来执行对应的 SQL。其中 StatementHandler 是最重要的。
 
-         3.2.StatementHandler ：作用是使用数据库的 Statement（PreparedStatement）执行操作，它是四大对象的核心，起到承上启下的作用，许多重要的插件都是通过拦截它来实现的。
+3.2.StatementHandler ：作用是使用数据库的 Statement（PreparedStatement）执行操作，它是四大对象的核心，起到承上启下的作用，许多重要的插件都是通过拦截它来实现的。
 
-         3.3.ParamentHandler ：用来处理 SQL 参数的。
+3.3.ParamentHandler ：用来处理 SQL 参数的。
 
-         3.4.ResultSetHandler ：进行数据集的封装返回处理的。
+3.4.ResultSetHandler ：进行数据集的封装返回处理的。
 
 4.Mapper ：映射器是一些由你创建的、绑定你映射的语句的接口。映射器接口的实例是从 SqlSession 中获得的, 他的作用是发送 SQL, 然后返回我们需要的结果. 或者执行 SQL 从而更改数据库的数据, 因此它应该在 SqlSession 的事务方法之内, 在 Spring 管理的 Bean 中, Mapper 是单例的。
 
@@ -115,7 +109,7 @@ Mybatis是一个持久层框架，用于数据的持久化。主要表现为将S
 
 (3)基础支撑层：负责最基础的功能支撑，包括连接管理、事务管理、配置加载和缓存处理，这些都是共用的东西，将他们抽取出来作为最基础的组件。为上层的数据处理层提供最基础的支撑。
 
-![](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9nc3MwLmJkc3RhdGljLmNvbS8tNG8zZFNhZ194STRraEdrcG9XSzFIRjZoaHkvYmFpa2UvYzAlM0RiYWlrZTgwJTJDNSUyQzUlMkM4MCUyQzI2L3NpZ249NGRmM2FiMTQzOWRiYjZmZDMxNTZlZDc0Njg0ZGMwN2QvMGI0NmYyMWZiZTA5NmI2M2VhMGQ0MWJmMGMzMzg3NDRlYWY4YWNjYy5qcGc)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405164855.png)
 
 ### 框架结构：
 
@@ -127,7 +121,7 @@ Mybatis是一个持久层框架，用于数据的持久化。主要表现为将S
 
 (4)结果映射：将操作数据库的结果按照映射的配置进行转换，可以转换成HashMap、JavaBean或者基本数据类型，并将最终结果返回。
 
-![](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9nc3MxLmJkc3RhdGljLmNvbS85dm8zZFNhZ194STRraEdrcG9XSzFIRjZoaHkvYmFpa2UvYzAlM0RiYWlrZTgwJTJDNSUyQzUlMkM4MCUyQzI2L3NpZ249ZjZjYzY5NzY4MjI2Y2ZmYzdkMjdiN2UwZDg2ODIxZjUvNjQzODBjZDc5MTIzOTdkZGUwY2Q4N2ViNTk4MmIyYjdkMWEyODdhYy5qcGc)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405164952.png)
 
 ### 执行流程：
 
@@ -139,17 +133,17 @@ Mybatis是一个持久层框架，用于数据的持久化。主要表现为将S
 
 4.执行增删改查
 
-     1、调用DefaultSqlSession增删改查
+1、调用DefaultSqlSession增删改查
 
-     2、创建StatementHandler （同时创建ParameterHandler,ResultSetHandler）
+2、创建StatementHandler （同时创建ParameterHandler,ResultSetHandler）
 
-     3、调用StatementHandler预编译参数以及设置参数值，使用ParameterHandler给sql设置参数
+3、调用StatementHandler预编译参数以及设置参数值，使用ParameterHandler给sql设置参数
 
-     4、调用StatementHandler增删改查
+4、调用StatementHandler增删改查
 
-     5、ResultSetHandler封装结果
+5、ResultSetHandler封装结果
 
-![](https://img-blog.csdnimg.cn/20190821203129674.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2phZGViYWk=,size_16,color_FFFFFF,t_70)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20190821203129674.png)
 
 
 ## 与Hibernate的异同
@@ -174,25 +168,6 @@ Mybatis开始逐渐流行起来，必然有其原因，简单了解了一下它�
 <https://www.runoob.com/>
 
 https://blog.csdn.net/android_hl/article/details/53228348
-## 微信公众号
-
-### 个人公众号：黄小斜
-
-黄小斜是跨考软件工程的 985 硕士，自学 Java 两年，拿到了 BAT 等近十家大厂 offer，从技术小白成长为阿里工程师。
-
-作者专注于 JAVA 后端技术栈，热衷于分享程序员干货、学习经验、求职心得和程序人生，目前黄小斜的CSDN博客有百万+访问量，知乎粉丝2W+，全网已有10W+读者。
-
-黄小斜是一个斜杠青年，坚持学习和写作，相信终身学习的力量，希望和更多的程序员交朋友，一起进步和成长！
-
-**原创电子书:**
-关注公众号【黄小斜】后回复【原创电子书】即可领取我原创的电子书《菜鸟程序员修炼手册：从技术小白到阿里巴巴Java工程师》
-
-**程序员3T技术学习资源：** 一些程序员学习技术的资源大礼包，关注公众号后，后台回复关键字 **“资料”** 即可免费无套路获取。	
-
-**考研复习资料：** 
-计算机考研大礼包，都是我自己考研复习时用的一些复习资料,包括公共课和专业的复习视频，这里也推荐给大家，关注公众号后，后台回复关键字 **“考研”** 即可免费获取。	
-
-![](https://img-blog.csdnimg.cn/20190829222750556.jpg)
 
 # mybatis新手上路
 
@@ -215,7 +190,7 @@ Mybatis整体构造由 数据源配置文件、Sql映射文件、会话工厂、
 一个SqlMapConfig.xml基本的配置信息如下：
 
 
-<pre><configuration>
+<configuration>
     <!-- 加载数据库属性文件 -->
     <properties resource="db.properties"></properties>
     <environments default="development">
@@ -231,7 +206,8 @@ Mybatis整体构造由 数据源配置文件、Sql映射文件、会话工厂、
             </dataSource>
         </environment>
     </environments>
-</configuration></pre>
+</configuration>
+
 
 
 
@@ -242,8 +218,8 @@ Mybatis中所有数据库的操作都会基于该映射文件和配置的sql语�
 Mapper.xml配置文件大致如下：
 
 
-
-<pre><!DOCTYPE mapper 
+````
+<!DOCTYPE mapper 
     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.sl.dao.ProductDao">
@@ -252,7 +228,8 @@ Mapper.xml配置文件大致如下：
         parameterType:参数类型，也就是查询条件的类型 -->
     <select id="selectProductById" resultType="com.sl.po.Product" parameterType="int">
      <!-- 这里和普通的sql 查询语句差不多，对于只有一个参数，后面的 #{id}表示占位符，里面不一定要写id,写啥都可以，但是不要空着，如果有多个参数则必须写pojo类里面的属性 --> select * from products where id = #{id} </select>
-</mapper></pre>
+</mapper>
+````
 
 
 ### 3.会话工厂与会话
@@ -271,20 +248,20 @@ Mybatis通过执行器与Mappered Statement的结合实现与数据库的交互�
 
 执行流程图：
 
-![](https://images2018.cnblogs.com/blog/577318/201807/577318-20180702181255132-2135681101.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/577318-20180702181255132-2135681101.png)
 
 ## 测试工程搭建
 
- 1. 新建maven工程
+1. 新建maven工程
 
-![](https://images2018.cnblogs.com/blog/577318/201807/577318-20180702181320571-1138935145.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/577318-20180702181320571-1138935145.png)
 
 2\. 添加依赖pom.xml
 
 
 
-
-<pre><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+````
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.sl</groupId>
     <artifactId>mybatis-demo</artifactId>
@@ -322,14 +299,15 @@ Mybatis通过执行器与Mappered Statement的结合实现与数据库的交互�
             <version>${log4j.version}</version>
         </dependency>
     </dependencies>
-</project></pre>
+</project>
 
+````
 
 
 3.编写数据源配置文件SqlMapConfig.xml
 
-
-<pre><?xml version="1.0" encoding="UTF-8"?>
+````
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
 <!-- 加载配置文件 -->
@@ -352,35 +330,38 @@ Mybatis通过执行器与Mappered Statement的结合实现与数据库的交互�
         <!-- xml实现    注册productMapper.xml文件 -->
         <mapper resource="mapper/productMapper.xml"></mapper>
     </mappers>
-</configuration></pre>
+</configuration>
+````
 
 
 4.编写SQL映射配置文件productMapper.xml
 
-![](https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif)
 
+````
 
-
-<pre><?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper 
     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.sl.mapper.ProductMapper">
 
+
     <select id="selectAllProduct" resultType="com.sl.po.Product"> select * from products </select>
 
-</mapper></pre>
+</mapper>
 
-
+````
 5.编写测试代码TestClient.java
 
-
-<pre>//使用productMapper.xml配置文件
+````
+//使用productMapper.xml配置文件
 public class TestClient { //定义会话SqlSession
     SqlSession session =null;
 
+
     @Before public void init() throws IOException { //定义mabatis全局配置文件
         String resource = "SqlMapConfig.xml"; //加载mybatis全局配置文件 //InputStream inputStream = TestClient.class.getClassLoader().getResourceAsStream(resource);
+
  InputStream inputStream = Resources.getResourceAsStream(resource);
         SqlSessionFactoryBuilder builder = new SqlSessionFactoryBuilder();
         SqlSessionFactory factory = builder.build(inputStream); //根据sqlSessionFactory产生会话sqlsession
@@ -395,9 +376,11 @@ public class TestClient { //定义会话SqlSession
  session.close();    
     }
 
-}</pre>
+}
+````
 
-<pre>public class Product { private int Id; private String Name; private String Description; private BigDecimal UnitPrice; private String ImageUrl; private Boolean IsNew; public int getId() { return Id;
+````
+public class Product { private int Id; private String Name; private String Description; private BigDecimal UnitPrice; private String ImageUrl; private Boolean IsNew; public int getId() { return Id;
     } public void setId(int id) { this.Id = id;
     } public String getName() { return Name;
     } public void setName(String name) { this.Name = name;
@@ -411,24 +394,26 @@ public class TestClient { //定义会话SqlSession
     } public void setIsNew(boolean isnew) { this.IsNew = isnew;
     }
 
+
     @Override public String toString() { return "Product [id=" + Id + ", Name=" + Name + ", Description=" + Description + ", UnitPrice=" + UnitPrice + ", ImageUrl=" + ImageUrl + ", IsNew=" + IsNew+ "]";
     }
-}</pre>
 
+}
+````
 6.运行测试用例
 
-![](https://images2018.cnblogs.com/blog/577318/201807/577318-20180702181558003-1700599553.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/577318-20180702181558003-1700599553.png)
 
 
 ## 微信公众号
 
 ### 个人公众号：程序员黄小斜
 
-​
+
 黄小斜是 985 硕士，阿里巴巴Java工程师，在自学编程、技术求职、Java学习等方面有丰富经验和独到见解，希望帮助到更多想要从事互联网行业的程序员们。
-​
+
 作者专注于 JAVA 后端技术栈，热衷于分享程序员干货、学习经验、求职心得，以及自学编程和Java技术栈的相关干货。
-​
+
 黄小斜是一个斜杠青年，坚持学习和写作，相信终身学习的力量，希望和更多的程序员交朋友，一起进步和成长！
 
 **原创电子书:**
@@ -447,10 +432,10 @@ public class TestClient { //定义会话SqlSession
 这是一位阿里 Java 工程师的技术小站。作者黄小斜，专注 Java 相关技术：SSM、SpringBoot、MySQL、分布式、中间件、集群、Linux、网络、多线程，偶尔讲点Docker、ELK，同时也分享技术干货和学习经验，致力于Java全栈开发！
 
 
-**Java工程师必备学习资源:** 
+**Java工程师必备学习资源:**
 关注公众号后回复”Java“即可领取 Java基础、进阶、项目和架构师等免费学习资料，更有数据库、分布式、微服务等热门技术学习视频，内容丰富，兼顾原理和实践，另外也将赠送作者原创的Java学习指南、Java程序员面试指南等干货资源
 
 
 ![我的公众号](https://img-blog.csdnimg.cn/20190805090108984.jpg)
 
-​                     
+                     

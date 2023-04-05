@@ -1,5 +1,4 @@
-# Table of Contents
-
+# 目录
   * [什么是Servlet](#什么是servlet)
   * [Servlet体系结构](#servlet体系结构)
   * [Servlet工作原理](#servlet工作原理)
@@ -44,14 +43,7 @@ HTTP 协议只是一个规范，定义服务请求和响应的大致式样。Jav
 
 ## Servlet体系结构
 
-
-
-
-
-![](https://upload-images.jianshu.io/upload_images/6807865-fde8eafd9ebb9fa7.png?imageMogr2/auto-orient/strip|imageView2/2/w/434/format/webp)
-
-
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405152028.png)
 Servlet顶级类关联图
 
 
@@ -60,12 +52,7 @@ Servlet顶级类关联图
 
 Servlet的框架是由两个Java包组成的：javax.servlet与javax.servlet.http。在javax.servlet包中定义了所有的Servlet类都必须实现或者扩展的通用接口和类。在javax.servlet.http包中定义了采用Http协议通信的HttpServlet类。Servlet的框架的核心是javax.servlet.Servlet接口，所有的Servlet都必须实现这个接口。
 
-
-
-
-
-![](https://upload-images.jianshu.io/upload_images/6807865-c4f29f8263377807.png?imageMogr2/auto-orient/strip|imageView2/2/w/495/format/webp)
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405152057.png)
 
 
 Servlet接口
@@ -129,8 +116,7 @@ public void init(ServletConfig config) throws ServletException {
 
 
 
-![](https://upload-images.jianshu.io/upload_images/6807865-b62549f0e7ece508.png?imageMogr2/auto-orient/strip|imageView2/2/w/548/format/webp)
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405152119.png)
 
 
 Web服务器工作流程
@@ -143,8 +129,7 @@ Web服务器工作流程
 
 
 
-![](https://upload-images.jianshu.io/upload_images/6807865-6ba5b5d7a6206830.png?imageMogr2/auto-orient/strip|imageView2/2/w/700/format/webp)
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405152142.png)
 
 
 Servlet工作原理时序图
@@ -211,17 +196,10 @@ Servlet类加载--->实例化--->服务--->销毁；
 
 ```
 
-
-
-
-
-![](https://upload-images.jianshu.io/upload_images/6807865-2868e60f05e4c34d.png?imageMogr2/auto-orient/strip|imageView2/2/w/700/format/webp)
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405152215.png)
 
 
 Servlet生命周期
-
-
 
 **创建Servlet对象的时机：**
 
@@ -272,15 +250,10 @@ Servlet生命周期
 在整个Servlet的生命周期过程中，**创建Servlet实例、调用实例的init()和destroy()方法都只进行一次**，当初始化完成后，Servlet容器会将该实例保存在内存中，通过调用它的service()方法，为接收到的请求服务。下面给出Servlet整个生命周期过程的UML序列图，如图所示：
 
 
-
-
-
-![](https://upload-images.jianshu.io/upload_images/6807865-aec8736ee84fab58.png?imageMogr2/auto-orient/strip|imageView2/2/w/664/format/webp)
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405152252.png)
 
 
 Servlet生命周期
-
 
 
 > 如果需要让Servlet容器在启动时即加载Servlet，可以在web.xml文件中配置<load-on-startup>元素。
@@ -290,15 +263,9 @@ Servlet生命周期
 Listener 使用的非常广泛，它是基于观察者模式设计的，Listener 的设计对开发 Servlet 应用程序提供了一种快捷的手段，能够方便的从另一个纵向维度控制程序和数据。目前 Servlet 中提供了 5 种两类事件的观察者接口，它们分别是：4 个 EventListeners 类型的，ServletContextAttributeListener、ServletRequestAttributeListener、ServletRequestListener、HttpSessionAttributeListener 和 2 个 LifecycleListeners 类型的，ServletContextListener、HttpSessionListener。如下图所示：
 
 
-
-
-
-![](https://upload-images.jianshu.io/upload_images/6807865-3cd97763331db274.png?imageMogr2/auto-orient/strip|imageView2/2/w/495/format/webp)
-
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405152314.png)
 
 Servlet中的Listener
-
 
 
 它们基本上涵盖了整个 Servlet 生命周期中，你感兴趣的每种事件。这些 Listener 的实现类可以配置在 web.xml 中的 <listener> 标签中。当然也可以在应用程序中动态添加 Listener，需要注意的是 ServletContextListener 在容器启动之后就不能再添加新的，因为它所监听的事件已经不会再出现。掌握这些 Listener 的使用，能够让我们的程序设计的更加灵活。
@@ -334,8 +301,7 @@ Session 与 Cookie 的作用都是为了保持访问用户与后端服务器的�
 
 
 
-![](https://upload-images.jianshu.io/upload_images/6807865-c49338a0725008c1.png?imageMogr2/auto-orient/strip|imageView2/2/w/386/format/webp)
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405152357.png)
 
 
 Session相关类图
@@ -348,8 +314,7 @@ Session相关类图
 
 
 
-![](https://upload-images.jianshu.io/upload_images/6807865-0f293008a947ad0e.png?imageMogr2/auto-orient/strip|imageView2/2/w/568/format/webp)
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405152416.png)
 
 
 Session工作的时序图
@@ -375,11 +340,11 @@ https://blog.csdn.net/android_hl/article/details/53228348
 
 ### 个人公众号：程序员黄小斜
 
-​
+
 黄小斜是 985 硕士，阿里巴巴Java工程师，在自学编程、技术求职、Java学习等方面有丰富经验和独到见解，希望帮助到更多想要从事互联网行业的程序员们。
-​
+
 作者专注于 JAVA 后端技术栈，热衷于分享程序员干货、学习经验、求职心得，以及自学编程和Java技术栈的相关干货。
-​
+
 黄小斜是一个斜杠青年，坚持学习和写作，相信终身学习的力量，希望和更多的程序员交朋友，一起进步和成长！
 
 **原创电子书:**
@@ -404,4 +369,4 @@ https://blog.csdn.net/android_hl/article/details/53228348
 
 ![我的公众号](https://img-blog.csdnimg.cn/20190805090108984.jpg)
 
-​                     
+                     
