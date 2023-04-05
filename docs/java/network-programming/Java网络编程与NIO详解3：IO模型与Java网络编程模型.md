@@ -1,5 +1,4 @@
-# Table of Contents
-
+# 目录
   * [IO模型介绍](#io模型介绍)
     * [阻塞 I/O（blocking IO）](#阻塞-io（blocking-io）)
     * [非阻塞 I/O（nonblocking IO）](#非阻塞-io（nonblocking-io）)
@@ -107,8 +106,7 @@ asynchronous IO
 
 在linux中，默认情况下所有的socket都是blocking，一个典型的读操作流程大概是这样：
 
-![](https://upload-images.jianshu.io/upload_images/1446087-9522cafa9e14abd0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/552)
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405094447.png)
 阻塞IO流程
 
 当用户进程调用了recvfrom这个系统调用，kernel就开始了IO的第一个阶段：准备数据（对于网络IO来说，很多时候数据在一开始还没有到达。比如，还没有收到一个完整的UDP包。这个时候kernel就要等待足够的数据到来）。这个过程需要等待，也就是说数据被拷贝到**操作系统内核的缓冲区**中是需要一个过程的。而在用户进程这边，整个进程会被阻塞（当然，是进程自己选择的阻塞）。当kernel一直等到数据准备好了，它就会**将数据从kernel中拷贝到用户内存**，然后kernel返回结果，用户进程才解除block的状态，重新运行起来。
@@ -121,8 +119,7 @@ asynchronous IO
 
 linux下，可以通过设置socket使其变为non-blocking。当对一个non-blocking socket执行读操作时，流程是这个样子：
 
-![](https://upload-images.jianshu.io/upload_images/1446087-0c604ff4a2d8dc5d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/603)
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405094507.png)
 非阻塞 I/O 流程
 
 当用户进程发出read操作时，如果kernel中的数据还没有准备好，**那么它并不会block用户进程，而是立刻返回一个error**。从用户进程角度讲 ，它发起一个read操作后，并不需要等待，而是马上就得到了一个结果。用户进程判断结果是一个error时，它就知道数据还没有准备好，于是它可以再次发送read操作。一旦kernel中的数据准备好了，并且又再次收到了用户进程的system call，那么它马上就将数据拷贝到了用户内存，然后返回。
@@ -137,7 +134,7 @@ linux下，可以通过设置socket使其变为non-blocking。当对一个non-bl
 
 IO multiplexing就是我们说的select，poll，epoll，有些地方也称这种IO方式为event driven IO。select/epoll的好处就在于单个process就可以同时处理多个网络连接的IO。它的基本原理就是select，poll，epoll这个function会不断的轮询所负责的所有socket，当某个socket有数据到达了，就通知用户进程。
 
-![](https://upload-images.jianshu.io/upload_images/1446087-3b0399b077daf0a8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/609)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405094539.png)
 
 I/O 多路复用流程
 
@@ -178,22 +175,7 @@ epoll的出现，解决了select、poll的缺点：
 > **_所以, IO多路复用，本质上不会有并发的功能，因为任何时候还是只有一个进程或线程进行工作，它之所以能提高效率是因为select\epoll 把进来的socket放到他们的 '监视' 列表里面，当任何socket有可读可写数据立马处理，那如果select\epoll 手里同时检测着很多socket， 一有动静马上返回给进程处理，总比一个一个socket过来,阻塞等待,处理高效率。_**
 > 当然也可以多线程/多进程方式，一个连接过来开一个进程/线程处理，这样消耗的内存和进程切换页会耗掉更多的系统资源。
 > 所以我们可以结合IO多路复用和多进程/多线程 来高性能并发，IO复用负责提高接受socket的通知效率，收到请求后，交给进程池/线程池来处理逻辑。
-> 
-> ### 信号驱动
-> 
-> 上文的就餐方式还是需要你每次都去问一下饭菜状况。于是，你再次不耐烦了，就跟老板说，哪个饭菜好了就通知我一声吧。然后就自己坐在桌子那里干自己的事情。更甚者，你可以把手机号留给老板，自己出门，等饭菜好了直接发条短信给你。这就类似信号驱动的IO模型。
-> 
-> ![bio](http://www.rowkey.me/images/blog_images/io/sigio.png)
-> 
-> 流程如下：
-> 
-> *   开启套接字信号驱动IO功能
-> *   系统调用sigaction执行信号处理函数（非阻塞，立刻返回）
-> *   数据就绪，生成sigio信号，通过信号回调通知应用来读取数据。
-> 
-> 此种io方式存在的一个很大的问题：Linux中信号队列是有限制的，如果超过这个数字问题就无法读取数据。
-> 
-> ### 异步非阻塞
+>
 
 ### 异步 I/O（asynchronous IO）
 
@@ -201,8 +183,7 @@ epoll的出现，解决了select、poll的缺点：
 
 linux下的asynchronous IO其实用得很少。先看一下它的流程：
 
-![](https://upload-images.jianshu.io/upload_images/1446087-e707464b299104e1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/572)
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405094934.png)
 异步IO 流程
 
 用户进程发起read操作之后，立刻就可以开始去做其它的事。而另一方面，从kernel的角度，当它受到一个asynchronous read之后，首先它会立刻返回，所以不会对用户进程产生任何block。然后，kernel会等待数据准备完成，然后将数据拷贝到用户内存，当这一切都完成之后，kernel会给用户进程发送一个signal，告诉它read操作完成了。
@@ -307,8 +288,6 @@ JDK1.7引入NIO2.0，提供了异步文件通道和异步套接字通道的实�
 其编程模型相比NIO有了不少的简化。
 
 ### 对比
-
-
 
 | . | 同步阻塞IO | 伪异步IO | NIO | AIO |
 | --- | --- | --- | --- | --- |

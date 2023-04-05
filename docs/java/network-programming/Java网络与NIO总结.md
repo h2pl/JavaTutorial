@@ -1,5 +1,4 @@
-# Table of Contents
-
+# 目录
   * [Java IO](#java-io)
   * [Socket编程](#socket编程)
   * [客户端，服务端的线程模型](#客户端，服务端的线程模型)
@@ -14,16 +13,6 @@
     * [个人公众号：黄小斜](#个人公众号：黄小斜)
 
 
----
-title: Java网络编程与NIO学习总结
-date: 2018-07-08 22:08:22
-tags:
-	- Java网络编程
-	- NIO
-categories:
-	- 后端
-	- 技术总结
----
 这篇总结主要是基于我之前Java网络编程与NIO系列文章而形成的的。主要是把重要的知识点用自己的话说了一遍，可能会有一些错误，还望见谅和指点。谢谢
 
 更多详细内容可以查看我的专栏文章：Java网络编程与NIO
@@ -161,6 +150,7 @@ container是一个多级容器，最外层到最内层依次是engine，host，c
 
 下面是个server.xml文件实例，Tomcat根据该文件进行部署
 
+````
 <Server>                                                //顶层类元素，可以包括多个Service   
     <Service>                                           //顶层类元素，可包含一个Engine，多个Connecter
         <Connector>                                     //连接器类元素，代表通信接口
@@ -173,7 +163,7 @@ container是一个多级容器，最外层到最内层依次是engine，host，c
         </Connector>
     </Service>
 </Server>
-
+````
 
 根据配置文件初始化容器信息，当请求到达时进行容器间的请求传递，事实上整个链条被称作pipeline，pipeline连接了各个容器的入口，由于每个容器和组件都实现了lifecycle接口。
 

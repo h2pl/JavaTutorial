@@ -1,5 +1,4 @@
-# Table of Contents
-
+# 目录
   * [Buffer](#buffer)
     * [position、limit、capacity](#position、limit、capacity)
     * [初始化 Buffer](#初始化-buffer)
@@ -36,9 +35,9 @@
 
 <!-- more -->
 
-本文将介绍 Java NIO 中三大组件 **Buffer、Channel、Selector** 的使用。
+本文将介绍 Java NIO 中三大组件**Buffer、Channel、Selector**的使用。
 
-本来要一起介绍**非阻塞 IO** 和 JDK7 的**异步 IO** 的，不过因为之前的文章真的太长了，有点影响读者阅读，所以这里将它们放到另一篇文章中进行介绍。
+本来要一起介绍**非阻塞 IO**和 JDK7 的**异步 IO**的，不过因为之前的文章真的太长了，有点影响读者阅读，所以这里将它们放到另一篇文章中进行介绍。
 
 ## Buffer
 
@@ -46,9 +45,9 @@
 
 java.nio 定义了以下几个 Buffer 的实现，这个图读者应该也在不少地方见过了吧。
 
-![6](https://www.javadoop.com/blogimages/nio/6.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405095127.png)
 
-其实核心是最后的 **ByteBuffer**，前面的一大串类只是包装了一下它而已，我们使用最多的通常也是 ByteBuffer。
+其实核心是最后的**ByteBuffer**，前面的一大串类只是包装了一下它而已，我们使用最多的通常也是 ByteBuffer。
 
 我们应该将 Buffer 理解为一个数组，IntBuffer、CharBuffer、DoubleBuffer 等分别对应 int[]、char[]、double[] 等。
 
@@ -60,23 +59,23 @@ MappedByteBuffer 用于实现内存映射文件，也不是本文关注的重点
 
 就像数组有数组容量，每次访问元素要指定下标，Buffer 中也有几个重要属性：position、limit、capacity。
 
-![5](https://www.javadoop.com/blogimages/nio/5.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405095151.png)
 
 最好理解的当然是 capacity，它代表这个缓冲区的容量，一旦设定就不可以更改。比如 capacity 为 1024 的 IntBuffer，代表其一次可以存放 1024 个 int 类型的值。一旦 Buffer 的容量达到 capacity，需要清空 Buffer，才能重新写入值。
 
 position 和 limit 是变化的，我们分别看下读和写操作下，它们是如何变化的。
 
-**position** 的初始值是 0，每往 Buffer 中写入一个值，position 就自动加 1，代表下一次的写入位置。读操作的时候也是类似的，每读一个值，position 就自动加 1。
+**position**的初始值是 0，每往 Buffer 中写入一个值，position 就自动加 1，代表下一次的写入位置。读操作的时候也是类似的，每读一个值，position 就自动加 1。
 
 从写操作模式到读操作模式切换的时候（**flip**），position 都会归零，这样就可以从头开始读写了。
 
 **Limit**：写操作模式下，limit 代表的是最大能写入的数据，这个时候 limit 等于 capacity。写结束后，切换到读模式，此时的 limit 等于 Buffer 中实际的数据大小，因为 Buffer 不一定被写满了。
 
-![7](https://www.javadoop.com/blogimages/nio/7.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405095206.png)
 
 ### 初始化 Buffer
 
-每个 Buffer 实现类都提供了一个静态方法 `allocate(int capacity)` 帮助我们快速实例化一个 Buffer。如：
+每个 Buffer 实现类都提供了一个静态方法`allocate(int capacity)`帮助我们快速实例化一个 Buffer。如：
 
 ```
 ByteBuffer byteBuf = ByteBuffer.allocate(1024);
@@ -123,7 +122,7 @@ int num = channel.read(buf);
 
 如果要读 Buffer 中的值，需要切换模式，从写入模式切换到读出模式。注意，通常在说 NIO 的读操作的时候，我们说的是从 Channel 中读数据到 Buffer 中，对应的是对 Buffer 的写入操作，初学者需要理清楚这个。
 
-调用 Buffer 的 **flip()** 方法，可以从写入模式切换到读取模式。其实这个方法也就是设置了一下 position 和 limit 值罢了。
+调用 Buffer 的**flip()**方法，可以从写入模式切换到读取模式。其实这个方法也就是设置了一下 position 和 limit 值罢了。
 
 ```
 public final Buffer flip() {
@@ -217,7 +216,7 @@ public final Buffer clear() {
 
 所有的 NIO 操作始于通道，通道是数据来源或数据写入的目的地，主要地，我们将关心 java.nio 包中实现的以下几个 Channel：
 
-![8](https://www.javadoop.com/blogimages/nio/8.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405095238.png)
 
 *   FileChannel：文件通道，用于文件的读和写
 *   DatagramChannel：用于 UDP 连接的接收和发送
@@ -228,10 +227,9 @@ public final Buffer clear() {
 
 Channel 经常翻译为通道，类似 IO 中的流，用于读取和写入。它与前面介绍的 Buffer 打交道，读操作的时候将 Channel 中的数据填充到 Buffer 中，而写操作时将 Buffer 中的数据写入到 Channel 中。
 
-![9](https://www.javadoop.com/blogimages/nio/9.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405095252.png)
 
-![10](https://www.javadoop.com/blogimages/nio/10.png)
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405095318.png)
 至少读者应该记住一点，这两个方法都是 channel 实例的方法。
 
 ### FileChannel
@@ -363,7 +361,7 @@ int bytesSent = channel.send(buf, new InetSocketAddress("jenkov.com", 80));
 
 ## Selector
 
-NIO 三大组件就剩 Selector 了，Selector 建立在非阻塞的基础之上，大家经常听到的 **多路复用** 在 Java 世界中指的就是它，用于实现一个线程管理多个 Channel。
+NIO 三大组件就剩 Selector 了，Selector 建立在非阻塞的基础之上，大家经常听到的**多路复用**在 Java 世界中指的就是它，用于实现一个线程管理多个 Channel。
 
 读者在这一节不能消化 Selector 也没关系，因为后续在介绍非阻塞 IO 的时候还得说到这个，这里先介绍一些基本的接口操作。
 
@@ -400,9 +398,9 @@ NIO 三大组件就剩 Selector 了，Selector 建立在非阻塞的基础之上
 
         > 对应 00010000，接受 TCP 连接
 
-    我们可以同时监听一个 Channel 中的发生的多个事件，比如我们要监听 ACCEPT 和 READ 事件，那么指定参数为二进制的 000**1**000**1** 即十进制数值 17 即可。
+    我们可以同时监听一个 Channel 中的发生的多个事件，比如我们要监听 ACCEPT 和 READ 事件，那么指定参数为二进制的 000**1**000**1**即十进制数值 17 即可。
 
-    注册方法返回值是 **SelectionKey** 实例，它包含了 Channel 和 Selector 信息，也包括了一个叫做 Interest Set 的信息，即我们设置的我们感兴趣的正在监听的事件集合。
+    注册方法返回值是**SelectionKey**实例，它包含了 Channel 和 Selector 信息，也包括了一个叫做 Interest Set 的信息，即我们设置的我们感兴趣的正在监听的事件集合。
 
 3.  调用 select() 方法获取通道信息。用于判断是否有我们感兴趣的事件已经发生了。
 

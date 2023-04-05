@@ -1,5 +1,4 @@
-# Table of Contents
-
+# 目录
   * [前言](#前言)
   * [源码环境准备](#源码环境准备)
   * [endpoint](#endpoint)
@@ -43,7 +42,7 @@
 
 先简单画一张图示意一下本文的主要内容：
 
-![0](https://www.javadoop.com/blogimages/tomcat-nio/0.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405105401.png)
 
 **目录**
 
@@ -87,7 +86,7 @@ public static void main(String[] args) throws LifecycleException {
 
 这里，介绍第一个重要的概念：**Connector**。在 Tomcat 中，使用 Connector 来处理连接，一个 Tomcat 可以配置多个 Connector，分别用于监听不同端口，或处理不同协议。
 
-在 Connector 的构造方法中，我们可以传 `HTTP/1.1` 或 `AJP/1.3` 用于指定协议，也可以传入相应的协议处理类，毕竟协议不是重点，将不同端口进来的连接对应不同处理类才是正道。典型地，我们可以指定以下几个协议处理类：
+在 Connector 的构造方法中，我们可以传`HTTP/1.1`或`AJP/1.3`用于指定协议，也可以传入相应的协议处理类，毕竟协议不是重点，将不同端口进来的连接对应不同处理类才是正道。典型地，我们可以指定以下几个协议处理类：
 
 *   org.apache.coyote.http11.Http11NioProtocol：对应非阻塞 IO
 *   org.apache.coyote.http11.Http11Nio2Protocol：对应异步 IO
@@ -119,9 +118,9 @@ public static void main(String[] args) throws LifecycleException {
 
 ## endpoint
 
-前面我们说过一个 Connector 对应一个协议，当然这描述也不太对，NIO 和 NIO2 就都是处理 HTTP/1.1 的，只不过一个使用非阻塞，一个使用异步。进到指定 protocol 代码，我们就会发现，它们的代码及其简单，只不过是指定了特定的 **endpoint**。
+前面我们说过一个 Connector 对应一个协议，当然这描述也不太对，NIO 和 NIO2 就都是处理 HTTP/1.1 的，只不过一个使用非阻塞，一个使用异步。进到指定 protocol 代码，我们就会发现，它们的代码及其简单，只不过是指定了特定的**endpoint**。
 
-打开 `Http11NioProtocol` 和 `Http11Nio2Protocol`源码，我们可以看到，在构造方法中，它们分别指定了 NioEndpoint 和 Nio2Endpoint。
+打开`Http11NioProtocol`和`Http11Nio2Protocol`源码，我们可以看到，在构造方法中，它们分别指定了 NioEndpoint 和 Nio2Endpoint。
 
 ```
 // 非阻塞模式
@@ -143,15 +142,15 @@ public class Http11Nio2Protocol extends AbstractHttp11JsseProtocol<Nio2Channel> 
 }
 ```
 
-这里介绍第二个重要的概念：**endpoint**。Tomcat 使用不同的 endpoint 来处理不同的协议请求，今天我们的重点是 **NioEndpoint**，其使用**非阻塞 IO** 来进行处理 HTTP/1.1 协议的请求。
+这里介绍第二个重要的概念：**endpoint**。Tomcat 使用不同的 endpoint 来处理不同的协议请求，今天我们的重点是**NioEndpoint**，其使用**非阻塞 IO**来进行处理 HTTP/1.1 协议的请求。
 
-**NioEndpoint** 继承 => **AbstractJsseEndpoint** 继承 => **AbstractEndpoint**。中间的 AbstractJsseEndpoint 主要是提供了一些关于 `HTTPS` 的方法，这块我们暂时忽略它，后面所有关于 HTTPS 的我们都直接忽略，感兴趣的读者请自行分析。
+**NioEndpoint**继承 =>**AbstractJsseEndpoint**继承 =>**AbstractEndpoint**。中间的 AbstractJsseEndpoint 主要是提供了一些关于`HTTPS`的方法，这块我们暂时忽略它，后面所有关于 HTTPS 的我们都直接忽略，感兴趣的读者请自行分析。
 
 ## init 过程分析
 
 下面，我们看看从 tomcat.start() 一直到 NioEndpoint 的过程。
 
-**1\. AbstractProtocol** # **init**
+**1\. AbstractProtocol**#**init**
 
 ```
 @Override
@@ -165,7 +164,7 @@ public void init() throws Exception {
 }
 ```
 
-**2\. AbstractEndpoint** # **init**
+**2\. AbstractEndpoint**#**init**
 
 ```
 public final void init() throws Exception {
@@ -177,7 +176,7 @@ public final void init() throws Exception {
 }
 ```
 
-**3\. NioEndpoint** # **bind**
+**3\. NioEndpoint**#**bind**
 
 这里就到我们的 NioEndpoint 了，要使用到我们之前学习的 NIO 的知识了。
 
@@ -321,9 +320,9 @@ public void startInternal() throws Exception {
 }
 ```
 
-到这里，我们启动了**工作线程池**、 **poller 线程组**、**acceptor 线程组**。同时，工作线程池初始就已经启动了 10 个线程。我们用 **jconsole** 来看看此时的线程，请看下图：
+到这里，我们启动了**工作线程池**、**poller 线程组**、**acceptor 线程组**。同时，工作线程池初始就已经启动了 10 个线程。我们用**jconsole**来看看此时的线程，请看下图：
 
-![1](https://www.javadoop.com/blogimages/tomcat-nio/1.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405105500.png)
 
 从 jconsole 中，我们可以看到，此时启动了 BlockPoller、worker、poller、acceptor、AsyncTimeout，大家应该都已经清楚了每个线程是哪里启动的吧。
 
@@ -345,7 +344,7 @@ public Acceptor(AbstractEndpoint<?,U> endpoint) {
 }
 ```
 
-**threadName** 就是一个线程名字而已，Acceptor 的状态 **state** 主要是随着 endpoint 来的。
+**threadName**就是一个线程名字而已，Acceptor 的状态**state**主要是随着 endpoint 来的。
 
 ```
 public enum AcceptorState {
@@ -498,7 +497,7 @@ protected boolean setSocketOptions(SocketChannel socket) {
 }
 ```
 
-我们看到，这里又没有进行实际的处理，而是将这个 SocketChannel **注册**到了其中一个 poller 上。因为我们知道，acceptor 应该尽可能的简单，只做 accept 的工作，简单处理下就往后面扔。acceptor 还得回到之前的循环去 accept 新的连接呢。
+我们看到，这里又没有进行实际的处理，而是将这个 SocketChannel**注册**到了其中一个 poller 上。因为我们知道，acceptor 应该尽可能的简单，只做 accept 的工作，简单处理下就往后面扔。acceptor 还得回到之前的循环去 accept 新的连接呢。
 
 我们只需要明白，此时，往 poller 中注册了一个 NioChannel 实例，此实例包含客户端过来的 SocketChannel 和一个 SocketBufferHandler 实例。
 
@@ -820,7 +819,7 @@ protected SocketProcessorBase<NioChannel> createSocketProcessor(
 
 最后，再祭出文章开始的那张图来总结一下：
 
-![0](https://www.javadoop.com/blogimages/tomcat-nio/0.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405105530.png)
 
 这里简单梳理下前面我们说的流程，帮大家回忆一下：
 

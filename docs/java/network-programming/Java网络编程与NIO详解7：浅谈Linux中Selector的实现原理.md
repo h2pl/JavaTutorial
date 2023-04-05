@@ -1,5 +1,4 @@
-# Table of Contents
-
+# 目录
   * [概述](#概述)
   * [Selector的中的重要属性](#selector的中的重要属性)
   * [Selector 源码解析](#selector-源码解析)
@@ -63,23 +62,23 @@ Selector中维护3个特别重要的SelectionKey集合，分别是
 首先先来段Selector最简单的使用片段
 
 ```
-        ServerSocketChannel serverChannel = ServerSocketChannel.open();
-        serverChannel.configureBlocking(false);
-        int port = 5566;          
-        serverChannel.socket().bind(new InetSocketAddress(port));
-        Selector selector = Selector.open();
-        serverChannel.register(selector, SelectionKey.OP_ACCEPT);
-        while(true){
-            int n = selector.select();
-            if(n > 0) {
-                Iterator<SelectionKey> iter = selector.selectedKeys().iterator();
-                while (iter.hasNext()) {
-                    SelectionKey selectionKey = iter.next();
-                    ......
-                    iter.remove();
-                }
-            }
+ServerSocketChannel serverChannel = ServerSocketChannel.open();
+serverChannel.configureBlocking(false);
+int port = 5566;          
+serverChannel.socket().bind(new InetSocketAddress(port));
+Selector selector = Selector.open();
+serverChannel.register(selector, SelectionKey.OP_ACCEPT);
+while(true){
+    int n = selector.select();
+    if(n > 0) {
+        Iterator<SelectionKey> iter = selector.selectedKeys().iterator();
+        while (iter.hasNext()) {
+            SelectionKey selectionKey = iter.next();
+            ......
+            iter.remove();
         }
+    }
+}
 
 ```
 
@@ -90,50 +89,50 @@ SocketChannel、ServerSocketChannel和Selector的实例初始化都通过Selecto
 ServerSocketChannel.open();
 
 ```
-    public static ServerSocketChannel open() throws IOException {
-        return SelectorProvider.provider().openServerSocketChannel();
-    }
+public static ServerSocketChannel open() throws IOException {
+    return SelectorProvider.provider().openServerSocketChannel();
+}
 
 ```
 
 SocketChannel.open();
 
 ```
-    public static SocketChannel open() throws IOException {
-        return SelectorProvider.provider().openSocketChannel();
-    }
+public static SocketChannel open() throws IOException {
+    return SelectorProvider.provider().openSocketChannel();
+}
 
 ```
 
 Selector.open();
 
 ```
-    public static Selector open() throws IOException {
-        return SelectorProvider.provider().openSelector();
-    }
+public static Selector open() throws IOException {
+    return SelectorProvider.provider().openSelector();
+}
 
 ```
 
 我们来进一步的了解下SelectorProvider.provider()
 
 ```
-    public static SelectorProvider provider() {
-        synchronized (lock) {
-            if (provider != null)
-                return provider;
-            return AccessController.doPrivileged(
-                new PrivilegedAction<>() {
-                    public SelectorProvider run() {
-                            if (loadProviderFromProperty())
-                                return provider;
-                            if (loadProviderAsService())
-                                return provider;
-                            provider = sun.nio.ch.DefaultSelectorProvider.create();
+public static SelectorProvider provider() {
+    synchronized (lock) {
+        if (provider != null)
+            return provider;
+        return AccessController.doPrivileged(
+            new PrivilegedAction<>() {
+                public SelectorProvider run() {
+                        if (loadProviderFromProperty())
                             return provider;
-                        }
-                    });
-        }
+                        if (loadProviderAsService())
+                            return provider;
+                        provider = sun.nio.ch.DefaultSelectorProvider.create();
+                        return provider;
+                    }
+                });
     }
+}
 
 ```
 
@@ -145,14 +144,7 @@ Selector.open();
 不同系统对应着不同的sun.nio.ch.DefaultSelectorProvider
 
 
-
-
-
-![](https://upload-images.jianshu.io/upload_images/4235178-a02c498e08979aff.png?imageMogr2/auto-orient/strip|imageView2/2/w/640/format/webp)
-
-
-
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405100409.png)
 
 这里我们看linux下面的sun.nio.ch.DefaultSelectorProvider
 
@@ -222,28 +214,28 @@ class EPollSelectorImpl
 
 ```
 EPollSelectorImpl(SelectorProvider sp) throws IOException {
-        super(sp);
-        long pipeFds = IOUtil.makePipe(false);
-        fd0 = (int) (pipeFds >>> 32);
-        fd1 = (int) pipeFds;
+    super(sp);
+    long pipeFds = IOUtil.makePipe(false);
+    fd0 = (int) (pipeFds >>> 32);
+    fd1 = (int) pipeFds;
+    try {
+        pollWrapper = new EPollArrayWrapper();
+        pollWrapper.initInterrupt(fd0, fd1);
+        fdToKey = new HashMap<>();
+    } catch (Throwable t) {
         try {
-            pollWrapper = new EPollArrayWrapper();
-            pollWrapper.initInterrupt(fd0, fd1);
-            fdToKey = new HashMap<>();
-        } catch (Throwable t) {
-            try {
-                FileDispatcherImpl.closeIntFD(fd0);
-            } catch (IOException ioe0) {
-                t.addSuppressed(ioe0);
-            }
-            try {
-                FileDispatcherImpl.closeIntFD(fd1);
-            } catch (IOException ioe1) {
-                t.addSuppressed(ioe1);
-            }
-            throw t;
+            FileDispatcherImpl.closeIntFD(fd0);
+        } catch (IOException ioe0) {
+            t.addSuppressed(ioe0);
         }
+        try {
+            FileDispatcherImpl.closeIntFD(fd1);
+        } catch (IOException ioe1) {
+            t.addSuppressed(ioe1);
+        }
+        throw t;
     }
+}
 
 ```
 
@@ -252,11 +244,11 @@ EPollSelectorImpl构造函数完成：
 ② 通过EPollArrayWrapper向epoll注册中断事件
 
 ```
-    void initInterrupt(int fd0, int fd1) {
-        outgoingInterruptFD = fd1;
-        incomingInterruptFD = fd0;
-        epollCtl(epfd, EPOLL_CTL_ADD, fd0, EPOLLIN);
-    }
+void initInterrupt(int fd0, int fd1) {
+    outgoingInterruptFD = fd1;
+    incomingInterruptFD = fd0;
+    epollCtl(epfd, EPOLL_CTL_ADD, fd0, EPOLLIN);
+}
 
 ```
 
@@ -287,44 +279,44 @@ epoll_event的数据成员(epoll_data_t data)包含有与通过epoll_ctl将文�
 EPollArrayWrapper将Linux的epoll相关系统调用封装成了native方法供EpollSelectorImpl使用。
 
 ```
-    private native int epollCreate();
-    private native void epollCtl(int epfd, int opcode, int fd, int events);
-    private native int epollWait(long pollAddress, int numfds, long timeout,
-                                 int epfd) throws IOException;
+private native int epollCreate();
+private native void epollCtl(int epfd, int opcode, int fd, int events);
+private native int epollWait(long pollAddress, int numfds, long timeout,
+                             int epfd) throws IOException;
 
 ```
 
 上述三个native方法就对应Linux下epoll相关的三个系统调用
 
 ```
-    // The fd of the epoll driver
-    private final int epfd;
+// The fd of the epoll driver
+private final int epfd;
 
-     // The epoll_event array for results from epoll_wait
-    private final AllocatedNativeObject pollArray;
+ // The epoll_event array for results from epoll_wait
+private final AllocatedNativeObject pollArray;
 
-    // Base address of the epoll_event array
-    private final long pollArrayAddress;
-
-```
-
-```
-    // 用于存储已经注册的文件描述符和其注册等待改变的事件的关联关系。在epoll_wait操作就是要检测这里文件描述法注册的事件是否有发生。
-    private final byte[] eventsLow = new byte[MAX_UPDATE_ARRAY_SIZE];
-    private final Map<Integer,Byte> eventsHigh = new HashMap<>();
+// Base address of the epoll_event array
+private final long pollArrayAddress;
 
 ```
 
 ```
-    EPollArrayWrapper() throws IOException {
-        // creates the epoll file descriptor
-        epfd = epollCreate();
+// 用于存储已经注册的文件描述符和其注册等待改变的事件的关联关系。在epoll_wait操作就是要检测这里文件描述法注册的事件是否有发生。
+private final byte[] eventsLow = new byte[MAX_UPDATE_ARRAY_SIZE];
+private final Map<Integer,Byte> eventsHigh = new HashMap<>();
 
-        // the epoll_event array passed to epoll_wait
-        int allocationSize = NUM_EPOLLEVENTS * SIZE_EPOLLEVENT;
-        pollArray = new AllocatedNativeObject(allocationSize, true);
-        pollArrayAddress = pollArray.address();
-    }
+```
+
+```
+EPollArrayWrapper() throws IOException {
+    // creates the epoll file descriptor
+    epfd = epollCreate();
+
+    // the epoll_event array passed to epoll_wait
+    int allocationSize = NUM_EPOLLEVENTS * SIZE_EPOLLEVENT;
+    pollArray = new AllocatedNativeObject(allocationSize, true);
+    pollArrayAddress = pollArray.address();
+}
 
 ```
 
@@ -337,22 +329,22 @@ ServerSocketChannel.open();
 返回ServerSocketChannelImpl对象，构建linux系统下ServerSocket的文件描述符。
 
 ```
-    // Our file descriptor
-    private final FileDescriptor fd;
+// Our file descriptor
+private final FileDescriptor fd;
 
-    // fd value needed for dev/poll. This value will remain valid
-    // even after the value in the file descriptor object has been set to -1
-    private int fdVal;
-
-```
+// fd value needed for dev/poll. This value will remain valid
+// even after the value in the file descriptor object has been set to -1
+private int fdVal;
 
 ```
-    ServerSocketChannelImpl(SelectorProvider sp) throws IOException {
-        super(sp);
-        this.fd =  Net.serverSocket(true);
-        this.fdVal = IOUtil.fdVal(fd);
-        this.state = ST_INUSE;
-    }
+
+```
+ServerSocketChannelImpl(SelectorProvider sp) throws IOException {
+    super(sp);
+    this.fd =  Net.serverSocket(true);
+    this.fdVal = IOUtil.fdVal(fd);
+    this.state = ST_INUSE;
+}
 
 ```
 
@@ -361,52 +353,52 @@ ServerSocketChannel.open();
 serverChannel.register(selector, SelectionKey.OP_ACCEPT);
 
 ```
-    public final SelectionKey register(Selector sel, int ops,
-                                       Object att)
-        throws ClosedChannelException
-    {
-        synchronized (regLock) {
-            if (!isOpen())
-                throw new ClosedChannelException();
-            if ((ops & ~validOps()) != 0)
-                throw new IllegalArgumentException();
-            if (blocking)
-                throw new IllegalBlockingModeException();
-            SelectionKey k = findKey(sel);
-            if (k != null) {
-                k.interestOps(ops);
-                k.attach(att);
-            }
-            if (k == null) {
-                // New registration
-                synchronized (keyLock) {
-                    if (!isOpen())
-                        throw new ClosedChannelException();
-                    k = ((AbstractSelector)sel).register(this, ops, att);
-                    addKey(k);
-                }
-            }
-            return k;
+public final SelectionKey register(Selector sel, int ops,
+                                   Object att)
+    throws ClosedChannelException
+{
+    synchronized (regLock) {
+        if (!isOpen())
+            throw new ClosedChannelException();
+        if ((ops & ~validOps()) != 0)
+            throw new IllegalArgumentException();
+        if (blocking)
+            throw new IllegalBlockingModeException();
+        SelectionKey k = findKey(sel);
+        if (k != null) {
+            k.interestOps(ops);
+            k.attach(att);
         }
-    }
-
-```
-
-```
-    protected final SelectionKey register(AbstractSelectableChannel ch,
-                                          int ops,
-                                          Object attachment)
-    {
-        if (!(ch instanceof SelChImpl))
-            throw new IllegalSelectorException();
-        SelectionKeyImpl k = new SelectionKeyImpl((SelChImpl)ch, this);
-        k.attach(attachment);
-        synchronized (publicKeys) {
-            implRegister(k);
+        if (k == null) {
+            // New registration
+            synchronized (keyLock) {
+                if (!isOpen())
+                    throw new ClosedChannelException();
+                k = ((AbstractSelector)sel).register(this, ops, att);
+                addKey(k);
+            }
         }
-        k.interestOps(ops);
         return k;
     }
+}
+
+```
+
+```
+protected final SelectionKey register(AbstractSelectableChannel ch,
+                                      int ops,
+                                      Object attachment)
+{
+    if (!(ch instanceof SelChImpl))
+        throw new IllegalSelectorException();
+    SelectionKeyImpl k = new SelectionKeyImpl((SelChImpl)ch, this);
+    k.attach(attachment);
+    synchronized (publicKeys) {
+        implRegister(k);
+    }
+    k.interestOps(ops);
+    return k;
+}
 
 ```
 
@@ -419,15 +411,15 @@ b) 同时该操作还会将设置SelectionKey的interestOps字段，这是给我
 ### EPollSelectorImpl. implRegister
 
 ```
-    protected void implRegister(SelectionKeyImpl ski) {
-        if (closed)
-            throw new ClosedSelectorException();
-        SelChImpl ch = ski.channel;
-        int fd = Integer.valueOf(ch.getFDVal());
-        fdToKey.put(fd, ski);
-        pollWrapper.add(fd);
-        keys.add(ski);
-    }
+protected void implRegister(SelectionKeyImpl ski) {
+    if (closed)
+        throw new ClosedSelectorException();
+    SelChImpl ch = ski.channel;
+    int fd = Integer.valueOf(ch.getFDVal());
+    fdToKey.put(fd, ski);
+    pollWrapper.add(fd);
+    keys.add(ski);
+}
 
 ```
 
@@ -445,38 +437,38 @@ selection操作有3中类型：
 我们主要来看看select()的实现 ：int n = selector.select();
 
 ```
-    public int select() throws IOException {
-        return select(0);
-    }
+public int select() throws IOException {
+    return select(0);
+}
 
 ```
 
 最终会调用到EPollSelectorImpl的doSelect
 
 ```
-    protected int doSelect(long timeout) throws IOException {
-        if (closed)
-            throw new ClosedSelectorException();
-        processDeregisterQueue();
-        try {
-            begin();
-            pollWrapper.poll(timeout);
-        } finally {
-            end();
-        }
-        processDeregisterQueue();
-        int numKeysUpdated = updateSelectedKeys();
-        if (pollWrapper.interrupted()) {
-            // Clear the wakeup pipe
-            pollWrapper.putEventOps(pollWrapper.interruptedIndex(), 0);
-            synchronized (interruptLock) {
-                pollWrapper.clearInterrupted();
-                IOUtil.drain(fd0);
-                interruptTriggered = false;
-            }
-        }
-        return numKeysUpdated;
+protected int doSelect(long timeout) throws IOException {
+    if (closed)
+        throw new ClosedSelectorException();
+    processDeregisterQueue();
+    try {
+        begin();
+        pollWrapper.poll(timeout);
+    } finally {
+        end();
     }
+    processDeregisterQueue();
+    int numKeysUpdated = updateSelectedKeys();
+    if (pollWrapper.interrupted()) {
+        // Clear the wakeup pipe
+        pollWrapper.putEventOps(pollWrapper.interruptedIndex(), 0);
+        synchronized (interruptLock) {
+            pollWrapper.clearInterrupted();
+            IOUtil.drain(fd0);
+            interruptTriggered = false;
+        }
+    }
+    return numKeysUpdated;
+}
 
 ```
 
@@ -488,49 +480,49 @@ selection操作有3中类型：
 先来看processDeregisterQueue():
 
 ```
-    void processDeregisterQueue() throws IOException {
-        Set var1 = this.cancelledKeys();
-        synchronized(var1) {
-            if (!var1.isEmpty()) {
-                Iterator var3 = var1.iterator();
+void processDeregisterQueue() throws IOException {
+    Set var1 = this.cancelledKeys();
+    synchronized(var1) {
+        if (!var1.isEmpty()) {
+            Iterator var3 = var1.iterator();
 
-                while(var3.hasNext()) {
-                    SelectionKeyImpl var4 = (SelectionKeyImpl)var3.next();
+            while(var3.hasNext()) {
+                SelectionKeyImpl var4 = (SelectionKeyImpl)var3.next();
 
-                    try {
-                        this.implDereg(var4);
-                    } catch (SocketException var12) {
-                        IOException var6 = new IOException("Error deregistering key");
-                        var6.initCause(var12);
-                        throw var6;
-                    } finally {
-                        var3.remove();
-                    }
+                try {
+                    this.implDereg(var4);
+                } catch (SocketException var12) {
+                    IOException var6 = new IOException("Error deregistering key");
+                    var6.initCause(var12);
+                    throw var6;
+                } finally {
+                    var3.remove();
                 }
             }
-
         }
+
     }
+}
 
 ```
 
 从cancelledKeys集合中依次取出注销的SelectionKey，执行注销操作，将处理后的SelectionKey从cancelledKeys集合中移除。执行processDeregisterQueue()后cancelledKeys集合会为空。
 
 ```
-    protected void implDereg(SelectionKeyImpl ski) throws IOException {
-        assert (ski.getIndex() >= 0);
-        SelChImpl ch = ski.channel;
-        int fd = ch.getFDVal();
-        fdToKey.remove(Integer.valueOf(fd));
-        pollWrapper.remove(fd);
-        ski.setIndex(-1);
-        keys.remove(ski);
-        selectedKeys.remove(ski);
-        deregister((AbstractSelectionKey)ski);
-        SelectableChannel selch = ski.channel();
-        if (!selch.isOpen() && !selch.isRegistered())
-            ((SelChImpl)selch).kill();
-    }
+protected void implDereg(SelectionKeyImpl ski) throws IOException {
+    assert (ski.getIndex() >= 0);
+    SelChImpl ch = ski.channel;
+    int fd = ch.getFDVal();
+    fdToKey.remove(Integer.valueOf(fd));
+    pollWrapper.remove(fd);
+    ski.setIndex(-1);
+    keys.remove(ski);
+    selectedKeys.remove(ski);
+    deregister((AbstractSelectionKey)ski);
+    SelectableChannel selch = ski.channel();
+    if (!selch.isOpen() && !selch.isRegistered())
+        ((SelChImpl)selch).kill();
+}
 
 ```
 
@@ -545,18 +537,18 @@ selection操作有3中类型：
 接着我们来看EPollArrayWrapper.poll(timeout)：
 
 ```
-    int poll(long timeout) throws IOException {
-        updateRegistrations();
-        updated = epollWait(pollArrayAddress, NUM_EPOLLEVENTS, timeout, epfd);
-        for (int i=0; i<updated; i++) {
-            if (getDescriptor(i) == incomingInterruptFD) {
-                interruptedIndex = i;
-                interrupted = true;
-                break;
-            }
+int poll(long timeout) throws IOException {
+    updateRegistrations();
+    updated = epollWait(pollArrayAddress, NUM_EPOLLEVENTS, timeout, epfd);
+    for (int i=0; i<updated; i++) {
+        if (getDescriptor(i) == incomingInterruptFD) {
+            interruptedIndex = i;
+            interrupted = true;
+            break;
         }
-        return updated;
     }
+    return updated;
+}
 
 ```
 
@@ -566,30 +558,30 @@ updateRegistrations()方法会将已经注册到该selector的事件(eventsLow�
 再看updateSelectedKeys()：
 
 ```
-    private int updateSelectedKeys() {
-        int entries = pollWrapper.updated;
-        int numKeysUpdated = 0;
-        for (int i=0; i<entries; i++) {
-            int nextFD = pollWrapper.getDescriptor(i);
-            SelectionKeyImpl ski = fdToKey.get(Integer.valueOf(nextFD));
-            // ski is null in the case of an interrupt
-            if (ski != null) {
-                int rOps = pollWrapper.getEventOps(i);
-                if (selectedKeys.contains(ski)) {
-                    if (ski.channel.translateAndSetReadyOps(rOps, ski)) {
-                        numKeysUpdated++;
-                    }
-                } else {
-                    ski.channel.translateAndSetReadyOps(rOps, ski);
-                    if ((ski.nioReadyOps() & ski.nioInterestOps()) != 0) {
-                        selectedKeys.add(ski);
-                        numKeysUpdated++;
-                    }
+private int updateSelectedKeys() {
+    int entries = pollWrapper.updated;
+    int numKeysUpdated = 0;
+    for (int i=0; i<entries; i++) {
+        int nextFD = pollWrapper.getDescriptor(i);
+        SelectionKeyImpl ski = fdToKey.get(Integer.valueOf(nextFD));
+        // ski is null in the case of an interrupt
+        if (ski != null) {
+            int rOps = pollWrapper.getEventOps(i);
+            if (selectedKeys.contains(ski)) {
+                if (ski.channel.translateAndSetReadyOps(rOps, ski)) {
+                    numKeysUpdated++;
+                }
+            } else {
+                ski.channel.translateAndSetReadyOps(rOps, ski);
+                if ((ski.nioReadyOps() & ski.nioInterestOps()) != 0) {
+                    selectedKeys.add(ski);
+                    numKeysUpdated++;
                 }
             }
         }
-        return numKeysUpdated;
     }
+    return numKeysUpdated;
+}
 
 ```
 
@@ -643,27 +635,13 @@ epoll是Linux下的一种IO多路复用技术，可以非常高效的处理数�
 
 socket读数据
 
-
-
-
-
-![](https://upload-images.jianshu.io/upload_images/4235178-55ea1cf846c7d84c.png?imageMogr2/auto-orient/strip|imageView2/2/w/540/format/webp)
-
-
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405100605.png)
 
 
 socket写数据
 
 
-
-
-
-![](https://upload-images.jianshu.io/upload_images/4235178-39c86c1d52d6abce.png?imageMogr2/auto-orient/strip|imageView2/2/w/585/format/webp)
-
-
-
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405100624.png)
 
 最后顺便说下在Linux系统中JDK NIO使用的是 LT ，而Netty epoll使用的是 ET。
 
@@ -675,4 +653,4 @@ socket写数据
 
 [http://www.jianshu.com/p/0d497fe5484a](https://www.jianshu.com/p/0d497fe5484a)
 [http://remcarpediem.com/2017/04/02/Netty](https://link.jianshu.com/?t=http://remcarpediem.com/2017/04/02/Netty)源码-三-I-O模型和Java-NIO底层原理/
-圣思园netty课程
+

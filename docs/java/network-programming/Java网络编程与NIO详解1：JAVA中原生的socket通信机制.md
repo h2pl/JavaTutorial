@@ -21,24 +21,18 @@
 
 1.  jdk == 1.8
 
-## [](https://github.com/jasonGeng88/blog/blob/master/201708/java-socket.md#%E7%9F%A5%E8%AF%86%E7%82%B9)知识点
-
 *   socket 的连接处理
 *   IO 输入、输出流的处理
 *   请求数据格式处理
 *   请求模型优化
 
-## [](https://github.com/jasonGeng88/blog/blob/master/201708/java-socket.md#%E5%9C%BA%E6%99%AF)场景
-
 今天，和大家聊一下 JAVA 中的 socket 通信问题。这里采用最简单的一请求一响应模型为例，假设我们现在需要向 baidu 站点进行通信。我们用 JAVA 原生的 socket 该如何实现。
 
-### [](https://github.com/jasonGeng88/blog/blob/master/201708/java-socket.md#%E5%BB%BA%E7%AB%8B-socket-%E8%BF%9E%E6%8E%A5)建立 socket 连接
-
-首先，我们需要建立 socket 连接（_核心代码_）
+首先，我们需要建立 socket 连接（核心代码）
 
 
-
-<pre>import java.net.InetSocketAddress;
+````
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 
@@ -48,7 +42,7 @@ Socket socket = new Socket();
 SocketAddress remote = new InetSocketAddress(host, port);
 // 建立连接
 socket.connect(remote);
-</pre>
+````
 
 
 
@@ -61,21 +55,21 @@ _socket 连接实际与处理文件流有点类似，都是在进行 IO 操作�
 获取输入、输出流代码如下：
 
 
-
-<pre>// 输入流
+````
+// 输入流
 InputStream in = socket.getInputStream();
 // 输出流
-OutputStream out = socket.getOutputStream();</pre>
+OutputStream out = socket.getOutputStream();
+````
+
+
+关于 IO 流的处理，我们一般会用相应的包装类来处理 IO 流，如果直接处理的话，我们需要对`byte[]`进行操作，而这是相对比较繁琐的。如果采用包装类，我们可以直接以`string`、`int`等类型进行处理，简化了 IO 字节操作。
+
+下面以`BufferedReader`与`PrintWriter`作为输入输出的包装类进行处理。
 
 
 
-关于 IO 流的处理，我们一般会用相应的包装类来处理 IO 流，如果直接处理的话，我们需要对 `byte[]` 进行操作，而这是相对比较繁琐的。如果采用包装类，我们可以直接以`string`、`int`等类型进行处理，简化了 IO 字节操作。
-
-下面以 `BufferedReader` 与 `PrintWriter` 作为输入输出的包装类进行处理。
-
-
-
-<pre>// 获取 socket 输入流
+// 获取 socket 输入流
 private BufferedReader getReader(Socket socket) throws IOException {
     InputStream in = socket.getInputStream();
     return new BufferedReader(new InputStreamReader(in));
@@ -86,11 +80,6 @@ private PrintWriter getWriter(Socket socket) throws IOException {
     OutputStream out = socket.getOutputStream();
     return new PrintWriter(new OutputStreamWriter(out));
 }
-</pre>
-
-
-
-### [](https://github.com/jasonGeng88/blog/blob/master/201708/java-socket.md#%E6%95%B0%E6%8D%AE%E8%AF%B7%E6%B1%82%E4%B8%8E%E5%93%8D%E5%BA%94)数据请求与响应
 
 有了 socket 连接、IO 输入输出流，下面就该向发送请求数据，以及获取请求的响应结果。
 
@@ -100,9 +89,7 @@ private PrintWriter getWriter(Socket socket) throws IOException {
 
 请求的数据内容处理如下：
 
-
-
-<pre>public class HttpUtil {
+public class HttpUtil {
 
     public static String compositeRequest(String host){
 
@@ -112,33 +99,23 @@ private PrintWriter getWriter(Socket socket) throws IOException {
                 "Accept: */*\r\n\r\n";
     }
 
-}</pre>
-
-
+}
 
 发送请求数据代码如下：
 
-
-
-<pre>// 发起请求
+// 发起请求
 PrintWriter writer = getWriter(socket);
 writer.write(HttpUtil.compositeRequest(host));
-writer.flush();</pre>
-
-
+writer.flush();
 
 接收响应数据代码如下：
 
-
-
-<pre>// 读取响应
+// 读取响应
 String msg;
 BufferedReader reader = getReader(socket);
 while ((msg = reader.readLine()) != null){
     System.out.println(msg);
-}</pre>
-
-
+}
 
 ### [](https://github.com/jasonGeng88/blog/blob/master/201708/java-socket.md#%E7%BB%93%E6%9E%9C%E5%B1%95%E7%A4%BA)结果展示
 
@@ -153,16 +130,16 @@ import java.io.*;import java.net.InetSocketAddress;import java.net.Socket;import
 下面，我们通过实例化一个客户端，来展示 socket 通信的结果。
 
 
-
-<pre>public class Application {
+````
+public class Application {
 
     public static void main(String[] args) {
 
         new SocketHttpClient().start("www.baidu.com", 80);
 
     }
-}</pre>
-
+}
+````
 
 
 结果输出：
@@ -180,8 +157,8 @@ import java.io.*;import java.net.InetSocketAddress;import java.net.Socket;import
 所以如果要同时请求10个不同的站点，如下：
 
 
-
-<pre>public class SingleThreadApplication {
+````
+public class SingleThreadApplication {
 
     public static void main(String[] args) {
 
@@ -193,8 +170,8 @@ import java.io.*;import java.net.InetSocketAddress;import java.net.Socket;import
         }
 
     }
-}</pre>
-
+}
+````
 
 
 它一定是第一个请求响应结束后，才会发起下一个站点处理。
@@ -216,8 +193,8 @@ public class MultiThreadApplication {     public static void main(String[] args)
 既然线程太多不行，那我们控制一下线程创建的数目不就行了。只启动固定的线程数来进行 socket 处理，既利用了多线程的处理，又控制了系统的资源消耗。
 
 
-
-<pre>public class ThreadPoolApplication {
+````
+public class ThreadPoolApplication {
 
     public static void main(String[] args) {
 
@@ -237,8 +214,8 @@ public class MultiThreadApplication {     public static void main(String[] args)
         }
 
     }
-}</pre>
-
+}
+````
 
 
 _关于启动的线程数，一般 CPU 密集型会设置在 N+1（N为CPU核数），IO 密集型设置在 2N + 1。_
@@ -248,8 +225,8 @@ _关于启动的线程数，一般 CPU 密集型会设置在 N+1（N为CPU核数
 ## 补充1：TCP客户端与服务端
 
 
-
-<pre>public class TCP客户端 {
+````
+public class TCP客户端 {
     public static void main(String[] args) {
         new Thread(new Runnable() {
             @Override
@@ -272,13 +249,13 @@ _关于启动的线程数，一般 CPU 密集型会设置在 N+1（N为CPU核数
             }
         }).start();
   }
-}</pre>
+}
+````
 
 
 
-
-
-<pre>public class TCP服务端 {
+````
+public class TCP服务端 {
     public static void main(String[] args) {
         new Thread(new Runnable() {
             @Override
@@ -303,11 +280,11 @@ _关于启动的线程数，一般 CPU 密集型会设置在 N+1（N为CPU核数
             }
         }).start();
   }
-}</pre>
-
+}
+````
 ## 补充2：UDP客户端和服务端
-
-<pre>public class UDP客户端 {
+````
+public class UDP客户端 {
     public static void main(String[] args) {
         new Thread(new Runnable() {
             @Override
@@ -329,9 +306,10 @@ _关于启动的线程数，一般 CPU 密集型会设置在 N+1（N为CPU核数
             }
         }).start();
   }
-}</pre>
-
-<pre>public class UDP服务端 {
+}
+````
+````
+public class UDP服务端 {
     public static void main(String[] args) {
         new Thread(new Runnable() {
             @Override
@@ -353,11 +331,5 @@ _关于启动的线程数，一般 CPU 密集型会设置在 N+1（N为CPU核数
         }).start();
   }
 }
-</pre>
+````
 
-
-
-## [](https://github.com/jasonGeng88/blog/blob/master/201708/java-socket.md#%E5%90%8E%E7%BB%AD)后续
-
-*   JAVA 中是如何实现 IO多路复用
-*   Netty 下的实现异步请求的

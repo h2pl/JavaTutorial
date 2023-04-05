@@ -1,5 +1,4 @@
-# Table of Contents
-
+# 目录
 * [mmap基础概念](#mmap基础概念)
 * [mmap内存映射原理](#mmap内存映射原理)
 * [mmap和常规文件操作的区别](#mmap和常规文件操作的区别)
@@ -57,17 +56,15 @@
 
 mmap是一种内存映射文件的方法，即将一个文件或者其它对象映射到进程的地址空间，实现文件磁盘地址和进程虚拟地址空间中一段虚拟地址的一一对映关系。实现这样的映射关系后，进程就可以采用指针的方式读写操作这一段内存，而系统会自动回写脏页面到对应的文件磁盘上，即完成了对文件的操作而不必再调用read,write等系统调用函数。相反，内核空间对这段区域的修改也直接反映用户空间，从而可以实现不同进程间的文件共享。如下图所示：
 
-          ![](https://images0.cnblogs.com/blog2015/571793/201507/200501092691998.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405100810.png)
 
 由上图可以看出，进程的虚拟地址空间，由多个虚拟内存区域构成。虚拟内存区域是进程的虚拟地址空间中的一个同质区间，即具有同样特性的连续地址范围。上图中所示的text数据段（代码段）、初始数据段、BSS数据段、堆、栈和内存映射，都是一个独立的虚拟内存区域。而为内存映射服务的地址空间处在堆栈之间的空余部分。
 
 linux内核使用vm_area_struct结构来表示一个独立的虚拟内存区域，由于每个不同质的虚拟内存区域功能和内部机制都不同，因此一个进程使用多个vm_area_struct结构来分别表示不同类型的虚拟内存区域。各个vm_area_struct结构使用链表或者树形结构链接，方便进程快速访问，如下图所示：
 
-         ![](https://images0.cnblogs.com/blog2015/571793/201507/200501434261629.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405100838.png)
 
 vm_area_struct结构中包含区域起始和终止地址以及其他相关信息，同时也包含一个vm_ops指针，其内部可引出所有针对这个区域可以使用的系统调用函数。这样，进程对某一虚拟内存区域的任何操作需要用要的信息，都可以从vm_area_struct中获得。mmap函数就是要创建一个新的vm_area_struct结构，并将其与文件的物理磁盘地址相连。具体步骤请看下一节。
-
-[回到顶部](https://www.cnblogs.com/huxiao-tee/p/4660352.html#_labelTop)
 
 # mmap内存映射原理
 
@@ -75,7 +72,7 @@ mmap内存映射的实现过程，总的来说可以分为三个阶段：
 
 **（一）进程启动映射过程，并在虚拟地址空间中为映射创建虚拟映射区域**
 
-1、进程在用户空间调用库函数mmap，原型：void *mmap(void *start, size_t length, int prot, int flags, int fd, off_t offset);
+1、进程在用户空间调用库函数mmap，原型：void*mmap(void*start,size_tlength,intprot,intflags, intfd,off_toffset);
 
 2、在当前进程的虚拟地址空间中，寻找一段空闲的满足要求的连续的虚拟地址
 
@@ -87,7 +84,7 @@ mmap内存映射的实现过程，总的来说可以分为三个阶段：
 
 5、为映射分配了新的虚拟地址区域后，通过待映射的文件指针，在文件描述符表中找到对应的文件描述符，通过文件描述符，链接到内核“已打开文件集”中该文件的文件结构体（struct file），每个文件结构体维护着和这个已打开文件相关各项信息。
 
-6、通过该文件的文件结构体，链接到file_operations模块，调用内核函数mmap，其原型为：int mmap(struct file *filp, struct vm_area_struct *vma)，不同于用户空间库函数。
+6、通过该文件的文件结构体，链接到file_operations模块，调用内核函数mmap，其原型为：int mmap(structfile*filp,structvm_area_struct*vma)，不同于用户空间库函数。
 
 7、内核mmap函数通过虚拟文件系统inode模块定位到文件磁盘物理地址。
 
@@ -101,13 +98,11 @@ mmap内存映射的实现过程，总的来说可以分为三个阶段：
 
 10、缺页异常进行一系列判断，确定无非法操作后，内核发起请求调页过程。
 
-11、调页过程先在交换缓存空间（swap cache）中寻找需要访问的内存页，如果没有则调用nopage函数把所缺的页从磁盘装入到主存中。
+11、调页过程先在交换缓存空间（swapcache）中寻找需要访问的内存页，如果没有则调用nopage函数把所缺的页从磁盘装入到主存中。
 
 12、之后进程即可对这片主存进行读或者写的操作，如果写操作改变了其内容，一定时间后系统会自动回写脏页面到对应磁盘地址，也即完成了写入到文件的过程。
 
 注：修改过的脏页面并不会立即更新回文件中，而是有一段时间的延迟，可以调用msync()来强制同步, 这样所写的内容就能立即保存到文件里了。
-
-[回到顶部](https://www.cnblogs.com/huxiao-tee/p/4660352.html#_labelTop)
 
 # mmap和常规文件操作的区别
 
@@ -127,8 +122,6 @@ mmap内存映射的实现过程，总的来说可以分为三个阶段：
 
 **总而言之，常规文件操作需要从磁盘到页缓存再到用户主存的两次数据拷贝。而mmap操控文件，只需要从磁盘到用户主存的一次数据拷贝过程。**说白了，mmap的关键点是实现了用户空间和内核空间的数据直接交互而省去了空间不同数据不通的繁琐过程。因此mmap效率更高。
 
-[回到顶部](https://www.cnblogs.com/huxiao-tee/p/4660352.html#_labelTop)
-
 # mmap优点总结
 
 由上文讨论可知，mmap优点共有一下几点：
@@ -139,11 +132,9 @@ mmap内存映射的实现过程，总的来说可以分为三个阶段：
 
 3、提供进程间共享内存及相互通信的方式。不管是父子进程还是无亲缘关系的进程，都可以将自身用户空间映射到同一个文件或匿名映射到同一片区域。从而通过各自对映射区域的改动，达到进程间通信和进程间共享的目的。
 
-     同时，如果进程A和进程B都映射了区域C，当A第一次读取C时通过缺页从磁盘复制文件页到内存中；但当B再读C的相同页面时，虽然也会产生缺页异常，但是不再需要从磁盘中复制文件过来，而可直接使用已经保存在内存中的文件数据。
+  同时，如果进程A和进程B都映射了区域C，当A第一次读取C时通过缺页从磁盘复制文件页到内存中；但当B再读C的相同页面时，虽然也会产生缺页异常，但是不再需要从磁盘中复制文件过来，而可直接使用已经保存在内存中的文件数据。
 
 4、可用于实现高效的大规模数据传输。内存空间不足，是制约大数据操作的一个方面，解决方案往往是借助硬盘空间协助操作，补充内存的不足。但是进一步会造成大量的文件I/O操作，极大影响效率。这个问题可以通过mmap映射很好的解决。换句话说，但凡是需要用磁盘空间代替内存的时候，mmap都可以发挥其功效。
-
-
 
 # mmap使用细节
 
@@ -159,8 +150,7 @@ mmap内存映射的实现过程，总的来说可以分为三个阶段：
 
 分析：因为单位物理页面的大小是4096字节，虽然被映射的文件只有5000字节，但是对应到进程虚拟地址区域的大小需要满足整页大小，因此mmap函数执行后，实际映射到虚拟内存区域8192个 字节，5000~8191的字节部分用零填充。映射后的对应关系如下图所示：
 
-               ![](https://images0.cnblogs.com/blog2015/571793/201507/200521495513717.png)
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405100908.png)
 此时：
 
 （1）读/写前5000个字节（0~4999），会返回操作文件内容。
@@ -173,7 +163,7 @@ mmap内存映射的实现过程，总的来说可以分为三个阶段：
 
 分析：由于文件的大小是5000字节，和情形一一样，其对应的两个物理页。那么这两个物理页都是合法可以读写的，只是超出5000的部分不会体现在原文件中。由于程序要求映射15000字节，而文件只占两个物理页，因此8192字节~15000字节都不能读写，操作时会返回异常。如下图所示：
 
-                 ![](https://images0.cnblogs.com/blog2015/571793/201507/200522381763096.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405100917.png)
 
 此时：
 
@@ -205,33 +195,17 @@ mmap内存映射的实现过程，总的来说可以分为三个阶段：
 
 PhantomReference 是所有“弱引用”中最弱的引用类型。不同于软引用和弱引用，虚引用无法通过 get() 方法来取得目标对象的强引用从而使用目标对象，观察源码可以发现 get() 被重写为永远返回 null。
 那虚引用到底有什么作用？其实虚引用主要被用来 跟踪对象被垃圾回收的状态，通过查看引用队列中是否包含对象所对应的虚引用来判断它是否 即将被垃圾回收，从而采取行动。它并不被期待用来取得目标对象的引用，而目标对象被回收前，它的引用会被放入一个 ReferenceQueue 对象中，从而达到跟踪对象垃圾回收的作用。
-关于java引用类型的实现和原理可以阅读之前的文章[Reference 、ReferenceQueue 详解](https://www.jianshu.com/p/f86d3a43eec5) 和[Java 引用类型简述](https://www.jianshu.com/p/9a089a37f78d)
+关于java引用类型的实现和原理可以阅读之前的文章[Reference 、ReferenceQueue 详解](https://www.jianshu.com/p/f86d3a43eec5)和[Java 引用类型简述](https://www.jianshu.com/p/9a089a37f78d)
 
 #### 关于linux的内核态和用户态
 
-
-
-
-
-![](https://upload-images.jianshu.io/upload_images/4235178-7c5ca2cb236fd2eb.png?imageMogr2/auto-orient/strip|imageView2/2/w/752/format/webp)
-
-
-
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405100942.png)
 
 *   内核态：控制计算机的硬件资源，并提供上层应用程序运行的环境。比如socket I/0操作或者文件的读写操作等
 *   用户态：上层应用程序的活动空间，应用程序的执行必须依托于内核提供的资源。
 *   系统调用：为了使上层应用能够访问到这些资源，内核为上层应用提供访问的接口。
 
-
-
-
-
-![](https://upload-images.jianshu.io/upload_images/4235178-2393d0797135217b.png?imageMogr2/auto-orient/strip|imageView2/2/w/1200/format/webp)
-
-
-
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405100954.png)
 
 因此我们可以得知当我们通过JNI调用的native方法实际上就是从用户态切换到了内核态的一种方式。并且通过该系统调用使用操作系统所提供的功能。
 
@@ -242,15 +216,7 @@ A：intel cpu提供Ring0-Ring3四种级别的运行模式，Ring0级别最高，
 
 DirectByteBuffer是Java用于实现堆外内存的一个重要类，我们可以通过该类实现堆外内存的创建、使用和销毁。
 
-
-
-
-
-![](https://upload-images.jianshu.io/upload_images/4235178-fc2ae3eac18813d3.png?imageMogr2/auto-orient/strip|imageView2/2/w/726/format/webp)
-
-
-
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405101025.png)
 
 DirectByteBuffer该类本身还是位于Java内存模型的堆中。堆内内存是JVM可以直接管控、操纵。
 而DirectByteBuffer中的unsafe.allocateMemory(size);是个一个native方法，这个方法分配的是堆外内存，通过C的malloc来进行分配的。分配的内存是系统本地的内存，并不在Java的内存中，也不属于JVM管控范围，所以在DirectByteBuffer一定会存在某种方式来操纵堆外内存。
@@ -266,15 +232,7 @@ DirectByteBuffer该类本身还是位于Java内存模型的堆中。堆内内存
 address只会被直接缓存给使用到。之所以将address属性升级放在Buffer中，是为了在JNI调用GetDirectBufferAddress时提升它调用的速率。
 address表示分配的堆外内存的地址。
 
-
-
-
-
-![](https://upload-images.jianshu.io/upload_images/4235178-5e010dc58916b102.png?imageMogr2/auto-orient/strip|imageView2/2/w/1200/format/webp)
-
-
-
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405101047.png)
 
 unsafe.allocateMemory(size);分配完堆外内存后就会返回分配的堆外内存基地址，并将这个地址赋值给了address属性。这样我们后面通过JNI对这个堆外内存操作时都是通过这个address来实现的了。
 
@@ -285,45 +243,36 @@ A：这是因为JNI方法访问的内存区域是一个已经确定了的内存�
 Q：如上面所说，JNI调用的内存是不能进行GC操作的，那该如何解决了？
 A：①堆内内存与堆外内存之间数据拷贝的方式(并且在将堆内内存拷贝到堆外内存的过程JVM会保证不会进行GC操作)：比如我们要完成一个从文件中读数据到堆内内存的操作，即FileChannelImpl.read(HeapByteBuffer)。这里实际上File I/O会将数据读到堆外内存中，然后堆外内存再讲数据拷贝到堆内内存，这样我们就读到了文件中的内存。
 
-
-
-
-
-![](https://upload-images.jianshu.io/upload_images/4235178-f94db8df14023550.png?imageMogr2/auto-orient/strip|imageView2/2/w/1194/format/webp)
-
-
-
-
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405101116.png)
 ```
-    static int read(FileDescriptor var0, ByteBuffer var1, long var2, NativeDispatcher var4) throws IOException {
-        if (var1.isReadOnly()) {
-            throw new IllegalArgumentException("Read-only buffer");
-        } else if (var1 instanceof DirectBuffer) {
-            return readIntoNativeBuffer(var0, var1, var2, var4);
-        } else {
-            // 分配临时的堆外内存
-            ByteBuffer var5 = Util.getTemporaryDirectBuffer(var1.remaining());
+static int read(FileDescriptor var0, ByteBuffer var1, long var2, NativeDispatcher var4) throws IOException {
+    if (var1.isReadOnly()) {
+        throw new IllegalArgumentException("Read-only buffer");
+    } else if (var1 instanceof DirectBuffer) {
+        return readIntoNativeBuffer(var0, var1, var2, var4);
+    } else {
+        // 分配临时的堆外内存
+        ByteBuffer var5 = Util.getTemporaryDirectBuffer(var1.remaining());
 
-            int var7;
-            try {
-                // File I/O 操作会将数据读入到堆外内存中
-                int var6 = readIntoNativeBuffer(var0, var5, var2, var4);
-                var5.flip();
-                if (var6 > 0) {
-                    // 将堆外内存的数据拷贝到堆外内存中
-                    var1.put(var5);
-                }
-
-                var7 = var6;
-            } finally {
-                // 里面会调用DirectBuffer.cleaner().clean()来释放临时的堆外内存
-                Util.offerFirstTemporaryDirectBuffer(var5);
+        int var7;
+        try {
+            // File I/O 操作会将数据读入到堆外内存中
+            int var6 = readIntoNativeBuffer(var0, var5, var2, var4);
+            var5.flip();
+            if (var6 > 0) {
+                // 将堆外内存的数据拷贝到堆外内存中
+                var1.put(var5);
             }
 
-            return var7;
+            var7 = var6;
+        } finally {
+            // 里面会调用DirectBuffer.cleaner().clean()来释放临时的堆外内存
+            Util.offerFirstTemporaryDirectBuffer(var5);
         }
+
+        return var7;
     }
+}
 
 ```
 
@@ -335,99 +284,99 @@ A：①堆内内存与堆外内存之间数据拷贝的方式(并且在将堆内
 #### 堆外内存分配
 
 ```
-    DirectByteBuffer(int cap) {                   // package-private
-        super(-1, 0, cap, cap);
-        boolean pa = VM.isDirectMemoryPageAligned();
-        int ps = Bits.pageSize();
-        long size = Math.max(1L, (long)cap + (pa ? ps : 0));
-        // 保留总分配内存(按页分配)的大小和实际内存的大小
-        Bits.reserveMemory(size, cap);
+DirectByteBuffer(int cap) {                   // package-private
+    super(-1, 0, cap, cap);
+    boolean pa = VM.isDirectMemoryPageAligned();
+    int ps = Bits.pageSize();
+    long size = Math.max(1L, (long)cap + (pa ? ps : 0));
+    // 保留总分配内存(按页分配)的大小和实际内存的大小
+    Bits.reserveMemory(size, cap);
 
-        long base = 0;
-        try {
-            // 通过unsafe.allocateMemory分配堆外内存，并返回堆外内存的基地址
-            base = unsafe.allocateMemory(size);
-        } catch (OutOfMemoryError x) {
-            Bits.unreserveMemory(size, cap);
-            throw x;
-        }
-        unsafe.setMemory(base, size, (byte) 0);
-        if (pa && (base % ps != 0)) {
-            // Round up to page boundary
-            address = base + ps - (base & (ps - 1));
-        } else {
-            address = base;
-        }
-        // 构建Cleaner对象用于跟踪DirectByteBuffer对象的垃圾回收，以实现当DirectByteBuffer被垃圾回收时，堆外内存也会被释放
-        cleaner = Cleaner.create(this, new Deallocator(base, size, cap));
-        att = null;
+    long base = 0;
+    try {
+        // 通过unsafe.allocateMemory分配堆外内存，并返回堆外内存的基地址
+        base = unsafe.allocateMemory(size);
+    } catch (OutOfMemoryError x) {
+        Bits.unreserveMemory(size, cap);
+        throw x;
     }
+    unsafe.setMemory(base, size, (byte) 0);
+    if (pa && (base % ps != 0)) {
+        // Round up to page boundary
+        address = base + ps - (base & (ps - 1));
+    } else {
+        address = base;
+    }
+    // 构建Cleaner对象用于跟踪DirectByteBuffer对象的垃圾回收，以实现当DirectByteBuffer被垃圾回收时，堆外内存也会被释放
+    cleaner = Cleaner.create(this, new Deallocator(base, size, cap));
+    att = null;
+}
 
 ```
 
 #### Bits.reserveMemory(size, cap) 方法
 
 ```
-    static void reserveMemory(long size, int cap) {
+static void reserveMemory(long size, int cap) {
 
-        if (!memoryLimitSet && VM.isBooted()) {
-            maxMemory = VM.maxDirectMemory();
-            memoryLimitSet = true;
-        }
+    if (!memoryLimitSet && VM.isBooted()) {
+        maxMemory = VM.maxDirectMemory();
+        memoryLimitSet = true;
+    }
 
-        // optimist!
+    // optimist!
+    if (tryReserveMemory(size, cap)) {
+        return;
+    }
+
+    final JavaLangRefAccess jlra = SharedSecrets.getJavaLangRefAccess();
+
+    // retry while helping enqueue pending Reference objects
+    // which includes executing pending Cleaner(s) which includes
+    // Cleaner(s) that free direct buffer memory
+    while (jlra.tryHandlePendingReference()) {
         if (tryReserveMemory(size, cap)) {
             return;
         }
+    }
 
-        final JavaLangRefAccess jlra = SharedSecrets.getJavaLangRefAccess();
+    // trigger VM's Reference processing
+    System.gc();
 
-        // retry while helping enqueue pending Reference objects
-        // which includes executing pending Cleaner(s) which includes
-        // Cleaner(s) that free direct buffer memory
-        while (jlra.tryHandlePendingReference()) {
+    // a retry loop with exponential back-off delays
+    // (this gives VM some time to do it's job)
+    boolean interrupted = false;
+    try {
+        long sleepTime = 1;
+        int sleeps = 0;
+        while (true) {
             if (tryReserveMemory(size, cap)) {
                 return;
             }
+            if (sleeps >= MAX_SLEEPS) {
+                break;
+            }
+            if (!jlra.tryHandlePendingReference()) {
+                try {
+                    Thread.sleep(sleepTime);
+                    sleepTime <<= 1;
+                    sleeps++;
+                } catch (InterruptedException e) {
+                    interrupted = true;
+                }
+            }
         }
 
-        // trigger VM's Reference processing
-        System.gc();
+        // no luck
+        throw new OutOfMemoryError("Direct buffer memory");
 
-        // a retry loop with exponential back-off delays
-        // (this gives VM some time to do it's job)
-        boolean interrupted = false;
-        try {
-            long sleepTime = 1;
-            int sleeps = 0;
-            while (true) {
-                if (tryReserveMemory(size, cap)) {
-                    return;
-                }
-                if (sleeps >= MAX_SLEEPS) {
-                    break;
-                }
-                if (!jlra.tryHandlePendingReference()) {
-                    try {
-                        Thread.sleep(sleepTime);
-                        sleepTime <<= 1;
-                        sleeps++;
-                    } catch (InterruptedException e) {
-                        interrupted = true;
-                    }
-                }
-            }
-
-            // no luck
-            throw new OutOfMemoryError("Direct buffer memory");
-
-        } finally {
-            if (interrupted) {
-                // don't swallow interrupts
-                Thread.currentThread().interrupt();
-            }
+    } finally {
+        if (interrupted) {
+            // don't swallow interrupts
+            Thread.currentThread().interrupt();
         }
     }
+}
 
 ```
 
@@ -436,16 +385,16 @@ A：①堆内内存与堆外内存之间数据拷贝的方式(并且在将堆内
 其中，如果系统中内存( 即，堆外内存 )不够的话：
 
 ```
-        final JavaLangRefAccess jlra = SharedSecrets.getJavaLangRefAccess();
+final JavaLangRefAccess jlra = SharedSecrets.getJavaLangRefAccess();
 
-        // retry while helping enqueue pending Reference objects
-        // which includes executing pending Cleaner(s) which includes
-        // Cleaner(s) that free direct buffer memory
-        while (jlra.tryHandlePendingReference()) {
-            if (tryReserveMemory(size, cap)) {
-                return;
-            }
-        }
+// retry while helping enqueue pending Reference objects
+// which includes executing pending Cleaner(s) which includes
+// Cleaner(s) that free direct buffer memory
+while (jlra.tryHandlePendingReference()) {
+    if (tryReserveMemory(size, cap)) {
+        return;
+    }
+}
 
 ```
 
@@ -453,20 +402,20 @@ jlra.tryHandlePendingReference()会触发一次非堵塞的Reference#tryHandlePe
 因为在Reference的静态代码块中定义了：
 
 ```
-        SharedSecrets.setJavaLangRefAccess(new JavaLangRefAccess() {
-            @Override
-            public boolean tryHandlePendingReference() {
-                return tryHandlePending(false);
-            }
-        });
+SharedSecrets.setJavaLangRefAccess(new JavaLangRefAccess() {
+    @Override
+    public boolean tryHandlePendingReference() {
+        return tryHandlePending(false);
+    }
+});
 
 ```
 
 如果在进行一次堆外内存资源回收后，还不够进行本次堆外内存分配的话，则
 
 ```
-        // trigger VM's Reference processing
-        System.gc();
+// trigger VM's Reference processing
+System.gc();
 
 ```
 
@@ -474,14 +423,7 @@ System.gc()会触发一个full gc，当然前提是你没有显示的设置-XX:+
 所以在后面打代码中，会进行最多9次尝试，看是否有足够的可用堆外内存来分配堆外内存。并且每次尝试之前，都对延迟等待时间，已给JVM足够的时间去完成full gc操作。如果9次尝试后依旧没有足够的可用堆外内存来分配本次堆外内存，则抛出OutOfMemoryError("Direct buffer memory”)异常。
 
 
-
-
-
-![](https://upload-images.jianshu.io/upload_images/4235178-6da0d60191992f59.png?imageMogr2/auto-orient/strip|imageView2/2/w/449/format/webp)
-
-
-
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405101406.png)
 
 注意，这里之所以用使用full gc的很重要的一个原因是：System.gc()会对新生代的老生代都会进行内存回收，这样会比较彻底地回收DirectByteBuffer对象以及他们关联的堆外内存.
 DirectByteBuffer对象本身其实是很小的，但是它后面可能关联了一个非常大的堆外内存，因此我们通常称之为冰山对象.
@@ -526,7 +468,7 @@ Cleaner是PhantomReference的子类，并通过自身的next和prev字段维护�
 
 
 
-![](https://upload-images.jianshu.io/upload_images/4235178-792afac32aefd061.png?imageMogr2/auto-orient/strip|imageView2/2/w/713/format/webp)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405101539.png)
 
 
 
@@ -535,9 +477,7 @@ Cleaner是PhantomReference的子类，并通过自身的next和prev字段维护�
 
 
 
-
-![](https://upload-images.jianshu.io/upload_images/4235178-07eaab88f1d02927.png?imageMogr2/auto-orient/strip|imageView2/2/w/750/format/webp)
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405101614.png)
 
 
 
@@ -548,13 +488,7 @@ thunk方法：
 
 
 
-
-
-![](https://upload-images.jianshu.io/upload_images/4235178-ebeffa00197df134.png?imageMogr2/auto-orient/strip|imageView2/2/w/515/format/webp)
-
-
-
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405101655.png)
 
 #### 通过配置参数的方式来回收堆外内存
 
@@ -593,6 +527,7 @@ thunk方法：
 ## 参考文章
 
 [http://lovestblog.cn/blog/2015/05/12/direct-buffer/](https://link.jianshu.com/?t=http://lovestblog.cn/blog/2015/05/12/direct-buffer/)
+
 [http://www.infoq.com/cn/news/2014/12/external-memory-heap-memory](https://link.jianshu.com/?t=http://www.infoq.com/cn/news/2014/12/external-memory-heap-memory)
+
 [http://www.jianshu.com/p/85e931636f27](https://www.jianshu.com/p/85e931636f27)
-圣思园《并发与Netty》课程
