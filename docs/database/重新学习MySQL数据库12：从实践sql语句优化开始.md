@@ -1,25 +1,28 @@
 # 目录
+
 * [字段](#字段)
 * [索引](#索引)
 * [查询SQL](#查询sql)
 * [引擎](#引擎)
-    * [MyISAM](#myisam)
-    * [InnoDB](#innodb)
-    * [0、自己写的海量数据sql优化实践](#0、自己写的海量数据sql优化实践)
+  * [MyISAM](#myisam)
+  * [InnoDB](#innodb)
+  * [0、自己写的海量数据sql优化实践](#0、自己写的海量数据sql优化实践)
 * [mysql百万级分页优化](#mysql百万级分页优化)
-    * [　　普通分页](#　　普通分页)
-    * [　　 优化分页](#　　-优化分页)
+  * [　　普通分页](#　　普通分页)
+  * [　　 优化分页](#　　-优化分页)
 * [　　总结](#　　总结)
 
 
 本文转自互联网
 
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看
+
 > https://github.com/h2pl/Java-Tutorial
 
 喜欢的话麻烦点下Star哈
 
 本也将整理到我的个人博客：
+
 > www.how2playlife.com
 
 更多Java技术文章将陆续在微信公众号【Java技术江湖】更新，敬请关注。
@@ -247,45 +250,59 @@ Query_time: 3.166424 Lock_time: 0.000000 Rows_sent: 900500 Rows_examined: 999999
 
 **explain执行计划**
 
+````
 id select_type table partitions type possible_keys key key_len ref rows filtered Extra
 
 1 SIMPLE vote_record \N ALL \N \N \N \N 996507 100.00 \N
+````
 
 全表扫描耗时3秒多，用不到索引。
 
+````
 **2 select * from vote_record where vote_num > 1000**
+````
 
 没有索引，所以相当于全表扫描，一样是3.5秒左右
 
+````
 **3 select * from vote_record where vote_num > 1000**
+````
 
 **加索引create**
 
+````
 **CREATE INDEX vote ON vote_record(vote_num);**
+````
 
 **explain查看执行计划**
 
+````
 id select_type table partitions type possible_keys key key_len ref rows filtered Extra
 
 1 SIMPLE vote_record \N ALL votenum,vote \N \N \N 996507 50.00 Using where
+````
 
 还是没用到索引，因为不符合最左前缀匹配。查询需要3.5秒左右
 
 最后修改一下sql语句
 
+````
 EXPLAIN SELECT * FROM vote_record WHERE id > 0 AND vote_num > 1000;
 
 id select_type table partitions type possible_keys key key_len ref rows filtered Extra
 
 1 SIMPLE vote_record \N range PRIMARY,votenum,vote PRIMARY 4 \N 498253 50.00 Using where
+````
 
 用到了索引，但是只用到了主键索引。再修改一次
 
+````
 EXPLAIN SELECT * FROM vote_record WHERE id > 0 AND vote_num = 1000;
 
 id select_type table partitions type possible_keys key key_len ref rows filtered Extra
 
 1 SIMPLE vote_record \N index_merge PRIMARY,votenum,vote votenum,PRIMARY 8,4 \N 51 100.00 Using intersect(votenum,PRIMARY); Using where
+````
 
 用到了两个索引，votenum,PRIMARY。
 
@@ -293,11 +310,13 @@ id select_type table partitions type possible_keys key key_len ref rows filtered
 
 再看一个语句
 
+````
 EXPLAIN SELECT * FROM vote_record WHERE id = 1000 AND vote_num > 1000
 
 id select_type table partitions type possible_keys key key_len ref rows filtered Extra
 
 1 SIMPLE vote_record \N const PRIMARY,votenum PRIMARY 4 const 1 100.00 \N
+````
 
 也只有主键用到了索引。这是因为只有最左前缀索引可以用>或<，其他索引用<或者>会导致用不到索引。
 
@@ -311,7 +330,7 @@ id select_type table partitions type possible_keys key key_len ref rows filtered
 
 show global variables like "%slow%";
 
-![](https://oscimg.oschina.net/oscnet/318ac710c3fcf1b293f4a280bbb4642a951.jpg)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/318ac710c3fcf1b293f4a280bbb4642a951.jpg)
 
 2.开启慢查询日志
 
@@ -321,7 +340,7 @@ set global slow_query_log=on;
 
 show global variables like "%long%";
 
-![](https://oscimg.oschina.net/oscnet/25c18a8fbb6cc43a48b554bde844191d75d.jpg)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/25c18a8fbb6cc43a48b554bde844191d75d.jpg)
 
 4.如果不是自己想的时间，修改慢查询时间，只要超过了以下的设置时间，查询的日志就会到刚刚的日志中，我设置查询时间超过1S就进入到慢查询日志中
 
@@ -331,15 +350,15 @@ set global long_query_time=1;
 
 Sql查询语句：select sql_no_cache * from employees_tmp where first_name='Duangkaew' and gender='M'
 
-![](https://oscimg.oschina.net/oscnet/19fa580673fef04c767680a8010c444b786.jpg)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/19fa580673fef04c767680a8010c444b786.jpg)
 
 发现查数据的总时间去掉了17.74S
 
 查看日志：打开日志
 
-![](https://oscimg.oschina.net/oscnet/a55efa460d5393061ddb62d6d225d62532a.jpg)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/a55efa460d5393061ddb62d6d225d62532a.jpg)
 
-![](https://oscimg.oschina.net/oscnet/290fac71753491a5a18fe66015adc1f7687.jpg)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/290fac71753491a5a18fe66015adc1f7687.jpg)
 
 标记1：执行的sql语句
 
@@ -355,65 +374,83 @@ Sql查询语句：select sql_no_cache * from employees_tmp where first_name='Dua
 
 6.执行打印计划，主要是查看是否使用了索引等其他内容,主要就是在sql前面加上explain 关键字
 
+````
 explain select sql_no_cache * from employees_tmp where first_name='Duangkaew' and gender='M';
+````
 
-![](https://oscimg.oschina.net/oscnet/c15fd4c1db312050661a019557401f4b1cf.jpg)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/c15fd4c1db312050661a019557401f4b1cf.jpg)
 
 描述extra中，表示只使用了where条件，没有其他什么索引之类的
 
 7.进行sql优化，建一个fist_name的索引，索引就是将你需要的数据先给筛选出来，这样就可以节省很多扫描时间
 
+````
 create index firstname on employees_tmp(first_name);
+````
 
-![](https://oscimg.oschina.net/oscnet/325f92967bec30c8fcec3376725d21ea9ad.jpg)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/325f92967bec30c8fcec3376725d21ea9ad.jpg)
 
 注：创建索引时会很慢，是对整个表做了一个复制功能，并进行数据的一些分类（我猜是这样，所以会很慢）
 
 8.查看建立的索引
 
+````
 show index from employees_tmp;
+````
 
-![](https://oscimg.oschina.net/oscnet/240bdc203ec8db9c4e2f9a1715816dcf928.jpg)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/240bdc203ec8db9c4e2f9a1715816dcf928.jpg)
 
 9.在执行查询语句，查看语句的执行时间
 
+````
 select sql_no_cache * from employees_tmp where first_name='Duangkaew' and gender='M'
+````
 
-![](https://oscimg.oschina.net/oscnet/addc98d4a52648e09b8c29f773865cf00ba.jpg)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/addc98d4a52648e09b8c29f773865cf00ba.jpg)
 
 发现时间已经有所提升了，其实选择索引也不一开始就知道，我们在试试使用性别，gender进行索引
 
 10.删除已经有的索引，删除索引：
 
+````
 drop index first_name on employees_tmp;
+````
 
 11.创建性别的索引(性别是不怎么好的索引方式，因为有很多重复数据)
 
+````
 create index index_gendar on employees_tmp(gender);
+````
 
 在执行sql语句查询数据，查看查询执行时间，没有创建比较优秀的索引，导致查询时间还变长了，
 
 为嘛还变长了，这个我没有弄懂
 
-![](https://oscimg.oschina.net/oscnet/d043c97d87b9fa6eb65f17b281db14d4df8.jpg)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/d043c97d87b9fa6eb65f17b281db14d4df8.jpg)
 
 12.我们在试试使用创建组合索引，使用性别和姓名
 
+````
 alter table employees_tmp add index idx_union (first_name,gender);
+````
 
 在执行sql查看sql数据的执行时间
 
+````
 select sql_no_cache * from employees_tmp where first_name='Duangkaew' and gender='M'
+````
 
 速度提升了N多倍啊
 
-![](https://oscimg.oschina.net/oscnet/a2da1ce647c8e31ec16d9a6750f1e29b014.jpg)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/a2da1ce647c8e31ec16d9a6750f1e29b014.jpg)
 
 查看创建的索引
 
+````
 show index from employees_tmp;
+````
 
-![](https://oscimg.oschina.net/oscnet/9704ee337b205ce64e31dbe4c12af495c5b.jpg)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/9704ee337b205ce64e31dbe4c12af495c5b.jpg)
 
 索引建的好真的一个好帮手，建不好就是费时的一个操作
 

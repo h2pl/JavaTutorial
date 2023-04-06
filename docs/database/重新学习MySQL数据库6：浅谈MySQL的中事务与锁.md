@@ -54,10 +54,6 @@
 
 <!-- more -->
 
-<!-- more -->
-
-
-
 ## 『浅入深出』MySQL 中事务的实现
 
 在关系型数据库中，事务的重要性不言而喻，只要对数据库稍有了解的人都知道事务具有 ACID 四个基本属性，而我们不知道的可能就是数据库是如何实现这四个属性的；在这篇文章中，我们将对事务的实现进行分析，尝试理解数据库是如何实现事务的，当然我们也会在文章中简单对 MySQL 中对 ACID 的实现进行简单的介绍。
@@ -427,19 +423,13 @@ DELETE
 
 InnoDB会为删除的每一行保存当前系统的版本号(事务的ID)作为删除标识. 看下面的具体例子分析: 第二个事务,ID为2;
 
-start transaction; select *  from yang;  //(1) select *  from yang;  //(2) commit;  
-
-
-
+start transaction; select *  from yang;  //(1) select *  from yang;  //(2) commit;
 
 假设1
 
 假设在执行这个事务ID为2的过程中,刚执行到(1),这时,有另一个事务ID为3往这个表里插入了一条数据; 第三个事务ID为3;
 
 start transaction; insert into yang values(NULL,'tian'); commit;
-
-
-
 
 这时表中的数据如下:
 
@@ -461,9 +451,9 @@ start transaction; insert into yang values(NULL,'tian'); commit;
 假设2
 
 假设在执行这个事务ID为2的过程中,刚执行到(1),假设事务执行完事务3后，接着又执行了事务4; 第四个事务:
-
+````
 start   transaction;  delete  from yang where id=1; commit;  
-
+````
 
 
 

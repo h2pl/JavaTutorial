@@ -1,10 +1,9 @@
-# Table of Contents
-
-      * [什么是ziplist](#什么是ziplist)
-      * [ziplist的数据结构定义](#ziplist的数据结构定义)
-      * [ziplist的接口](#ziplist的接口)
-      * [ziplist的插入逻辑解析](#ziplist的插入逻辑解析)
-      * [hash与ziplist](#hash与ziplist)
+# 目录
+      * [什么是ziplist](#什么是ziplist)  
+      * [ziplist的数据结构定义](#ziplist的数据结构定义)  
+      * [ziplist的接口](#ziplist的接口)  
+      * [ziplist的插入逻辑解析](#ziplist的插入逻辑解析)  
+      * [hash与ziplist](#hash与ziplist)  
 
 
 本文转自互联网
@@ -20,7 +19,7 @@
 
 如果对本系列文章有什么建议，或者是有什么疑问的话，也可以关注公众号【Java技术江湖】联系作者，欢迎你参与本系列博文的创作和修订。
 
-<!-- more -->
+<!-- more -->  
 
 
 本文是《[Redis内部数据结构详解](http://zhangtielei.com/posts/blog-redis-dict.html)》系列的第四篇。在本文中，我们首先介绍一个新的Redis内部数据结构——ziplist，然后在文章后半部分我们会讨论一下在robj, dict和ziplist的基础上，Redis对外暴露的hash结构是怎样构建起来的。
@@ -31,11 +30,11 @@
 
 
 
-```
-hash-max-ziplist-entries 512
-hash-max-ziplist-value 64
-
-```
+```  
+hash-max-ziplist-entries 512  
+hash-max-ziplist-value 64  
+  
+```  
 
 
 
@@ -109,7 +108,7 @@ ziplist的数据结构组成是本文要讨论的重点。实际上，ziplist还
 
 好了，ziplist的数据结构定义，我们介绍完了，现在我们看一个具体的例子。
 
-[![Redis Ziplist Sample](http://zhangtielei.com/assets/photos_redis/redis_ziplist_sample.png)](http://zhangtielei.com/assets/photos_redis/redis_ziplist_sample.png)
+[![Redis Ziplist Sample](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/redis_ziplist_sample.png)
 
 上图是一份真实的ziplist数据。我们逐项解读一下：
 
@@ -146,19 +145,19 @@ ziplist的数据结构组成是本文要讨论的重点。实际上，ziplist还
 
 
 
-```
-unsigned char *ziplistNew(void);
-unsigned char *ziplistMerge(unsigned char **first, unsigned char **second);
-unsigned char *ziplistPush(unsigned char *zl, unsigned char *s, unsigned int slen, int where);
-unsigned char *ziplistIndex(unsigned char *zl, int index);
-unsigned char *ziplistNext(unsigned char *zl, unsigned char *p);
-unsigned char *ziplistPrev(unsigned char *zl, unsigned char *p);
-unsigned char *ziplistInsert(unsigned char *zl, unsigned char *p, unsigned char *s, unsigned int slen);
-unsigned char *ziplistDelete(unsigned char *zl, unsigned char **p);
-unsigned char *ziplistFind(unsigned char *p, unsigned char *vstr, unsigned int vlen, unsigned int skip);
-unsigned int ziplistLen(unsigned char *zl);
-
-```
+```  
+unsigned char *ziplistNew(void);  
+unsigned char *ziplistMerge(unsigned char **first, unsigned char **second);  
+unsigned char *ziplistPush(unsigned char *zl, unsigned char *s, unsigned int slen, int where);  
+unsigned char *ziplistIndex(unsigned char *zl, int index);  
+unsigned char *ziplistNext(unsigned char *zl, unsigned char *p);  
+unsigned char *ziplistPrev(unsigned char *zl, unsigned char *p);  
+unsigned char *ziplistInsert(unsigned char *zl, unsigned char *p, unsigned char *s, unsigned int slen);  
+unsigned char *ziplistDelete(unsigned char *zl, unsigned char **p);  
+unsigned char *ziplistFind(unsigned char *p, unsigned char *vstr, unsigned int vlen, unsigned int skip);  
+unsigned int ziplistLen(unsigned char *zl);  
+  
+```  
 
 
 
@@ -187,98 +186,21 @@ ziplistPush和ziplistInsert都是插入，只是对于插入位置的限定不�
 
 
 
-```
-static unsigned char *__ziplistInsert(unsigned char *zl, unsigned char *p, unsigned char *s, unsigned int slen) {
-    size_t curlen = intrev32ifbe(ZIPLIST_BYTES(zl)), reqlen;
-    unsigned int prevlensize, prevlen = 0;
-    size_t offset;
-    int nextdiff = 0;
-    unsigned char encoding = 0;
-    long long value = 123456789; /* initialized to avoid warning. Using a value
-                                    that is easy to see if for some reason
-                                    we use it uninitialized. */
-    zlentry tail;
-
-    /* Find out prevlen for the entry that is inserted. */
-    if (p[0] != ZIP_END) {
-        ZIP_DECODE_PREVLEN(p, prevlensize, prevlen);
-    } else {
-        unsigned char *ptail = ZIPLIST_ENTRY_TAIL(zl);
-        if (ptail[0] != ZIP_END) {
-            prevlen = zipRawEntryLength(ptail);
-        }
-    }
-
-    /* See if the entry can be encoded */
-    if (zipTryEncoding(s,slen,&value,&encoding)) {
-        /* 'encoding' is set to the appropriate integer encoding */
-        reqlen = zipIntSize(encoding);
-    } else {
-        /* 'encoding' is untouched, however zipEncodeLength will use the
-         * string length to figure out how to encode it. */
-        reqlen = slen;
-    }
-    /* We need space for both the length of the previous entry and
-     * the length of the payload. */
-    reqlen += zipPrevEncodeLength(NULL,prevlen);
-    reqlen += zipEncodeLength(NULL,encoding,slen);
-
-    /* When the insert position is not equal to the tail, we need to
-     * make sure that the next entry can hold this entry's length in
-     * its prevlen field. */
-    nextdiff = (p[0] != ZIP_END) ? zipPrevLenByteDiff(p,reqlen) : 0;
-
-    /* Store offset because a realloc may change the address of zl. */
-    offset = p-zl;
-    zl = ziplistResize(zl,curlen+reqlen+nextdiff);
-    p = zl+offset;
-
-    /* Apply memory move when necessary and update tail offset. */
-    if (p[0] != ZIP_END) {
-        /* Subtract one because of the ZIP_END bytes */
-        memmove(p+reqlen,p-nextdiff,curlen-offset-1+nextdiff);
-
-        /* Encode this entry's raw length in the next entry. */
-        zipPrevEncodeLength(p+reqlen,reqlen);
-
-        /* Update offset for tail */
-        ZIPLIST_TAIL_OFFSET(zl) =
-            intrev32ifbe(intrev32ifbe(ZIPLIST_TAIL_OFFSET(zl))+reqlen);
-
-        /* When the tail contains more than one entry, we need to take
-         * "nextdiff" in account as well. Otherwise, a change in the
-         * size of prevlen doesn't have an effect on the *tail* offset. */
-        zipEntry(p+reqlen, &tail);
-        if (p[reqlen+tail.headersize+tail.len] != ZIP_END) {
-            ZIPLIST_TAIL_OFFSET(zl) =
-                intrev32ifbe(intrev32ifbe(ZIPLIST_TAIL_OFFSET(zl))+nextdiff);
-        }
-    } else {
-        /* This element will be the new tail. */
-        ZIPLIST_TAIL_OFFSET(zl) = intrev32ifbe(p-zl);
-    }
-
-    /* When nextdiff != 0, the raw length of the next entry has changed, so
-     * we need to cascade the update throughout the ziplist */
-    if (nextdiff != 0) {
-        offset = p-zl;
-        zl = __ziplistCascadeUpdate(zl,p+reqlen);
-        p = zl+offset;
-    }
-
-    /* Write the entry */
-    p += zipPrevEncodeLength(p,prevlen);
-    p += zipEncodeLength(p,encoding,slen);
-    if (ZIP_IS_STR(encoding)) {
-        memcpy(p,s,slen);
-    } else {
-        zipSaveInteger(p,value,encoding);
-    }
-    ZIPLIST_INCR_LENGTH(zl,1);
-    return zl;
-}
-
-```
+```  
+static unsigned char *__ziplistInsert(unsigned char *zl, unsigned char *p, unsigned char *s, unsigned int slen) {  
+    size_t curlen = intrev32ifbe(ZIPLIST_BYTES(zl)), reqlen;    unsigned int prevlensize, prevlen = 0;    size_t offset;    int nextdiff = 0;    unsigned char encoding = 0;    long long value = 123456789; /* initialized to avoid warning. Using a value                                    that is easy to see if for some reason                                    we use it uninitialized. */    zlentry tail;  
+    /* Find out prevlen for the entry that is inserted. */    if (p[0] != ZIP_END) {        ZIP_DECODE_PREVLEN(p, prevlensize, prevlen);    } else {        unsigned char *ptail = ZIPLIST_ENTRY_TAIL(zl);        if (ptail[0] != ZIP_END) {            prevlen = zipRawEntryLength(ptail);        }    }  
+    /* See if the entry can be encoded */    if (zipTryEncoding(s,slen,&value,&encoding)) {        /* 'encoding' is set to the appropriate integer encoding */        reqlen = zipIntSize(encoding);    } else {        /* 'encoding' is untouched, however zipEncodeLength will use the         * string length to figure out how to encode it. */        reqlen = slen;    }    /* We need space for both the length of the previous entry and     * the length of the payload. */    reqlen += zipPrevEncodeLength(NULL,prevlen);    reqlen += zipEncodeLength(NULL,encoding,slen);  
+    /* When the insert position is not equal to the tail, we need to     * make sure that the next entry can hold this entry's length in     * its prevlen field. */    nextdiff = (p[0] != ZIP_END) ? zipPrevLenByteDiff(p,reqlen) : 0;  
+    /* Store offset because a realloc may change the address of zl. */    offset = p-zl;    zl = ziplistResize(zl,curlen+reqlen+nextdiff);    p = zl+offset;  
+    /* Apply memory move when necessary and update tail offset. */    if (p[0] != ZIP_END) {        /* Subtract one because of the ZIP_END bytes */        memmove(p+reqlen,p-nextdiff,curlen-offset-1+nextdiff);  
+        /* Encode this entry's raw length in the next entry. */        zipPrevEncodeLength(p+reqlen,reqlen);  
+        /* Update offset for tail */        ZIPLIST_TAIL_OFFSET(zl) =            intrev32ifbe(intrev32ifbe(ZIPLIST_TAIL_OFFSET(zl))+reqlen);  
+        /* When the tail contains more than one entry, we need to take         * "nextdiff" in account as well. Otherwise, a change in the         * size of prevlen doesn't have an effect on the *tail* offset. */        zipEntry(p+reqlen, &tail);        if (p[reqlen+tail.headersize+tail.len] != ZIP_END) {            ZIPLIST_TAIL_OFFSET(zl) =                intrev32ifbe(intrev32ifbe(ZIPLIST_TAIL_OFFSET(zl))+nextdiff);        }    } else {        /* This element will be the new tail. */        ZIPLIST_TAIL_OFFSET(zl) = intrev32ifbe(p-zl);    }  
+    /* When nextdiff != 0, the raw length of the next entry has changed, so     * we need to cascade the update throughout the ziplist */    if (nextdiff != 0) {        offset = p-zl;        zl = __ziplistCascadeUpdate(zl,p+reqlen);        p = zl+offset;    }  
+    /* Write the entry */    p += zipPrevEncodeLength(p,prevlen);    p += zipEncodeLength(p,encoding,slen);    if (ZIP_IS_STR(encoding)) {        memcpy(p,s,slen);    } else {        zipSaveInteger(p,value,encoding);    }    ZIPLIST_INCR_LENGTH(zl,1);    return zl;}  
+  
+```  
 
 
 
@@ -310,15 +232,11 @@ hash是Redis中可以用来存储一个对象结构的比较理想的数据类�
 
 
 
-```
-robj *createHashObject(void) {
-    unsigned char *zl = ziplistNew();
-    robj *o = createObject(OBJ_HASH, zl);
-    o->encoding = OBJ_ENCODING_ZIPLIST;
-    return o;
-}
-
-```
+```  
+robj *createHashObject(void) {  
+    unsigned char *zl = ziplistNew();    robj *o = createObject(OBJ_HASH, zl);    o->encoding = OBJ_ENCODING_ZIPLIST;    return o;}  
+  
+```  
 
 
 
@@ -332,11 +250,11 @@ robj *createHashObject(void) {
 
 
 
-```
-hset user:100 name tielei
-hset user:100 age 20
-
-```
+```  
+hset user:100 name tielei  
+hset user:100 age 20  
+  
+```  
 
 
 
@@ -352,11 +270,11 @@ hset user:100 age 20
 
 
 
-```
-hash-max-ziplist-entries 512
-hash-max-ziplist-value 64
-
-```
+```  
+hash-max-ziplist-entries 512  
+hash-max-ziplist-value 64  
+  
+```  
 
 
 

@@ -96,7 +96,7 @@ mysql -h 127.0.0.1 -u 用户名 -p
 
 2 创建表
 语法还是比较复杂的，之前有腾讯面试官问这个，然后答不上来。
-    
+````    
     CREATE TABLE `user_accounts` (
       `id`             int(100) unsigned NOT NULL AUTO_INCREMENT primary key,
       `password`       varchar(32)       NOT NULL DEFAULT '' COMMENT '用户密码',
@@ -108,7 +108,7 @@ mysql -h 127.0.0.1 -u 用户名 -p
       UNIQUE INDEX idx_user_mobile(`mobile`)
     )
     ENGINE=InnoDB DEFAULT CHARSET=utf8
-
+````
 
 3 crud比较简单，不谈
 
@@ -191,11 +191,11 @@ mysql慢查询日志可以在mysql的,my.cnf文件中配置开启，然后执行
 比如分析一个sql：
 
     explain查看执行计划
-    
+````    
     id	select_type	table	partitions	type	possible_keys	key	key_len	ref	rows	filtered	Extra
     
     1	SIMPLE	vote_record	\N	ALL	votenum,vote	\N	\N	\N	996507	50.00	Using where
-
+````
 
     
     
@@ -205,13 +205,13 @@ mysql慢查询日志可以在mysql的,my.cnf文件中配置开启，然后执行
     
     
     最后修改一下sql语句
-    
+````    
     EXPLAIN SELECT * FROM vote_record WHERE id > 0 AND vote_num > 1000;
     
     id	select_type	table	partitions	type	possible_keys	key	key_len	ref	rows	filtered	Extra
     
     1	SIMPLE	vote_record	\N	range	PRIMARY,votenum,vote	PRIMARY	4	\N	498253	50.00	Using where
-
+````
 
     
     
@@ -219,7 +219,7 @@ mysql慢查询日志可以在mysql的,my.cnf文件中配置开启，然后执行
 
 
     
-    
+````    
     EXPLAIN SELECT * FROM vote_record WHERE id > 0 AND vote_num = 1000;
 
 
@@ -231,7 +231,7 @@ mysql慢查询日志可以在mysql的,my.cnf文件中配置开启，然后执行
 
 
     
-    
+````    
     用到了两个索引，votenum,PRIMARY。
 
 ## mysql的binlog,redo log和undo log。

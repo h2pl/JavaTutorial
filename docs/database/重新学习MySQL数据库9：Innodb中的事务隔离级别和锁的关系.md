@@ -85,7 +85,7 @@ MySQL中锁的种类很多，有常见的表锁和行锁，也有新加入的Met
 ### Read Committed（读取提交内容）
 
 在RC级别中，数据的读取都是不加锁的，但是数据的写入、修改和删除是需要加锁的。效果如下
-
+````
 MySQL> show create table class_teacher \G\
 
 
@@ -154,16 +154,16 @@ MySQL> select * from class_teacher;
 
 
 
-+----+--------------+------------+</pre>
-
++----+--------------+------------+
+````
 由于MySQL的InnoDB默认是使用的RR级别，所以我们先要将该session开启成RC级别，并且设置binlog的模式
-
+````
 SET session transaction isolation level read committed;
 
 
 
-SET SESSION binlog_format = 'ROW';（或者是MIXED）</pre>
-
+SET SESSION binlog_format = 'ROW';（或者是MIXED）
+````
 | 事务A | 事务B |
 | --- | --- |
 | begin; | begin; |

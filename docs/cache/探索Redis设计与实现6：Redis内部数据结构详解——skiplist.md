@@ -1,4 +1,4 @@
-# Table of Contents
+# 目录
 
     * [skiplist数据结构简介](#skiplist数据结构简介)
     * [skiplist的算法性能分析](#skiplist的算法性能分析)
@@ -16,6 +16,7 @@
 本文转自互联网
 
 本文将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看
+
 > https://github.com/h2pl/Java-Tutorial
 
 喜欢的话麻烦点下Star哈
@@ -70,17 +71,17 @@ skiplist，顾名思义，首先它是一个list。实际上，它是在有序�
 
 我们先来看一个有序链表，如下图（最左侧的灰色节点表示一个空的头结点）：
 
-[![有序链表结构图](http://zhangtielei.com/assets/photos_redis/skiplist/sorted_linked_list.png)](http://zhangtielei.com/assets/photos_redis/skiplist/sorted_linked_list.png)
+![[有序链表结构图](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/sorted_linked_list.png)](http://zhangtielei.com/assets/photos_redis/skiplist/sorted_linked_list.png)
 
 在这样一个链表中，如果我们要查找某个数据，那么需要从头开始逐个进行比较，直到找到包含数据的那个节点，或者找到第一个比给定数据大的节点为止（没找到）。也就是说，时间复杂度为O(n)。同样，当我们要插入新数据的时候，也要经历同样的查找过程，从而确定插入位置。
 
 假如我们每相邻两个节点增加一个指针，让指针指向下下个节点，如下图：
 
-[![每两个节点增加一个跳跃指针的有序链表](http://zhangtielei.com/assets/photos_redis/skiplist/skip2node_linked_list.png)](http://zhangtielei.com/assets/photos_redis/skiplist/skip2node_linked_list.png)
+[![每两个节点增加一个跳跃指针的有序链表](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/skip2node_linked_list.png)](http://zhangtielei.com/assets/photos_redis/skiplist/skip2node_linked_list.png)
 
 这样所有新增加的指针连成了一个新的链表，但它包含的节点个数只有原来的一半（上图中是7, 19, 26）。现在当我们想查找数据的时候，可以先沿着这个新链表进行查找。当碰到比待查数据大的节点时，再回到原来的链表中进行查找。比如，我们想查找23，查找的路径是沿着下图中标红的指针所指向的方向进行的：
 
-[![一个搜索路径的例子](http://zhangtielei.com/assets/photos_redis/skiplist/search_path_on_skip2node_list.png)](http://zhangtielei.com/assets/photos_redis/skiplist/search_path_on_skip2node_list.png)
+[![一个搜索路径的例子](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/search_path_on_skip2node_list.png)](http://zhangtielei.com/assets/photos_redis/skiplist/search_path_on_skip2node_list.png)
 
 *   23首先和7比较，再和19比较，比它们都大，继续向后比较。
 *   但23和26比较的时候，比26要小，因此回到下面的链表（原链表），与22比较。
@@ -90,7 +91,7 @@ skiplist，顾名思义，首先它是一个list。实际上，它是在有序�
 
 利用同样的方式，我们可以在上层新产生的链表上，继续为每相邻的两个节点增加一个指针，从而产生第三层链表。如下图：
 
-[![两层跳跃指针](http://zhangtielei.com/assets/photos_redis/skiplist/skip2node_level3_linked_list.png)](http://zhangtielei.com/assets/photos_redis/skiplist/skip2node_level3_linked_list.png)
+[![两层跳跃指针](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/skip2node_level3_linked_list.png)](http://zhangtielei.com/assets/photos_redis/skiplist/skip2node_level3_linked_list.png)
 
 在这个新的三层链表结构上，如果我们还是查找23，那么沿着最上层链表首先要比较的是19，发现23比19大，接下来我们就知道只需要到19的后面去继续查找，从而一下子跳过了19前面的所有节点。可以想象，当链表足够长的时候，这种多层链表的查找方式能让我们跳过很多下层节点，大大加快查找的速度。
 
@@ -98,7 +99,7 @@ skiplist正是受这种多层链表的想法的启发而设计出来的。实际
 
 skiplist为了避免这一问题，它不要求上下相邻两层链表之间的节点个数有严格的对应关系，而是为每个节点随机出一个层数(level)。比如，一个节点随机出的层数是3，那么就把它链入到第1层到第3层这三层链表中。为了表达清楚，下图展示了如何通过一步步的插入操作从而形成一个skiplist的过程：
 
-[![skiplist插入形成过程](http://zhangtielei.com/assets/photos_redis/skiplist/skiplist_insertions.png)](http://zhangtielei.com/assets/photos_redis/skiplist/skiplist_insertions.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230406205225.png)
 
 从上面skiplist的创建和插入过程可以看出，每一个节点的层数（level）是随机出来的，而且新插入一个节点不会影响其它节点的层数。因此，插入操作只需要修改插入节点前后的指针，而不需要对很多节点都进行调整。这就降低了插入操作的复杂度。实际上，这是skiplist的一个很重要的特性，这让它在插入性能上明显优于平衡树的方案。这在后面我们还会提到。
 
@@ -106,7 +107,7 @@ skiplist为了避免这一问题，它不要求上下相邻两层链表之间的
 
 刚刚创建的这个skiplist总共包含4层链表，现在假设我们在它里面依然查找23，下图给出了查找路径：
 
-[![skiplist上的查找路径展示](http://zhangtielei.com/assets/photos_redis/skiplist/search_path_on_skiplist.png)](http://zhangtielei.com/assets/photos_redis/skiplist/search_path_on_skiplist.png)
+[![skiplist上的查找路径展示](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/search_path_on_skiplist.png)](http://zhangtielei.com/assets/photos_redis/skiplist/search_path_on_skiplist.png)
 
 需要注意的是，前面演示的各个节点的插入过程，实际上在插入之前也要先经历一个类似的查找过程，在确定插入位置后，再完成插入操作。
 
@@ -175,7 +176,7 @@ MaxLevel = 32
 
 因此，一个节点的平均层数（也即包含的平均指针数目），计算如下：
 
-[![skiplist平均层数计算](http://zhangtielei.com/assets/photos_redis/skiplist/skiplist_avg_level.png)](http://zhangtielei.com/assets/photos_redis/skiplist/skiplist_avg_level.png)
+[![skiplist平均层数计算](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/skiplist_avg_level.png)](http://zhangtielei.com/assets/photos_redis/skiplist/skiplist_avg_level.png)
 
 现在很容易计算出：
 
@@ -195,7 +196,7 @@ MaxLevel = 32
 
 这两种情形如下图所示：
 
-[![skiplist沿查找路径回溯](http://zhangtielei.com/assets/photos_redis/skiplist/skiplist_backwards.png)](http://zhangtielei.com/assets/photos_redis/skiplist/skiplist_backwards.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230406205314.png)
 
 用C(k)表示向上攀爬k个层级所需要走过的平均查找路径长度（概率期望），那么：
 
@@ -279,7 +280,7 @@ sorted set是一个有序的数据集合，对于像类似排行榜这样的应�
 
 这份数据给出了每位同学的名字和分数。下面我们将这份数据存储到sorted set里面去：
 
-[![sorted set命令举例](http://zhangtielei.com/assets/photos_redis/skiplist/sorted_set_cmd_examples.png)](http://zhangtielei.com/assets/photos_redis/skiplist/sorted_set_cmd_examples.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230406205334.png)
 
 对于上面的这些命令，我们需要的注意的地方包括：
 
@@ -375,7 +376,7 @@ typedef struct zskiplist {
 
 下图以前面插入的代数课成绩表为例，展示了Redis中一个skiplist的可能结构：
 
-[![Redis skiplist结构举例](http://zhangtielei.com/assets/photos_redis/skiplist/redis_skiplist_example.png)](http://zhangtielei.com/assets/photos_redis/skiplist/redis_skiplist_example.png)
+[![Redis skiplist结构举例](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/redis_skiplist_example.png)](http://zhangtielei.com/assets/photos_redis/skiplist/redis_skiplist_example.png)
 
 注意：图中前向指针上面括号中的数字，表示对应的span的值。即当前指针跨越了多少个节点，这个计数不包括指针的起点节点，但包括指针的终点节点。
 
@@ -440,11 +441,11 @@ typedef struct zset {
 在前面我们对于skiplist和平衡树、哈希表的比较中，其实已经不难看出Redis里使用skiplist而不用平衡树的原因了。现在我们看看，对于这个问题，Redis的作者 @antirez 是怎么说的：
 
 > There are a few reasons:
-> 
+>
 > 1) They are not very memory intensive. It’s up to you basically. Changing parameters about the probability of a node to have a given number of levels will make then less memory intensive than btrees.
-> 
+>
 > 2) A sorted set is often target of many ZRANGE or ZREVRANGE operations, that is, traversing the skip list as a linked list. With this operation the cache locality of skip lists is at least as good as with other kind of balanced trees.
-> 
+>
 > 3) They are simpler to implement, debug, and so forth. For instance thanks to the skip list simplicity I received a patch (already in Redis master) with augmented skip lists implementing ZRANK in O(log(N)). It required little changes to the code.
 
 这段话原文出处：

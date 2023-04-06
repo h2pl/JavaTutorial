@@ -1,14 +1,16 @@
-# Table of Contents
+# 目录
 
-      * [dict的数据结构定义](#dict的数据结构定义)
-      * [dict的创建（dictCreate）](#dict的创建（dictcreate）)
-      * [dict的查找（dictFind）](#dict的查找（dictfind）)
-            * [dictIsRehashing(d) ((d)->rehashidx != -1)](#dictisrehashingd-d-rehashidx---1)
-      * [dict的插入（dictAdd和dictReplace）](#dict的插入（dictadd和dictreplace）)
-      * [dict的删除（dictDelete）](#dict的删除（dictdelete）)
+  * [dict的数据结构定义](#dict的数据结构定义)
+  * [dict的创建（dictCreate）](#dict的创建（dictcreate）)
+  * [dict的查找（dictFind）](#dict的查找（dictfind）)
+        * [dictIsRehashing(d) ((d)->rehashidx != -1)](#dictisrehashingd-d-rehashidx---1)
+  * [dict的插入（dictAdd和dictReplace）](#dict的插入（dictadd和dictreplace）)
+  * [dict的删除（dictDelete）](#dict的删除（dictdelete）)
+
 本文转自互联网
 
 本文将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看
+
 > https://github.com/h2pl/Java-Tutorial
 
 喜欢的话麻烦点下Star哈
@@ -66,7 +68,8 @@ dict本质上是为了解决算法中的查找问题（Searching），一般查�
 为了实现增量式重哈希（incremental rehashing），dict的数据结构里包含两个哈希表。在重哈希期间，数据从第一个哈希表向第二个哈希表迁移。
 
 dict的C代码定义如下（出自Redis源码dict.h）：
-    
+
+````
     typedef struct dictEntry {
         void *key;
         union {
@@ -104,10 +107,10 @@ dict的C代码定义如下（出自Redis源码dict.h）：
         int iterators; /* number of iterators currently running */
     } dict;
 
-
+````
 为了能更清楚地展示dict的数据结构定义，我们用一张结构图来表示它。如下。
 
-[![Redis dict结构图](http://zhangtielei.com/assets/photos_redis/redis_dict_structure.png)](http://zhangtielei.com/assets/photos_redis/redis_dict_structure.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230406203512.png)
 
 结合上面的代码和结构图，可以很清楚地看出dict的结构。一个dict由如下若干项组成：
 
@@ -136,7 +139,7 @@ dictType结构包含若干函数指针，用于dict的调用者对涉及key和va
 dictEntry结构中包含k, v和指向链表下一项的next指针。k是void指针，这意味着它可以指向任何类型。v是个union，当它的值是uint64_t、int64_t或double类型时，就不再需要额外的存储，这有利于减少内存碎片。当然，v也可以是void指针，以便能存储任何类型的数据。
 
 #### dict的创建（dictCreate）
-
+````
     dict *dictCreate(dictType *type,
             void *privDataPtr)
     {
@@ -166,11 +169,11 @@ dictEntry结构中包含k, v和指向链表下一项的next指针。k是void指�
         ht->used = 0;
     }
 
-
+````
 dictCreate为dict的数据结构分配空间并为各个变量赋初值。其中两个哈希表ht[0]和ht[1]起始都没有分配空间，table指针都赋为NULL。这意味着要等第一个数据插入时才会真正分配空间。
 
 #### dict的查找（dictFind）
-    
+````
     #define dictIsRehashing(d) ((d)->rehashidx != -1)
     
     dictEntry *dictFind(dict *d, const void *key)
@@ -193,7 +196,7 @@ dictCreate为dict的数据结构分配空间并为各个变量赋初值。其中
         }
         return NULL;
     }
-
+````
 
 上述dictFind的源码，根据dict当前是否正在重哈希，依次做了这么几件事：
 
@@ -204,7 +207,7 @@ dictCreate为dict的数据结构分配空间并为各个变量赋初值。其中
 
 下面我们有必要看一下增量式重哈希的_dictRehashStep的实现。
 
-    
+````
     static void _dictRehashStep(dict *d) {
         if (d->iterators == 0) dictRehash(d,1);
     }
@@ -253,7 +256,7 @@ dictCreate为dict的数据结构分配空间并为各个变量赋初值。其中
         /* More to rehash... */
         return 1;
     }
-
+````
 dictRehash每次将重哈希至少向前推进n步（除非不到n步整个重哈希就结束了），每一步都将ht[0]上某一个bucket（即一个dictEntry链表）上的每一个dictEntry移动到ht[1]上，它在ht[1]上的新位置根据ht[1]的sizemask进行重新计算。rehashidx记录了当前尚未迁移（有待迁移）的ht[0]的bucket位置。
 
 如果dictRehash被调用的时候，rehashidx指向的bucket里一个dictEntry也没有，那么它就没有可迁移的数据。这时它尝试在ht[0].table数组中不断向后遍历，直到找到下一个存有数据的bucket位置。如果一直找不到，则最多走n*10步，本次重哈希暂告结束。
@@ -268,7 +271,7 @@ dictAdd插入新的一对key和value，如果key已经存在，则插入失败�
 
 dictReplace也是插入一对key和value，不过在key存在的时候，它会更新value。
 
-    
+````
     int dictAdd(dict *d, void *key, void *val)
     {
         dictEntry *entry = dictAddRaw(d,key);
@@ -329,7 +332,7 @@ dictReplace也是插入一对key和value，不过在key存在的时候，它会�
         }
         return idx;
     }
-
+````
 以上是dictAdd的关键实现代码。我们主要需要注意以下几点：
 
 *   它也会触发推进一步重哈希（_dictRehashStep）。
@@ -340,7 +343,7 @@ dictReplace也是插入一对key和value，不过在key存在的时候，它会�
 
 dictReplace在dictAdd基础上实现，如下：
 
-    
+````
     int dictReplace(dict *d, void *key, void *val)
     {
         dictEntry *entry, auxentry;
@@ -361,7 +364,7 @@ dictReplace在dictAdd基础上实现，如下：
         dictFreeVal(d, &auxentry);
         return 0;
     }
-
+````
 在key已经存在的情况下，dictReplace会同时调用dictAdd和dictFind，这其实相当于两次查找过程。这里Redis的代码不够优化。
 
 #### dict的删除（dictDelete）
@@ -376,7 +379,3 @@ dictDelete的源码这里忽略，具体请参考dict.c。需要稍加注意的�
 
 dict的实现相对来说比较简单，本文就介绍到这。在下一篇中我们将会介绍Redis中动态字符串的实现——sds，敬请期待。
 
-**原创文章，转载请注明出处，并包含下面的二维码！否则拒绝转载！**
-**本文链接：**[http://zhangtielei.com/posts/blog-redis-dict.html](http://zhangtielei.com/posts/blog-redis-dict.html)
-
-![我的微信公众号: tielei-blog (张铁蕾)](http://zhangtielei.com/assets/my_weixin_sign_sf_840.jpg)

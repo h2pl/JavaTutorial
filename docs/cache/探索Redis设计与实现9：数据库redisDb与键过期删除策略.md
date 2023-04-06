@@ -1,7 +1,4 @@
-# Table of Contents
-
-
-
+# 目录
 本文转自互联网
 本文将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看
 > https://github.com/h2pl/Java-Tutorial
@@ -19,28 +16,28 @@
 一. 数据库
 Redis的数据库使用字典作为底层实现，数据库的增、删、查、改都是构建在字典的操作之上的。
 redis服务器将所有数据库都保存在服务器状态结构redisServer(redis.h/redisServer)的db数组（应该是一个链表）里：
-
+````
     struct redisServer {
       //..
       // 数据库数组，保存着服务器中所有的数据库
         redisDb *db;
       //..
     }
-
+````
 在初始化服务器时，程序会根据服务器状态的dbnum属性来决定应该创建多少个数据库：
-
+````
     struct redisServer {
         // ..
         //服务器中数据库的数量
         int dbnum;
         //..
     }
-
+````
 dbnum属性的值是由服务器配置的database选项决定的，默认值为16；
 
 二、切换数据库原理
 每个Redis客户端都有自己的目标数据库，每当客户端执行数据库的读写命令时，目标数据库就会成为这些命令的操作对象。
-
+````
     127.0.0.1:6379> set msg 'Hello world'
     OK
     127.0.0.1:6379> get msg
@@ -50,20 +47,20 @@ dbnum属性的值是由服务器配置的database选项决定的，默认值为1
     127.0.0.1:6379[2]> get msg
     (nil)
     127.0.0.1:6379[2]>
-
+````
 在服务器内部，客户端状态redisClient结构(redis.h/redisClient)的db属性记录了客户端当前的目标数据库，这个属性是一个指向redisDb结构(redis.h/redisDb)的指针：
-
+````
     typedef struct redisClient {
         //..
         // 客户端当前正在使用的数据库
         redisDb *db;
         //..
     } redisClient;
-
+````
 redisClient.db指针指向redisServer.db数组中的一个元素，而被指向的元素就是当前客户端的目标数据库。
 我们就可以通过修改redisClient指针，让他指向服务器中的不同数据库，从而实现切换数据库的功能–这就是select命令的实现原理。
 实现代码：
-
+````
     int selectDb(redisClient *c, int id) {
         // 确保 id 在正确范围内
         if (id < 0 || id >= server.dbnum)
@@ -72,9 +69,10 @@ redisClient.db指针指向redisServer.db数组中的一个元素，而被指向�
         c->db = &server.db[id];
         return REDIS_OK;
     }
-
+````
 三、数据库的键空间
 1、数据库的结构（我们只分析键空间和键过期时间）
+````
     typedef struct redisDb {
         // 数据库键空间，保存着数据库中的所有键值对
         dict *dict;                 /* The keyspace for this DB */
@@ -87,7 +85,7 @@ redisClient.db指针指向redisServer.db数组中的一个元素，而被指向�
         //..
     } redisDb
 
-
+````
 上图是一个RedisDb的示例，该数据库存放有五个键值对，分别是sRedis，INums，hBooks，SortNum和sNums，它们各自都有自己的值对象，另外，其中有三个键设置了过期时间，当前数据库是服务器的第0号数据库。现在，我们就从源码角度分析这个数据库结构：
 我们知道，Redis是一个键值对数据库服务器，服务器中的每一个数据库都是一个redis.h/redisDb结构，其中，结构中的dict字典保存了数据库中所有的键值对，我们就将这个字典成为键空间。
 Redis数据库的数据都是以键值对的形式存在，其充分利用了字典高效索引的特点。
@@ -97,7 +95,7 @@ b、键空间的值就是数据库中的值，可以是5种类型对象（字符
 
 2、键空间的初始化
 在redis.c中，我们可以找到键空间的初始化操作：
-
+````
     //创建并初始化数据库结构
      for (j = 0; j < server.dbnum; j++) {
         // 创建每个数据库的键空间
@@ -106,12 +104,12 @@ b、键空间的值就是数据库中的值，可以是5种类型对象（字符
         // 设定当前数据库的编号
         server.db[j].id = j;
     }
-
+````
 初始化之后就是对键空间的操作了。
 
 3、键空间的操作
 我先把一些常见的键空间操作函数列出来：
-
+````
     // 从数据库中取出键key的值对象，若不存在就返回NULL
     robj *lookupKey(redisDb *db, robj *key);
     
@@ -152,10 +150,11 @@ b、键空间的值就是数据库中的值，可以是5种类型对象（字符
     int dbDelete(redisDb *db, robj *key);
     /* 清空所有数据库，返回键值对的个数 */
     long long emptyDb(void(callback)(void*));
-
+````
 下面我选取几个比较典型的操作函数分析一下：
 
 查找键值对函数–lookupKey
+````
 robj *lookupKey(redisDb *db, robj *key) {
     // 查找键空间
     dictEntry *de = dictFind(db->dict,key->ptr);
@@ -173,10 +172,10 @@ robj *lookupKey(redisDb *db, robj *key) {
         return NULL;
     }
 }
-
+````
 添加键值对–dbAdd
 添加键值对使我们经常使用到的函数，底层由dbAdd()函数实现，传入的参数是待添加的数据库，键对象和值对象，源码如下：
-
+````
 void dbAdd(redisDb *db, robj *key, robj *val) {
     // 复制键名
     sds copy = sdsdup(key->ptr);
@@ -187,13 +186,13 @@ void dbAdd(redisDb *db, robj *key, robj *val) {
     // 如果开启了集群模式，那么将键保存到槽里面
     if (server.cluster_enabled) slotToKeyAdd(key);
  }
-
+````
 好了，关于键空间操作函数就分析到这，其他函数(在文件db.c中)大家可以自己去分析，有问题的话可以回帖，我们可以一起讨论！
 
 四、数据库的过期键操作
 在前面我们说到，redisDb结构中有一个expires指针（概况图可以看上图），该指针指向一个字典结构，字典中保存了所有键的过期时间，该字典称为过期字典。
 过期字典的初始化：
-
+````
 // 创建并初始化数据库结构
  for (j = 0; j < server.dbnum; j++) {
         // 创建每个数据库的过期时间字典
@@ -202,13 +201,15 @@ void dbAdd(redisDb *db, robj *key, robj *val) {
         server.db[j].id = j;
         // ..
     }
-
+````
 a、过期字典的键是一个指针，指向键空间中的某一个键对象（就是某一个数据库键）；
 b、过期字典的值是一个long long类型的整数，这个整数保存了键所指向的数据库键的时间戳–一个毫秒精度的unix时间戳。
 下面我们就来分析过期键的处理函数：
 
 1、过期键处理函数
+
 设置键的过期时间–setExpire()
+````
 /*
  * 将键 key 的过期时间设为 when
  */
@@ -224,8 +225,9 @@ void setExpire(redisDb *db, robj *key, long long when) {
     // 这里是直接使用整数值来保存过期时间，不是用 INT 编码的 String 对象
     dictSetSignedIntegerVal(de,when);
 }
-
+````
 获取键的过期时间–getExpire()
+````
 long long getExpire(redisDb *db, robj *key) {
     dictEntry *de;
     // 如果过期键不存在，那么直接返回
@@ -235,8 +237,9 @@ long long getExpire(redisDb *db, robj *key) {
     // 返回过期时间
     return dictGetSignedIntegerVal(de);
 }
-
+````
 删除键的过期时间–removeExpire()
+````
 // 移除键 key 的过期时间
 int removeExpire(redisDb *db, robj *key) {
     // 确保键带有过期时间
@@ -244,7 +247,7 @@ int removeExpire(redisDb *db, robj *key) {
     // 删除过期时间
     return dictDelete(db->expires,key->ptr) == DICT_OK;
 }
-
+````
 2、过期键删除策略
 通过前面的介绍，大家应该都知道数据库键的过期时间都保存在过期字典里，那假如一个键过期了，那么这个过期键是什么时候被删除的呢？现在来看看redis的过期键的删除策略：
 a、定时删除：在设置键的过期时间的同时，创建一个定时器，在定时结束的时候，将该键删除；
@@ -257,7 +260,7 @@ c、定期删除：每隔一段时间，对数据库中的键进行一次遍历�
 
 惰性删除函数–expireIfNeeded()
 源码如下：
-
+````
 /* 检查key是否已经过期，如果是的话，将它从数据库中删除 
  * 并将删除命令写入AOF文件以及附属节点(主从复制和AOF持久化相关)
  * 返回0代表该键还没有过期，或者没有设置过期时间
@@ -287,11 +290,12 @@ int expireIfNeeded(redisDb *db, robj *key) {
     // 将该键从数据库中删除
     return dbDelete(db,key);
 }
-
+````
 定期删除策略
 过期键的定期删除策略由redis.c/activeExpireCycle()函数实现，服务器周期性地操作redis.c/serverCron()（每隔100ms执行一次）时，会调用activeExpireCycle()函数，分多次遍历服务器中的各个数据库，从数据库中的expires字典中随机检查一部分键的过期时间，并删除其中的过期键。
 删除过期键的操作由activeExpireCycleTryExpire函数(activeExpireCycle()调用了该函数)执行，其源码如下：
 
+````
 /* 检查键的过期时间，如过期直接删除*/
 int activeExpireCycleTryExpire(redisDb *db, dictEntry *de, long long now) {
     // 获取过期时间
@@ -318,6 +322,6 @@ int activeExpireCycleTryExpire(redisDb *db, dictEntry *de, long long now) {
         return 0;
     }
 }
-
+````
 删除过期键对AOF、RDB和主从复制都有影响，等到了介绍相关功能时再讨论。
 今天就先到这里~

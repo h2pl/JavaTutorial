@@ -122,8 +122,8 @@ CREATE TABLE `user_accounts` (  `id`             int(100) unsigned NOT NULL AUTO
 
 ### SELECT
 
-> SELECT 语句用于从表中选取数据。 
-> 语法：`SELECT 列名称 FROM 表名称` 
+> SELECT 语句用于从表中选取数据。
+> 语法：`SELECT 列名称 FROM 表名称`
 > 语法：`SELECT * FROM 表名称`
 
 ```
@@ -132,7 +132,7 @@ CREATE TABLE `user_accounts` (  `id`             int(100) unsigned NOT NULL AUTO
 
 ### UPDATE
 
-> Update 语句用于修改表中的数据。 
+> Update 语句用于修改表中的数据。
 > 语法：`UPDATE 表名称 SET 列名称 = 新值 WHERE 列名称 = 某值`
 
 ```
@@ -141,8 +141,8 @@ CREATE TABLE `user_accounts` (  `id`             int(100) unsigned NOT NULL AUTO
 
 ### INSERT
 
-> INSERT INTO 语句用于向表格中插入新的行。 
-> 语法：`INSERT INTO 表名称 VALUES (值1, 值2,....)` 
+> INSERT INTO 语句用于向表格中插入新的行。
+> 语法：`INSERT INTO 表名称 VALUES (值1, 值2,....)`
 > 语法：`INSERT INTO 表名称 (列1, 列2,...) VALUES (值1, 值2,....)`
 
 ```
@@ -151,7 +151,7 @@ CREATE TABLE `user_accounts` (  `id`             int(100) unsigned NOT NULL AUTO
 
 ### DELETE
 
-> DELETE 语句用于删除表中的行。 
+> DELETE 语句用于删除表中的行。
 > 语法：`DELETE FROM 表名称 WHERE 列名称 = 值`
 
 ```
@@ -160,7 +160,7 @@ CREATE TABLE `user_accounts` (  `id`             int(100) unsigned NOT NULL AUTO
 
 ## WHERE
 
-> WHERE 子句用于规定选择的标准。 
+> WHERE 子句用于规定选择的标准。
 > 语法：`SELECT 列名称 FROM 表名称 WHERE 列 运算符 值`
 
 ```
@@ -169,7 +169,7 @@ CREATE TABLE `user_accounts` (  `id`             int(100) unsigned NOT NULL AUTO
 
 ## AND 和 OR
 
-> AND - 如果第一个条件和第二个条件都成立； 
+> AND - 如果第一个条件和第二个条件都成立；
 > OR - 如果第一个条件和第二个条件中只要有一个成立；
 
 ### AND
@@ -186,10 +186,10 @@ CREATE TABLE `user_accounts` (  `id`             int(100) unsigned NOT NULL AUTO
 
 ## ORDER BY
 
-> 语句默认按照升序对记录进行排序。 
-> `ORDER BY` - 语句用于根据指定的列对结果集进行排序。 
-> `DESC` - 按照降序对记录进行排序。 
-> `ASC` - 按照顺序对记录进行排序。
+> 语句默认按照升序对记录进行排序。
+> `ORDER BY`- 语句用于根据指定的列对结果集进行排序。
+> `DESC`- 按照降序对记录进行排序。
+> `ASC`- 按照顺序对记录进行排序。
 
 ```
 -- Company在表Orders中为字母，则会以字母顺序显示公司名称SELECT Company, OrderNumber FROM Orders ORDER BY Company -- 后面跟上 DESC 则为降序显示SELECT Company, OrderNumber FROM Orders ORDER BY Company DESC -- Company以降序显示公司名称，并OrderNumber以顺序显示SELECT Company, OrderNumber FROM Orders ORDER BY Company DESC, OrderNumber ASC
@@ -197,7 +197,7 @@ CREATE TABLE `user_accounts` (  `id`             int(100) unsigned NOT NULL AUTO
 
 ## IN
 
-> IN - 操作符允许我们在 WHERE 子句中规定多个值。 
+> IN - 操作符允许我们在 WHERE 子句中规定多个值。
 > IN - 操作符用来指定范围，范围中的每一条，都进行匹配。IN取值规律，由逗号分割，全部放置括号中。
 > 语法：`SELECT "字段名"FROM "表格名"WHERE "字段名" IN ('值一', '值二', ...);`
 
@@ -210,7 +210,7 @@ CREATE TABLE `user_accounts` (  `id`             int(100) unsigned NOT NULL AUTO
 > NOT - 操作符总是与其他操作符一起使用，用在要过滤的前面。
 
 ```
-SELECT vend_id, prod_name FROM Products WHERE NOT vend_id = 'DLL01' ORDER BYprod_name;
+SELECTvend_id, prod_nameFROMProductsWHERENOTvend_id ='DLL01'ORDERBYprod_name;
 ```
 
 ## UNION
@@ -223,8 +223,8 @@ SELECT vend_id, prod_name FROM Products WHERE NOT vend_id = 'DLL01' ORDE
 
 ## AS
 
-> as - 可理解为：用作、当成，作为；别名 
-> 一般是重命名列名或者表名。 
+> as - 可理解为：用作、当成，作为；别名
+> 一般是重命名列名或者表名。
 > 语法：`select column_1 as 列1,column_2 as 列2 from table as 表`
 
 ```
@@ -253,7 +253,7 @@ SELECT Persons.LastName, Persons.FirstName, Orders.OrderNoFROM PersonsINNER JOIN
 
 ### COUNT
 
-> COUNT 让我们能够数出在表格中有多少笔资料被选出来。 
+> COUNT 让我们能够数出在表格中有多少笔资料被选出来。
 > 语法：`SELECT COUNT("字段名") FROM "表格名";`
 
 ```
@@ -262,7 +262,7 @@ SELECT Persons.LastName, Persons.FirstName, Orders.OrderNoFROM PersonsINNER JOIN
 
 ### MAX
 
-> MAX 函数返回一列中的最大值。NULL 值不包括在计算中。 
+> MAX 函数返回一列中的最大值。NULL 值不包括在计算中。
 > 语法：`SELECT MAX("字段名") FROM "表格名"`
 
 ```
@@ -293,7 +293,7 @@ OLD和NEW不区分大小写
 
 ### 普通索引(INDEX)
 
-> 语法：ALTER TABLE `表名字` ADD INDEX 索引名字 ( `字段名字` )
+> 语法：ALTER TABLE`表名字`ADD INDEX 索引名字 (`字段名字`)
 
 ```
 -- –直接创建索引CREATE INDEX index_user ON user(title)-- –修改表结构的方式添加索引ALTER TABLE table_name ADD INDEX index_name ON (column(length))-- 给 user 表中的 name字段 添加普通索引(INDEX)ALTER TABLE `table` ADD INDEX index_name (name)-- –创建表的时候同时创建索引CREATE TABLE `table` (    `id` int(11) NOT NULL AUTO_INCREMENT ,    `title` char(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,    `content` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL ,    `time` int(10) NULL DEFAULT NULL ,    PRIMARY KEY (`id`),    INDEX index_name (title(length)))-- –删除索引DROP INDEX index_name ON table
@@ -301,7 +301,7 @@ OLD和NEW不区分大小写
 
 ### 主键索引(PRIMARY key)
 
-> 语法：ALTER TABLE `表名字` ADD PRIMARY KEY ( `字段名字` )
+> 语法：ALTER TABLE`表名字`ADD PRIMARY KEY (`字段名字`)
 
 ```
 -- 给 user 表中的 id字段 添加主键索引(PRIMARY key)ALTER TABLE `user` ADD PRIMARY key (id);
@@ -309,7 +309,7 @@ OLD和NEW不区分大小写
 
 ### 唯一索引(UNIQUE)
 
-> 语法：ALTER TABLE `表名字` ADD UNIQUE (`字段名字`)
+> 语法：ALTER TABLE`表名字`ADD UNIQUE (`字段名字`)
 
 ```
 -- 给 user 表中的 creattime 字段添加唯一索引(UNIQUE)ALTER TABLE `user` ADD UNIQUE (creattime);
@@ -317,7 +317,7 @@ OLD和NEW不区分大小写
 
 ### 全文索引(FULLTEXT)
 
-> 语法：ALTER TABLE `表名字` ADD FULLTEXT (`字段名字`)
+> 语法：ALTER TABLE`表名字`ADD FULLTEXT (`字段名字`)
 
 ```
 -- 给 user 表中的 description 字段添加全文索引(FULLTEXT)ALTER TABLE `user` ADD FULLTEXT (description);
@@ -327,7 +327,7 @@ OLD和NEW不区分大小写
 
 > 语法：
 
-ALTER TABLE `table_name` ADD INDEX index_name ( `column1`, `column2`, `column3`)
+ALTER TABLE`table_name`ADD INDEX index_name (`column1`,`column2`,`column3`)
 
 ```
 -- 给 user 表中的 name、city、age 字段添加名字为name_city_age的普通索引(INDEX)ALTER TABLE user ADD INDEX name_city_age (name(10),city,age); 

@@ -1,27 +1,27 @@
-# Table of Contents
+# 目录
 
-      * [robj的数据结构定义](#robj的数据结构定义)
-            * [OBJ_STRING 0](#obj_string-0)
-            * [OBJ_LIST 1](#obj_list-1)
-            * [OBJ_SET 2](#obj_set-2)
-            * [OBJ_ZSET 3](#obj_zset-3)
-            * [OBJ_HASH 4](#obj_hash-4)
-            * [OBJ_ENCODING_RAW 0     /* Raw representation */](#obj_encoding_raw-0------raw-representation-)
-            * [OBJ_ENCODING_INT 1     /* Encoded as integer */](#obj_encoding_int-1------encoded-as-integer-)
-            * [OBJ_ENCODING_HT 2      /* Encoded as hash table */](#obj_encoding_ht-2-------encoded-as-hash-table-)
-            * [OBJ_ENCODING_ZIPMAP 3  /* Encoded as zipmap */](#obj_encoding_zipmap-3---encoded-as-zipmap-)
-            * [OBJ_ENCODING_LINKEDLIST 4 /* Encoded as regular linked list */](#obj_encoding_linkedlist-4--encoded-as-regular-linked-list-)
-            * [OBJ_ENCODING_ZIPLIST 5 /* Encoded as ziplist */](#obj_encoding_ziplist-5--encoded-as-ziplist-)
-            * [OBJ_ENCODING_INTSET 6  /* Encoded as intset */](#obj_encoding_intset-6---encoded-as-intset-)
-            * [OBJ_ENCODING_SKIPLIST 7  /* Encoded as skiplist */](#obj_encoding_skiplist-7---encoded-as-skiplist-)
-            * [OBJ_ENCODING_EMBSTR 8  /* Embedded sds string encoding */](#obj_encoding_embstr-8---embedded-sds-string-encoding-)
-            * [OBJ_ENCODING_QUICKLIST 9 /* Encoded as linked list of ziplists */](#obj_encoding_quicklist-9--encoded-as-linked-list-of-ziplists-)
-            * [LRU_BITS 24](#lru_bits-24)
-      * [string robj的编码过程](#string-robj的编码过程)
-            * [sdsEncodedObject(objptr) (objptr->encoding == OBJ_ENCODING_RAW || objptr->encoding == OBJ_ENCODING_EMBSTR)](#sdsencodedobjectobjptr-objptr-encoding--obj_encoding_raw--objptr-encoding--obj_encoding_embstr)
-      * [string robj的解码过程](#string-robj的解码过程)
-      * [再谈sds与string的关系](#再谈sds与string的关系)
-      * [robj的引用计数操作](#robj的引用计数操作)
+  * [robj的数据结构定义](#robj的数据结构定义)
+        * [OBJ_STRING 0](#obj_string-0)
+        * [OBJ_LIST 1](#obj_list-1)
+        * [OBJ_SET 2](#obj_set-2)
+        * [OBJ_ZSET 3](#obj_zset-3)
+        * [OBJ_HASH 4](#obj_hash-4)
+        * [OBJ_ENCODING_RAW 0     /* Raw representation */](#obj_encoding_raw-0------raw-representation-)
+        * [OBJ_ENCODING_INT 1     /* Encoded as integer */](#obj_encoding_int-1------encoded-as-integer-)
+        * [OBJ_ENCODING_HT 2      /* Encoded as hash table */](#obj_encoding_ht-2-------encoded-as-hash-table-)
+        * [OBJ_ENCODING_ZIPMAP 3  /* Encoded as zipmap */](#obj_encoding_zipmap-3---encoded-as-zipmap-)
+        * [OBJ_ENCODING_LINKEDLIST 4 /* Encoded as regular linked list */](#obj_encoding_linkedlist-4--encoded-as-regular-linked-list-)
+        * [OBJ_ENCODING_ZIPLIST 5 /* Encoded as ziplist */](#obj_encoding_ziplist-5--encoded-as-ziplist-)
+        * [OBJ_ENCODING_INTSET 6  /* Encoded as intset */](#obj_encoding_intset-6---encoded-as-intset-)
+        * [OBJ_ENCODING_SKIPLIST 7  /* Encoded as skiplist */](#obj_encoding_skiplist-7---encoded-as-skiplist-)
+        * [OBJ_ENCODING_EMBSTR 8  /* Embedded sds string encoding */](#obj_encoding_embstr-8---embedded-sds-string-encoding-)
+        * [OBJ_ENCODING_QUICKLIST 9 /* Encoded as linked list of ziplists */](#obj_encoding_quicklist-9--encoded-as-linked-list-of-ziplists-)
+        * [LRU_BITS 24](#lru_bits-24)
+  * [string robj的编码过程](#string-robj的编码过程)
+        * [sdsEncodedObject(objptr) (objptr->encoding == OBJ_ENCODING_RAW || objptr->encoding == OBJ_ENCODING_EMBSTR)](#sdsencodedobjectobjptr-objptr-encoding--obj_encoding_raw--objptr-encoding--obj_encoding_embstr)
+  * [string robj的解码过程](#string-robj的解码过程)
+  * [再谈sds与string的关系](#再谈sds与string的关系)
+  * [robj的引用计数操作](#robj的引用计数操作)
 
 
 本文转自互联网
@@ -49,7 +49,7 @@
 #### robj的数据结构定义
 
 在server.h中我们找到跟robj定义相关的代码，如下（注意，本系列文章中的代码片段全部来源于Redis源码的3.2分支）：
-
+````
     /* Object types */
     #define OBJ_STRING 0
     #define OBJ_LIST 1
@@ -79,7 +79,7 @@
         int refcount;
         void *ptr;
     } robj;
-    
+````    
 
 一个robj包含如下5个字段：
 
@@ -124,7 +124,7 @@
 #### string robj的编码过程
 
 当我们执行Redis的set命令的时候，Redis首先将接收到的value值（string类型）表示成一个type = OBJ_STRING并且encoding = OBJ_ENCODING_RAW的robj对象，然后在存入内部存储之前先执行一个编码过程，试图将它表示成另一种更节省内存的encoding方式。这一过程的核心代码，是object.c中的tryObjectEncoding函数。
-
+````
     robj *tryObjectEncoding(robj *o) {
         long value;
         sds s = o->ptr;
@@ -203,16 +203,16 @@
         /* Return the original object. */
         return o;
     }
-
+````
 
 这段代码执行的操作比较复杂，我们有必要仔细看一下每一步的操作：
 
 *   第1步检查，检查type。确保只对string类型的对象进行操作。
 *   第2步检查，检查encoding。sdsEncodedObject是定义在server.h中的一个宏，确保只对OBJ_ENCODING_RAW和OBJ_ENCODING_EMBSTR编码的string对象进行操作。这两种编码的string都采用sds来存储，可以尝试进一步编码处理。
 
-
+````
     #define sdsEncodedObject(objptr) (objptr->encoding == OBJ_ENCODING_RAW || objptr->encoding == OBJ_ENCODING_EMBSTR)
-
+````
 *   第3步检查，检查refcount。引用计数大于1的共享对象，在多处被引用。由于编码过程结束后robj的对象指针可能会变化（我们在前一篇介绍sdscatlen函数的时候提到过类似这种接口使用模式），这样对于引用计数大于1的对象，就需要更新所有地方的引用，这不容易做到。因此，对于计数大于1的对象不做编码处理。
 *   试图将字符串转成64位的long。64位的long所能表达的数据范围是-2^63到2^63-1，用十进制表达出来最长是20位数（包括负号）。这里判断小于等于21，似乎是写多了，实际判断小于等于20就够了（如果我算错了请一定告诉我哦）。string2l如果将字符串转成long转成功了，那么会返回1并且将转好的long存到value变量里。
 *   在转成long成功时，又分为两种情况。
@@ -223,7 +223,7 @@
     *   如果前面所有的编码尝试都没有成功（仍然是OBJ_ENCODING_RAW），且sds里空余字节过多，那么做最后一次努力，调用sds的sdsRemoveFreeSpace接口来释放空余字节。
 
 其中调用的createEmbeddedStringObject，我们有必要看一下它的代码：
-
+````
     robj *createEmbeddedStringObject(const char *ptr, size_t len) {
         robj *o = zmalloc(sizeof(robj)+sizeof(struct sdshdr8)+len+1);
         struct sdshdr8 *sh = (void*)(o+1);
@@ -245,7 +245,7 @@
         }
         return o;
     }
-
+````
 createEmbeddedStringObject对sds重新分配内存，将robj和sds放在一个连续的内存块中分配，这样对于短字符串的存储有利于减少内存碎片。这个连续的内存块包含如下几部分：
 
 *   16个字节的robj结构。
@@ -260,7 +260,7 @@ createEmbeddedStringObject对sds重新分配内存，将robj和sds放在一个�
 当我们需要获取字符串的值，比如执行get命令的时候，我们需要执行与前面讲的编码过程相反的操作——解码。
 
 这一解码过程的核心代码，是object.c中的getDecodedObject函数。
-
+````
     robj *getDecodedObject(robj *o) {
         robj *dec;
     
@@ -278,7 +278,7 @@ createEmbeddedStringObject对sds重新分配内存，将robj和sds放在一个�
             serverPanic("Unknown encoding type");
         }
     }
-
+````
 
 这个过程比较简单，需要我们注意的点有：
 
@@ -305,7 +305,7 @@ createEmbeddedStringObject对sds重新分配内存，将robj和sds放在一个�
     *   t_string.c中的getrangeCommand函数。
 
 值得一提的是，append和setbit命令的实现中，都会最终调用到db.c中的dbUnshareStringValue函数，将string对象的内部编码转成OBJ_ENCODING_RAW的（只有这种编码的robj对象，其内部的sds 才能在后面自由追加新的内容），并解除可能存在的对象共享状态。这里面调用了前面提到的getDecodedObject。
-
+````
     
     robj *dbUnshareStringValue(redisDb *db, robj *key, robj *o) {
         serverAssert(o->type == OBJ_STRING);
@@ -317,13 +317,13 @@ createEmbeddedStringObject对sds重新分配内存，将robj和sds放在一个�
         }
         return o;
     }
-
+````
 
 #### robj的引用计数操作
 
 将robj的引用计数加1和减1的操作，定义在object.c中：
 
-
+````
     void incrRefCount(robj *o) {
         o->refcount++;
     }
@@ -344,7 +344,7 @@ createEmbeddedStringObject对sds重新分配内存，将robj和sds放在一个�
             o->refcount--;
         }
     }
-
+````
 我们特别关注一下将引用计数减1的操作decrRefCount。如果只剩下最后一个引用了（refcount已经是1了），那么在decrRefCount被调用后，整个robj将被释放。
 
 注意：Redis的del命令就依赖decrRefCount操作将value释放掉。

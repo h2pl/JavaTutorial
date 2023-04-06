@@ -1,5 +1,4 @@
-# Table of Contents
-
+# 目录
   * [redis 学习笔记](#redis-学习笔记)
     * [redis 是什么?](#redis-是什么)
     * [Redis 数据结构](#redis-数据结构)

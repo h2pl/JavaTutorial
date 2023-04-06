@@ -1,4 +1,4 @@
-# Table of Contents
+# 目录
 
 * [转自https://blog.csdn.net/xlgen157387/article/details/61925524](#转自httpsblogcsdnnetxlgen157387articledetails61925524)
 * [前言](#前言)
@@ -10,6 +10,7 @@
 
 本文转自互联网
 本文将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看
+
 > https://github.com/h2pl/Java-Tutorial
 
 喜欢的话麻烦点下Star哈
@@ -22,15 +23,9 @@
 
 <!-- more -->
 
-# 转自https://blog.csdn.net/xlgen157387/article/details/61925524
+转自https://blog.csdn.net/xlgen157387/article/details/61925524
 
 # 前言
-
-
-
-
-
-
 
 我们知道Redis是一款内存服务器，就算我们对自己的服务器足够的信任，不会出现任何软件或者硬件的故障，但也会有可能出现突然断电等情况，造成Redis服务器中的数据失效。因此，我们需要向传统的关系型数据库一样对数据进行备份，将Redis在内存中的数据持久化到硬盘等非易失性介质中，来保证数据的可靠性。
 
@@ -101,7 +96,7 @@ appendonly no  #是否使用AOF持久化appendfsync everysec  #多久执行一�
 
 各虚拟机类别，创建子线程所耗时间：
 
-![这里写图片描述](https://img-blog.csdn.net/20170313204830337?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQveGxnZW4xNTczODc=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230406210020.png)
 
 因此，为了防止Redis因为创建子进程的时候出现停顿，我们可以考虑关闭自动保存，转而通过手动的方式发送BGSAVE或者SAVE来进行持久化，
 
@@ -135,7 +130,7 @@ appendfsync everysec/always/no
 
 appendfsync同步频率的区别如下图：
 
-![这里写图片描述](https://img-blog.csdn.net/20170313210401173?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQveGxnZW4xNTczODc=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230406210035.png)
 
 （1）always的方式固然可以对没一条数据进行很好的保存，但是这种同步策略需要对硬盘进行大量的写操作，所以Redis处理命令的速度会受到硬盘性能的限制。
 

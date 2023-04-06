@@ -1,15 +1,17 @@
-# Table of Contents
+# 目录
 
-      * [quicklist概述](#quicklist概述)
-      * [quicklist的数据结构定义](#quicklist的数据结构定义)
-      * [quicklist的创建](#quicklist的创建)
-      * [quicklist的push操作](#quicklist的push操作)
-      * [quicklist的其它操作](#quicklist的其它操作)
+      * [quicklist概述](#quicklist概述)  
+      * [quicklist的数据结构定义](#quicklist的数据结构定义)  
+      * [quicklist的创建](#quicklist的创建)  
+      * [quicklist的push操作](#quicklist的push操作)  
+      * [quicklist的其它操作](#quicklist的其它操作)  
+
 
 
 本文转自互联网
 
 本文将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看
+
 > https://github.com/h2pl/Java-Tutorial
 
 喜欢的话麻烦点下Star哈
@@ -20,7 +22,7 @@
 
 如果对本系列文章有什么建议，或者是有什么疑问的话，也可以关注公众号【Java技术江湖】联系作者，欢迎你参与本系列博文的创作和修订。
 
-<!-- more -->
+<!-- more -->  
 
 本文是《[Redis内部数据结构详解](http://zhangtielei.com/posts/blog-redis-dict.html)》系列的第五篇。在本文中，我们介绍一个Redis内部数据结构——quicklist。Redis对外暴露的list数据类型，它底层实现所依赖的内部数据结构就是quicklist。
 
@@ -30,10 +32,10 @@
 
 
 
-```
-list-max-ziplist-size -2
-list-compress-depth 0
-
+```  
+list-max-ziplist-size -2  
+list-compress-depth 0  
+  
 ```
 
 
@@ -91,9 +93,9 @@ quicklist的结构为什么这样设计呢？总结起来，大概又是一个�
 
 
 
-```
-list-max-ziplist-size -2
-
+```  
+list-max-ziplist-size -2  
+  
 ```
 
 
@@ -120,9 +122,9 @@ list-max-ziplist-size -2
 
 
 
-```
-list-compress-depth 0
-
+```  
+list-compress-depth 0  
+  
 ```
 
 
@@ -151,34 +153,16 @@ quicklist相关的数据结构定义可以在quicklist.h中找到：
 
 
 
-```
-typedef struct quicklistNode {
-    struct quicklistNode *prev;
-    struct quicklistNode *next;
-    unsigned char *zl;
-    unsigned int sz;             /* ziplist size in bytes */
-    unsigned int count : 16;     /* count of items in ziplist */
-    unsigned int encoding : 2;   /* RAW==1 or LZF==2 */
-    unsigned int container : 2;  /* NONE==1 or ZIPLIST==2 */
-    unsigned int recompress : 1; /* was this node previous compressed? */
-    unsigned int attempted_compress : 1; /* node can't compress; too small */
-    unsigned int extra : 10; /* more bits to steal for future usage */
-} quicklistNode;
-
-typedef struct quicklistLZF {
-    unsigned int sz; /* LZF size in bytes*/
-    char compressed[];
-} quicklistLZF;
-
-typedef struct quicklist {
-    quicklistNode *head;
-    quicklistNode *tail;
-    unsigned long count;        /* total count of all entries in all ziplists */
-    unsigned int len;           /* number of quicklistNodes */
-    int fill : 16;              /* fill factor for individual nodes */
-    unsigned int compress : 16; /* depth of end nodes not to compress;0=off */
-} quicklist;
-
+```  
+typedef struct quicklistNode {  
+    struct quicklistNode *prev;    struct quicklistNode *next;    unsigned char *zl;    unsigned int sz;             /* ziplist size in bytes */    unsigned int count : 16;     /* count of items in ziplist */    unsigned int encoding : 2;   /* RAW==1 or LZF==2 */    unsigned int container : 2;  /* NONE==1 or ZIPLIST==2 */    unsigned int recompress : 1; /* was this node previous compressed? */    unsigned int attempted_compress : 1; /* node can't compress; too small */    unsigned int extra : 10; /* more bits to steal for future usage */} quicklistNode;  
+  
+typedef struct quicklistLZF {  
+    unsigned int sz; /* LZF size in bytes*/    char compressed[];} quicklistLZF;  
+  
+typedef struct quicklist {  
+    quicklistNode *head;    quicklistNode *tail;    unsigned long count;        /* total count of all entries in all ziplists */    unsigned int len;           /* number of quicklistNodes */    int fill : 16;              /* fill factor for individual nodes */    unsigned int compress : 16; /* depth of end nodes not to compress;0=off */} quicklist;  
+  
 ```
 
 
@@ -190,7 +174,7 @@ quicklistNode结构代表quicklist的一个节点，其中各个字段的含义�
 *   prev: 指向链表前一个节点的指针。
 *   next: 指向链表后一个节点的指针。
 *   zl: 数据指针。如果当前节点的数据没有压缩，那么它指向一个ziplist结构；否则，它指向一个quicklistLZF结构。
-*   sz: 表示zl指向的ziplist的总大小（包括`zlbytes`, `zltail`, `zllen`, `zlend`和各个数据项）。需要注意的是：如果ziplist被压缩了，那么这个sz的值仍然是压缩前的ziplist大小。
+*   sz: 表示zl指向的ziplist的总大小（包括`zlbytes`, `zltail`, `zllen`, `zlend`和各个数据项）。需要注意的是：如果ziplist被压缩了，那么这个sz的值仍然是压缩前的ziplist大小。
 *   count: 表示ziplist里面包含的数据项个数。这个字段只有16bit。稍后我们会一起计算一下这16bit是否够用。
 *   encoding: 表示ziplist是否压缩了（以及用了哪个压缩算法）。目前只有两种取值：2表示被压缩了（而且用的是[LZF](http://oldhome.schmorp.de/marc/liblzf.html)压缩算法），1表示没有压缩。
 *   container: 是一个预留字段。本来设计是用来表明一个quicklist节点下面是直接存数据，还是使用ziplist存数据，或者用其它的结构来存数据（用作一个数据容器，所以叫container）。但是，在目前的实现中，这个值是一个固定的值2，表示使用ziplist作为数据容器。
@@ -212,7 +196,7 @@ quicklistLZF结构表示一个被压缩过的ziplist。其中：
 *   fill: 16bit，ziplist大小设置，存放`list-max-ziplist-size`参数的值。
 *   compress: 16bit，节点压缩深度设置，存放`list-compress-depth`参数的值。
 
-[![Redis quicklist 结构图](http://zhangtielei.com/assets/photos_redis/redis_quicklist_structure.png)](http://zhangtielei.com/assets/photos_redis/redis_quicklist_structure.png)
+[![Redis quicklist 结构图](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/redis_quicklist_structure.png)](http://zhangtielei.com/assets/photos_redis/redis_quicklist_structure.png)
 
 上图是一个quicklist的结构图举例。图中例子对应的ziplist大小配置和节点压缩深度配置，如下：
 
@@ -220,10 +204,10 @@ quicklistLZF结构表示一个被压缩过的ziplist。其中：
 
 
 
-```
-list-max-ziplist-size 3
-list-compress-depth 2
-
+```  
+list-max-ziplist-size 3  
+list-compress-depth 2  
+  
 ```
 
 
@@ -254,19 +238,11 @@ list-compress-depth 2
 
 
 
-```
-quicklist *quicklistCreate(void) {
-    struct quicklist *quicklist;
-
-    quicklist = zmalloc(sizeof(*quicklist));
-    quicklist->head = quicklist->tail = NULL;
-    quicklist->len = 0;
-    quicklist->count = 0;
-    quicklist->compress = 0;
-    quicklist->fill = -2;
-    return quicklist;
-}
-
+```  
+quicklist *quicklistCreate(void) {  
+    struct quicklist *quicklist;  
+    quicklist = zmalloc(sizeof(*quicklist));    quicklist->head = quicklist->tail = NULL;    quicklist->len = 0;    quicklist->count = 0;    quicklist->compress = 0;    quicklist->fill = -2;    return quicklist;}  
+  
 ```
 
 
@@ -283,62 +259,20 @@ quicklist的push操作是调用`quicklistPush`来实现的。
 
 
 
-```
-void quicklistPush(quicklist *quicklist, void *value, const size_t sz,
-                   int where) {
-    if (where == QUICKLIST_HEAD) {
-        quicklistPushHead(quicklist, value, sz);
-    } else if (where == QUICKLIST_TAIL) {
-        quicklistPushTail(quicklist, value, sz);
-    }
-}
-
-/* Add new entry to head node of quicklist.
- *
- * Returns 0 if used existing head.
- * Returns 1 if new head created. */
-int quicklistPushHead(quicklist *quicklist, void *value, size_t sz) {
-    quicklistNode *orig_head = quicklist->head;
-    if (likely(
-            _quicklistNodeAllowInsert(quicklist->head, quicklist->fill, sz))) {
-        quicklist->head->zl =
-            ziplistPush(quicklist->head->zl, value, sz, ZIPLIST_HEAD);
-        quicklistNodeUpdateSz(quicklist->head);
-    } else {
-        quicklistNode *node = quicklistCreateNode();
-        node->zl = ziplistPush(ziplistNew(), value, sz, ZIPLIST_HEAD);
-
-        quicklistNodeUpdateSz(node);
-        _quicklistInsertNodeBefore(quicklist, quicklist->head, node);
-    }
-    quicklist->count++;
-    quicklist->head->count++;
-    return (orig_head != quicklist->head);
-}
-
-/* Add new entry to tail node of quicklist.
- *
- * Returns 0 if used existing tail.
- * Returns 1 if new tail created. */
-int quicklistPushTail(quicklist *quicklist, void *value, size_t sz) {
-    quicklistNode *orig_tail = quicklist->tail;
-    if (likely(
-            _quicklistNodeAllowInsert(quicklist->tail, quicklist->fill, sz))) {
-        quicklist->tail->zl =
-            ziplistPush(quicklist->tail->zl, value, sz, ZIPLIST_TAIL);
-        quicklistNodeUpdateSz(quicklist->tail);
-    } else {
-        quicklistNode *node = quicklistCreateNode();
-        node->zl = ziplistPush(ziplistNew(), value, sz, ZIPLIST_TAIL);
-
-        quicklistNodeUpdateSz(node);
-        _quicklistInsertNodeAfter(quicklist, quicklist->tail, node);
-    }
-    quicklist->count++;
-    quicklist->tail->count++;
-    return (orig_tail != quicklist->tail);
-}
-
+```  
+void quicklistPush(quicklist *quicklist, void *value, const size_t sz,  
+                   int where) {    if (where == QUICKLIST_HEAD) {        quicklistPushHead(quicklist, value, sz);    } else if (where == QUICKLIST_TAIL) {        quicklistPushTail(quicklist, value, sz);    }}  
+  
+/* Add new entry to head node of quicklist.  
+ * * Returns 0 if used existing head. * Returns 1 if new head created. */int quicklistPushHead(quicklist *quicklist, void *value, size_t sz) {  
+    quicklistNode *orig_head = quicklist->head;    if (likely(            _quicklistNodeAllowInsert(quicklist->head, quicklist->fill, sz))) {        quicklist->head->zl =            ziplistPush(quicklist->head->zl, value, sz, ZIPLIST_HEAD);        quicklistNodeUpdateSz(quicklist->head);    } else {        quicklistNode *node = quicklistCreateNode();        node->zl = ziplistPush(ziplistNew(), value, sz, ZIPLIST_HEAD);  
+        quicklistNodeUpdateSz(node);        _quicklistInsertNodeBefore(quicklist, quicklist->head, node);    }    quicklist->count++;    quicklist->head->count++;    return (orig_head != quicklist->head);}  
+  
+/* Add new entry to tail node of quicklist.  
+ * * Returns 0 if used existing tail. * Returns 1 if new tail created. */int quicklistPushTail(quicklist *quicklist, void *value, size_t sz) {  
+    quicklistNode *orig_tail = quicklist->tail;    if (likely(            _quicklistNodeAllowInsert(quicklist->tail, quicklist->fill, sz))) {        quicklist->tail->zl =            ziplistPush(quicklist->tail->zl, value, sz, ZIPLIST_TAIL);        quicklistNodeUpdateSz(quicklist->tail);    } else {        quicklistNode *node = quicklistCreateNode();        node->zl = ziplistPush(ziplistNew(), value, sz, ZIPLIST_TAIL);  
+        quicklistNodeUpdateSz(node);        _quicklistInsertNodeAfter(quicklist, quicklist->tail, node);    }    quicklist->count++;    quicklist->tail->count++;    return (orig_tail != quicklist->tail);}  
+  
 ```
 
 
@@ -371,7 +305,7 @@ quicklist不仅实现了从头部或尾部插入，也实现了从任意指定�
 
 下一篇我们将介绍skiplist和它所支撑的Redis数据类型sorted set，敬请期待。
 
-**原创文章，转载请注明出处，并包含下面的二维码！否则拒绝转载！**
+**原创文章，转载请注明出处，并包含下面的二维码！否则拒绝转载！**  
 **本文链接：**[http://zhangtielei.com/posts/blog-redis-quicklist.html](http://zhangtielei.com/posts/blog-redis-quicklist.html)
 
-![我的微信公众号: tielei-blog (张铁蕾)](http://zhangtielei.com/assets/my_weixin_sign_sf_840.jpg)
+![我的微信公众号: tielei-blog (张铁蕾)](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/my_weixin_sign_sf_840.jpg)

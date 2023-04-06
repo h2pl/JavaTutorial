@@ -45,10 +45,6 @@
 
 <!-- more -->
 
-<!-- more -->
-
-
-
 作为一名开发人员，在日常的工作中会难以避免地接触到数据库，无论是基于文件的 sqlite 还是工程上使用非常广泛的 MySQL、PostgreSQL，但是一直以来也没有对数据库有一个非常清晰并且成体系的认知，所以最近两个月的时间看了几本数据库相关的书籍并且阅读了 MySQL 的官方文档，希望对各位了解数据库的、不了解数据库的有所帮助。
 
 ![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405202853.png)
@@ -377,7 +373,7 @@ MySQL 中默认的事务隔离级别就是`REPEATABLE READ`，但是它通过 Ne
 
 ## [Innodb与Myisam引擎的区别与应用场景](https://www.cnblogs.com/changna1314/p/6878900.html)
 
-1\. 区别：
+1. 区别：
 
 （1）事务处理：
 
@@ -403,7 +399,7 @@ InnoDB：InnoDB 中不保存表的具体行数，也就是说，执行select cou
 
 mysiam表不支持外键，而InnoDB支持
 
-2.为什么MyISAM会比Innodb 的查询速度快。
+2. 为什么MyISAM会比Innodb 的查询速度快。
 
 INNODB在做SELECT的时候，要维护的东西比MYISAM引擎多很多；
 1）数据块，INNODB要缓存，MYISAM只缓存索引块，这中间还有换进换出的减少；
@@ -412,7 +408,7 @@ INNODB在做SELECT的时候，要维护的东西比MYISAM引擎多很多；
 
 MVCC ( Multi-Version Concurrency Control )多版本并发控制
 
-3\. 应用场景
+3. 应用场景
 
 MyISAM适合：(1)做很多count 的计算；(2)插入不频繁，查询非常频繁；(3)没有事务。
 
