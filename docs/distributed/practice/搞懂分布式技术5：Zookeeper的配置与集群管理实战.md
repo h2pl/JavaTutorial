@@ -1,27 +1,29 @@
-# Table of Contents
+# 目录
 
-  * [4.1 配置文件](#41-配置文件)
-  * [4.2 服务端命令](#42-服务端命令)
-  * [4.3 客户端命令](#43-客户端命令)
+* [4.1 配置文件](#41-配置文件)
+* [4.2 服务端命令](#42-服务端命令)
+* [4.3 客户端命令](#43-客户端命令)
     * [4.3.1 查看节点列表](#431-查看节点列表)
     * [4.3.2 创建新节点](#432-创建新节点)
     * [4.3.3 查看节点数据](#433-查看节点数据)
     * [4.3.4 修改节点数据](#434-修改节点数据)
     * [4.3.5 删除节点](#435-删除节点)
-  * [4.4 ZooKeeper四字命令](#44-zookeeper四字命令)
-  * [5.1 集群配置](#51-集群配置)
-  * [5.2 集群启动](#52-集群启动)
-  * [5.3 集群容灾](#53-集群容灾)
+* [4.4 ZooKeeper四字命令](#44-zookeeper四字命令)
+* [5.1 集群配置](#51-集群配置)
+* [5.2 集群启动](#52-集群启动)
+* [5.3 集群容灾](#53-集群容灾)
 
 
 本文内容参考网络，侵删
 
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看
+
 > https://github.com/h2pl/Java-Tutorial
 
 喜欢的话麻烦点下Star哈
 
 本文也将同步到我的个人博客：
+
 > www.how2playlife.com
 
 更多Java技术文章将陆续在微信公众号【Java技术江湖】更新，敬请关注。
@@ -54,7 +56,7 @@ syncLimit=5
 
 dataDir=/tmp/zookeeper
 
-顾名思义就是 **ZooKeeper保存数据的目录**，用于存放内存数据库快照的文件夹，同时用于集群的myid文件也存在这个文件夹里。默认情况下，ZooKeeper 将写数据的日志文件也保存在这个目录里。注意：一个配置文件只能包含一个dataDir字样，即使它被注释掉了。
+顾名思义就是**ZooKeeper保存数据的目录**，用于存放内存数据库快照的文件夹，同时用于集群的myid文件也存在这个文件夹里。默认情况下，ZooKeeper 将写数据的日志文件也保存在这个目录里。注意：一个配置文件只能包含一个dataDir字样，即使它被注释掉了。
 
 clientPort=2181
 
@@ -76,7 +78,7 @@ autopurge.purgeInterval=1
 
 利用“zkServer.sh help”命令，可以查看支持的参数：
 
-![](https://img-blog.csdn.net/20161026094506241?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230407212604.png)
 
 可见，“zkServer.sh”可以附带的参数有：
 
@@ -92,21 +94,21 @@ autopurge.purgeInterval=1
 
 例如，使用命令“**zkServer.sh start**”启动ZooKeeper服务端，该命令后面可以附带参数，用于指定配置文件的路径，比如“zkServer.sh start ../conf/ZooKeeper.cfg”,代表使用ZooKeeper.cfg作为配置文件，如果不指定路径，默认加载“conf/zoo.cfg”文件：
 
-![](https://img-blog.csdn.net/20161026094527607?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230407212614.png)
 
 使用**“zkServer.sh stop**”停止服务端：
 
-![](https://img-blog.csdn.net/20161026094541826?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230407212621.png)
 
 ## 4.3 客户端命令
 
 使用命令“**zkCli.sh -server 127.0.0.1:2181**”可以连接到IP为“127.0.0.1”，端口为“2181”的ZooKeeper服务器。如果连接本机的2181端口，则后面的参数可以省略。如：
 
-![](https://img-blog.csdn.net/20161026094633014?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230407212629.png)
 
 此时，输入“help”可以查看命令参数：
 
-![](https://img-blog.csdn.net/20161026094654858?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230407212637.png)
 
 ### 4.3.1 查看节点列表
 
@@ -114,7 +116,7 @@ autopurge.purgeInterval=1
 
 “**ls path**”用于查看路径path下的所有直接子节点：
 
-![](https://img-blog.csdn.net/20161026094740687?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230407212645.png)
 
 可见，系统初始化的时候，根节点下会自动创建一个名为“zookeeper”的节点，用于存储ZooKeeper的管理信息。所以用户不能再根节点下创建同名的子节点。
 
@@ -128,7 +130,7 @@ autopurge.purgeInterval=1
 
 create /firstNode HelloWorld
 
-![](https://img-blog.csdn.net/20161026094755539?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230407212654.png)
 
 ### 4.3.3 查看节点数据
 
@@ -136,19 +138,19 @@ create /firstNode HelloWorld
 
 get /firstNode
 
-![](https://img-blog.csdn.net/20161026094814110?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230407212702.png)
 
 除了返回节点存储的数据之外，还有一系列的元信息，如代表节点创建时间的“cZxid”、“ctime”（两种表示方法）；节点的修改时间“mZxid”、“mtime”等。
 
 ### 4.3.4 修改节点数据
 
-“**set path data** ”用于将path节点下的数据更改为data。
+“**set path data**”用于将path节点下的数据更改为data。
 
 如，将“/firstNode”下的数据更改为“WorldHello”：
 
 set /firstNode WorldHello
 
-![](https://img-blog.csdn.net/20161026095005321?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center)
+
 
 ### 4.3.5 删除节点
 
@@ -158,7 +160,7 @@ set /firstNode WorldHello
 
 delete /firstNode
 
-![](https://img-blog.csdn.net/20161026094832782?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230407212739.png)
 
 此外，还有用于设置节点ACL、查看节点状态等其他命令，需要时可以查阅相关手册。
 
@@ -206,7 +208,7 @@ wchs
 
 wchc
 
-通过 **session** 列出服务器 watch 的详细信息，它的输出是一个与 watch 相关的会话的列表
+通过**session**列出服务器 watch 的详细信息，它的输出是一个与 watch 相关的会话的列表
 
 wchp
 
@@ -226,7 +228,7 @@ nc为“NetCat”工具提供的命令，通常的Linux发行版中都带有NetC
 
 该命令的意思为，将“conf”命令传递给127.0.0.1的2181端口（即本机的ZooKeeper服务端口），并将响应打印出来：
 
-![](https://img-blog.csdn.net/20161026095053040?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230407212748.png)
 
 在一台机器上运营一个ZooKeeper实例，称之为单机（Standalone）模式。单机模式有个致命的缺陷，一旦唯一的实例挂了，依赖ZooKeeper的应用全得完蛋。
 
@@ -240,65 +242,68 @@ nc为“NetCat”工具提供的命令，通常的Linux发行版中都带有NetC
 
 首先，需要为三个实例创建不同的配置文件：
 
-<pre>zk1.cfg的配置项如下：
-​
+zk1.cfg的配置项如下：
+````
  tickTime=2000
-​
+
  initLimit=10
-​
+
  syncLimit=5
-​
+
  dataDir=/zk1/dataDir
-​
+
  clientPort=2181
-​
- server.1=127.0.0.1:2888:3888
-​
- server.2=127.0.0.1:2889:3889
-​
- server.3=127.0.0.1:2890:3890</pre>
 
-<pre>zk2.cfg的配置项如下：
-​
+ server.1=127.0.0.1:2888:3888
+
+ server.2=127.0.0.1:2889:3889
+
+ server.3=127.0.0.1:2890:3890
+````
+
+zk2.cfg的配置项如下：
+````
  tickTime=2000
-​
- initLimit=10
-​
- syncLimit=5
-​
- dataDir=/zk2/dataDir
-​
- clientPort=2182
-​
- server.1=127.0.0.1:2888:3888
-​
- server.2=127.0.0.1:2889:3889
-​
- server.3=127.0.0.1:2890:3890</pre>
 
-<pre>zk3.cfg的配置项如下：
-​
+ initLimit=10
+
+ syncLimit=5
+
+ dataDir=/zk2/dataDir
+
+ clientPort=2182
+
+ server.1=127.0.0.1:2888:3888
+
+ server.2=127.0.0.1:2889:3889
+
+ server.3=127.0.0.1:2890:3890
+````
+
+zk3.cfg的配置项如下：
+````
 tickTime=2000
-​
+
 initLimit=10
-​
+
 syncLimit=5
-​
+
 dataDir=/zk3/dataDir
-​
+
 clientPort=2183
-​
+
 server.1=127.0.0.1:2888:3888
-​
+
 server.2=127.0.0.1:2889:3889
-​
-server.3=127.0.0.1:2890:3890</pre>
+
+server.3=127.0.0.1:2890:3890
+````
 
 因为部署在同一台机器上，所以每个实例的dataDir、clientPort要做区分，其余配置保持一致。
 
 需要注意的是，集群中所有的实例作为一个整体对外提供服务，集群中每个实例之间都互相连接，所以，每个配置文件中都要列出所有实例的映射关系。
 
-在每个配置文件的末尾，有几行“server.A=B：C：D”这样的配置，其中， **A** 是一个数字，表示这个是**第几号服务器**；B 是这个服务器的 **ip 地址**；C 表示的是这个**服务器与集群中的 Leader 服务器交换信息的端口**；D 表示的是万一集群中的 Leader 服务器挂了，需要一个端口来重新进行选举，选出一个新的 Leader，而这个端口就是用来执行**选举时服务器相互通信的端口**。如果是伪集群的配置方式，由于 B 都是一样，所以不同的 Zookeeper 实例通信端口号不能一样，所以要给它们分配不同的端口号。
+在每个配置文件的末尾，有几行“server.A=B：C：D”这样的配置，其中，**A**是一个数字，表示这个是**第几号服务器**；B 是这个服务器的**ip 地址**；C 表示的是这个**服务器与集群中的 Leader 服务器交换信息的端口**；D 表示的是万一集群中的 Leader 服务器挂了，需要一个端口来重新进行选举，选出一个新的 Leader，而这个端口就是用来执行**选举时服务器相互通信的端口**。如果是伪集群的配置方式，由于 B 都是一样，所以不同的 Zookeeper 实例通信端口号不能一样，所以要给它们分配不同的端口号。
 
 除了修改 zoo.cfg 配置文件，集群模式下还要配置一个**myid**文件，这个文件**在 dataDir 目录下，文件里只有一个数据，就是 A 的值**(第几号服务器)，Zookeeper 启动时会读取这个文件，拿到里面的数据与配置信息比较从而判断到底是那个 Server。
 
@@ -308,25 +313,25 @@ server.3=127.0.0.1:2890:3890</pre>
 
 依次启动三个实例：
 
-![](https://img-blog.csdn.net/20161027092116131?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230407212755.png)
 
 查看Server状态：
 
-![](https://img-blog.csdn.net/20161027092128275?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230407212802.png)
 
 可见，现在的集群中，zk2充当着Leader角色，而zk1与zk3充当着Follower角色。
 
 使用三个客户端连接三个Server，在zk1的客户端下，新增“/newNode”节点，储存数据“zk1”：
 
-![](https://img-blog.csdn.net/20161027092143725?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230407212808.png)
 
 在zk2的客户端与查看该节点：
 
-![](https://img-blog.csdn.net/20161027092201291?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230407212816.png)
 
 在zk3的客户端与查看该节点：
 
-![](https://img-blog.csdn.net/20161027092213463?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230407212822.png)
 
 可见，集群中的Server保持着数据同步。
 
@@ -334,12 +339,12 @@ server.3=127.0.0.1:2890:3890</pre>
 
 如果我们把身为Leader的zk2关闭，会发生什么呢？
 
-![](https://img-blog.csdn.net/20161027092228400?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230407212828.png)
 
 可见，集群自动完成了切换，zk3变成了Leader。实际应用中，如果集群中的Leader宕机了，或者Leader与超过半数的Follower失去联系，都会触发ZooKeeper的选举流程，选举出新的Leader之后继续对外服务。
 
 如果我们再把zk3关闭，会发生什么呢？
 
-![](https://img-blog.csdn.net/20161027092241119?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230407212836.png))
 
 可见，关闭zk3以后，由于集群中的可用Server只剩下一台（达不到集群总数的半数以上），**集群将处于不可用的状态。**

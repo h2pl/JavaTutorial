@@ -671,11 +671,11 @@ SELECT s.* from  Student s INNER JOIN SC sc on sc.s_id = s.s_id where sc.c_id=0 
 
 数据分页在网页中十分多见，分页一般都是limit start,offset,然后根据页码page计算start
 
-<pre>　select * from user limit **1**,**20**</pre>
+　select * from user limit **1**,**20**
 
 这种分页在几十万的时候分页效率就会比较低了，MySQL需要从头开始一直往后计算，这样大大影响效率
 
-<pre>SELECT * from user limit **100001**,**20**; //time **0**.151s explain SELECT * from user limit **100001**,**20**;</pre>
+SELECT * from user limit **100001**,**20**; //time **0**.151s explain SELECT * from user limit **100001**,**20**;
 
 我们可以用explain分析下语句，没有用到任何索引，MySQL执行的行数是16W+，于是我们可以想用到索引去实现分页
 
@@ -685,11 +685,11 @@ SELECT s.* from  Student s INNER JOIN SC sc on sc.s_id = s.s_id where sc.c_id=0 
 
 使用主键索引来优化数据分页
 
-<pre> select * from user where id>(select id from user where id>=**100000** limit **1**) limit **20**; //time **0**.003s</pre>
+ select * from user where id>(select id from user where id>=**100000** limit **1**) limit **20**; //time **0**.003s
 
 使用explain分析语句，MySQL这次扫描的行数是8W+，时间也大大缩短。
 
-<pre> explain select * from user where id>(select id from user where id>=**100000** limit **1**) limit **20**;</pre>
+ explain select * from user where id>(select id from user where id>=**100000** limit **1**) limit **20**;
 
 ![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/05fffbffc5e3ef9add4719846ad53f25099.jpg)
 

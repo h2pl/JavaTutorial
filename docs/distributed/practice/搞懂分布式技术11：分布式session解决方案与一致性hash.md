@@ -1,5 +1,4 @@
-# Table of Contents
-
+# 目录
 * [一、问题的提出](#一、问题的提出)
   * [1\. 什么是Session？](#1-什么是session？)
   * [2\. 什么是Session一致性问题？](#2-什么是session一致性问题？)
@@ -27,12 +26,12 @@
 
 如果对本系列文章有什么建议，或者是有什么疑问的话，也可以关注公众号【Java技术江湖】联系作者，欢迎你参与本系列博文的创作和修订。
 
-<!-- more -->
+<!-- more -->  
 # 一、问题的提出
 
 ## 1\. 什么是Session？
 
-用户使用网站的服务，需要使用浏览器与Web服务器进行多次交互。HTTP协议本身是无状态的，需要基于HTTP协议支持会话状态（Session State）的机制。具体的实现方式是：在会话开始时，分配一个
+用户使用网站的服务，需要使用浏览器与Web服务器进行多次交互。HTTP协议本身是无状态的，需要基于HTTP协议支持会话状态（Session State）的机制。具体的实现方式是：在会话开始时，分配一个  
 唯一的会话标识（SessionID），并通过Cookie将这个标识告诉浏览器，以后每次请求的时候，浏览器都会带上这个会话标识SessionID来告诉Web服务器这个请求是属于哪个会话的。在Web服务器上，各个会话都有独立的存储，保存不同会话的信息。如果遇到禁用Cookie的情况，一般的做法就是把这个会话标识放到URL的参数中。
 
 ## 2\. 什么是Session一致性问题？
@@ -126,13 +125,12 @@
 
 一致性hash是首先计算四个ip地址对应的hash值hash(ip1),hash(ip2),hash(ip3),hash(ip3)，计算出来的hash值是0~最大正整数直接的一个值，这四个值在一致性hash环上呈现如下图：
 
-![](https://ss2.baidu.com/6ONYsjip0QIZ8tyhnq/it/u=2593891421,1964184427&fm=173&app=49&f=JPEG?w=640&h=496&s=0D867D32415B45CE0CF9ADDA000050B1)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230407214157.png)
 
 
 
-hash环上顺时针从整数0开始，一直到最大正整数，我们根据四个ip计算的hash值肯定会落到这个hash环上的某一个点，至此我们把服务器的四个ip映射到了一致性hash环当用户在客户端进行请求时候，首先根据hash(用户id)计算路由规则（hash值），然后看hash值落到了hash环的那个地方，根据hash值在hash环上的位置顺时针找距离最近的ip作为路由ip.
-
-![](https://ss2.baidu.com/6ONYsjip0QIZ8tyhnq/it/u=255229169,3112842859&fm=173&app=49&f=JPEG?w=640&h=484&s=1CC47D32599269C60C71ACCA000050B1)
+hash环上顺时针从整数0开始，一直到最大正整数，我们根据四个ip计算的hash值肯定会落到这个hash环上的某一个点，至此我们把服务器的四个ip映射到了一致性hash环当用户在客户端进行请求时候，首先根据hash(用户id)计算路由规则（hash值），然后看hash值落到了hash环的那个地方，根据hash值在hash环上的位置顺时针找距离最近的ip作为路由ip.  
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230407214219.png)
 
 
 
@@ -142,7 +140,7 @@ hash环上顺时针从整数0开始，一直到最大正整数，我们根据四
 
 当ip2的服务器挂了的时候，一致性hash环大致如下图：
 
-![](https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=677396536,3784543717&fm=173&app=49&f=JPEG?w=640&h=452&s=0C847D32019269C61C79BCDA000080B1)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230407214245.png)
 
 
 
@@ -152,7 +150,7 @@ hash环上顺时针从整数0开始，一直到最大正整数，我们根据四
 
 当新增一个ip5的服务器后，一致性hash环大致如下图：
 
-![](https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=1963410234,1960362096&fm=173&app=49&f=JPEG?w=640&h=507&s=61C47D32499269CE4EF96CCA000080B1)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230407214301.png)
 
 
 
@@ -162,7 +160,7 @@ hash环上顺时针从整数0开始，一直到最大正整数，我们根据四
 
 单调性(Monotonicity)，单调性是指如果已经有一些请求通过哈希分派到了相应的服务器进行处理，又有新的服务器加入到系统中时候，应保证原有的请求可以被映射到原有的或者新的服务器中去，而不会被映射到原来的其它服务器上去。 这个通过上面新增服务器ip5可以证明，新增ip5后，原来被ip1处理的user6现在还是被ip1处理，原来被ip1处理的user5现在被新增的ip5处理。分散性(Spread)：分布式环境中，客户端请求时候可能不知道所有服务器的存在，可能只知道其中一部分服务器，在客户端看来他看到的部分服务器会形成一个完整的hash环。如果多个客户端都把部分服务器作为一个完整hash环，那么可能会导致，同一个用户的请求被路由到不同的服务器进行处理。这种情况显然是应该避免的，因为它不能保证同一个用户的请求落到同一个服务器。所谓分散性是指上述情况发生的严重程度。平衡性(Balance)：平衡性也就是说负载均衡，是指客户端hash后的请求应该能够分散到不同的服务器上去。一致性hash可以做到每个服务器都进行处理请求，但是不能保证每个服务器处理的请求的数量大致相同，如下图
 
-![](https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=134719927,415275374&fm=173&app=49&f=JPEG?w=640&h=509&s=1DC47D32195A61CE5CD9DDDA0000A0B1)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230407214309.png)
 
 
 
@@ -170,9 +168,8 @@ hash环上顺时针从整数0开始，一直到最大正整数，我们根据四
 
 五、虚拟节点
 
-当服务器节点比较少的时候会出现上节所说的一致性hash倾斜的问题，一个解决方法是多加机器，但是加机器是有成本的，那么就加虚拟节点，比如上面三个机器，每个机器引入1个虚拟节点后的一致性hash环的图如下：
-
-![](https://ss2.baidu.com/6ONYsjip0QIZ8tyhnq/it/u=2945843696,3879552818&fm=173&app=49&f=JPEG?w=640&h=499&s=44867D32595AEDCE4E714CCA0000C0B1)
+当服务器节点比较少的时候会出现上节所说的一致性hash倾斜的问题，一个解决方法是多加机器，但是加机器是有成本的，那么就加虚拟节点，比如上面三个机器，每个机器引入1个虚拟节点后的一致性hash环的图如下：  
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230407214322.png)
 
 
 
@@ -182,18 +179,14 @@ hash环上顺时针从整数0开始，一直到最大正整数，我们根据四
 
 六、均匀一致性hash
 
-上节我们使用虚拟节点后的图看起来比较均衡，但是如果生成虚拟节点的算法不够好很可能会得到下面的环：
-
-![](https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=725945433,2343916262&fm=173&app=49&f=JPEG?w=640&h=478&s=19C47D32091A60CE4EF54CCA000070B1)
-
+上节我们使用虚拟节点后的图看起来比较均衡，但是如果生成虚拟节点的算法不够好很可能会得到下面的环：  
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230407214331.png)
 
 
 可知每个服务节点引入1个虚拟节点后，情况相比没有引入前均衡性有所改善，但是并不均衡。
 
-均衡的一致性hash应该是如下图：
-
-![](https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=1456000641,676791436&fm=173&app=49&f=JPEG?w=640&h=533&s=44C47D32195AE4CE0C714DCA0000C0B1)
-
+均衡的一致性hash应该是如下图：  
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230407214345.png)
 
 
 均匀一致性hash的目标是如果服务器有N台，客户端的hash值有M个，那么每个服务器应该处理大概M/N个用户的。也就是每台服务器负载尽量均衡。dubbo提供的一致性hash负载均衡算法就是不均匀的，我们自己实现了dubbo的spi扩展实现了均匀一致性hash.

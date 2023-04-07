@@ -14,14 +14,14 @@
 
 如果对本系列文章有什么建议，或者是有什么疑问的话，也可以关注公众号【Java技术江湖】联系作者，欢迎你参与本系列博文的创作和修订。
 
-<!-- more -->
+<!-- more -->  
 
 ## **引言**
 
 
 [《分布式系统理论基础 - 一致性、2PC和3PC》](http://www.cnblogs.com/bangerlee/p/5268485.html)一文介绍了一致性、达成一致性需要面临的各种问题以及2PC、3PC模型，Paxos协议在节点宕机恢复、消息无序或丢失、网络分化的场景下能保证决议的一致性，是被讨论最广泛的一致性协议。
 
-Paxos协议同时又以其“艰深晦涩”著称，下面结合 [Paxos Made Simple](http://research.microsoft.com/en-us/um/people/lamport/pubs/paxos-simple.pdf)、[The Part-Time Parliament](http://research.microsoft.com/en-us/um/people/lamport/pubs/lamport-paxos.pdf) 两篇论文，尝试通过Paxos推演、学习和了解Paxos协议。
+Paxos协议同时又以其“艰深晦涩”著称，下面结合[Paxos Made Simple](http://research.microsoft.com/en-us/um/people/lamport/pubs/paxos-simple.pdf)、[The Part-Time Parliament](http://research.microsoft.com/en-us/um/people/lamport/pubs/lamport-paxos.pdf)两篇论文，尝试通过Paxos推演、学习和了解Paxos协议。
 
 **Basic Paxos**
 
@@ -29,13 +29,13 @@ Paxos协议同时又以其“艰深晦涩”著称，下面结合 [Paxos Made S
 
 也许你会疑惑只确定一个值能起什么作用，在Paxos协议里确定并只确定一个值是确定多值的基础，如何确定多值将在第二部分Multi Paxos中介绍，这部分我们聚焦在“Paxos如何确定并只确定一个值”这一问题上。
 
-![](https://images2015.cnblogs.com/blog/116770/201607/116770-20160711232543717-973749854.gif)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/116770-20160711232543717-973749854.gif)
 
 和2PC类似，Paxos先把节点分成两类，发起提议(proposal)的一方为proposer，参与决议的一方为acceptor。假如只有一个proposer发起提议，并且节点不宕机、消息不丢包，那么acceptor做到以下这点就可以确定一个值：
 
 
 
-<pre>**P1**. 一个acceptor接受它收到的第一项提议</pre>
+**P1**. 一个acceptor接受它收到的第一项提议
 
 
 
@@ -45,7 +45,7 @@ Paxos协议同时又以其“艰深晦涩”著称，下面结合 [Paxos Made S
 
 1\. proposer发起的每项提议分别用一个ID标识，提议的组成因此变为(ID, value)
 
-2. acceptor可以接受(accept)不止一项提议，当多数(quorum) acceptor接受一项提议时该提议被确定(chosen)
+2.acceptor可以接受(accept)不止一项提议，当多数(quorum)acceptor接受一项提议时该提议被确定(chosen)
 
 _(注: 注意以上“接受”和“确定”的区别）_
 
@@ -53,7 +53,7 @@ _(注: 注意以上“接受”和“确定”的区别）_
 
 
 
-<pre>**P2**. 如果一项值为v的提议被确定，那么后续只确定值为v的提议</pre>
+**P2**. 如果一项值为v的提议被确定，那么后续只确定值为v的提议
 
 
 
@@ -63,7 +63,7 @@ _(注: 乍看这个条件不太好理解，谨记目标是“确定并只确定�
 
 
 
-<pre>**P2a**. 如果一项值为v的提议被确定，那么acceptor后续只接受值为v的提议</pre>
+**P2a**. 如果一项值为v的提议被确定，那么acceptor后续只接受值为v的提议
 
 
 
@@ -75,25 +75,25 @@ _(注: 乍看这个条件不太好理解，谨记目标是“确定并只确定�
 
 
 
-<pre>**P2b**. 如果一项值为v的提议被确定，那么proposer后续只发起值为v的提议</pre>
+**P2b**. 如果一项值为v的提议被确定，那么proposer后续只发起值为v的提议
 
 
 
-满足P2b则P2a成立 (P2b => P2a => P2)。
+满足P2b则P2a成立 (P2b =>P2a => P2)。
 
 P2b约束的是提议被确定(chosen)后proposer的行为，我们更关心提议被确定前proposer应该怎么做：
 
 
 
-<pre>**P2c**. 对于提议(n,v)，acceptor的多数派S中，如果存在acceptor最近一次(即ID值最大)接受的提议的值为v'，那么要求v = v'；否则v可为任意值</pre>
+**P2c**. 对于提议(n,v)，acceptor的多数派S中，如果存在acceptor最近一次(即ID值最大)接受的提议的值为v'，那么要求v = v'；否则v可为任意值
 
 
 
-满足P2c则P2b成立 (P2c => P2b => P2a => P2)。
+满足P2c则P2b成立 (P2c =>P2b => P2a => P2)。
 
-条件P2c是Basic Paxos的核心，光看P2c的描述可能会觉得一头雾水，我们通过 [The Part-Time Parliament](http://research.microsoft.com/en-us/um/people/lamport/pubs/lamport-paxos.pdf) 中的例子加深理解：
+条件P2c是Basic Paxos的核心，光看P2c的描述可能会觉得一头雾水，我们通过[The Part-Time Parliament](http://research.microsoft.com/en-us/um/people/lamport/pubs/lamport-paxos.pdf)中的例子加深理解：
 
-![](https://images2015.cnblogs.com/blog/116770/201607/116770-20160712103935326-2086911417.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/116770-20160712103935326-2086911417.png)
 
 假设有A~E 5个acceptor，- 表示acceptor因宕机等原因缺席当次决议，x 表示acceptor不接受提议，o 表示接受提议；多数派acceptor接受提议后提议被确定，以上表格对应的决议过程如下：
 
@@ -105,9 +105,9 @@ P2b约束的是提议被确定(chosen)后proposer的行为，我们更关心提�
 
 以上提到的各项约束条件可以归纳为3点，如果proposer/acceptor满足下面3点，那么在少数节点宕机、网络分化隔离的情况下，在“确定并只确定一个值”这件事情上可以保证一致性(consistency)：
 
-*   B1(ß): ß中每一轮决议都有唯一的ID标识
+*   B1(ß):ß中每一轮决议都有唯一的ID标识
 *   B2(ß): 如果决议B被acceptor多数派接受，则确定决议B
-*   B3(ß): 对于ß中的任意提议B(n,v)，acceptor的多数派中如果存在acceptor最近一次(即ID值最大)接受的提议的值为v'，那么要求v = v'；否则v可为任意值
+*   B3(ß):对于ß中的任意提议B(n,v)，acceptor的多数派中如果存在acceptor最近一次(即ID值最大)接受的提议的值为v'，那么要求v = v'；否则v可为任意值
 
 _(注: 希腊字母ß表示多轮决议的集合，字母B表示一轮决议)_
 
@@ -119,7 +119,7 @@ _(注: 希腊字母ß表示多轮决议的集合，字母B表示一轮决议)_
 
 至此，proposer/acceptor完成一轮决议可归纳为prepare和accept两个阶段。prepare阶段proposer发起提议问询提议值、acceptor回应问询并进行promise；accept阶段完成决议，图示如下：
 
-![](https://images2015.cnblogs.com/blog/116770/201607/116770-20160712125617045-527200085.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/116770-20160712125617045-527200085.png)
 
 还有一个问题需要考量，假如proposer A发起ID为n的提议，在提议未完成前proposer B又发起ID为n+1的提议，在n+1提议未完成前proposer C又发起ID为n+2的提议…… 如此acceptor不能完成决议、形成活锁(livelock)，虽然这不影响一致性，但我们一般不想让这样的情况发生。解决的方法是从proposer中选出一个leader，提议统一由leader发起。
 
@@ -129,11 +129,11 @@ _(注: 希腊字母ß表示多轮决议的集合，字母B表示一轮决议)_
 
 通过以上步骤分布式系统已经能确定一个值，“只确定一个值有什么用？这可解决不了我面临的问题。” 你心中可能有这样的疑问。
 
-![](https://images2015.cnblogs.com/blog/116770/201607/116770-20160712150303811-1635028332.gif)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/116770-20160712150303811-1635028332.gif)
 
 其实不断地进行“确定一个值”的过程、再为每个过程编上序号，就能得到具有全序关系(total order)的系列值，进而能应用在数据库副本存储等很多场景。我们把单次“确定一个值”的过程称为实例(instance)，它由proposer/acceptor/learner组成，下图说明了A/B/C三机上的实例：
 
-![](https://images2015.cnblogs.com/blog/116770/201607/116770-20160712212514107-1914374126.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/116770-20160712212514107-1914374126.png)
 
 不同序号的实例之间互相不影响，A/B/C三机输入相同、过程实质等同于执行相同序列的状态机(state machine)指令 ，因而将得到一致的结果。
 
@@ -144,8 +144,8 @@ proposer leader在Multi Paxos中还有助于提升性能，常态下统一由lea
 以上介绍了Paxos的推演过程、如何在Basic Paxos的基础上通过状态机构建Multi Paxos。Paxos协议比较“艰深晦涩”，但多读几遍论文一般能理解其内涵，更难的是如何将Paxos真正应用到工程实践。
 
 微信后台开发同学实现并开源了一套基于Paxos协议的多机状态拷贝类库[PhxPaxos](https://github.com/tencent-wechat/phxpaxos)，PhxPaxos用于将单机服务扩展到多机，其经过线上系统验证并在一致性保证、性能等方面作了很多考量。
-
---
+  
+--  
 
 本文提到的一些概念包括一致性(consistency)、一致性系统模型(system model)、多数派(quorum)、全序关系(total order)等，在以下文章中有介绍 :)
 
@@ -156,6 +156,3 @@ proposer leader在Multi Paxos中还有助于提升性能，常态下统一由lea
 [《分布式系统理论基础 - 时间、时钟和事件顺序》](http://www.cnblogs.com/bangerlee/p/5448766.html)
 
 [《分布式系统理论基础 - CAP》](http://www.cnblogs.com/bangerlee/p/5328888.html)
-
-
-

@@ -1,11 +1,13 @@
 本文转自：https://www.cnblogs.com/bangerlee/p/5328888.html
 
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看
+
 > https://github.com/h2pl/Java-Tutorial
 
 喜欢的话麻烦点下Star哈
 
 本文也将同步到我的个人博客：
+
 > www.how2playlife.com
 
 更多Java技术文章将陆续在微信公众号【Java技术江湖】更新，敬请关注。
@@ -14,7 +16,7 @@
 
 如果对本系列文章有什么建议，或者是有什么疑问的话，也可以关注公众号【Java技术江湖】联系作者，欢迎你参与本系列博文的创作和修订。
 
-<!-- more -->
+<!-- more -->  
 **引言**
 
 CAP是分布式系统、特别是分布式存储领域中被讨论最多的理论，“[什么是CAP定理？](https://www.quora.com/What-Is-CAP-Theorem-1)”在Quora 分布式系统分类下排名 FAQ 的 No.1。CAP在程序员中也有较广的普及，它不仅仅是“C、A、P不能同时满足，最多只能3选2”，以下尝试综合各方观点，从发展历史、工程实践等角度讲述CAP理论。希望大家透过本文对CAP理论有更多地了解和认识。
@@ -27,15 +29,14 @@ CAP由[Eric Brewer](https://en.wikipedia.org/wiki/Eric_Brewer_(scientist))在200
 
 该猜想在提出两年后被证明成立<sup>[4]</sup>，成为我们熟知的CAP定理：
 
-*   **数据一致性**(consistency)：如果系统对一个写操作返回成功，那么之后的读请求都必须读到这个新数据；如果返回失败，那么所有读操作都不能读到这个数据，对调用者而言数据具有强一致性(strong consistency) (又叫原子性 atomic、线性一致性 linearizable consistency)<sup>[5]</sup>
-*   **服务可用性**(availability)：所有读写请求在一定时间内得到响应，可终止、不会一直等待
+*   **数据一致性**(consistency)：如果系统对一个写操作返回成功，那么之后的读请求都必须读到这个新数据；如果返回失败，那么所有读操作都不能读到这个数据，对调用者而言数据具有强一致性(strong consistency) (又叫原子性 atomic、线性一致性 linearizable consistency)<sup>[5]</sup>*   **服务可用性**(availability)：所有读写请求在一定时间内得到响应，可终止、不会一直等待
 *   **分区容错性**(partition-tolerance)：在网络分区的情况下，被分隔的节点仍能正常对外服务
 
 在某时刻如果满足AP，分隔的节点同时对外服务但不能相互通信，将导致状态不一致，即不能满足C；如果满足CP，网络分区的情况下为达成C，请求只能一直等待，即不满足A；如果要满足CA，在一定时间内要达到节点状态一致，要求不能出现网络分区，则不能满足P。
 
 C、A、P三者最多只能满足其中两个，和FLP定理一样，CAP定理也指示了一个不可达的结果(impossibility result)。
 
-![](https://images2015.cnblogs.com/blog/116770/201603/116770-20160329205542613-1908405713.jpg)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230407204500.png)
 
 **CAP的工程启示**
 
@@ -57,9 +58,9 @@ Partition字面意思是网络分区，即因网络因素将系统分隔为多�
 
 **2、CA非0/1的选择**
 
-P 是必选项，那3选2的选择题不就变成数据一致性(consistency)、服务可用性(availability) 2选1？工程实践中一致性有不同程度，可用性也有不同等级，在保证分区容错性的前提下，放宽约束后可以兼顾一致性和可用性，两者不是非此即彼<sup>[12]</sup>。
+P 是必选项，那3选2的选择题不就变成数据一致性(consistency)、服务可用性(availability) 2选1？工程实践中一致性有不同程度，可用性也有不同等级，在保证分区容错性的前提下，放宽约束后可以兼顾一致性和可用性，两者不是非此即彼<sup>[12]</sup>。
 
-![](https://images2015.cnblogs.com/blog/116770/201604/116770-20160401221124957-2025686892.jpg)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/116770-20160401221124957-2025686892.jpg)
 
 CAP定理证明中的一致性指强一致性，强一致性要求多节点组成的被调要能像单节点一样运作、操作具备原子性，数据在时间、时序上都有要求。如果放宽这些要求，还有其他一致性类型：
 
@@ -86,45 +87,42 @@ CAP理论对分布式系统实现有非常重大的影响，我们可以根据�
 
 有非常非常多文章讨论和研究CAP理论，希望这篇对你认识和了解CAP理论有帮助。
 
-[1] [Harvest, Yield, and Scalable Tolerant Systems](https://cs.uwaterloo.ca/~brecht/servers/readings-new2/harvest-yield.pdf), Armando Fox , Eric Brewer, 1999
+[1] [Harvest, Yield, and Scalable Tolerant Systems](https://cs.uwaterloo.ca/~brecht/servers/readings-new2/harvest-yield.pdf), Armando Fox , Eric Brewer, 1999
 
-[2] [Towards Robust Distributed Systems](http://www.cs.berkeley.edu/~brewer/cs262b-2004/PODC-keynote.pdf), Eric Brewer, 2000
+[2] [Towards Robust Distributed Systems](http://www.cs.berkeley.edu/~brewer/cs262b-2004/PODC-keynote.pdf), Eric Brewer, 2000
 
-[3] [Inktomi's wild ride - A personal view of the Internet bubble](https://www.youtube.com/watch?v=E91oEn1bnXM), Eric Brewer, 2004
+[3] [Inktomi's wild ride - A personal view of the Internet bubble](https://www.youtube.com/watch?v=E91oEn1bnXM), Eric Brewer, 2004
 
-[4] [Brewer’s Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web](https://pdfs.semanticscholar.org/24ce/ce61e2128780072bc58f90b8ba47f624bc27.pdf), Seth Gilbert, Nancy Lynch, 2002
+[4] [Brewer’s Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web](https://pdfs.semanticscholar.org/24ce/ce61e2128780072bc58f90b8ba47f624bc27.pdf), Seth Gilbert, Nancy Lynch, 2002
 
-[5] [Linearizability: A Correctness Condition for Concurrent Objects](http://cs.brown.edu/~mph/HerlihyW90/p463-herlihy.pdf), Maurice P. Herlihy,Jeannette M. Wing, 1990
+[5] [Linearizability: A Correctness Condition for Concurrent Objects](http://cs.brown.edu/~mph/HerlihyW90/p463-herlihy.pdf), Maurice P. Herlihy,Jeannette M. Wing, 1990
 
-[6] [Brewer's CAP Theorem - The kool aid Amazon and Ebay have been drinking](http://julianbrowne.com/article/viewer/brewers-cap-theorem), Julian Browne, 2009
+[6] [Brewer's CAP Theorem - The kool aid Amazon and Ebay have been drinking](http://julianbrowne.com/article/viewer/brewers-cap-theorem), Julian Browne, 2009
 
-[7] [CAP Theorem between Claims and Misunderstandings: What is to be Sacrificed?](http://www.sersc.org/journals/IJAST/vol56/1.pdf), Balla Wade Diack,Samba Ndiaye,Yahya Slimani, 2013
+[7] [CAP Theorem between Claims and Misunderstandings: What is to be Sacrificed?](http://www.sersc.org/journals/IJAST/vol56/1.pdf), Balla Wade Diack,Samba Ndiaye,Yahya Slimani, 2013
 
-[8] [Errors in Database Systems, Eventual Consistency, and the CAP Theorem](http://cacm.acm.org/blogs/blog-cacm/83396-errors-in-database-systems-eventual-consistency-and-the-cap-theorem/fulltext), Michael Stonebraker, 2010
+[8] [Errors in Database Systems, Eventual Consistency, and the CAP Theorem](http://cacm.acm.org/blogs/blog-cacm/83396-errors-in-database-systems-eventual-consistency-and-the-cap-theorem/fulltext), Michael Stonebraker, 2010
 
-[9] [CAP Confusion: Problems with 'partition tolerance'](http://blog.cloudera.com/blog/2010/04/cap-confusion-problems-with-partition-tolerance/), Henry Robinson, 2010
+[9] [CAP Confusion: Problems with 'partition tolerance'](http://blog.cloudera.com/blog/2010/04/cap-confusion-problems-with-partition-tolerance/), Henry Robinson, 2010
 
-[10] [You Can’t Sacrifice Partition Tolerance](https://codahale.com/you-cant-sacrifice-partition-tolerance/), Coda Hale, 2010
+[10] [You Can’t Sacrifice Partition Tolerance](https://codahale.com/you-cant-sacrifice-partition-tolerance/), Coda Hale, 2010
 
-[11] [Perspectives on the CAP Theorem](https://groups.csail.mit.edu/tds/papers/Gilbert/Brewer2.pdf), Seth Gilbert, Nancy Lynch, 2012
+[11] [Perspectives on the CAP Theorem](https://groups.csail.mit.edu/tds/papers/Gilbert/Brewer2.pdf), Seth Gilbert, Nancy Lynch, 2012
 
-[12] [CAP Twelve Years Later: How the "Rules" Have Changed](https://www.computer.org/cms/Computer.org/ComputingNow/homepage/2012/0512/T_CO2_CAP12YearsLater.pdf), Eric Brewer, 2012
+[12] [CAP Twelve Years Later: How the "Rules" Have Changed](https://www.computer.org/cms/Computer.org/ComputingNow/homepage/2012/0512/T_CO2_CAP12YearsLater.pdf), Eric Brewer, 2012
 
-[13] [How to Make a Multiprocessor Computer That Correctly Executes Multiprocess Programs](http://research.microsoft.com/en-us/um/people/lamport/pubs/multi.pdf), Lamport Leslie, 1979
+[13] [How to Make a Multiprocessor Computer That Correctly Executes Multiprocess Programs](http://research.microsoft.com/en-us/um/people/lamport/pubs/multi.pdf), Lamport Leslie, 1979
 
-[14] [Eventual Consistent Databases: State of the Art](http://www.ronpub.com/publications/OJDB-v1i1n03_Elbushra.pdf), Mawahib Elbushra , Jan Lindström, 2014
+[14] [Eventual Consistent Databases: State of the Art](http://www.ronpub.com/publications/OJDB-v1i1n03_Elbushra.pdf), Mawahib Elbushra , Jan Lindström, 2014
 
-[15] [Eventually Consistent](http://www.allthingsdistributed.com/2008/12/eventually_consistent.html), Werner Vogels, 2008
+[15] [Eventually Consistent](http://www.allthingsdistributed.com/2008/12/eventually_consistent.html), Werner Vogels, 2008
 
-[16] [Speed Matters for Google Web Search](http://www.isaacsunyer.com/wp-content/uploads/2009/09/test_velocidad_google.pdf), Jake Brutlag, 2009
+[16] [Speed Matters for Google Web Search](http://www.isaacsunyer.com/wp-content/uploads/2009/09/test_velocidad_google.pdf), Jake Brutlag, 2009
 
-[17] [Consistency Tradeoffs in Modern Distributed Database System Design](http://cs-www.cs.yale.edu/homes/dna/papers/abadi-pacelc.pdf), Daniel J. Abadi, 2012
+[17] [Consistency Tradeoffs in Modern Distributed Database System Design](http://cs-www.cs.yale.edu/homes/dna/papers/abadi-pacelc.pdf), Daniel J. Abadi, 2012
 
-[18] [A CAP Solution (Proving Brewer Wrong)](http://guysblogspot.blogspot.com/2008/09/cap-solution-proving-brewer-wrong.html), Guy's blog, 2008
+[18] [A CAP Solution (Proving Brewer Wrong)](http://guysblogspot.blogspot.com/2008/09/cap-solution-proving-brewer-wrong.html), Guy's blog, 2008
 
-[19] [How to beat the CAP theorem](http://nathanmarz.com/blog/how-to-beat-the-cap-theorem.html), nathanmarz , 2011
+[19] [How to beat the CAP theorem](http://nathanmarz.com/blog/how-to-beat-the-cap-theorem.html), nathanmarz , 2011
 
-[20] [The CAP FAQ](https://github.com/henryr/cap-faq), Henry Robinson
-
-
-
+[20] [The CAP FAQ](https://github.com/henryr/cap-faq), Henry Robinson

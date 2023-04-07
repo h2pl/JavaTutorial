@@ -14,7 +14,7 @@
 
 如果对本系列文章有什么建议，或者是有什么疑问的话，也可以关注公众号【Java技术江湖】联系作者，欢迎你参与本系列博文的创作和修订。
 
-<!-- more -->
+<!-- more -->  
 
 
 ## [分布式服务协调员zookeeper - 应用场景和监控](https://www.cnblogs.com/bangerlee/p/4427331.html)
@@ -29,7 +29,7 @@ zookeeper在分布式系统中作为协调员的角色，可应用于Leader选�
 
 ZK以Unix文件系统树结构的形式管理存储的数据，图示如下：
 
-![](https://images0.cnblogs.com/blog2015/116770/201504/142337054797921.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/142337054797921.png)
 
 其中每个树节点被称为**znode**，每个znode类似一个文件，包含文件元信息(meta data)和数据。
 
@@ -64,8 +64,8 @@ ZK提供了以下API，供client操作znode和znode中存储的数据：
 
 
 
-<pre>[zk: localhost:2181(CONNECTED) 4] ls /master
-[lock-0000000241, lock-0000000243, lock-0000000242]</pre>
+[zk: localhost:2181(CONNECTED) 4] ls /master  
+[lock-0000000241, lock-0000000243, lock-0000000242]
 
 
 
@@ -85,8 +85,8 @@ znode可以存储数据，基于这一点，我们可以用ZK实现分布式系�
 
 
 
-<pre>[zk: localhost:2181(CONNECTED) 30] get /A/blk-0000340369 {"svr_info": [{"ip": "1.1.1.1.", "port": "11000"}]}
-cZxid = 0x2ffdeda3be ……</pre>
+[zk: localhost:2181(CONNECTED) 30] get /A/blk-0000340369 {"svr_info": [{"ip": "1.1.1.1.", "port": "11000"}]}  
+cZxid = 0x2ffdeda3be ……
 
 
 
@@ -103,9 +103,9 @@ ZK自身提供了一些“四字命令”，通过这些四字命令，我们可
 
 
 
-<pre># echo "mntr" | /usr/bin/netcat 127.0.0.1 2181 zk_version 3.4.3-1240972, built on 02/06/2012 10:48 GMT
-zk_packets_received 267044485 zk_packets_sent 267069992 zk_outstanding_requests 0 zk_server_state follower
-zk_znode_count 16216</pre>
+# echo "mntr" | /usr/bin/netcat 127.0.0.1 2181 zk_version 3.4.3-1240972, built on 02/06/2012 10:48 GMT  
+zk_packets_received 267044485 zk_packets_sent 267069992 zk_outstanding_requests 0 zk_server_state follower  
+zk_znode_count 16216
 
 
 
@@ -120,8 +120,8 @@ zk_znode_count 16216</pre>
 
 
 
-<pre>/usr/local/zookeeper/bin/zkCli.sh create /zookeeper/test 'test' >/dev/null 2>&1
-/usr/local/zookeeper/bin/zkCli.sh delete /zookeeper/test >/dev/null 2>&1</pre>
+/usr/local/zookeeper/bin/zkCli.sh create /zookeeper/test 'test' >/dev/null 2>&1  
+/usr/local/zookeeper/bin/zkCli.sh delete /zookeeper/test >/dev/null 2>&1
 
 
 
@@ -130,6 +130,3 @@ zk_znode_count 16216</pre>
 **小结**
 
 zookeeper以目录树的形式管理数据，提供znode监听、数据设置等接口，基于这些接口，我们可以实现Leader选举、配置管理、命名服务等功能。结合四字命令，加上模拟zookeeper client 创建/删除znode，我们可以实现对zookeeper的有效监控。在各种分布式系统中，我们经常可以看到zookeeper的身影。
-
-
-

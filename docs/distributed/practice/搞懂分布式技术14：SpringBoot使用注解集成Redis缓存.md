@@ -1,4 +1,4 @@
-# Table of Contents
+# 目录
 
 * [Redis配置](#redis配置)
 * [连接超时时间（毫秒）](#连接超时时间（毫秒）)
@@ -37,7 +37,7 @@ Spring Boot 熟悉后，集成一个外部扩展是一件很容易的事，集�
 
 二、创建 RedisClient.java
 注意该类存放的package
-
+````
     package org.springframework.data.redis.connection.jedis;
     
     import java.io.ByteArrayInputStream;
@@ -316,10 +316,11 @@ Spring Boot 熟悉后，集成一个外部扩展是一件很容易的事，集�
             T doInvoker(Jedis jedis);
         }
     }
-
+````
 三、创建Redis配置类
+
     RedisConfig.java
-    
+````    
     package com.shanhy.example.redis;
     
     import org.springframework.context.annotation.Bean;
@@ -408,10 +409,10 @@ Spring Boot 熟悉后，集成一个外部扩展是一件很容易的事，集�
         }
     
     }
-
+````
 四、创建测试方法
 下面代码随便放一个Controller里
-
+````
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
@@ -438,10 +439,10 @@ Spring Boot 熟悉后，集成一个外部扩展是一件很容易的事，集�
 
         return "OK";
     }
-
+````
 五、配置文件配置Redis
     application.yml
-    
+````    
     spring:
       # Redis配置
       redis:
@@ -455,10 +456,9 @@ Spring Boot 熟悉后，集成一个外部扩展是一件很容易的事，集�
           min-idle: 5
           max-active: 20
           max-wait: 2
-
+````
 这样就完成了Redis的配置，可以正常使用 redisTemplate 了。
 
-atoop/article/details/71275331
 
 ### 一、创建 Caching 配置类
 

@@ -1,4 +1,4 @@
-# Table of Contents
+# 目录
 
 * [初步认识RocketMQ的核心模块](#初步认识rocketmq的核心模块)
 * [错误的方案0](#错误的方案0)
@@ -12,11 +12,13 @@
 本文内容参考网络，侵删
 
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看
+
 > https://github.com/h2pl/Java-Tutorial
 
 喜欢的话麻烦点下Star哈
 
 本文也将同步到我的个人博客：
+
 > www.how2playlife.com
 
 更多Java技术文章将陆续在微信公众号【Java技术江湖】更新，敬请关注。
@@ -29,17 +31,9 @@
 
 # 初步认识RocketMQ的核心模块
 
-
-
-
-
-![](https://upload-images.jianshu.io/upload_images/4943997-9842b6eec46bd737.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/328)
-
-
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/4943997-9842b6eec46bd737.png)
 
 rocketmq模块
-
-
 
 **rocketmq-broker：接受生产者发来的消息并存储（通过调用rocketmq-store），消费者从这里取得消息。**
 
@@ -57,12 +51,7 @@ rocketmq模块
 
 **rocketmq-tools：命令行工具**
 
-
-
 [分布式消息队列RocketMQ--事务消息--解决分布式事务](https://www.cnblogs.com/ZJOE80/p/7810533.html)
-
-
-
 
 
 说到分布式事务，就会谈到那个经典的”账号转账”问题：2个账号，分布处于2个不同的DB，或者说2个不同的子系统里面，A要扣钱，B要加钱，如何保证原子性？
@@ -71,7 +60,7 @@ rocketmq模块
 
 但这里面有个问题：A是先update DB，后发送消息呢？ 还是先发送消息，后update DB？
 
-假设先update DB成功，发送消息网络失败，重发又失败，怎么办？ 
+假设先update DB成功，发送消息网络失败，重发又失败，怎么办？
 假设先发送消息成功，update DB失败。消息已经发出去了，又不能撤回，怎么办？
 
 所以，这里下个结论： 只要发送消息和update DB这2个操作不是原子的，无论谁先谁后，都是有问题的。
@@ -86,17 +75,17 @@ rocketmq模块
 
 （1）网络的2将军问题：发送消息失败，发送方并不知道是消息中间件真的没有收到消息呢？还是消息已经收到了，只是返回response的时候失败了？
 
-         如果是已经收到消息了，而发送端认为没有收到，执行update db的回滚操作。则会导致A账号的钱没有扣，B账号的钱却加了。
+    如果是已经收到消息了，而发送端认为没有收到，执行update db的回滚操作。则会导致A账号的钱没有扣，B账号的钱却加了。
 
 （2）把网络调用放在DB事务里面，可能会因为网络的延时，导致DB长事务。严重的，会block整个DB。这个风险很大。
 
-         基于以上分析，我们知道，这个方案其实是错误的！
+    基于以上分析，我们知道，这个方案其实是错误的！
 
 # 方案1–业务方自己实现
 
 假设消息中间件没有提供“事务消息”功能，比如你用的是Kafka。那如何解决这个问题呢？
 
-解决方案如下： 
+解决方案如下：
 （1）Producer端准备1张消息表，把update DB和insert message这2个操作，放在一个DB事务里面。
 
 （2）准备一个后台程序，源源不断的把消息表中的message传送给消息中间件。失败了，不断重试重传。允许消息重复，但消息不会丢，顺序也不会打乱。
@@ -115,9 +104,9 @@ rocketmq模块
 
 具体来说，就是把消息的发送分成了2个阶段：Prepare阶段和确认阶段。
 
-具体来说，上面的2个步骤，被分解成3个步骤： 
-(1) 发送Prepared消息 
-(2) update DB 
+具体来说，上面的2个步骤，被分解成3个步骤：
+(1) 发送Prepared消息
+(2) update DB
 (3) 根据update DB结果成功或失败，Confirm或者取消Prepared消息。
 
 可能有人会问了，前2步执行成功了，最后1步失败了怎么办？这里就涉及到了RocketMQ的关键点：RocketMQ会定期（默认是1分钟）扫描所有的Prepared消息，询问发送方，到底是要确认这条消息发出去？还是取消此条消息？
@@ -143,7 +132,9 @@ SendResult sendResult = producer.sendMessageInTransaction(msg, tranExecuter, nul
 producer.shutdown();
 
 ```
+
 然后执行本地事务，具体代码如下
+
 ```
 public TransactionSendResult sendMessageInTransaction(.....)  {
     // 逻辑代码，非实际代码
@@ -157,11 +148,11 @@ public TransactionSendResult sendMessageInTransaction(.....)  {
 }
 ```
 
-![](https://img-blog.csdn.net/20180624145825253?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2E3MjQ4ODg=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230407220221.png)
 
 上面所说的消息中间件上注册的listener，超时以后会回调producer的接口以确定事务执行情况
 
-![](https://img-blog.csdn.net/20180624145955411?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2E3MjQ4ODg=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230407220230.png)
 
 总结：对比方案2和方案1，RocketMQ最大的改变，其实就是把“扫描消息表”这个事情，不让业务方做，而是消息中间件帮着做了。
 

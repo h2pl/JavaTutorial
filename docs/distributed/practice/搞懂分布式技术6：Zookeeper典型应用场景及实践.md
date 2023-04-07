@@ -1,4 +1,4 @@
-# Table of Contents
+# 目录
 
 * [一.ZooKeeper典型应用场景实践](#一zookeeper典型应用场景实践)
 * [1 Zookeeper数据模型](#1-zookeeper数据模型)
@@ -13,22 +13,24 @@
   * [3.6 负载均衡](#36-负载均衡)
   * [3.7 分布式通知/协调](#37-分布式通知协调)
   * [二:典型场景描述总结](#二典型场景描述总结)
-      * [**数据发布与订阅**(配置管理)](#数据发布与订阅配置管理)
-      * [**负载均衡**](#负载均衡)
-      * [**分布通知/协调**](#分布通知协调)
-      * [**命名服务**](#命名服务)
-      * [**分布式锁**](#分布式锁)
-      * [**集群管理**](#集群管理)
-      * [**分布式队列**](#分布式队列)
+    * [**数据发布与订阅**(配置管理)](#数据发布与订阅配置管理)
+    * [**负载均衡**](#负载均衡)
+    * [**分布通知/协调**](#分布通知协调)
+    * [**命名服务**](#命名服务)
+    * [**分布式锁**](#分布式锁)
+    * [**集群管理**](#集群管理)
+    * [**分布式队列**](#分布式队列)
 
 本文内容参考网络，侵删
 
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看
+
 > https://github.com/h2pl/Java-Tutorial
 
 喜欢的话麻烦点下Star哈
 
 本文也将同步到我的个人博客：
+
 > www.how2playlife.com
 
 更多Java技术文章将陆续在微信公众号【Java技术江湖】更新，敬请关注。
@@ -49,7 +51,7 @@ ZooKeeper是一个`高可用的分布式数据管理与系统协调框架`。`�
 
 Zookeeper 会维护`一个具有层次关系的数据结构`，它非常类似于一个标准的文件系统，如图所示：
 
-[![](https://static.oschina.net/uploads/img/201511/17163447_w7k1.png)](https://static.oschina.net/uploads/img/201511/17163447_w7k1.png)
+[![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/17163447_w7k1.png)](https://static.oschina.net/uploads/img/201511/17163447_w7k1.png)
 
 **图中的每个节点称为一个znode. 每个znode由3部分组成：**
 
@@ -63,7 +65,7 @@ Zookeeper 会维护`一个具有层次关系的数据结构`，它非常类似�
 
 1.  每个子目录项如 NameService 都被称作为 znode，这个 znode 是被它所在的路径唯一标识，如 Server1 这个 znode 的标识为 /NameService/Server1；
 
-2.  znode 可以有子节点目录，并且每个 znode 可以存储数据，注意 `EPHEMERAL 类型的目录节点不能有子节点目录`；
+2.  znode 可以有子节点目录，并且每个 znode 可以存储数据，注意`EPHEMERAL 类型的目录节点不能有子节点目录`；
 
 3.  znode 是有版本的，每个 znode 中存储的数据可以有多个版本，`也就是一个访问路径中可以存储多份数据`；
 
@@ -71,13 +73,13 @@ Zookeeper 会维护`一个具有层次关系的数据结构`，它非常类似�
 
 5.  znode 的`目录名可以自动编号`，如 App1 已经存在，再创建的话，将会自动命名为 App2；
 
-6.  znode `可以被监控，包括这个目录节点中存储的数据的修改，子节点目录的变化等`，一旦变化可以通知设置监控的客户端，`这个是 Zookeeper 的核心特性`，Zookeeper 的很多功能都是基于这个特性实现的，后面在典型的应用场景中会有实例介绍；
+6.  znode`可以被监控，包括这个目录节点中存储的数据的修改，子节点目录的变化等`，一旦变化可以通知设置监控的客户端，`这个是 Zookeeper 的核心特性`，Zookeeper 的很多功能都是基于这个特性实现的，后面在典型的应用场景中会有实例介绍；
 
 **znode节点的状态信息：**
 
-使用get命令获取指定节点的数据时, `同时也将返回该节点的状态信息, 称为Stat`. 其包含如下字段:
+使用get命令获取指定节点的数据时,`同时也将返回该节点的状态信息, 称为Stat`. 其包含如下字段:
 
-<pre>czxid. 节点创建时的zxid；
+czxid. 节点创建时的zxid；
 mzxid. 节点最新一次更新发生时的zxid；
 ctime. 节点创建时的时间戳；
 mtime. 节点最新一次更新发生时的时间戳；
@@ -87,13 +89,13 @@ aclVersion. 节点ACL(授权信息)的更新次数；
 ephemeralOwner. 如果该节点为ephemeral节点, ephemeralOwner值表示与该节点绑定的session id. 如果该节点不是              ephemeral节点, ephemeralOwner值为0\. 至于什么是ephemeral节点；
 dataLength. 节点数据的字节数；
 numChildren. 子节点个数；
-​</pre>
+
 
 **zxid：**
 
 znode节点的状态信息中包含czxid和mzxid, 那么什么是zxid呢?
 
-`ZooKeeper状态的每一次改变, 都对应着一个递增的Transaction id, 该id称为zxid`. 由于zxid的递增性质, 如果zxid1小于zxid2, 那么zxid1肯定先于zxid2发生. `创建任意节点, 或者更新任意节点的数据, 或者删除任意节点, 都会导致Zookeeper状态发生改变, 从而导致zxid的值增加`.
+`ZooKeeper状态的每一次改变, 都对应着一个递增的Transaction id, 该id称为zxid`. 由于zxid的递增性质, 如果zxid1小于zxid2, 那么zxid1肯定先于zxid2发生.`创建任意节点, 或者更新任意节点的数据, 或者删除任意节点, 都会导致Zookeeper状态发生改变, 从而导致zxid的值增加`.
 
 **session：**
 
@@ -105,21 +107,22 @@ znode节点的状态信息中包含czxid和mzxid, 那么什么是zxid呢?
 
 `persistent. persistent节点不和特定的session绑定`, 不会随着创建该节点的session的结束而消失, 而是**一直存在, 除非该节点被显式删除**.
 
-`ephemeral. ephemeral(临时)节点是临时性的, 如果创建该节点的session结束了, 该节点就会被自动删除`. `ephemeral节点不能拥有子节点`. 虽然ephemeral节点与创建它的session绑定, 但只要该节点没有被删除, 其他session就可以读写该节点中关联的数据. `使用-e参数指定创建ephemeral节点`.
+`ephemeral. ephemeral(临时)节点是临时性的, 如果创建该节点的session结束了, 该节点就会被自动删除`.`ephemeral节点不能拥有子节点`. 虽然ephemeral节点与创建它的session绑定, 但只要该节点没有被删除, 其他session就可以读写该节点中关联的数据.`使用-e参数指定创建ephemeral节点`.
 
-<pre>create -e /xing/ei world</pre>
+create -e /xing/ei world
 
-`sequence. 严格的说, sequence(顺序)并非节点类型中的一种`. **sequence节点既可以是ephemeral的, 也可以是persistent的**. `创建sequence节点时, ZooKeeper server会在指定的节点名称后加上一个数字序列, 该数字序列是递增的`. 因此可以**多次创建相同的sequence节点, 而得到不同的节点**. `使用-s参数指定创建sequence节点`.
+`sequence. 严格的说, sequence(顺序)并非节点类型中的一种`.**sequence节点既可以是ephemeral的, 也可以是persistent的**.`创建sequence节点时, ZooKeeper server会在指定的节点名称后加上一个数字序列, 该数字序列是递增的`. 因此可以**多次创建相同的sequence节点, 而得到不同的节点**.`使用-s参数指定创建sequence节点`.
 
-<pre>[zk: localhost:4180(CONNECTED) 0] create -s /xing/item world  
-Created /xing/item0000000001  
-[zk: localhost:4180(CONNECTED) 1] create -s /xing/item world  
-Created /xing/item0000000002  
-[zk: localhost:4180(CONNECTED) 2] create -s /xing/item world  
-Created /xing/item0000000003  
-[zk: localhost:4180(CONNECTED) 3] create -s /xing/item world  
+````
+[zk: localhost:4180(CONNECTED) 0] create -s /xing/item world 
+Created /xing/item0000000001 
+[zk: localhost:4180(CONNECTED) 1] create -s /xing/item world 
+Created /xing/item0000000002 
+[zk: localhost:4180(CONNECTED) 2] create -s /xing/item world 
+Created /xing/item0000000003 
+[zk: localhost:4180(CONNECTED) 3] create -s /xing/item world 
 Created /xing/item0000000004
-​</pre>
+````
 
 **watch：**
 
@@ -127,16 +130,17 @@ Created /xing/item0000000004
 
 ls命令. ls命令的第一个参数指定znode, 第二个参数如果为true, 则说明监听该znode的**子节点的增减**, 以及该znode**本身的删除**事件.
 
-<pre>[zk: localhost:4180(CONNECTED) 21] ls /xing true
+````
+[zk: localhost:4180(CONNECTED) 21] ls /xing true
 []
 [zk: localhost:4180(CONNECTED) 22] create /xing/item item000
 WATCHER::
  WatchedEvent state:SyncConnected type:NodeChildrenChanged path:/xing
-Created /xing/item</pre>
+Created /xing/item
 
 `get命令. get命令的第一个参数指定znode, 第二个参数如果为true, 则说明监听该znode的更新和删除事件`.
 
-<pre>[zk: localhost:4180(CONNECTED) 39] get /xing true
+[zk: localhost:4180(CONNECTED) 39] get /xing true
 world
 cZxid = 0x100000066
 ctime = Fri May 17 22:30:01 CST 2013
@@ -154,21 +158,22 @@ Created /xing/item
 [zk: localhost:4180(CONNECTED) 41] rmr /xing
 WATCHER::
  WatchedEvent state:SyncConnected type:NodeDeleted path:/xing
-​</pre>
+````
 
 # 2 如何使用Zookeeper
 
-Zookeeper 作为一个分布式的服务框架，`主要用来解决分布式集群中应用系统的一致性问题`，它能提供基于类似于文件系统的目录节点树方式的数据存储，但是 `Zookeeper 并不是用来专门存储数据的，它的作用主要是用来维护和监控你存储的数据的状态变化`。`通过监控这些数据状态的变化，从而可以达到基于数据的集群管理`，后面将会详细介绍 Zookeeper 能够解决的一些典型问题，这里先介绍一下，Zookeeper 的操作接口和简单使用示例。
+Zookeeper 作为一个分布式的服务框架，`主要用来解决分布式集群中应用系统的一致性问题`，它能提供基于类似于文件系统的目录节点树方式的数据存储，但是`Zookeeper 并不是用来专门存储数据的，它的作用主要是用来维护和监控你存储的数据的状态变化`。`通过监控这些数据状态的变化，从而可以达到基于数据的集群管理`，后面将会详细介绍 Zookeeper 能够解决的一些典型问题，这里先介绍一下，Zookeeper 的操作接口和简单使用示例。
 
 ## 2.1 常用接口操作
 
-客户端要连接 Zookeeper 服务器可以通过创建 `org.apache.zookeeper.ZooKeeper` 的一个实例对象，然后调用这个类提供的接口来和服务器交互。
+客户端要连接 Zookeeper 服务器可以通过创建`org.apache.zookeeper.ZooKeeper`的一个实例对象，然后调用这个类提供的接口来和服务器交互。
 
-前面说了 `ZooKeeper 主要是用来维护和监控一个目录节点树中存储的数据的状态`，所有我们能够操作 ZooKeeper 的也和操作目录节点树大体一样，如创建一个目录节点，给某个目录节点设置数据，获取某个目录节点的所有子目录节点，给某个目录节点设置权限和监控这个目录节点的状态变化。
+前面说了`ZooKeeper 主要是用来维护和监控一个目录节点树中存储的数据的状态`，所有我们能够操作 ZooKeeper 的也和操作目录节点树大体一样，如创建一个目录节点，给某个目录节点设置数据，获取某个目录节点的所有子目录节点，给某个目录节点设置权限和监控这个目录节点的状态变化。
 
 **ZooKeeper 基本的操作示例：**
 
-<pre>public class ZkDemo {
+````
+public class ZkDemo {
  public static void main(String[] args) throws IOException, KeeperException, InterruptedException {
  // 创建一个与服务器的连接
  ZooKeeper zk = new ZooKeeper("127.0.0.1:2180", 60000, new Watcher() {
@@ -186,10 +191,10 @@ Zookeeper 作为一个分布式的服务框架，`主要用来解决分布式集
  if (zk.exists("/node", true) == null) {
  // 创建一个给定的目录节点 path, 并给它设置数据；
  // CreateMode 标识有四种形式的目录节点，分别是：
- //     PERSISTENT：持久化目录节点，这个目录节点存储的数据不会丢失；
- //     PERSISTENT_SEQUENTIAL：顺序自动编号的目录节点，这种目录节点会根据当前已近存在的节点数自动加 1，然后返回给客户端已经成功创建的目录节点名；
- //     EPHEMERAL：临时目录节点，一旦创建这个节点的客户端与服务器端口也就是 session 超时，这种节点会被自动删除；
- //     EPHEMERAL_SEQUENTIAL：临时自动编号节点
+ //   PERSISTENT：持久化目录节点，这个目录节点存储的数据不会丢失；
+ //   PERSISTENT_SEQUENTIAL：顺序自动编号的目录节点，这种目录节点会根据当前已近存在的节点数自动加 1，然后返回给客户端已经成功创建的目录节点名；
+ //   EPHEMERAL：临时目录节点，一旦创建这个节点的客户端与服务器端口也就是 session 超时，这种节点会被自动删除；
+ //   EPHEMERAL_SEQUENTIAL：临时自动编号节点
  zk.create("/node", "conan".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
  System.out.println("create /node conan");
  // 查看/node节点数据
@@ -224,7 +229,7 @@ Zookeeper 作为一个分布式的服务框架，`主要用来解决分布式集
  zk.close();
  }
 }
-​</pre>
+````
 
 # 3 ZooKeeper 典型的应用场景
 
@@ -234,7 +239,7 @@ Zookeeper 从设计模式角度来看，是一个`基于观察者模式设计的
 
 ## 3.1 统一命名服务（Name Service）
 
-分布式应用中，通常需要有一套完整的命名规则，既能够产生唯一的名称又便于人识别和记住，通常情况下用树形的名称结构是一个理想的选择，**树形的名称结构是一个有层次的目录结构，既对人友好又不会重复**。说到这里你可能想到了 JNDI，没错 Zookeeper 的 Name Service **与 JNDI 能够完成的功能是差不多的**，它们都是将有层次的目录结构关联到一定资源上，但是 Zookeeper 的 Name Service 更加是广泛意义上的关联，也许你并不需要将名称关联到特定资源上，你可能只需要一个不会重复名称，**就像数据库中产生一个唯一的数字主键一样**。
+分布式应用中，通常需要有一套完整的命名规则，既能够产生唯一的名称又便于人识别和记住，通常情况下用树形的名称结构是一个理想的选择，**树形的名称结构是一个有层次的目录结构，既对人友好又不会重复**。说到这里你可能想到了 JNDI，没错 Zookeeper 的 Name Service**与 JNDI 能够完成的功能是差不多的**，它们都是将有层次的目录结构关联到一定资源上，但是 Zookeeper 的 Name Service 更加是广泛意义上的关联，也许你并不需要将名称关联到特定资源上，你可能只需要一个不会重复名称，**就像数据库中产生一个唯一的数字主键一样**。
 
 `Name Service 已经是 Zookeeper 内置的功能`，你只要调用 Zookeeper 的 API 就能实现。如调用 create 接口就可以很容易创建一个目录节点。
 
@@ -256,7 +261,7 @@ Zookeeper 从设计模式角度来看，是一个`基于观察者模式设计的
 
 像这样的配置信息完全可以交给 Zookeeper 来管理，`将配置信息保存在 Zookeeper 的某个目录节点中，然后将所有需要修改的应用机器监控配置信息的状态，一旦配置信息发生变化，每台应用机器就会收到 Zookeeper 的通知，然后从 Zookeeper 获取新的配置信息应用到系统中`。
 
-[![](https://static.oschina.net/uploads/img/201511/18093533_GnwN.png)](https://static.oschina.net/uploads/img/201511/18093533_GnwN.png)
+[![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/18093533_GnwN.png)](https://static.oschina.net/uploads/img/201511/18093533_GnwN.png)
 
 **发布与订阅模型，即所谓的配置中心**，顾名思义就是**发布者将数据发布到ZK节点上，供订阅者动态获取数据**，`实现配置信息的集中式管理和动态更新`。例如全局的配置信息，服务式服务框架的服务地址列表等就非常适合使用。
 
@@ -276,13 +281,13 @@ Zookeeper 从设计模式角度来看，是一个`基于观察者模式设计的
 
 Zookeeper 能够很容易的实现集群管理的功能，如有多台 Server 组成一个服务集群，那么`必须要一个“总管”知道当前集群中每台机器的服务状态，一旦有机器不能提供服务，集群中其它集群必须知道`，从而做出调整重新分配服务策略。同样`当增加集群的服务能力时，就会增加一台或多台 Server，同样也必须让“总管”知道`。
 
-Zookeeper 不仅能够帮你维护当前的集群中机器的服务状态，而且能够帮你选出一个“总管”，让这个总管来管理集群，这就是 `Zookeeper 的另一个功能 Leader Election`。
+Zookeeper 不仅能够帮你维护当前的集群中机器的服务状态，而且能够帮你选出一个“总管”，让这个总管来管理集群，这就是`Zookeeper 的另一个功能 Leader Election`。
 
-它们的实现方式都是在 **Zookeeper 上创建一个 EPHEMERAL 类型的目录节点`，然后`每个 Server 在它们创建目录节点的父目录节点上调用 getChildren(String path, boolean watch) 方法并设置 watch 为 true`，由于是 EPHEMERAL 目录节点，当创建它的 Server 死去，这个目录节点也随之被删除，所以 Children 将会变化，这时 getChildren上的 Watch 将会被调用，所以其它 Server 就知道已经有某台 Server 死去了**。新增 Server 也是同样的原理。
+它们的实现方式都是在**Zookeeper 上创建一个 EPHEMERAL 类型的目录节点`，然后`每个 Server 在它们创建目录节点的父目录节点上调用 getChildren(String path, boolean watch) 方法并设置 watch 为 true`，由于是 EPHEMERAL 目录节点，当创建它的 Server 死去，这个目录节点也随之被删除，所以 Children 将会变化，这时 getChildren上的 Watch 将会被调用，所以其它 Server 就知道已经有某台 Server 死去了**。新增 Server 也是同样的原理。
 
-Zookeeper 如何实现 Leader Election，也就是选出一个 Master Server。和前面的一样`每台 Server 创建一个 EPHEMERAL 目录节点，不同的是它还是一个 SEQUENTIAL 目录节点，所以它是个 EPHEMERAL_SEQUENTIAL 目录节点`。之所以它是 **EPHEMERAL_SEQUENTIAL** 目录节点，是因为我们可以给每台 Server 编号，我们可以`选择当前是最小编号的 Server 为 Master`，假如这个最小编号的 Server 死去，由于是 EPHEMERAL 节点，`死去的 Server 对应的节点也被删除，所以当前的节点列表中又出现一个最小编号的节点，我们就选择这个节点为当前 Master`。这样就实现了动态选择 Master，避免了传统意义上单 Master 容易出现单点故障的问题。
+Zookeeper 如何实现 Leader Election，也就是选出一个 Master Server。和前面的一样`每台 Server 创建一个 EPHEMERAL 目录节点，不同的是它还是一个 SEQUENTIAL 目录节点，所以它是个 EPHEMERAL_SEQUENTIAL 目录节点`。之所以它是**EPHEMERAL_SEQUENTIAL**目录节点，是因为我们可以给每台 Server 编号，我们可以`选择当前是最小编号的 Server 为 Master`，假如这个最小编号的 Server 死去，由于是 EPHEMERAL 节点，`死去的 Server 对应的节点也被删除，所以当前的节点列表中又出现一个最小编号的节点，我们就选择这个节点为当前 Master`。这样就实现了动态选择 Master，避免了传统意义上单 Master 容易出现单点故障的问题。
 
-[![](https://static.oschina.net/uploads/img/201511/18095931_70Ol.png)](https://static.oschina.net/uploads/img/201511/18095931_70Ol.png)
+[![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/18095931_70Ol.png)](https://static.oschina.net/uploads/img/201511/18095931_70Ol.png)
 
 **1\. 集群机器监控**
 
@@ -308,13 +313,13 @@ Zookeeper 如何实现 Leader Election，也就是选出一个 Master Server。�
 
 另外，这种场景演化一下，就是`动态Master选举`。这就要用到`EPHEMERAL_SEQUENTIAL类型节点的特性了`。
 
-上文中提到，所有客户端创建请求，最终只有一个能够创建成功。在这里稍微变化下，就是**允许所有请求都能够创建成功，但是得有个创建顺序**，于是所有的请求最终在ZK上创建结果的一种可能情况是这样： /currentMaster/{sessionId}-1 ,/currentMaster/{sessionId}-2,/currentMaster/{sessionId}-3 ….. `每次选取序列号最小的那个机器作为Master，如果这个机器挂了，由于他创建的节点会马上消失，那么之后最小的那个机器就是Master了`。
+上文中提到，所有客户端创建请求，最终只有一个能够创建成功。在这里稍微变化下，就是**允许所有请求都能够创建成功，但是得有个创建顺序**，于是所有的请求最终在ZK上创建结果的一种可能情况是这样： /currentMaster/{sessionId}-1 ,/currentMaster/{sessionId}-2,/currentMaster/{sessionId}-3 …..`每次选取序列号最小的那个机器作为Master，如果这个机器挂了，由于他创建的节点会马上消失，那么之后最小的那个机器就是Master了`。
 
 **3\. 在搜索系统中，如果集群中每个机器都生成一份全量索引，不仅耗时，而且不能保证彼此之间索引数据一致。**因此让集群中的Master来进行全量索引的生成，然后同步到集群中其它机器。另外，Master选举的容灾措施是，可以随时进行手动指定master，就是说应用在zk在无法获取master信息时，可以通过比如http方式，向一个地方获取master。
 
 **4\. 在Hbase中，也是使用ZooKeeper来实现动态HMaster的选举。**在Hbase实现中，会在ZK上存储一些ROOT表的地址和HMaster的地址，HRegionServer也会把自己以临时节点（Ephemeral）的方式注册到Zookeeper中，使得HMaster可以随时感知到各个HRegionServer的存活状态，同时，一旦HMaster出现问题，会重新选举出一个HMaster来运行，从而避免了HMaster的单点问题。
 
-[![](https://static.oschina.net/uploads/img/201511/18102032_cFyc.png)](https://static.oschina.net/uploads/img/201511/18102032_cFyc.png)
+[![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/18102032_cFyc.png)](https://static.oschina.net/uploads/img/201511/18102032_cFyc.png)
 
 ## 3.4 共享锁（Locks）
 
@@ -326,9 +331,9 @@ Zookeeper 如何实现 Leader Election，也就是选出一个 Master Server。�
 
 2.  **控制时序，就是所有视图来获取这个锁的客户端，最终都是会被安排执行，只是有个全局时序了**。做法和上面基本类似，只是这里 /distribute_lock 已经预先存在，客户端在它下面创建临时有序节点（这个可以通过节点的属性控制：CreateMode.EPHEMERAL_SEQUENTIAL来指定）。**Zk的父节点（/distribute_lock）维持一份sequence,保证子节点创建的时序性，从而也形成了每个客户端的全局时序。**
 
-[![](https://static.oschina.net/uploads/img/201511/18103433_BJs7.png)](https://static.oschina.net/uploads/img/201511/18103433_BJs7.png)
+[![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/18103433_BJs7.png)](https://static.oschina.net/uploads/img/201511/18103433_BJs7.png)
 
-[![](https://static.oschina.net/uploads/img/201511/18103709_c4c3.png)](https://static.oschina.net/uploads/img/201511/18103709_c4c3.png)
+[![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/18103709_c4c3.png)](https://static.oschina.net/uploads/img/201511/18103709_c4c3.png)
 
 ## 3.5 队列管理
 
@@ -342,15 +347,15 @@ Zookeeper 可以处理两种类型的队列：
 
 创建一个父目录 /synchronizing，每个成员都监控标志（Set Watch）位目录 /synchronizing/start 是否存在，然后每个成员都加入这个队列，**加入队列的方式**就是创建 /synchronizing/member_i 的**临时目录节点**，然后每个成员获取 / synchronizing 目录的所有目录节点，也就是 member_i。判断 i 的值是否已经是成员的个数，如果小于成员个数等待 /synchronizing/start 的出现，`如果已经相等就创建 /synchronizing/start`。
 
-[![](https://static.oschina.net/uploads/img/201511/18104311_7kNc.png)](https://static.oschina.net/uploads/img/201511/18104311_7kNc.png)
+[![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/18104311_7kNc.png)](https://static.oschina.net/uploads/img/201511/18104311_7kNc.png)
 
-[![](https://static.oschina.net/uploads/img/201511/18104433_Rdxx.png)](https://static.oschina.net/uploads/img/201511/18104433_Rdxx.png)
+[![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/18104433_Rdxx.png)](https://static.oschina.net/uploads/img/201511/18104433_Rdxx.png)
 
 **FIFO 队列用 Zookeeper 实现思路如下：**
 
 实现的思路也非常简单，就是在特定的目录下**创建 SEQUENTIAL 类型的子目录 /queue_i**，这样就能保证所有成员加入队列时都是有编号的`，出队列时通过 getChildren( ) 方法可以返回当前所有的队列中的元素，然后消费其中最小的一个，这样就能保证 FIFO。
 
-[![](https://static.oschina.net/uploads/img/201511/18104614_ncNj.png)](https://static.oschina.net/uploads/img/201511/18104614_ncNj.png)
+[![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/18104614_ncNj.png)
 
 ## 3.6 负载均衡
 
@@ -362,13 +367,13 @@ Zookeeper 可以处理两种类型的队列：
 
 `消费负载均衡`： 在消费过程中，一个消费者会消费一个或多个分区中的消息，但是一个分区只会由一个消费者来消费。MetaQ的消费策略是：
 
-1.  每个分区针对同一个group只挂载一个消费者。
+1. 每个分区针对同一个group只挂载一个消费者。
 
-2.  如果同一个group的消费者数目大于分区数目，则多出来的消费者将不参与消费。
+2. 如果同一个group的消费者数目大于分区数目，则多出来的消费者将不参与消费。
 
-3.  如果同一个group的消费者数目小于分区数目，则有部分消费者需要额外承担消费任务。
+3. 如果同一个group的消费者数目小于分区数目，则有部分消费者需要额外承担消费任务。
 
-    在某个消费者故障或者重启等情况下，其他消费者会感知到这一变化（通过 zookeeper watch消费者列表），然后重新进行负载均衡，保证所有的分区都有消费者进行消费。
+   在某个消费者故障或者重启等情况下，其他消费者会感知到这一变化（通过 zookeeper watch消费者列表），然后重新进行负载均衡，保证所有的分区都有消费者进行消费。
 
 ## 3.7 分布式通知/协调
 

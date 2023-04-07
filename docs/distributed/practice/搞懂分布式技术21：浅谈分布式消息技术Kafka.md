@@ -1,8 +1,6 @@
-# Table of Contents
+# 目录
 
-
-
-本文转载自 linkedkeeper.com
+本文转载自 linkedkeeper.com  
 本文内容参考网络，侵删
 
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看
@@ -19,7 +17,7 @@
 
 如果对本系列文章有什么建议，或者是有什么疑问的话，也可以关注公众号【Java技术江湖】联系作者，欢迎你参与本系列博文的创作和修订。
 
-<!-- more -->
+<!-- more -->  
 
 本文主要介绍了这几部分内容：
 
@@ -53,10 +51,9 @@ Kafka主要设计目标如下：
 
 **Kafka的设计原理分析**
 
-![](http://misc.linkedkeeper.com/misc/img/blog/201707/linkedkeeper0_3573ea93-7e93-49b4-9779-6765b4fb0878.jpg)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/linkedkeeper0_3573ea93-7e93-49b4-9779-6765b4fb0878.jpg)
 
-一个典型的kafka集群中包含若干producer，若干broker，若干consumer，以及一个Zookeeper集群。Kafka通过Zookeeper管理集群配置，选举leader，以及在consumer group发生变化时进行rebalance。producer使用push模式将消息发布到broker，consumer使用pull模式从broker订阅并消费消息。 　
-
+一个典型的kafka集群中包含若干producer，若干broker，若干consumer，以及一个Zookeeper集群。Kafka通过Zookeeper管理集群配置，选举leader，以及在consumer group发生变化时进行rebalance。producer使用push模式将消息发布到broker，consumer使用pull模式从broker订阅并消费消息。 　  
 Kafka专用术语：
 
 *   Broker：消息中间件处理结点，一个Kafka节点就是一个broker，多个broker可以组成一个Kafka集群。
@@ -91,11 +88,11 @@ Kafka专用术语：
 
 一个topic可以认为一个一类消息，每个topic将被分成多个partition，每个partition在存储层面是append log文件。
 
-![](http://misc.linkedkeeper.com/misc/img/blog/201707/linkedkeeper0_ab744f92-5ee7-4856-aa95-dea5978bc622.jpg)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/linkedkeeper0_ab744f92-5ee7-4856-aa95-dea5978bc622.jpg)
 
 在Kafka文件存储中，同一个topic下有多个不同partition，每个partition为一个目录，partiton命名规则为topic名称+有序序号，第一个partiton序号从0开始，序号最大值为partitions数量减1。
 
-![](http://misc.linkedkeeper.com/misc/img/blog/201707/linkedkeeper0_db460b0e-81c1-432d-94c5-6113e24deb06.jpg)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/linkedkeeper0_db460b0e-81c1-432d-94c5-6113e24deb06.jpg)
 
 *   每个partion（目录）相当于一个巨型文件被平均分配到多个大小相等segment（段）数据文件中。但每个段segment file消息数量不一定相等，这种特性方便old segment file快速被删除。
 
@@ -107,11 +104,11 @@ Kafka专用术语：
 
 *   segment文件命名规则：partion全局的第一个segment从0开始，后续每个segment文件名为上一个segment文件最后一条消息的offset值。数值最大为64位long大小，19位数字字符长度，没有数字用0填充。
 
-![](http://misc.linkedkeeper.com/misc/img/blog/201707/linkedkeeper0_5c910b0a-7769-4b61-8ef7-f203c6cc6ebf.jpg)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/linkedkeeper0_5c910b0a-7769-4b61-8ef7-f203c6cc6ebf.jpg)
 
 segment中index与data file对应关系物理结构如下：
 
-![](http://misc.linkedkeeper.com/misc/img/blog/201707/linkedkeeper0_7a05abe1-0f8e-42e3-8967-d1b2c08df29d.jpg)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/linkedkeeper0_7a05abe1-0f8e-42e3-8967-d1b2c08df29d.jpg)
 
 上图中索引文件存储大量元数据，数据文件存储大量消息，索引文件中元数据指向对应数据文件中message的物理偏移地址。
 
@@ -119,22 +116,22 @@ segment中index与data file对应关系物理结构如下：
 
 了解到segment data file由许多message组成，下面详细说明message物理结构如下：
 
-![](http://misc.linkedkeeper.com/misc/img/blog/201707/linkedkeeper0_ea153317-4c86-4880-bbf5-f6e3cc674da8.jpg)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/linkedkeeper0_ea153317-4c86-4880-bbf5-f6e3cc674da8.jpg)
 
 参数说明：
 
 
 
-| 关键字 | 解释说明 |
-| --- | --- |
-| 8 byte offset | 在parition(分区)内的每条消息都有一个有序的id号，这个id号被称为偏移(offset),它可以唯一确定每条消息在parition(分区)内的位置。即offset表示partiion的第多少message |
-| 4 byte message size | message大小 |
-| 4 byte CRC32 | 用crc32校验message |
-| 1 byte “magic" | 表示本次发布Kafka服务程序协议版本号 |
-| 1 byte “attributes" | 表示为独立版本、或标识压缩类型、或编码类型。 |
-| 4 byte key length | 表示key的长度,当key为-1时，K byte key字段不填 |
-| K byte key | 可选 |
-| value bytes payload | 表示实际消息数据。 |
+| 关键字 | 解释说明 |  
+| --- | --- |  
+| 8 byte offset | 在parition(分区)内的每条消息都有一个有序的id号，这个id号被称为偏移(offset),它可以唯一确定每条消息在parition(分区)内的位置。即offset表示partiion的第多少message |  
+| 4 byte message size | message大小 |  
+| 4 byte CRC32 | 用crc32校验message |  
+| 1 byte “magic" | 表示本次发布Kafka服务程序协议版本号 |  
+| 1 byte “attributes" | 表示为独立版本、或标识压缩类型、或编码类型。 |  
+| 4 byte key length | 表示key的长度,当key为-1时，K byte key字段不填 |  
+| K byte key | 可选 |  
+| value bytes payload | 表示实际消息数据。 |  
 
 
 
@@ -148,7 +145,7 @@ kafka在0.8版本前没有提供Partition的Replication机制，一旦Broker宕�
 
 引入Replication之后，同一个Partition可能会有多个Replica，而这时需要在这些Replication之间选出一个Leader，Producer和Consumer只与这个Leader交互，其它Replica作为Follower从Leader中复制数据。
 
-![](http://misc.linkedkeeper.com/misc/img/blog/201707/linkedkeeper0_977192fb-57c2-4b1f-a224-34a5225ec343.jpg)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/linkedkeeper0_977192fb-57c2-4b1f-a224-34a5225ec343.jpg)
 
 2) 副本放置策略
 
@@ -164,7 +161,7 @@ Kafka分配Replica的算法如下：
 
 假设集群一共有4个brokers，一个topic有4个partition，每个Partition有3个副本。下图是每个Broker上的副本分配情况。
 
-![](http://misc.linkedkeeper.com/misc/img/blog/201707/linkedkeeper0_e2fe9558-b7c4-4d40-bd0d-d58d594b01a2.jpg)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/linkedkeeper0_e2fe9558-b7c4-4d40-bd0d-d58d594b01a2.jpg)
 
 3) 同步策略
 
@@ -176,7 +173,7 @@ Consumer读消息也是从Leader读取，只有被commit过的消息才会暴露
 
 Kafka Replication的数据流如下图所示：
 
-![](http://misc.linkedkeeper.com/misc/img/blog/201707/linkedkeeper0_040045e5-02e6-4086-819c-146dc37f2db2.jpg)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/linkedkeeper0_040045e5-02e6-4086-819c-146dc37f2db2.jpg)
 
 对于Kafka而言，定义一个Broker是否“活着”包含两个条件：
 
@@ -202,7 +199,7 @@ Majority Vote的选举策略和ZooKeeper中的Zab选举是类似的，实际上Z
 
 同一Topic的一条消息只能被同一个Consumer Group内的一个Consumer消费，但多个Consumer Group可同时消费这一消息。
 
-![](http://misc.linkedkeeper.com/misc/img/blog/201707/linkedkeeper0_dfba985b-057b-4d5f-adbb-b2590a5af87d.jpg)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/linkedkeeper0_dfba985b-057b-4d5f-adbb-b2590a5af87d.jpg)
 
 这是Kafka用来实现一个Topic消息的广播（发给所有的Consumer）和单播（发给某一个Consumer）的手段。一个Topic可以对应多个Consumer Group。如果需要实现广播，只要每个Consumer有一个独立的Group就可以了。要实现单播只要所有的Consumer在同一个Group里。用Consumer Group还可以将Consumer进行自由的分组而不需要多次发送消息到不同的Topic。
 
@@ -224,17 +221,17 @@ push模式很难适应消费速率不同的消费者，因为消息发送速率�
 
 每条消息都被append到该Partition中，属于顺序写磁盘，因此效率非常高。
 
-![](http://misc.linkedkeeper.com/misc/img/blog/201707/linkedkeeper0_969b4966-9981-47c9-a743-4e4b882339bb.jpg)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/linkedkeeper0_969b4966-9981-47c9-a743-4e4b882339bb.jpg)
 
 对于传统的message queue而言，一般会删除已经被消费的消息，而Kafka是不会删除数据的，它会把所有的数据都保留下来，每个消费者（Consumer）对每个Topic都有一个offset用来表示读取到了第几条数据。
 
-![](http://misc.linkedkeeper.com/misc/img/blog/201707/linkedkeeper0_4e1d6df1-c2c0-432c-8463-dc43f18444eb.jpg)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/linkedkeeper0_4e1d6df1-c2c0-432c-8463-dc43f18444eb.jpg)
 
 即便是顺序写入硬盘，硬盘的访问速度还是不可能追上内存。所以Kafka的数据并不是实时的写入硬盘，它充分利用了现代操作系统分页存储来利用内存提高I/O效率。
 
 在Linux Kernal 2.2之后出现了一种叫做“零拷贝(zero-copy)”系统调用机制，就是跳过“用户缓冲区”的拷贝，建立一个磁盘空间和内存空间的直接映射，数据不再复制到“用户态缓冲区”系统上下文切换减少2次，可以提升一倍性能。
 
-![](http://misc.linkedkeeper.com/misc/img/blog/201707/linkedkeeper0_de0c3ea1-f84f-4ef9-b223-0ef531165b81.jpg)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/linkedkeeper0_de0c3ea1-f84f-4ef9-b223-0ef531165b81.jpg)
 
 通过mmap，进程像读写硬盘一样读写内存（当然是虚拟机内存）。使用这种方式可以获取很大的I/O提升，省去了用户空间到内核空间复制的开销（调用文件的read会把数据先放到内核空间的内存中，然后再复制到用户空间的内存中。）
 
@@ -242,11 +239,11 @@ push模式很难适应消费速率不同的消费者，因为消息发送速率�
 
 试想一下，一个Web Server传送一个静态文件，如何优化？答案是zero copy。传统模式下我们从硬盘读取一个文件是这样的。
 
-![](http://misc.linkedkeeper.com/misc/img/blog/201707/linkedkeeper0_94a51a2c-afa2-47e4-975d-1857bd769487.jpg)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/linkedkeeper0_94a51a2c-afa2-47e4-975d-1857bd769487.jpg)
 
 先复制到内核空间（read是系统调用，放到了DMA，所以用内核空间），然后复制到用户空间（1、2）；从用户空间重新复制到内核空间（你用的socket是系统调用，所以它也有自己的内核空间），最后发送给网卡（3、4）。
 
-![](http://misc.linkedkeeper.com/misc/img/blog/201707/linkedkeeper0_e89b49e9-369c-4deb-b9b0-f58f02b33430.jpg)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/linkedkeeper0_e89b49e9-369c-4deb-b9b0-f58f02b33430.jpg)
 
 Zero Copy中直接从内核空间（DMA的）到内核空间（Socket的），然后发送网卡。这个技术非常普遍，Nginx也是用的这种技术。
 
