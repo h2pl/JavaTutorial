@@ -712,12 +712,3 @@ https://www.cnblogs.com/uodut/p/7067162.html
 https://www.jb51.net/article/135672.htm
 https://www.cnblogs.com/suiyue-/p/6052456.html
 
-## 微信公众号
-
-### Java技术江湖
-
-如果大家想要实时关注我更新的文章以及分享的干货的话，可以关注我的公众号【Java技术江湖】一位阿里 Java 工程师的技术小站，作者黄小斜，专注 Java 相关技术：SSM、SpringBoot、MySQL、分布式、中间件、集群、Linux、网络、多线程，偶尔讲点Docker、ELK，同时也分享技术干货和学习经验，致力于Java全栈开发！
-
-**Java工程师必备学习资源:** 一些Java工程师常用学习资源，关注公众号后，后台回复关键字 **“Java”** 即可免费无套路获取。
-
-![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/1.png)
