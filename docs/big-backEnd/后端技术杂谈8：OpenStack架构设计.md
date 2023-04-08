@@ -32,7 +32,7 @@
 
 <!-- more -->
 
-OpenStack 是开源云计算平台，支持多种虚拟化环境，并且其服务组件都提供了 API接口 便于二次开发。
+OpenStack 是开源云计算平台，支持多种虚拟化环境，并且其服务组件都提供了API接口便于二次开发。
 
 OpenStack通过各种补充服务提供基础设施即服务 Infrastructure-as-a-Service (IaaS)`的解决方案。每个服务都提供便于集成的应用程序接口`Application Programming Interface (API)。
 
@@ -74,23 +74,23 @@ OpenStack的各个服务之间通过统一的REST风格的API调用，实现系�
 
 OpenStack services
 
-*   Dashboard     【Horizon】     提供了一个基于web的自服务门户，与OpenStack底层服务交互，诸如启动一个实例，分配IP地址以及配置访问控制。
+*   Dashboard   【Horizon】   提供了一个基于web的自服务门户，与OpenStack底层服务交互，诸如启动一个实例，分配IP地址以及配置访问控制。
 
-*   Compute       【Nova】        在OpenStack环境中计算实例的生命周期管理。按需响应包括生成、调度、回收虚拟机等操作。
+*   Compute    【Nova】    在OpenStack环境中计算实例的生命周期管理。按需响应包括生成、调度、回收虚拟机等操作。
 
-*   Networking    【Neutron】     确保为其它OpenStack服务提供网络连接即服务，比如OpenStack计算。为用户提供API定义网络和使用。基于插件的架构其支持众多的网络提供商和技术。
+*   Networking  【Neutron】   确保为其它OpenStack服务提供网络连接即服务，比如OpenStack计算。为用户提供API定义网络和使用。基于插件的架构其支持众多的网络提供商和技术。
 
-*   Object Storage    【Swift】   通过一个 RESTful,基于HTTP的应用程序接口存储和任意检索的非结构化数据对象。它拥有高容错机制，基于数据复制和可扩展架构。它的实现并像是一个文件服务器需要挂载目录。在此种方式下，它写入对象和文件到多个硬盘中，以确保数据是在集群内跨服务器的多份复制。
+*   Object Storage  【Swift】  通过一个 RESTful,基于HTTP的应用程序接口存储和任意检索的非结构化数据对象。它拥有高容错机制，基于数据复制和可扩展架构。它的实现并像是一个文件服务器需要挂载目录。在此种方式下，它写入对象和文件到多个硬盘中，以确保数据是在集群内跨服务器的多份复制。
 
-*   Block Storage       【Cinder】   为运行实例而提供的持久性块存储。它的可插拔驱动架构的功能有助于创建和管理块存储设备。
+*   Block Storage    【Cinder】  为运行实例而提供的持久性块存储。它的可插拔驱动架构的功能有助于创建和管理块存储设备。
 
-*   Identity service  【Keystone】    为其他OpenStack服务提供认证和授权服务，为所有的OpenStack服务提供一个端点目录。
+*   Identity service 【Keystone】  为其他OpenStack服务提供认证和授权服务，为所有的OpenStack服务提供一个端点目录。
 
-*   Image service     【Glance】  存储和检索虚拟机磁盘镜像，OpenStack计算会在实例部署时使用此服务。
+*   Image service   【Glance】 存储和检索虚拟机磁盘镜像，OpenStack计算会在实例部署时使用此服务。
 
-*   Telemetry服务      【Ceilometer】  为OpenStack云的计费、基准、扩展性以及统计等目的提供监测和计量。
+*   Telemetry服务   【Ceilometer】 为OpenStack云的计费、基准、扩展性以及统计等目的提供监测和计量。
 
-*   Orchestration服务   【Heat服务】   Orchestration服务支持多样化的综合的云应用，通过调用OpenStack-native REST API和CloudFormation-compatible Query API，支持`HOT <Heat Orchestration Template (HOT)>`格式模板或者AWS CloudFormation格式模板
+*   Orchestration服务  【Heat服务】  Orchestration服务支持多样化的综合的云应用，通过调用OpenStack-native REST API和CloudFormation-compatible Query API，支持`HOT <Heat Orchestration Template (HOT)>`格式模板或者AWS CloudFormation格式模板
 
 通过对这些组件的介绍，可以帮助我们在后续的内容中，了解各个组件的作用，便于排查问题，而在你对基础安装，配置，操作和故障诊断熟悉之后，你应该考虑按照生产架构来进行部署。
 
