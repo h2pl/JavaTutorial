@@ -1,10 +1,4 @@
-# 目录
-      * [什么是ziplist](#什么是ziplist)  
-      * [ziplist的数据结构定义](#ziplist的数据结构定义)  
-      * [ziplist的接口](#ziplist的接口)  
-      * [ziplist的插入逻辑解析](#ziplist的插入逻辑解析)  
-      * [hash与ziplist](#hash与ziplist)  
-
+[toc]
 
 本文转自互联网
 
@@ -27,22 +21,16 @@
 我们在讨论中还会涉及到两个Redis配置（在redis.conf中的ADVANCED CONFIG部分）：
 
 
-
-
-
 ```  
 hash-max-ziplist-entries 512  
 hash-max-ziplist-value 64  
   
-```  
-
-
-
+```
 
 
 本文的后半部分会对这两个配置做详细的解释。
 
-#### 什么是ziplist
+## 什么是ziplist
 
 Redis官方对于ziplist的定义是（出自ziplist.c的文件头部注释）：
 
@@ -54,7 +42,7 @@ Redis官方对于ziplist的定义是（出自ziplist.c的文件头部注释）�
 
 另外，ziplist为了在细节上节省内存，对于值的存储采用了变长的编码方式，大概意思是说，对于大的整数，就多用一些字节来存储，而对于小的整数，就少用一些字节来存储。我们接下来很快就会讨论到这些实现细节。
 
-#### ziplist的数据结构定义
+## ziplist的数据结构定义
 
 ziplist的数据结构组成是本文要讨论的重点。实际上，ziplist还是稍微有点复杂的，它复杂的地方就在于它的数据结构定义。一旦理解了数据结构，它的一些操作也就比较容易理解了。
 
@@ -137,7 +125,7 @@ ziplist的数据结构组成是本文要讨论的重点。实际上，ziplist还
 
 接下来我要贴一些代码了。
 
-#### ziplist的接口
+## ziplist的接口
 
 我们先不着急看实现，先来挑几个ziplist的重要的接口，看看它们长什么样子：
 
@@ -176,7 +164,7 @@ unsigned int ziplistLen(unsigned char *zl);
 *   ziplistFind: 查找给定的数据（由vstr和vlen指定）。注意它有一个skip参数，表示查找的时候每次比较之间要跳过几个数据项。为什么会有这么一个参数呢？其实这个参数的主要用途是当用ziplist表示hash结构的时候，是按照一个field，一个value来依次存入ziplist的。也就是说，偶数索引的数据项存field，奇数索引的数据项存value。当按照field的值进行查找的时候，就需要把奇数项跳过去。
 *   ziplistLen: 计算ziplist的长度（即包含数据项的个数）。
 
-#### ziplist的插入逻辑解析
+## ziplist的插入逻辑解析
 
 ziplist的相关接口的具体实现，还是有些复杂的，限于篇幅的原因，我们这里只结合代码来讲解插入的逻辑。插入是很有代表性的操作，通过这部分来一窥ziplist内部的实现，其它部分的实现我们也就会很容易理解了。
 
@@ -216,7 +204,7 @@ static unsigned char *__ziplistInsert(unsigned char *zl, unsigned char *p, unsig
 *   现在额外的空间有了，接下来就是将原来p位置的数据项以及后面的所有数据都向后挪动，并为它设置新的`<prevrawlen>`字段。此外，还可能需要调整ziplist的`<zltail>`字段。
 *   最后，组装新的待插入数据项，放在位置p。
 
-#### hash与ziplist
+## hash与ziplist
 
 hash是Redis中可以用来存储一个对象结构的比较理想的数据类型。一个对象的各个属性，正好对应一个hash结构的各个field。
 

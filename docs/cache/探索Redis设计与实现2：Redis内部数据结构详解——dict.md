@@ -1,11 +1,4 @@
-# 目录
-
-  * [dict的数据结构定义](#dict的数据结构定义)
-  * [dict的创建（dictCreate）](#dict的创建（dictcreate）)
-  * [dict的查找（dictFind）](#dict的查找（dictfind）)
-        * [dictIsRehashing(d) ((d)->rehashidx != -1)](#dictisrehashingd-d-rehashidx---1)
-  * [dict的插入（dictAdd和dictReplace）](#dict的插入（dictadd和dictreplace）)
-  * [dict的删除（dictDelete）](#dict的删除（dictdelete）)
+[toc]
 
 本文转自互联网
 
@@ -63,7 +56,7 @@ dict本质上是为了解决算法中的查找问题（Searching），一般查�
 
 下面进行详细介绍。
 
-#### dict的数据结构定义
+## dict的数据结构定义
 
 为了实现增量式重哈希（incremental rehashing），dict的数据结构里包含两个哈希表。在重哈希期间，数据从第一个哈希表向第二个哈希表迁移。
 
@@ -138,7 +131,7 @@ dictType结构包含若干函数指针，用于dict的调用者对涉及key和va
 
 dictEntry结构中包含k, v和指向链表下一项的next指针。k是void指针，这意味着它可以指向任何类型。v是个union，当它的值是uint64_t、int64_t或double类型时，就不再需要额外的存储，这有利于减少内存碎片。当然，v也可以是void指针，以便能存储任何类型的数据。
 
-#### dict的创建（dictCreate）
+## dict的创建（dictCreate）
 ````
     dict *dictCreate(dictType *type,
             void *privDataPtr)
@@ -172,7 +165,7 @@ dictEntry结构中包含k, v和指向链表下一项的next指针。k是void指�
 ````
 dictCreate为dict的数据结构分配空间并为各个变量赋初值。其中两个哈希表ht[0]和ht[1]起始都没有分配空间，table指针都赋为NULL。这意味着要等第一个数据插入时才会真正分配空间。
 
-#### dict的查找（dictFind）
+## dict的查找（dictFind）
 ````
     #define dictIsRehashing(d) ((d)->rehashidx != -1)
     
@@ -265,7 +258,7 @@ dictRehash每次将重哈希至少向前推进n步（除非不到n步整个重�
 
 根据以上对于重哈希过程的分析，我们容易看出，本文前面的dict结构图中所展示的正是rehashidx=2时的情况，前面两个bucket（ht[0].table[0]和ht[0].table[1]）都已经迁移到ht[1]上去了。
 
-#### dict的插入（dictAdd和dictReplace）
+## dict的插入（dictAdd和dictReplace）
 
 dictAdd插入新的一对key和value，如果key已经存在，则插入失败。
 
@@ -367,7 +360,7 @@ dictReplace在dictAdd基础上实现，如下：
 ````
 在key已经存在的情况下，dictReplace会同时调用dictAdd和dictFind，这其实相当于两次查找过程。这里Redis的代码不够优化。
 
-#### dict的删除（dictDelete）
+## dict的删除（dictDelete）
 
 dictDelete的源码这里忽略，具体请参考dict.c。需要稍加注意的是：
 

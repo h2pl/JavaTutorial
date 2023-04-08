@@ -1,16 +1,4 @@
-# 目录
-
-    * [skiplist数据结构简介](#skiplist数据结构简介)
-    * [skiplist的算法性能分析](#skiplist的算法性能分析)
-    * [skiplist与平衡树、哈希表的比较](#skiplist与平衡树、哈希表的比较)
-    * [Redis中的skiplist实现](#redis中的skiplist实现)
-      * [sorted set的命令举例](#sorted-set的命令举例)
-      * [Redis中skiplist实现的特殊性](#redis中skiplist实现的特殊性)
-      * [skiplist的数据结构定义](#skiplist的数据结构定义)
-            * [ZSKIPLIST_MAXLEVEL 32](#zskiplist_maxlevel-32)
-            * [ZSKIPLIST_P 0.25](#zskiplist_p-025)
-    * [Redis中的sorted set](#redis中的sorted-set)
-    * [Redis为什么用skiplist而不用平衡树？](#redis为什么用skiplist而不用平衡树？)
+[toc]
 
 
 本文转自互联网
@@ -59,7 +47,7 @@ zset-max-ziplist-value 64
 
 注：本文讨论的代码实现基于Redis源码的3.2分支。
 
-### skiplist数据结构简介
+## skiplist数据结构简介
 
 skiplist本质上也是一种查找结构，用于解决算法中的查找问题（Searching），即根据给定的key，快速查到它所在的位置（或者对应的value）。
 
@@ -159,7 +147,7 @@ MaxLevel = 32
 
 
 
-### skiplist的算法性能分析
+## skiplist的算法性能分析
 
 在这一部分，我们来简单分析一下skiplist的时间复杂度和空间复杂度，以便对于skiplist的性能有一个直观的了解。如果你不是特别偏执于算法的性能分析，那么可以暂时跳过这一小节的内容。
 
@@ -250,7 +238,7 @@ C(k)=k/p
 
 当然，这里的时间复杂度分析还是比较粗略的。比如，沿着查找路径向左向上回溯的时候，可能先到达左侧头结点，然后沿头结点一路向上；还可能先到达最高层的节点，然后沿着最高层链表一路向左。但这些细节不影响平均时间复杂度的最后结果。另外，这里给出的时间复杂度只是一个概率平均值，但实际上计算一个精细的概率分布也是有可能的。详情还请参见[William Pugh](https://en.wikipedia.org/wiki/William_Pugh)的论文《[Skip Lists: A Probabilistic Alternative to Balanced Trees](ftp://ftp.cs.umd.edu/pub/skipLists/skiplists.pdf)》。
 
-### skiplist与平衡树、哈希表的比较
+## skiplist与平衡树、哈希表的比较
 
 *   skiplist和各种平衡树（如AVL、红黑树等）的元素是有序排列的，而哈希表不是有序的。因此，在哈希表上只能做单个key的查找，不适宜做范围查找。所谓范围查找，指的是查找那些大小在指定的两个值之间的所有节点。
 *   在做范围查找的时候，平衡树比skiplist操作要复杂。在平衡树上，我们找到指定范围的小值之后，还需要以中序遍历的顺序继续寻找其它不超过大值的节点。如果不对平衡树进行一定的改造，这里的中序遍历并不容易实现。而在skiplist上进行范围查找就非常简单，只需要在找到小值之后，对第1层链表进行若干步的遍历就可以实现。
@@ -259,13 +247,13 @@ C(k)=k/p
 *   查找单个key，skiplist和平衡树的时间复杂度都为O(log n)，大体相当；而哈希表在保持较低的哈希值冲突概率的前提下，查找时间复杂度接近O(1)，性能更高一些。所以我们平常使用的各种Map或dictionary结构，大都是基于哈希表实现的。
 *   从算法实现难度上来比较，skiplist比平衡树要简单得多。
 
-### Redis中的skiplist实现
+## Redis中的skiplist实现
 
 在这一部分，我们讨论Redis中的skiplist实现。
 
 在Redis中，skiplist被用于实现暴露给外部的一个数据结构：sorted set。准确地说，sorted set底层不仅仅使用了skiplist，还使用了ziplist和dict。这几个数据结构的关系，我们下一章再讨论。现在，我们先花点时间把sorted set的关键命令看一下。这些命令对于Redis里skiplist的实现，有重要的影响。
 
-#### sorted set的命令举例
+### sorted set的命令举例
 
 sorted set是一个有序的数据集合，对于像类似排行榜这样的应用场景特别适合。
 
@@ -296,7 +284,7 @@ sorted set是一个有序的数据集合，对于像类似排行榜这样的应�
 *   每个数据对应一个分数(score)。
 *   根据分数大小和数据本身的字典排序，每个数据会产生一个排名(rank)。可以按正序或倒序。
 
-#### Redis中skiplist实现的特殊性
+### Redis中skiplist实现的特殊性
 
 我们简单分析一下前面出现的几个查询命令：
 
@@ -329,7 +317,7 @@ sorted set是一个有序的数据集合，对于像类似排行榜这样的应�
 *   第1层链表不是一个单向链表，而是一个双向链表。这是为了方便以倒序方式获取一个范围内的元素。
 *   在skiplist中可以很方便地计算出每个元素的排名(rank)。
 
-#### skiplist的数据结构定义
+### skiplist的数据结构定义
 
 
 
@@ -384,7 +372,7 @@ typedef struct zskiplist {
 
 可见，在查找skiplist的过程中，通过累加span值的方式，我们就能很容易算出排名。相反，如果指定排名来查找数据（类似zrange和zrevrange那样），也可以不断累加span并时刻保持累加值不超过指定的排名，通过这种方式就能得到一条O(log n)的查找路径。
 
-### Redis中的sorted set
+## Redis中的sorted set
 
 我们前面提到过，Redis中的sorted set，是在skiplist, dict和ziplist基础上构建起来的:
 
@@ -436,7 +424,7 @@ typedef struct zset {
 
 
 
-### Redis为什么用skiplist而不用平衡树？
+## Redis为什么用skiplist而不用平衡树？
 
 在前面我们对于skiplist和平衡树、哈希表的比较中，其实已经不难看出Redis里使用skiplist而不用平衡树的原因了。现在我们看看，对于这个问题，Redis的作者 @antirez 是怎么说的：
 

@@ -1,16 +1,4 @@
-# 目录
-
-    * [intset数据结构简介](#intset数据结构简介)
-            * [INTSET_ENC_INT16 (sizeof(int16_t))](#intset_enc_int16-sizeofint16_t)
-            * [INTSET_ENC_INT32 (sizeof(int32_t))](#intset_enc_int32-sizeofint32_t)
-            * [INTSET_ENC_INT64 (sizeof(int64_t))](#intset_enc_int64-sizeofint64_t)
-    * [intset的查找和添加操作](#intset的查找和添加操作)
-    * [Redis的set](#redis的set)
-    * [Redis set的并、交、差算法](#redis-set的并、交、差算法)
-      * [交集](#交集)
-      * [并集](#并集)
-      * [差集](#差集)
-
+[toc]
 
 本文转自互联网
 
@@ -54,7 +42,7 @@ set-max-intset-entries 512
 
 注：本文讨论的代码实现基于Redis源码的3.2分支。
 
-### intset数据结构简介
+## intset数据结构简介
 
 intset顾名思义，是由整数组成的集合。实际上，intset是一个由整数组成的有序集合，从而便于在上面进行二分查找，用于快速地判断一个元素是否属于这个集合。它在内存分配上与[ziplist](http://zhangtielei.com/posts/blog-redis-ziplist.html)有些类似，是连续的一整块内存空间，而且对于大整数和小整数（按绝对值）采取了不同的编码，尽量对内存的使用进行了优化。
 
@@ -110,7 +98,7 @@ intset与[ziplist](http://zhangtielei.com/posts/blog-redis-ziplist.html)相比�
 *   ziplist是无序的，而intset是从小到大有序的。因此，在ziplist上查找只能遍历，而在intset上可以进行二分查找，性能更高。
 *   ziplist可以对每个数据项进行不同的变长编码（每个数据项前面都有数据长度字段`len`），而intset只能整体使用一个统一的编码（`encoding`）。
 
-### intset的查找和添加操作
+## intset的查找和添加操作
 
 要理解intset的一些实现细节，只需要关注intset的两个关键操作基本就可以了：查找（`intsetFind`）和添加（`intsetAdd`）元素。
 
@@ -238,7 +226,7 @@ intset *intsetAdd(intset *is, int64_t value, uint8_t *success) {
 *   注意一下`intsetAdd`的返回值，它返回一个新的intset指针。它可能与传入的intset指针`is`相同，也可能不同。调用方必须用这里返回的新的intset，替换之前传进来的旧的intset变量。类似这种接口使用模式，在Redis的实现代码中是很常见的，比如我们之前在介绍[sds](http://zhangtielei.com/posts/blog-redis-sds.html)和[ziplist](http://zhangtielei.com/posts/blog-redis-ziplist.html)的时候都碰到过类似的情况。
 *   显然，这个`intsetAdd`算法总的时间复杂度为O(n)。
 
-### Redis的set
+## Redis的set
 
 为了更好地理解Redis对外暴露的set数据结构，我们先看一下set的一些关键的命令。下面是一些命令举例：
 
@@ -267,13 +255,13 @@ intset *intsetAdd(intset *is, int64_t value, uint8_t *success) {
 
 实际上，从时间复杂度上比较，intset的平均情况是没有dict性能高的。以查找为例，intset是O(log n)的，而dict可以认为是O(1)的。但是，由于使用intset的时候集合元素个数比较少，所以这个影响不大。
 
-### Redis set的并、交、差算法
+## Redis set的并、交、差算法
 
 Redis set的并、交、差算法的实现代码，在t_set.c中。其中计算交集调用的是`sinterGenericCommand`，计算并集和差集调用的是`sunionDiffGenericCommand`。它们都能同时对多个（可以多于2个）集合进行运算。当对多个集合进行差集运算时，它表达的含义是：用第一个集合与第二个集合做差集，所得结果再与第三个集合做差集，依次向后类推。
 
 我们在这里简要介绍一下三个算法的实现思路。
 
-#### 交集
+### 交集
 
 计算交集的过程大概可以分为三部分：
 
@@ -285,7 +273,7 @@ Redis set的并、交、差算法的实现代码，在t_set.c中。其中计算�
 
 > O(N*M) worst case where N is the cardinality of the smallest set and M is the number of sets.
 
-#### 并集
+### 并集
 
 计算并集最简单，只需要遍历所有集合，将每一个元素都添加到最后的结果集合中。向集合中添加元素会自动去重。
 
@@ -295,7 +283,7 @@ Redis set的并、交、差算法的实现代码，在t_set.c中。其中计算�
 
 注意，这里同前面讨论交集计算一样，将元素插入到结果集合的过程，忽略intset的情况，认为时间复杂度为O(1)。
 
-#### 差集
+### 差集
 
 计算差集有两种可能的算法，它们的时间复杂度有所区别。
 

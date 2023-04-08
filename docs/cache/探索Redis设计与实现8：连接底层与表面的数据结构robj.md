@@ -1,29 +1,4 @@
-# 目录
-
-  * [robj的数据结构定义](#robj的数据结构定义)
-        * [OBJ_STRING 0](#obj_string-0)
-        * [OBJ_LIST 1](#obj_list-1)
-        * [OBJ_SET 2](#obj_set-2)
-        * [OBJ_ZSET 3](#obj_zset-3)
-        * [OBJ_HASH 4](#obj_hash-4)
-        * [OBJ_ENCODING_RAW 0     /* Raw representation */](#obj_encoding_raw-0------raw-representation-)
-        * [OBJ_ENCODING_INT 1     /* Encoded as integer */](#obj_encoding_int-1------encoded-as-integer-)
-        * [OBJ_ENCODING_HT 2      /* Encoded as hash table */](#obj_encoding_ht-2-------encoded-as-hash-table-)
-        * [OBJ_ENCODING_ZIPMAP 3  /* Encoded as zipmap */](#obj_encoding_zipmap-3---encoded-as-zipmap-)
-        * [OBJ_ENCODING_LINKEDLIST 4 /* Encoded as regular linked list */](#obj_encoding_linkedlist-4--encoded-as-regular-linked-list-)
-        * [OBJ_ENCODING_ZIPLIST 5 /* Encoded as ziplist */](#obj_encoding_ziplist-5--encoded-as-ziplist-)
-        * [OBJ_ENCODING_INTSET 6  /* Encoded as intset */](#obj_encoding_intset-6---encoded-as-intset-)
-        * [OBJ_ENCODING_SKIPLIST 7  /* Encoded as skiplist */](#obj_encoding_skiplist-7---encoded-as-skiplist-)
-        * [OBJ_ENCODING_EMBSTR 8  /* Embedded sds string encoding */](#obj_encoding_embstr-8---embedded-sds-string-encoding-)
-        * [OBJ_ENCODING_QUICKLIST 9 /* Encoded as linked list of ziplists */](#obj_encoding_quicklist-9--encoded-as-linked-list-of-ziplists-)
-        * [LRU_BITS 24](#lru_bits-24)
-  * [string robj的编码过程](#string-robj的编码过程)
-        * [sdsEncodedObject(objptr) (objptr->encoding == OBJ_ENCODING_RAW || objptr->encoding == OBJ_ENCODING_EMBSTR)](#sdsencodedobjectobjptr-objptr-encoding--obj_encoding_raw--objptr-encoding--obj_encoding_embstr)
-  * [string robj的解码过程](#string-robj的解码过程)
-  * [再谈sds与string的关系](#再谈sds与string的关系)
-  * [robj的引用计数操作](#robj的引用计数操作)
-
-
+[toc]
 本文转自互联网
 本文将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看
 > https://github.com/h2pl/Java-Tutorial
@@ -46,7 +21,7 @@
 
 而从Redis内部实现的角度来看，在前面第一篇文章中，我们已经提到过，一个database内的这个映射关系是用一个dict来维护的。dict的key固定用一种数据结构来表达就够了，这就是动态字符串sds。而value则比较复杂，为了在同一个dict内能够存储不同类型的value，这就需要一个通用的数据结构，这个通用的数据结构就是robj（全名是redisObject）。举个例子：如果value是一个list，那么它的内部存储结构是一个quicklist（quicklist的具体实现我们放在后面的文章讨论）；如果value是一个string，那么它的内部存储结构一般情况下是一个sds。当然实际情况更复杂一点，比如一个string类型的value，如果它的值是一个数字，那么Redis内部还会把它转成long型来存储，从而减小内存使用。而一个robj既能表示一个sds，也能表示一个quicklist，甚至还能表示一个long型。
 
-#### robj的数据结构定义
+## robj的数据结构定义
 
 在server.h中我们找到跟robj定义相关的代码，如下（注意，本系列文章中的代码片段全部来源于Redis源码的3.2分支）：
 ````
@@ -121,7 +96,7 @@
 *   允许同一类型的数据采用不同的内部表示，从而在某些情况下尽量节省内存。
 *   支持对象共享和引用计数。当对象被共享的时候，只占用一份内存拷贝，进一步节省内存。
 
-#### string robj的编码过程
+## string robj的编码过程
 
 当我们执行Redis的set命令的时候，Redis首先将接收到的value值（string类型）表示成一个type = OBJ_STRING并且encoding = OBJ_ENCODING_RAW的robj对象，然后在存入内部存储之前先执行一个编码过程，试图将它表示成另一种更节省内存的encoding方式。这一过程的核心代码，是object.c中的tryObjectEncoding函数。
 ````
@@ -255,7 +230,7 @@ createEmbeddedStringObject对sds重新分配内存，将robj和sds放在一个�
 
 加起来一共不超过64字节（16+3+44+1），因此这样的一个短字符串可以完全分配在一个64字节长度的内存块中。
 
-#### string robj的解码过程
+## string robj的解码过程
 
 当我们需要获取字符串的值，比如执行get命令的时候，我们需要执行与前面讲的编码过程相反的操作——解码。
 
@@ -292,7 +267,7 @@ createEmbeddedStringObject对sds重新分配内存，将robj和sds放在一个�
             return createRawStringObject(ptr,len);
     }
 
-#### 再谈sds与string的关系
+## 再谈sds与string的关系
 
 在上一篇文章中，我们简单地提到了sds与string的关系；在本文介绍了robj的概念之后，我们重新总结一下sds与string的关系。
 
@@ -319,7 +294,7 @@ createEmbeddedStringObject对sds重新分配内存，将robj和sds放在一个�
     }
 ````
 
-#### robj的引用计数操作
+## robj的引用计数操作
 
 将robj的引用计数加1和减1的操作，定义在object.c中：
 

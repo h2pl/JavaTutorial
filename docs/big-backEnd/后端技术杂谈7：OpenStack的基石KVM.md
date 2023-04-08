@@ -1,7 +1,4 @@
-# 目录
-
-
-# [Qemu，KVM，Virsh傻傻的分不清](https://www.cnblogs.com/popsuper1982/p/8522535.html)
+[toc]
 
 本文转载自[Itweet](https://link.juejin.im/?target=http%3A%2F%2Fwww.itweet.cn)的博客
 
@@ -103,7 +100,7 @@ Libvirtd调用qemu-kvm操作虚拟机，有关CPU虚拟化的部分，qemu-kvm�
 
 本章节我们主要介绍通过VMware技术虚拟出相关的Linux软件环境，在Linux系统中，安装KVM虚拟化软件，实实在在的去实践一下KVM到底是一个什么样的技术？
 
-##  Kvm虚拟化技术实践
+## ##Kvm虚拟化技术实践
 
 ### VMware虚拟机支持Kvm虚拟化技术？
 
@@ -113,7 +110,7 @@ VMware软件版本信息，`VMware® Workstation 11.0.0 build-2305329`
 
 首先，你需要启动VMware软件，新建一个`CentOS 6.x`类型的虚拟机，正常安装完成，这个虚拟机默认的`虚拟化引擎`，`首选模式`为”自动”。
 
-如果想让我们的VMware虚拟化出来的CentOS虚拟机支持KVM虚拟化，我们需要修改它支持的`虚拟化引擎`,打开新建的虚拟机，虚拟机状态必须处于`关闭`状态，通过双击`编辑虚拟机设置` > `硬件` ，选择`处理器`菜单，右边会出现`虚拟化引擎`区域，选择`首选模式`为 _Intel Tv-x/EPT或AMD-V/RVI_,接下来勾选`虚拟化Intel Tv-x/EPT或AMD-V/RVI(v)`，点击`确定`。
+如果想让我们的VMware虚拟化出来的CentOS虚拟机支持KVM虚拟化，我们需要修改它支持的`虚拟化引擎`,打开新建的虚拟机，虚拟机状态必须处于`关闭`状态，通过双击`编辑虚拟机设置`##>##`硬件`##，选择`处理器`菜单，右边会出现`虚拟化引擎`区域，选择`首选模式`为##_Intel Tv-x/EPT或AMD-V/RVI_,接下来勾选`虚拟化Intel Tv-x/EPT或AMD-V/RVI(v)`，点击`确定`。
 
 KVM需要虚拟机宿主（host）的处理器带有虚拟化支持（对于Intel处理器来说是VT-x，对于AMD处理器来说是AMD-V）。你可以通过以下命令来检查你的处理器是否支持虚拟化：
 
@@ -124,7 +121,7 @@ KVM需要虚拟机宿主（host）的处理器带有虚拟化支持（对于Inte
 
 如果运行后没有显示，那么你的处理器不支持硬件虚拟化，你不能使用KVM。
 
-*   注意: 如果是硬件服务器，您可能需要在BIOS中启用虚拟化支持，参考 [Private Cloud personal workstation](https://link.juejin.im/?target=http%3A%2F%2Fwww.itweet.cn%2Fblog%2F2016%2F06%2F14%2FPrivate%2520Cloud%2520personal%2520workstation)
+*   注意: 如果是硬件服务器，您可能需要在BIOS中启用虚拟化支持，参考##[Private Cloud personal workstation](https://link.juejin.im/?target=http%3A%2F%2Fwww.itweet.cn%2Fblog%2F2016%2F06%2F14%2FPrivate%2520Cloud%2520personal%2520workstation)
 
 ### 安装Kvm虚拟化软件
 
@@ -151,7 +148,7 @@ KVM需要虚拟机宿主（host）的处理器带有虚拟化支持（对于Inte
   
   ```
 
-启动成功之后你可以通过`/etc/init.d/libvirtd status`查看启动状态，这个时候，kvm会自动生成一个本地网桥 `virbr0`，可以通过命令查看他的详细信息
+启动成功之后你可以通过`/etc/init.d/libvirtd status`查看启动状态，这个时候，kvm会自动生成一个本地网桥##`virbr0`，可以通过命令查看他的详细信息
 
 ```
 # ifconfig virbr0virbr0    Link encap:Ethernet  HWaddr 52:54:00:D7:23:AD            inet addr:192.168.122.1  Bcast:192.168.122.255  Mask:255.255.255.0          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1          RX packets:0 errors:0 dropped:0 overruns:0 frame:0          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0          collisions:0 txqueuelen:0           RX bytes:0 (0.0 b)  TX bytes:0 (0.0 b)
@@ -174,7 +171,7 @@ ps aux|grep dnsmasq
 
 ```
 
-`注意：` 启动libvirtd之后自动启动iptables，并且写上一些默认规则。
+`注意：`##启动libvirtd之后自动启动iptables，并且写上一些默认规则。
 
 ```
 # iptables -nvL -t natChain PREROUTING (policy ACCEPT 304 packets, 38526 bytes) pkts bytes target     prot opt in     out     source               destination          Chain POSTROUTING (policy ACCEPT 7 packets, 483 bytes) pkts bytes target     prot opt in     out     source               destination             0     0 MASQUERADE  tcp  --  *      *       192.168.122.0/24    !192.168.122.0/24    masq ports: 1024-65535     0     0 MASQUERADE  udp  --  *      *       192.168.122.0/24    !192.168.122.0/24    masq ports: 1024-65535     0     0 MASQUERADE  all  --  *      *       192.168.122.0/24    !192.168.122.0/24     Chain OUTPUT (policy ACCEPT 7 packets, 483 bytes) pkts bytes target     prot opt in     out     source               destination
@@ -214,7 +211,7 @@ virt-install  --virt-type kvm --name CentOS-6.6-x86_64 --ram 512 --cdrom /data/C
 
 ### 虚拟机远程管理软件
 
-我们可以使用虚拟机远程管理软件VNC进行操作系统的安装，我使用过的两款不错的虚拟机远程管理终端软件，一个是Windows上使用，一个在Mac上为了方便安装一个Google Chrome插件后即可开始使用，软件信息 `Tightvnc` 或者 `VNC[@Viewer](https://link.juejin.im/?target=https%3A%2F%2Fgithub.com%2FViewer "@Viewer") for Google Chrome`
+我们可以使用虚拟机远程管理软件VNC进行操作系统的安装，我使用过的两款不错的虚拟机远程管理终端软件，一个是Windows上使用，一个在Mac上为了方便安装一个Google Chrome插件后即可开始使用，软件信息##`Tightvnc`##或者##`VNC[@Viewer](https://link.juejin.im/?target=https%3A%2F%2Fgithub.com%2FViewer "@Viewer")##for Google Chrome`
 
 如果你和我一样使用的是`Google Chrome`提供的VNC插件，使用方式，在`Address`输入框中输入，宿主机IP:59000,`Picture Quality`选择框使用默认选项，点击`Connect`进入到安装操作系统的界面，你可以安装常规的方式进行安装，等待系统安装完成重启，然后就可以正常使用kvm虚拟化出来的操作系统了。
 
@@ -316,7 +313,7 @@ _实现网桥，在kvm宿主机完成_
 brctl addbr br0  #创建一个网桥 brctl show       #显示网桥信息 brctl addif br0 eth0 && ip addr del dev eth0 192.168.2.200/24 && ifconfig br0 192.168.2.200/24 up brctl show      #查看结果ifconfig br0    #验证br0是否成功取代了eth0的IP
 ```
 
-`注意`: 这里的IP地址为 _宿主机ip_
+`注意`: 这里的IP地址为##_宿主机ip_
 
 *   修改虚拟机桥接到br0网卡，在宿主机修改
 
@@ -363,9 +360,7 @@ Vnc登陆后，修改ip地址，看到dhcp可以使用，被桥接到现有的ip
 
 通过kvm相关的命令来创建虚拟机，安装和调试是非常必要的，因为现有的很多私有云，公有云产品都使用到了kvm这样的技术，学习基本的kvm使用对维护`openstack`集群有非常要的作用，其次所有的`openstack image`制作也得通过kvm这样的底层技术来完成，最后上传到`openstack`的镜像管理模块，才能开始通过`openstack image`生成云主机。
 
-到此，各位应该能够体会到，其实kvm是一个非常底层和核心的虚拟化技术，而openstack就是对`kvm`这样的技术进行了一个上层封装，可以非常方便，可视化的操作和维护`kvm`虚拟机，这就是现在`牛`上天的`云计算`技术最底层技术栈，具体怎么实现请看下图。
+到此，各位应该能够体会到，其实kvm是一个非常底层和核心的虚拟化技术，而openstack就是对`kvm`这样的技术进行了一个上层封装，可以非常方便，可视化的操作和维护`kvm`虚拟机，这就是现在`牛`上天的`云计算`技术最底层技术栈
 
-![Libvirt_support](https://user-gold-cdn.xitu.io/2017/6/19/69d6aeff29b1a8ff1d9a62579ad91afb?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
-
-如上图，没有`openstack`我们依然可以通过，`libvirt`来对虚拟机进行操作，只不过比较繁琐和难以维护。通过openstack就可以非常方便的进行底层虚拟化技术的管理、维护、使用。
+没有`openstack`我们依然可以通过，`libvirt`来对虚拟机进行操作，只不过比较繁琐和难以维护。通过openstack就可以非常方便的进行底层虚拟化技术的管理、维护、使用。
 

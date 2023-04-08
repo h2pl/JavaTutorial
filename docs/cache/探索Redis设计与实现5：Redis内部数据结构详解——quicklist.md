@@ -1,12 +1,4 @@
-# 目录
-
-      * [quicklist概述](#quicklist概述)  
-      * [quicklist的数据结构定义](#quicklist的数据结构定义)  
-      * [quicklist的创建](#quicklist的创建)  
-      * [quicklist的push操作](#quicklist的push操作)  
-      * [quicklist的其它操作](#quicklist的其它操作)  
-
-
+[toc]
 
 本文转自互联网
 
@@ -46,7 +38,7 @@ list-compress-depth 0
 
 注：本文讨论的quicklist实现基于Redis源码的3.2分支。
 
-#### quicklist概述
+## quicklist概述
 
 Redis对外暴露的上层list数据类型，经常被用作队列使用。比如它支持的如下一些操作：
 
@@ -145,7 +137,7 @@ list-compress-depth 0
 
 Redis对于quicklist内部节点的压缩算法，采用的[LZF](http://oldhome.schmorp.de/marc/liblzf.html)——一种无损压缩算法。
 
-#### quicklist的数据结构定义
+## quicklist的数据结构定义
 
 quicklist相关的数据结构定义可以在quicklist.h中找到：
 
@@ -230,7 +222,7 @@ list-compress-depth 2
 
 下面进入代码分析阶段。
 
-#### quicklist的创建
+## quicklist的创建
 
 当我们使用`lpush`或`rpush`命令第一次向一个不存在的list里面插入数据的时候，Redis会首先调用`quicklistCreate`接口创建一个空的quicklist。
 
@@ -251,7 +243,7 @@ quicklist *quicklistCreate(void) {
 
 在很多介绍数据结构的书上，实现双向链表的时候经常会多增加一个空余的头节点，主要是为了插入和删除操作的方便。从上面`quicklistCreate`的代码可以看出，quicklist是一个不包含空余头节点的双向链表（`head`和`tail`都初始化为NULL）。
 
-#### quicklist的push操作
+## quicklist的push操作
 
 quicklist的push操作是调用`quicklistPush`来实现的。
 
@@ -286,7 +278,7 @@ void quicklistPush(quicklist *quicklist, void *value, const size_t sz,
 
 在`_quicklistInsertNodeAfter`的实现中，还会根据`list-compress-depth`的配置将里面的节点进行压缩。它的实现比较繁琐，我们这里就不展开讨论了。
 
-#### quicklist的其它操作
+## quicklist的其它操作
 
 quicklist的操作较多，且实现细节都比较繁杂，这里就不一一分析源码了，我们简单介绍一些比较重要的操作。
 

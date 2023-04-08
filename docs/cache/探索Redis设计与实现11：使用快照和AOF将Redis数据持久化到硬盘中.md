@@ -1,12 +1,4 @@
-# 目录
-
-* [转自https://blog.csdn.net/xlgen157387/article/details/61925524](#转自httpsblogcsdnnetxlgen157387articledetails61925524)
-* [前言](#前言)
-  * [快照持久化](#快照持久化)
-  * [AOF持久化](#aof持久化)
-  * [验证快照文件和AOF文件](#验证快照文件和aof文件)
-  * [总结](#总结)
-
+[toc]
 
 本文转自互联网
 本文将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看

@@ -1,50 +1,7 @@
-# 目录
-
-* [Hadoop生态](#hadoop生态)
-
-  * [hdfs](#hdfs)
-    * [架构](#架构)
-    * [读写](#读写)
-    * [高可用](#高可用)
-  * [MapReduce](#mapreduce)
-    * [架构和流程](#架构和流程)
-    * [wordcount](#wordcount)
-  * [hive](#hive)
-  * [hbase](#hbase)
-    * [简介](#简介)
-    * [存储](#存储)
-  * [zk](#zk)
-  * [sqoop](#sqoop)
-  * [yarn](#yarn)
-  * [kafka](#kafka)
-  * [flume](#flume)
-  * [ambari](#ambari)
-  * [spark](#spark)
-  * [storm](#storm)
-  * [微信公众号](#微信公众号)
-    * [Java技术江湖](#java技术江湖)
-    * [个人公众号：黄小斜](#个人公众号：黄小斜)
-
-
-
----
-
-title: Hadoop生态学习总结  
-date: 2018-07-08 22:15:53  
-tags:
-
-- Hadoop  
-  categories:
-- 后端
-- 技术总结
-
----
+[toc]
 
 这篇总结主要是基于我之前Hadoop生态基础系列文章而形成的的。主要是把重要的知识点用自己的话说了一遍，可能会有一些错误，还望见谅和指点。谢谢
 
-更多详细内容可以查看我的专栏文章：Hadoop生态学习
-
-https://blog.csdn.net/a724888/article/category/7779280
 <!-- more -->  
 
 # Hadoop生态

@@ -1,9 +1,7 @@
-# 目录
-* [[](https://www.xilidou.com/2018/03/12/redis-data/#SDS "SDS")SDS](#[]httpswwwxilidoucom20180312redis-datasds-sdssds)
-* [[](https://www.xilidou.com/2018/03/12/redis-data/#%E9%93%BE%E8%A1%A8 "链表")链表](#[]httpswwwxilidoucom20180312redis-datae993bee8a1a8-链表链表)
-* [[](https://www.xilidou.com/2018/03/12/redis-data/#%E5%AD%97%E5%85%B8 "字典")字典](#[]httpswwwxilidoucom20180312redis-datae5ad97e585b8-字典字典)
+[toc]
 
 本文转自https://www.xilidou.com/2018/03/22/redis-event/  
+
 作者：犀利豆
 
 本文将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看

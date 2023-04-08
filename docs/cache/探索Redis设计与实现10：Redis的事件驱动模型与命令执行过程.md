@@ -1,3 +1,5 @@
+[toc]
+
 本文转自https://www.xilidou.com/2018/03/12/redis-data/  
 作者：犀利豆  
 本文将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看

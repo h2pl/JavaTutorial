@@ -43,7 +43,7 @@
 
 Linux 的命名空间机制提供了以下七种不同的命名空间，包括`CLONE_NEWCGROUP`、`CLONE_NEWIPC`、`CLONE_NEWNET`、`CLONE_NEWNS`、`CLONE_NEWPID`、`CLONE_NEWUSER`和`CLONE_NEWUTS`，通过这七个选项我们能在创建新的进程时设置新进程应该在哪些资源上与宿主机器进行隔离。
 
-### [](https://draveness.me/docker?hmsr=toutiao.io&utm_medium=toutiao.io&utm_source=toutiao.io#%E8%BF%9B%E7%A8%8B)进程
+## [](https://draveness.me/docker?hmsr=toutiao.io&utm_medium=toutiao.io&utm_source=toutiao.io#%E8%BF%9B%E7%A8%8B)进程
 
 进程是 Linux 以及现在操作系统中非常重要的概念，它表示一个正在执行的程序，也是在现代分时系统中的一个任务单元。在每一个 *nix 的操作系统上，我们都能够通过`ps`命令打印出当前操作系统中正在执行的进程，比如在 Ubuntu 上，使用该命令就能得到以下的结果：
 
@@ -100,7 +100,7 @@ daemon.containerd.Create(context.Background(), container.ID, spec, createOptions
 
 所有与命名空间的相关的设置都是在上述的两个函数中完成的，Docker 通过命名空间成功完成了与宿主机进程和网络的隔离。
 
-### [](https://draveness.me/docker?hmsr=toutiao.io&utm_medium=toutiao.io&utm_source=toutiao.io#%E7%BD%91%E7%BB%9C)网络
+## [](https://draveness.me/docker?hmsr=toutiao.io&utm_medium=toutiao.io&utm_source=toutiao.io#%E7%BD%91%E7%BB%9C)网络
 
 如果 Docker 的容器通过 Linux 的命名空间完成了与宿主机进程的网络隔离，但是却有没有办法通过宿主机的网络与整个互联网相连，就会产生很多限制，所以 Docker 虽然可以通过命名空间创建一个隔离的网络环境，但是 Docker 中的服务仍然需要与外界相连才能发挥作用。
 
@@ -151,7 +151,7 @@ $ redis-cli -h 127.0.0.1 -p 6379 pingPONG
 
 Docker 通过 Linux 的命名空间实现了网络的隔离，又通过 iptables 进行数据包转发，让 Docker 容器能够优雅地为宿主机器或者其他容器提供服务。
 
-#### [](https://draveness.me/docker?hmsr=toutiao.io&utm_medium=toutiao.io&utm_source=toutiao.io#libnetwork)libnetwork
+### [](https://draveness.me/docker?hmsr=toutiao.io&utm_medium=toutiao.io&utm_source=toutiao.io#libnetwork)libnetwork
 
 整个网络部分的功能都是通过 Docker 拆分出来的 libnetwork 实现的，它提供了一个连接不同容器的实现，同时也能够为应用给出一个能够提供一致的编程接口和网络层抽象的容器网络模型。
 
@@ -165,7 +165,7 @@ libnetwork 中最重要的概念，容器网络模型由以下的几个主要组
 
 > 想要获得更多与 libnetwork 或者容器网络模型相关的信息，可以阅读[Design · libnetwork](https://github.com/docker/libnetwork/blob/master/docs/design.md)了解更多信息，当然也可以阅读源代码了解不同 OS 对容器网络模型的不同实现。
 
-### [](https://draveness.me/docker?hmsr=toutiao.io&utm_medium=toutiao.io&utm_source=toutiao.io#%E6%8C%82%E8%BD%BD%E7%82%B9)挂载点
+## [](https://draveness.me/docker?hmsr=toutiao.io&utm_medium=toutiao.io&utm_source=toutiao.io#%E6%8C%82%E8%BD%BD%E7%82%B9)挂载点
 
 虽然我们已经通过 Linux 的命名空间解决了进程和网络隔离的问题，在 Docker 进程中我们已经没有办法访问宿主机器上的其他进程并且限制了网络的访问，但是 Docker 容器中的进程仍然能够访问或者修改宿主机器上的其他目录，这是我们不希望看到的。
 
@@ -189,7 +189,7 @@ libnetwork 中最重要的概念，容器网络模型由以下的几个主要组
 
 > 这一部分的内容是作者在 libcontainer 中的[SPEC.md](https://github.com/opencontainers/runc/blob/master/libcontainer/SPEC.md)文件中找到的，其中包含了 Docker 使用的文件系统的说明，对于 Docker 是否真的使用`chroot`来确保当前的进程无法访问宿主机器的目录，作者其实也没有确切的答案，一是 Docker 项目的代码太多庞大，不知道该从何入手，作者尝试通过 Google 查找相关的结果，但是既找到了无人回答的[问题](https://forums.docker.com/t/does-the-docker-engine-use-chroot/25429)，也得到了与 SPEC 中的描述有冲突的[答案](https://www.quora.com/Do-Docker-containers-use-a-chroot-environment)，如果各位读者有明确的答案可以在博客下面留言，非常感谢。
 
-### [](https://draveness.me/docker?hmsr=toutiao.io&utm_medium=toutiao.io&utm_source=toutiao.io#chroot)chroot   
+## [](https://draveness.me/docker?hmsr=toutiao.io&utm_medium=toutiao.io&utm_source=toutiao.io#chroot)chroot   
 在这里不得不简单介绍一下`chroot`（change root），在 Linux 系统中，系统默认的目录就都是以`/`也就是根目录开头的，`chroot`的使用能够改变当前的系统根目录结构，通过改变当前系统的根目录，我们能够限制用户的权利，在新的根目录下并不能够访问旧系统根目录的结构个文件，也就建立了一个与原系统完全隔离的目录结构。
 
 > 与 chroot 的相关内容部分来自[理解 chroot](https://www.ibm.com/developerworks/cn/linux/l-cn-chroot/index.html)一文，各位读者可以阅读这篇文章获得更详细的信息。
@@ -255,7 +255,7 @@ $ docker export $(docker create busybox) | tar -C rootfs -xvf -$ lsbin  dev  etc
 
 你可以看到这个 busybox 镜像中的目录结构与 Linux 操作系统的根目录中的内容并没有太多的区别，可以说Docker 镜像就是一个文件。
 
-### [](https://draveness.me/docker?hmsr=toutiao.io&utm_medium=toutiao.io&utm_source=toutiao.io#%E5%AD%98%E5%82%A8%E9%A9%B1%E5%8A%A8)存储驱动
+## [](https://draveness.me/docker?hmsr=toutiao.io&utm_medium=toutiao.io&utm_source=toutiao.io#%E5%AD%98%E5%82%A8%E9%A9%B1%E5%8A%A8)存储驱动
 
 Docker 使用了一系列不同的存储驱动管理镜像内的文件系统并运行容器，这些存储驱动与 Docker 卷（volume）有些不同，存储引擎管理着能够在多个容器之间共享的存储。
 
@@ -275,7 +275,7 @@ FROM ubuntu:15.04COPY . /appRUN make /appCMD python /app/app.py
 
 ![docker-images-and-container](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/2017-12-06-docker-images-and-container.png)
 
-### [](https://draveness.me/docker?hmsr=toutiao.io&utm_medium=toutiao.io&utm_source=toutiao.io#aufs)AUFS
+## [](https://draveness.me/docker?hmsr=toutiao.io&utm_medium=toutiao.io&utm_source=toutiao.io#aufs)AUFS
 
 UnionFS 其实是一种为 Linux 操作系统设计的用于把多个文件系统『联合』到同一个挂载点的文件系统服务。而 AUFS 即 Advanced UnionFS 其实就是 UnionFS 的升级版，它能够提供更优秀的性能和效率。
 
@@ -295,7 +295,7 @@ $ ls /var/lib/docker/aufs/diff/00adcccc1a55a36a610a6ebb3e07cc35577f2f5a3b671be3d
 
 上面的这张图片非常好的展示了组装的过程，每一个镜像层都是建立在另一个镜像层之上的，同时所有的镜像层都是只读的，只有每个容器最顶层的容器层才可以被用户直接读写，所有的容器都建立在一些底层服务（Kernel）上，包括命名空间、控制组、rootfs 等等，这种容器的组装方式提供了非常大的灵活性，只读的镜像层通过共享也能够减少磁盘的占用。
 
-### [](https://draveness.me/docker?hmsr=toutiao.io&utm_medium=toutiao.io&utm_source=toutiao.io#%E5%85%B6%E4%BB%96%E5%AD%98%E5%82%A8%E9%A9%B1%E5%8A%A8)其他存储驱动
+## [](https://draveness.me/docker?hmsr=toutiao.io&utm_medium=toutiao.io&utm_source=toutiao.io#%E5%85%B6%E4%BB%96%E5%AD%98%E5%82%A8%E9%A9%B1%E5%8A%A8)其他存储驱动
 
 AUFS 只是 Docker 使用的存储驱动的一种，除了 AUFS 之外，Docker 还支持了不同的存储驱动，包括`aufs`、`devicemapper`、`overlay2`、`zfs`和`vfs`等等，在最新的 Docker 中，`overlay2`取代了`aufs`成为了推荐的存储驱动，但是在没有`overlay2`驱动的机器上仍然会使用`aufs`作为 Docker 的默认驱动。
 

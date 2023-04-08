@@ -1,14 +1,3 @@
-<header>
-
-
-# [Redis实战（四） 集群机制](http://blog.720ui.com/2016/redis_action_04_cluster/ "Redis实战（四） 集群机制")
-
-发表于 <time datetime="2016-10-07T03:55:00.000Z" itemprop="datePublished">2016-10-07</time> | 数据存储 | Redis
-
-下面介绍Redis的集群方案。
-
-
-
 ## Replication（主从复制）
 
 Redis的replication机制允许slave从master那里通过网络传输拷贝到完整的数据备份，从而达到主从机制。为了实现主从复制，我们准备三个redis服务，依次命名为master，slave1，slave2。
@@ -270,8 +259,6 @@ appendonly yes
 
 5.3、测试
 ![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/redis3-cluster04.png)
-
-(完)最后，欢迎关注我的微信公众号「服务端思维」，有更多精彩文章与技术干货与你探讨。
 
 *   版权声明：本文由 **梁桂钊** 发表于 [梁桂钊的博客](http://blog.720ui.com/)
 *   转载声明：转载请联系公众号【服务端思维】。

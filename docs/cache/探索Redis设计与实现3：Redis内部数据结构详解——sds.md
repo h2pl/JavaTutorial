@@ -1,21 +1,4 @@
-# 目录
-* [前言](#前言)
-* [sds的数据结构定义](#sds的数据结构定义)  
-  * [SDS_TYPE_5  0](#sds_type_5--0)  
-  * [SDS_TYPE_8  1](#sds_type_8--1)  
-  * [SDS_TYPE_16 2](#sds_type_16-2)  
-  * [SDS_TYPE_32 3](#sds_type_32-3)  
-  * [SDS_TYPE_64 4](#sds_type_64-4)
-* [Redis dict结构举例](#redis-dict结构举例)  
-  * [SDS_TYPE_MASK 7](#sds_type_mask-7)  
-  * [SDS_TYPE_BITS 3](#sds_type_bits-3)  
-  * [SDS_HDR_VAR(T,s) struct sdshdr##T *sh = (void*)((s)-(sizeof(struct sdshdr##T)));](#sds_hdr_varts-struct-sdshdrt-sh--voids-sizeofstruct-sdshdrt)  
-  * [SDS_HDR(T,s) ((struct sdshdr##T *)((s)-(sizeof(struct sdshdr##T))))](#sds_hdrts-struct-sdshdrt-s-sizeofstruct-sdshdrt)  
-  * [SDS_TYPE_5_LEN(f) ((f)>>SDS_TYPE_BITS)](#sds_type_5_lenf-fsds_type_bits)
-* [sds的创建和销毁](#sds的创建和销毁)
-* [sds的连接（追加）操作](#sds的连接（追加）操作)
-* [浅谈sds与string的关系](#浅谈sds与string的关系)
-
+[toc]
 
 本文转自互联网
 
