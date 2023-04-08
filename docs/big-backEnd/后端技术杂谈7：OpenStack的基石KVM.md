@@ -1,38 +1,18 @@
-# Table of Contents
-
-* [[Qemu，KVM，Virsh傻傻的分不清](https://www.cnblogs.com/popsuper1982/p/8522535.html)](#[qemu，kvm，virsh傻傻的分不清]httpswwwcnblogscompopsuper1982p8522535html)
-  * [ Kvm虚拟化技术实践](# kvm虚拟化技术实践)
-    * [VMware虚拟机支持Kvm虚拟化技术？](#vmware虚拟机支持kvm虚拟化技术？)
-    * [安装Kvm虚拟化软件](#安装kvm虚拟化软件)
-* [ifconfig virbr0virbr0    Link encap:Ethernet  HWaddr 52:54:00:D7:23:AD            inet addr:192.168.122.1  Bcast:192.168.122.255  Mask:255.255.255.0          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1          RX packets:0 errors:0 dropped:0 overruns:0 frame:0          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0          collisions:0 txqueuelen:0           RX bytes:0 (0.0 b)  TX bytes:0 (0.0 b)](#ifconfig-virbr0virbr0----link-encapethernet--hwaddr-525400d723ad------------inet-addr1921681221--bcast192168122255--mask2552552550----------up-broadcast-running-multicast--mtu1500--metric1----------rx-packets0-errors0-dropped0-overruns0-frame0----------tx-packets0-errors0-dropped0-overruns0-carrier0----------collisions0-txqueuelen0-----------rx-bytes0-00-b--tx-bytes0-00-b)
-* [brctl showbridge name     bridge id               STP enabled     interfacesvirbr0          8000.525400d723ad       yes             virbr0-nic](#brctl-showbridge-name-----bridge-id---------------stp-enabled-----interfacesvirbr0----------8000525400d723ad-------yes-------------virbr0-nic)
-* [iptables -nvL -t natChain PREROUTING (policy ACCEPT 304 packets, 38526 bytes) pkts bytes target     prot opt in     out     source               destination          Chain POSTROUTING (policy ACCEPT 7 packets, 483 bytes) pkts bytes target     prot opt in     out     source               destination             0     0 MASQUERADE  tcp  --  *      *       192.168.122.0/24    !192.168.122.0/24    masq ports: 1024-65535     0     0 MASQUERADE  udp  --  *      *       192.168.122.0/24    !192.168.122.0/24    masq ports: 1024-65535     0     0 MASQUERADE  all  --  *      *       192.168.122.0/24    !192.168.122.0/24     Chain OUTPUT (policy ACCEPT 7 packets, 483 bytes) pkts bytes target     prot opt in     out     source               destination](#iptables--nvl--t-natchain-prerouting-policy-accept-304-packets-38526-bytes-pkts-bytes-target-----prot-opt-in-----out-----source---------------destination----------chain-postrouting-policy-accept-7-packets-483-bytes-pkts-bytes-target-----prot-opt-in-----out-----source---------------destination-------------0-----0-masquerade--tcp-------------------192168122024----192168122024----masq-ports-1024-65535-----0-----0-masquerade--udp-------------------192168122024----192168122024----masq-ports-1024-65535-----0-----0-masquerade--all-------------------192168122024----192168122024-----chain-output-policy-accept-7-packets-483-bytes-pkts-bytes-target-----prot-opt-in-----out-----source---------------destination)
-    * [kvm创建虚拟机](#kvm创建虚拟机)
-* [netstat -ntlp|grep 5900tcp        0      0 0.0.0.0:5900                0.0.0.0:*                   LISTEN      2504/qemu-kvm](#netstat--ntlpgrep-5900tcp--------0------0-00005900----------------0000-------------------listen------2504qemu-kvm)
-    * [虚拟机远程管理软件](#虚拟机远程管理软件)
-    * [KVM虚拟机管理](#kvm虚拟机管理)
-    * [libvirt虚拟机配置文件](#libvirt虚拟机配置文件)
-* [lltotal 8-rw-------. 1 root root 3047 Oct 19  2016 Centos-6.6-x68_64.xmldrwx------. 3 root root 4096 Oct 17  2016 networks](#lltotal-8-rw--------1-root-root-3047-oct-19--2016-centos-66-x68_64xmldrwx-------3-root-root-4096-oct-17--2016-networks)
-    * [监控kvm虚拟机](#监控kvm虚拟机)
-    * [KVM修改NAT模式为桥接[案例]](#kvm修改nat模式为桥接[案例])
-* [virsh edit Centos-6.6-x68_64  # 命令 52     <interface type='network'>     53       <mac address='52:54:00:2a:2d:60'/>     54       <source network='default'/>     55            56     </interface> 修改为：52     <interface type='bridge'>     53       <mac address='52:54:00:2a:2d:60'/>     54       <source bridge='br0'/>     55            56     </interface>](#virsh-edit-centos-66-x68_64---命令-52-----interface-typenetwork-----53-------mac-address5254002a2d60-----54-------source-networkdefault-----55------------56-----interface-修改为：52-----interface-typebridge-----53-------mac-address5254002a2d60-----54-------source-bridgebr0-----55------------56-----interface)
-* [brctl showbridge name     bridge id               STP enabled     interfacesbr0             8000.000c29f824c9       no              eth0virbr0          8000.525400353d8e       yes             virbr0-nic](#brctl-showbridge-name-----bridge-id---------------stp-enabled-----interfacesbr0-------------8000000c29f824c9-------no--------------eth0virbr0----------8000525400353d8e-------yes-------------virbr0-nic)
-* [virsh start CentOS-6.6-x86_64Domain CentOS-6.6-x86_64 started # brctl show                   bridge name     bridge id               STP enabled     interfacesbr0             8000.000c29f824c9       no              eth0                                                        vnet0virbr0          8000.525400353d8e       yes             virbr0-nic](#virsh-start-centos-66-x86_64domain-centos-66-x86_64-started--brctl-show-------------------bridge-name-----bridge-id---------------stp-enabled-----interfacesbr0-------------8000000c29f824c9-------no--------------eth0--------------------------------------------------------vnet0virbr0----------8000525400353d8e-------yes-------------virbr0-nic)
-* [ifup eth0](#ifup-eth0)
-* [ssh 192.168.2.108root@192.168.2.108's password: Last login: Sat Jan 30 12:40:28 2016](#ssh-1921682108root1921682108s-password-last-login-sat-jan-30-124028-2016)
-    * [总结](#总结)
+# 目录
 
 
 # [Qemu，KVM，Virsh傻傻的分不清](https://www.cnblogs.com/popsuper1982/p/8522535.html)
 
- 本文转载自[Itweet](https://link.juejin.im/?target=http%3A%2F%2Fwww.itweet.cn)的博客
+本文转载自[Itweet](https://link.juejin.im/?target=http%3A%2F%2Fwww.itweet.cn)的博客
 
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看
+
 > https://github.com/h2pl/Java-Tutorial
 
 喜欢的话麻烦点下Star哈
 
 本系列文章将整理到我的个人博客
+
 > www.how2playlife.com
 
 更多Java技术文章会更新在我的微信公众号【Java技术江湖】上，欢迎关注
@@ -67,7 +47,7 @@ KVM（Kernel-based Virtual Machine的英文缩写）是内核内建的虚拟机�
 
 Qemu向Guest OS模拟CPU，也模拟其他的硬件，GuestOS认为自己和硬件直接打交道，其实是同Qemu模拟出来的硬件打交道，Qemu将这些指令转译给真正的硬件。由于所有的指令都要从Qemu里面过一手，因而性能比较差
 
-![](https://images2018.cnblogs.com/blog/635909/201803/635909-20180307150620008-108720261.jpg)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/635909-20180307150620008-108720261.jpg)
 
 按照上一次的理论，完全虚拟化是非常慢的，所以要使用硬件辅助虚拟化技术Intel-VT，AMD-V，所以需要CPU硬件开启这个标志位，一般在BIOS里面设置。查看是否开启
 
@@ -81,11 +61,11 @@ Qemu向Guest OS模拟CPU，也模拟其他的硬件，GuestOS认为自己和硬�
 
 查看内核模块中是否含有kvm, ubuntu默认加载这些模块
 
-![](https://images2018.cnblogs.com/blog/635909/201803/635909-20180307150634298-628102674.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/635909-20180307150634298-628102674.png)
 
 KVM内核模块通过/dev/kvm暴露接口，用户态程序可以通过ioctl来访问这个接口，例如书写下面的程序
 
-![](https://images2018.cnblogs.com/blog/635909/201803/635909-20180307150654328-1662633336.png)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/635909-20180307150654328-1662633336.png)
 
 Qemu将KVM整合进来，通过ioctl调用/dev/kvm接口，将有关CPU指令的部分交由内核模块来做，就是qemu-kvm (qemu-system-XXX)
 
@@ -101,19 +81,19 @@ qemu和kvm整合之后，CPU的性能问题解决了，另外Qemu还会模拟其
 
 至此整个关系如下：
 
-![](https://images2018.cnblogs.com/blog/635909/201803/635909-20180307150733042-369996016.jpg)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/635909-20180307150733042-369996016.jpg)
 
 qemu-kvm会创建Guest OS，当需要执行CPU指令的时候，通过/dev/kvm调用kvm内核模块，通过硬件辅助虚拟化方式加速。如果需要进行网络和存储访问，则通过类虚拟化或者直通Pass through的方式，通过加载特殊的驱动，加速访问网络和存储资源。
 
 然而直接用qemu或者qemu-kvm或者qemu-system-xxx的少，大多数还是通过virsh启动，virsh属于libvirt工具，libvirt是目前使用最为广泛的对KVM虚拟机进行管理的工具和API，可不止管理KVM。
 
-![](https://images2018.cnblogs.com/blog/635909/201803/635909-20180307150801681-1586679180.jpg)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/635909-20180307150801681-1586679180.jpg)
 
 Libvirt分服务端和客户端，Libvirtd是一个daemon进程，是服务端，可以被本地的virsh调用，也可以被远程的virsh调用，virsh相当于客户端。
 
 Libvirtd调用qemu-kvm操作虚拟机，有关CPU虚拟化的部分，qemu-kvm调用kvm的内核模块来实现
 
-![](https://images2018.cnblogs.com/blog/635909/201803/635909-20180307150815111-1223973253.jpg)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/635909-20180307150815111-1223973253.jpg)
 
 这下子，整个相互关系才搞清楚了。
 
@@ -150,26 +130,26 @@ KVM需要虚拟机宿主（host）的处理器带有虚拟化支持（对于Inte
 
 安装kvm虚拟化软件，我们需要一个Linux操作系统环境，这里我们选择的Linux版本为`CentOS release 6.8 (Final)`，在这个VMware虚拟化出来的虚拟机中安装kvm虚拟化软件，具体步骤如下：
 
-*   首选安装epel源
+* 首选安装epel源
 
-    ```
-    sudo rpm -ivh http://mirrors.ustc.edu.cn/fedora/epel/6/x86_64/epel-release-6-8.noarch.rpm
+  ```
+  sudo rpm -ivh http://mirrors.ustc.edu.cn/fedora/epel/6/x86_64/epel-release-6-8.noarch.rpm
+  
+  ```
 
-    ```
+* 安装kvm虚拟化软件
 
-*   安装kvm虚拟化软件
+  ```
+  sudo yum install qemu-kvm qeum-kvm-tools virt-manager libvirt
+  
+  ```
 
-    ```
-    sudo yum install qemu-kvm qeum-kvm-tools virt-manager libvirt
+* 启动kvm虚拟化软件
 
-    ```
-
-*   启动kvm虚拟化软件
-
-    ```
-    sudo /etc/init.d/libvirtd start
-
-    ```
+  ```
+  sudo /etc/init.d/libvirtd start
+  
+  ```
 
 启动成功之后你可以通过`/etc/init.d/libvirtd status`查看启动状态，这个时候，kvm会自动生成一个本地网桥 `virbr0`，可以通过命令查看他的详细信息
 
@@ -270,12 +250,12 @@ virsh list
 
 ```
 
-*   常用命令查看
+* 常用命令查看
 
-    ```
-    virsh --help|more less
-
-    ```
+  ```
+  virsh --help|more less
+  
+  ```
 
 ### libvirt虚拟机配置文件
 
@@ -388,5 +368,4 @@ Vnc登陆后，修改ip地址，看到dhcp可以使用，被桥接到现有的ip
 ![Libvirt_support](https://user-gold-cdn.xitu.io/2017/6/19/69d6aeff29b1a8ff1d9a62579ad91afb?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
 
 如上图，没有`openstack`我们依然可以通过，`libvirt`来对虚拟机进行操作，只不过比较繁琐和难以维护。通过openstack就可以非常方便的进行底层虚拟化技术的管理、维护、使用。
-
 

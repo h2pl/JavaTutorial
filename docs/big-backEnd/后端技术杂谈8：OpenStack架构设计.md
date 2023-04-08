@@ -1,4 +1,4 @@
-# Table of Contents
+# 目录
 
     * [openstack 逻辑架构图](#openstack-逻辑架构图)
     * [OpenStack 项目和组件](#openstack-项目和组件)
@@ -15,11 +15,13 @@
 本文转自互联网，侵删
 
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看
+
 > https://github.com/h2pl/Java-Tutorial
 
 喜欢的话麻烦点下Star哈
 
 本系列文章将整理到我的个人博客
+
 > www.how2playlife.com
 
 更多Java技术文章会更新在我的微信公众号【Java技术江湖】上，欢迎关注
@@ -36,7 +38,7 @@ OpenStack通过各种补充服务提供基础设施即服务 Infrastructure-as-a
 
 ### openstack 逻辑架构图
 
-![](http://mmbiz.qpic.cn/mmbiz_png/MxvbhgSaC6GWEd8OJ3JRIWQfkhGo23icH3stE59wmxYcibF1kO8Eq288YjtayCVEIDpeDs5jN7lACVSsk3DwPibFQ/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230408115819.png)
 
 OpenStack 本身是一个分布式系统，不但各个服务可以分布部署，服务中的组件也可以分布部署。 这种分布式特性让 OpenStack 具备极大的灵活性、伸缩性和高可用性。 当然从另一个角度讲，这也使得 OpenStack 比一般系统复杂，学习难度也更大。
 
@@ -96,7 +98,7 @@ OpenStack services
 
 建议使用自动化部署工具，例如Ansible, Chef, Puppet, or Salt来自动化部署，管理生产环境。
 
-![](http://mmbiz.qpic.cn/mmbiz_png/MxvbhgSaC6GWEd8OJ3JRIWQfkhGo23icH6JtvNllODFno0K644yCIHEpfb8icyF7B3u6gXvgsT9AgzYgV26l9P1g/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230408115834.png)
 
 这个示例架构需要至少2个（主机）节点来启动基础服务`virtual machine <virtual machine (VM)>`或者实例。像块存储服务，对象存储服务这一类服务还需要额外的节点。
 
@@ -154,13 +156,13 @@ openstack网络是非常复杂的，并且也支持多种模式其中支持GRE�
 
 *   port 可以看做虚拟交换机上的一个端口。port 上定义了 MAC 地址和 IP 地址，当 instance 的虚拟网卡 VIF（Virtual Interface） 绑定到 port 时，port 会将 MAC 和 IP 分配给 VIF。port 与 subnet 是 1对多 关系。一个 port 必须属于某个 subnet；一个 subnet 可以有多个 port。
 
-![](http://mmbiz.qpic.cn/mmbiz_png/MxvbhgSaC6GWEd8OJ3JRIWQfkhGo23icHcCr8k5VVbooGYOMC3QYqlmOW8gwneIOEicS0txC4HtEicJLIN6bEyVcw/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230408115845.png)
 
 如上图所示，为VLAN模式下，网络节点的通信方式。
 
 在我们后续实施安装的时候，选择使用VXLAN网络模式，下面我们来重点介绍一下VXLAN模式。
 
-![](http://mmbiz.qpic.cn/mmbiz_png/MxvbhgSaC6GWEd8OJ3JRIWQfkhGo23icHOLoLQuIYiar5Jm1YPBZQpxGJibVshiaJ6ZicLmwsT3dc6K53ibfHNwBsw5Q/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230408115856.png)
 
 VXLAN网络模式，可以隔离广播风暴，不需要交换机配置chunk口，解决了vlan id个数限制，解决了gre点对点隧道个数过多问题，实现了大2层网络，可以让vm在机房之间无缝迁移，便于跨机房部署。缺点是，vxlan增加了ip头部大小，需要降低vm的mtu值，传输效率上会略有下降。
 

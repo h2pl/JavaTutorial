@@ -14,6 +14,42 @@
             <artifactId>markdown-toc</artifactId>
             <version>1.0.6</version>
         </dependency>
+        <!--对分词索引查询解析-->
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-queryparser</artifactId>
+            <version>7.1.0</version>
+        </dependency>
+        <!--高亮 -->
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-highlighter</artifactId>
+            <version>7.1.0</version>
+        </dependency>
+        <!--smartcn 中文分词器 SmartChineseAnalyzer  smartcn分词器 需要lucene依赖 且和lucene版本同步-->
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-analyzers-smartcn</artifactId>
+            <version>7.1.0</version>
+        </dependency>
+        <!--ik-analyzer 中文分词器-->
+        <dependency>
+            <groupId>cn.bestwu</groupId>
+            <artifactId>ik-analyzers</artifactId>
+            <version>5.1.0</version>
+        </dependency> <!--MMSeg4j 分词器-->
+        <dependency>
+            <groupId>com.chenlb.mmseg4j</groupId>
+            <artifactId>mmseg4j-solr</artifactId>
+            <version>2.4.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.solr</groupId>
+                    <artifactId>solr-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
     </dependencies>
+
 
 </project>

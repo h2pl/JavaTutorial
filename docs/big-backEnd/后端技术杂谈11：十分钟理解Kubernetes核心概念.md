@@ -1,15 +1,15 @@
-# Table of Contents
+# 目录
 
 * [十分钟带你理解Kubernetes核心概念](#十分钟带你理解kubernetes核心概念)
-    * [什么是Kubernetes？](#什么是kubernetes？)
-    * [集群](#集群)
-    * [Pod](#pod)
-    * [Lable](#lable)
-    * [Replication Controller](#replication-controller)
-    * [Service](#service)
-    * [Node](#node)
-    * [Kubernetes Master](#kubernetes-master)
-    * [下一步](#下一步)
+  * [什么是Kubernetes？](#什么是kubernetes？)
+  * [集群](#集群)
+  * [Pod](#pod)
+  * [Lable](#lable)
+  * [Replication Controller](#replication-controller)
+  * [Service](#service)
+  * [Node](#node)
+  * [Kubernetes Master](#kubernetes-master)
+  * [下一步](#下一步)
 
 
 本文转自互联网，侵删
@@ -22,13 +22,13 @@
 本系列文章将整理到我的个人博客
 > www.how2playlife.com
 
-更多Java技术文章会更新在我的微信公众号【Java技术江湖】上，欢迎关注
+更多Java技术文章会更新在我的微信公众号【Java技术江湖】上，欢迎关注  
 该系列博文会介绍常见的后端技术，这对后端工程师来说是一种综合能力，我们会逐步了解搜索技术，云计算相关技术、大数据研发等常见的技术喜提，以便让你更完整地了解后端技术栈的全貌，为后续参与分布式应用的开发和学习做好准备。
 
 
 如果对本系列文章有什么建议，或者是有什么疑问的话，也可以关注公众号【Java技术江湖】联系我，欢迎你参与本系列博文的创作和修订。
 
-<!-- more -->
+<!-- more -->  
 
 # 十分钟带你理解Kubernetes核心概念
 
@@ -40,7 +40,7 @@
 
 ### 什么是Kubernetes？
 
-Kubernetes（k8s）是自动化容器操作的开源平台，这些操作包括部署，调度和节点集群间扩展。如果你曾经用过Docker容器技术部署容器，那么可以将Docker看成Kubernetes内部使用的低级别组件。Kubernetes不仅仅支持Docker，还支持Rocket，这是另一种容器技术。
+Kubernetes（k8s）是自动化容器操作的开源平台，这些操作包括部署，调度和节点集群间扩展。如果你曾经用过Docker容器技术部署容器，那么可以将Docker看成Kubernetes内部使用的低级别组件。Kubernetes不仅仅支持Docker，还支持Rocket，这是另一种容器技术。  
 使用Kubernetes可以：
 
 *   自动化容器的部署和复制
@@ -51,10 +51,10 @@ Kubernetes（k8s）是自动化容器操作的开源平台，这些操作包括�
 
 实际上，使用Kubernetes只需一个[部署文件](https://github.com/kubernetes/kubernetes/blob/master/examples/guestbook/all-in-one/guestbook-all-in-one.yaml)，使用一条命令就可以部署多层容器（前端，后台等）的完整集群：
 
-```
-$ kubectl create -f single-config-file.yaml
-
-```
+```  
+$ kubectl create -f single-config-file.yaml  
+  
+```  
 
 kubectl是和Kubernetes API交互的命令行程序。现在介绍一些核心概念。
 
@@ -68,11 +68,11 @@ kubectl是和Kubernetes API交互的命令行程序。现在介绍一些核心�
 
 
 
-![](https://upload-images.jianshu.io/upload_images/1233356-838c13e9241040b4.png?imageMogr2/auto-orient/strip|imageView2/2/w/803/format/webp)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/1233356-838c13e9241040b4.png)
 
 
 
- [1.png](http://dockone.io/uploads/article/20151230/d56441427680948fb56a00af57bda690.png) 
+[1.png](http://dockone.io/uploads/article/20151230/d56441427680948fb56a00af57bda690.png)
 
 上图可以看到如下组件，使用特别的图标表示Service和Label：
 
@@ -108,11 +108,11 @@ Replication Controller确保任意时间都有指定数量的Pod“副本”在�
 
 
 
-![](https://upload-images.jianshu.io/upload_images/1233356-5f5b425bb2705525.gif?imageMogr2/auto-orient/strip|imageView2/2/w/797/format/webp)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/1233356-5f5b425bb2705525.gif)
 
 
 
- [2.gif](http://dockone.io/uploads/article/20151230/5e2bad1a25e33e2d155da81da1d3a54b.gif) 
+[2.gif](http://dockone.io/uploads/article/20151230/5e2bad1a25e33e2d155da81da1d3a54b.gif)
 
 如果之前不响应的Pod恢复了，现在就有4个Pod了，那么Replication Controller会将其中一个终止保持总数为3。如果在运行中将副本总数改为5，Replication Controller会立刻启动2个新Pod，保证总数为5。还可以按照这样的方式缩小Pod，这个特性在执行滚动[升级](https://cloud.google.com/container-engine/docs/replicationcontrollers/#rolling_updates)时很有用。
 
@@ -142,11 +142,11 @@ _如果Pods是短暂的，那么重启时IP地址可能会改变，怎么才能�
 
 
 
-![](https://upload-images.jianshu.io/upload_images/1233356-d12e172a195f74cd.gif?imageMogr2/auto-orient/strip|imageView2/2/w/797/format/webp)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/1233356-d12e172a195f74cd.gif)
 
 
 
- [3.gif](http://dockone.io/uploads/article/20151230/125bbccce0b3bbf42abab0e520d9250b.gif) 
+[3.gif](http://dockone.io/uploads/article/20151230/125bbccce0b3bbf42abab0e520d9250b.gif)
 
 有一个特别类型的Kubernetes Service，称为'[LoadBalancer](http://kubernetes.io/v1.1/docs/user-guide/services.html#type-loadbalancer)'，作为外部负载均衡器使用，在一定数量的Pod之间均衡流量。比如，对于负载均衡Web流量很有用。
 
@@ -164,10 +164,10 @@ _如果Pods是短暂的，那么重启时IP地址可能会改变，怎么才能�
 
 ### 下一步
 
-现在我们已经了解了Kubernetes核心概念的基本知识，你可以进一步阅读Kubernetes [用户手册](http://kubernetes.io/v1.1/docs/user-guide/README.html)。用户手册提供了快速并且完备的学习文档。
+现在我们已经了解了Kubernetes核心概念的基本知识，你可以进一步阅读Kubernetes [用户手册](http://kubernetes.io/v1.1/docs/user-guide/README.html)。用户手册提供了快速并且完备的学习文档。  
 如果迫不及待想要试试Kubernetes，可以使用[Google Container Engine](https://cloud.google.com/container-engine/docs/)。Google Container Engine是托管的Kubernetes容器环境。简单注册/登录之后就可以在上面尝试示例了。
 
-**原文链接：[Learn the Kubernetes Key Concepts in 10 Minutes](http://omerio.com/2015/12/18/learn-the-kubernetes-key-concepts-in-10-minutes/)（翻译：崔婧雯）**
-＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-译者介绍
+**原文链接：[Learn the Kubernetes Key Concepts in 10 Minutes](http://omerio.com/2015/12/18/learn-the-kubernetes-key-concepts-in-10-minutes/)（翻译：崔婧雯）**  
+＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝  
+译者介绍  
 崔婧雯，现就职于IBM，高级软件工程师，负责IBM WebSphere业务流程管理软件的系统测试工作。曾就职于VMware从事桌面虚拟化产品的质量保证工作。对虚拟化，中间件技术，业务流程管理有浓厚的兴趣。

@@ -1,249 +1,713 @@
-# Table of Contents
+**一、简介**
 
-* [可能是把Docker的概念讲的最清楚的一篇文章](#可能是把docker的概念讲的最清楚的一篇文章)
-  * [一 先从认识容器开始](#一-先从认识容器开始)
-    * [1.1 什么是容器？](#11-什么是容器？)
-      * [先来看看容器较为官方的解释](#先来看看容器较为官方的解释)
-      * [再来看看容器较为通俗的解释](#再来看看容器较为通俗的解释)
-    * [1.2 图解物理机、虚拟机与容器](#12-图解物理机、虚拟机与容器)
-  * [二 再来谈谈Docker的一些概念](#二-再来谈谈docker的一些概念)
-    * [2.1 什么是Docker？](#21-什么是docker？)
-    * [2.2 Docker思想](#22-docker思想)
-    * [2.3 Docker容器的特点](#23-docker容器的特点)
-    * [2.4 为什么要用Docker](#24-为什么要用docker)
-  * [三 容器 VS 虚拟机](#三-容器-vs-虚拟机)
-    * [3.1 两者对比图](#31-两者对比图)
-    * [3.2 容器与虚拟机 (VM) 总结](#32-容器与虚拟机-vm-总结)
-    * [3.3 容器与虚拟机 (VM)两者是可以共存的](#33-容器与虚拟机-vm两者是可以共存的)
-  * [四 Docker基本概念](#四-docker基本概念)
-    * [4.1 镜像（Image）——一个特殊的文件系统](#41-镜像（image）一个特殊的文件系统)
-    * [4.2 容器（Container)——镜像运行时的实体](#42-容器（container镜像运行时的实体)
-    * [4.3 仓库（Repository）——集中存放镜像文件的地方](#43-仓库（repository）集中存放镜像文件的地方)
-  * [五 最后谈谈：Build, Ship, and Run](#五-最后谈谈：build-ship-and-run)
-  * [六 总结](#六-总结)
 
 
-本文转载自互联网，侵删
-本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看
-> https://github.com/h2pl/Java-Tutorial
 
-喜欢的话麻烦点下Star哈
 
-本系列文章将整理到我的个人博客
-> www.how2playlife.com
+### 1、了解Docker的前生LXC
 
-更多Java技术文章会更新在我的微信公众号【Java技术江湖】上，欢迎关注
-该系列博文会介绍常见的后端技术，这对后端工程师来说是一种综合能力，我们会逐步了解搜索技术，云计算相关技术、大数据研发等常见的技术喜提，以便让你更完整地了解后端技术栈的全貌，为后续参与分布式应用的开发和学习做好准备。
 
 
-如果对本系列文章有什么建议，或者是有什么疑问的话，也可以关注公众号【Java技术江湖】联系我，欢迎你参与本系列博文的创作和修订。
 
-<!-- more -->
 
-# 可能是把Docker的概念讲的最清楚的一篇文章
+LXC为Linux Container的简写。可以提供轻量级的虚拟化，以便隔离进程和资源，而且不需要提供指令解释机制以及全虚拟化的其他复杂性。相当于C++中的NameSpace。容器有效地将由单个操作系统管理的资源划分到孤立的组中，以更好地在孤立的组之间平衡有冲突的资源使用需求。
 
 
 
-本文只是对Docker的概念做了较为详细的介绍，并不涉及一些像Docker环境的安装以及Docker的一些常见操作和命令。
 
-阅读本文大概需要15分钟，通过阅读本文你将知道一下概念：
 
-*   容器
-*   什么是Docker？
-*   Docker思想、特点
-*   Docker容器主要解决什么问题
-*   容器 VS 虚拟机
-*   Docker基本概念： 镜像（Image），容器（Container），仓库（Repository）
+与传统虚拟化技术相比，它的优势在于：  （1）与宿主机使用同一个内核，性能损耗小；  （2）不需要指令级模拟；  （3）不需要即时(Just-in-time)编译；  （4）容器可以在CPU核心的本地运行指令，不需要任何专门的解释机制；（5）避免了准虚拟化和系统调用替换中的复杂性；  （6）轻量级隔离，在隔离的同时还提供共享机制，以实现容器与宿主机的资源共享。
 
-* * *
 
-> Docker 是世界领先的软件容器平台，所以想要搞懂Docker的概念我们必须先从容器开始说起。
 
-## 一 先从认识容器开始
 
-### 1.1 什么是容器？
 
-#### 先来看看容器较为官方的解释
+总结：Linux Container是一种轻量级的虚拟化的手段。  Linux Container提供了在单一可控主机节点上支持多个相互隔离的server container同时执行的机制。Linux Container有点像chroot，提供了一个拥有自己进程和网络空间的虚拟环境，但又有别于虚拟机，因为lxc是一种操作系统层次上的资源的虚拟化。
 
-一句话概括容器：容器就是将软件打包成标准化单元，以用于开发、交付和部署。
 
-*   容器镜像是轻量的、可执行的独立软件包 ，包含软件运行所需的所有内容：代码、运行时环境、系统工具、系统库和设置。
-*   容器化软件适用于基于Linux和Windows的应用，在任何环境中都能够始终如一地运行。
-*   容器赋予了软件独立性 ，使其免受外在环境差异（例如，开发和预演环境的差异）的影响，从而有助于减少团队间在相同基础设施上运行不同软件时的冲突。
 
-#### 再来看看容器较为通俗的解释
 
-如果需要通俗的描述容器的话，我觉得容器就是一个存放东西的地方，就像书包可以装各种文具、衣柜可以放各种衣服、鞋架可以放各种鞋子一样。我们现在所说的容器存放的东西可能更偏向于应用比如网站、程序甚至是系统环境。
 
-![认识容器](https://user-gold-cdn.xitu.io/2018/6/17/1640cae21c18e404?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
+### 2、LXC与docker什么关系？
 
-### 1.2 图解物理机、虚拟机与容器
 
-关于虚拟机与容器的对比在后面会详细介绍到，这里只是通过网上的图片加深大家对于物理机、虚拟机与容器这三者的理解。
 
-物理机
 
-![物理机](https://user-gold-cdn.xitu.io/2018/6/18/1641129f0ecdf8ff?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
 
-虚拟机：
+docker并不是LXC替代品，docker底层使用了LXC来实现，LXC将linux进程沙盒化，使得进程之间相互隔离，并且能对各进程资源合理分配。  在LXC的基础之上，docker提供了一系列更强大的功能。
 
-![虚拟机](https://user-gold-cdn.xitu.io/2018/6/18/164112a72a917f4a?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
 
-容器：
 
-![容器](https://user-gold-cdn.xitu.io/2018/6/18/164112ac76e6f693?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
 
-通过上面这三张抽象图，我们可以大概可以通过类比概括出： 容器虚拟化的是操作系统而不是硬件，容器之间是共享同一套操作系统资源的。虚拟机技术是虚拟出一套硬件后，在其上运行一个完整操作系统。因此容器的隔离级别会稍低一些。
 
-* * *
+### 3、什么是docker
 
-> 相信通过上面的解释大家对于容器这个既陌生又熟悉的概念有了一个初步的认识，下面我们就来谈谈Docker的一些概念。
 
-## 二 再来谈谈Docker的一些概念
 
-![Docker的一些概念](https://user-gold-cdn.xitu.io/2018/6/18/16410734eb1ed373?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
 
-### 2.1 什么是Docker？
 
-说实话关于Docker是什么并太好说，下面我通过四点向你说明Docker到底是个什么东西。
+docker是一个开源的应用容器引擎，基于go语言开发并遵循了apache2.0协议开源。  docker可以让开发者打包他们的应用以及依赖包到一个轻量级、可移植的容器中，然后发布到任何流行的linux服务器，也可以实现虚拟化。  容器是完全使用沙箱机制，相互之间不会有任何接口（类iphone的app），并且容器开销极其低。
 
-*   Docker 是世界领先的软件容器平台。
-*   Docker 使用 Google 公司推出的 Go 语言 进行开发实现，基于 Linux 内核 的cgroup，namespace，以及AUFS类的UnionFS等技术，对进程进行封装隔离，属于操作系统层面的虚拟化技术。 由于隔离的进程独立于宿主和其它的隔离的进 程，因此也称其为容器。Docke最初实现是基于 LXC.
-*   Docker 能够自动执行重复性任务，例如搭建和配置开发环境，从而解放了开发人员以便他们专注在真正重要的事情上：构建杰出的软件。
-*   用户可以方便地创建和使用容器，把自己的应用放入容器。容器还可以进行版本管理、复制、分享、修改，就像管理普通的代码一样。
 
-![什么是Docker](https://user-gold-cdn.xitu.io/2018/6/18/16411c3946dda762?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
 
-### 2.2 Docker思想
 
-*   集装箱
-*   标准化： ①运输方式 ② 存储方式 ③ API接口
-*   隔离
 
-### 2.3 Docker容器的特点
+### 4、docker官方文档
 
-*   #### 轻量
 
-    在一台机器上运行的多个 Docker 容器可以共享这台机器的操作系统内核；它们能够迅速启动，只需占用很少的计算和内存资源。镜像是通过文件系统层进行构造的，并共享一些公共文件。这样就能尽量降低磁盘用量，并能更快地下载镜像。
 
-*   #### 标准
 
-    Docker 容器基于开放式标准，能够在所有主流 Linux 版本、Microsoft Windows 以及包括 VM、裸机服务器和云在内的任何基础设施上运行。
 
-*   #### 安全
+### 5、为什么docker越来越受欢迎
 
-    Docker 赋予应用的隔离性不仅限于彼此隔离，还独立于底层的基础设施。Docker 默认提供最强的隔离，因此应用出现问题，也只是单个容器的问题，而不会波及到整台机器。
 
-### 2.4 为什么要用Docker
 
-*   Docker 的镜像提供了除内核外完整的运行时环境，确保了应用运行环境一致性，从而不会再出现 “这段代码在我机器上没问题啊” 这类问题；——一致的运行环境
-*   可以做到秒级、甚至毫秒级的启动时间。大大的节约了开发、测试、部署的时间。——更快速的启动时间
-*   避免公用的服务器，资源会容易受到其他用户的影响。——隔离性
-*   善于处理集中爆发的服务器使用压力；——弹性伸缩，快速扩展
-*   可以很轻易的将在一个平台上运行的应用，迁移到另一个平台上，而不用担心运行环境的变化导致应用无法正常运行的情况。——迁移方便
-*   使用 Docker 可以通过定制应用镜像来实现持续集成、持续交付、部署。——持续交付和部署
 
-* * *
 
-> 每当说起容器，我们不得不将其与虚拟机做一个比较。就我而言，对于两者无所谓谁会取代谁，而是两者可以和谐共存。
+官方话语：
 
-## 三 容器 VS 虚拟机
 
-  简单来说： 容器和虚拟机具有相似的资源隔离和分配优势，但功能有所不同，因为容器虚拟化的是操作系统，而不是硬件，因此容器更容易移植，效率也更高。
 
-### 3.1 两者对比图
 
-  传统虚拟机技术是虚拟出一套硬件后，在其上运行一个完整操作系统，在该系统上再运行所需应用进程；而容器内的应用进程直接运行于宿主的内核，容器内没有自己的内核，而且也没有进行硬件虚拟。因此容器要比传统虚拟机更为轻便.
 
-![容器 VS 虚拟机](https://user-gold-cdn.xitu.io/2018/6/17/1640cb4abec9e902?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
+*   容器化越来越受欢迎，因为容器是：
 
-### 3.2 容器与虚拟机 (VM) 总结
+*   灵活：即使是最复杂的应用也可以集装箱化。
 
-![容器与虚拟机 (VM) 总结](https://user-gold-cdn.xitu.io/2018/6/18/16410aa3b89ae481?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
+*   轻量级：容器利用并共享主机内核。
 
-*   容器是一个应用层抽象，用于将代码和依赖资源打包在一起。 多个容器可以在同一台机器上运行，共享操作系统内核，但各自作为独立的进程在用户空间中运行 。与虚拟机相比， 容器占用的空间较少（容器镜像大小通常只有几十兆），瞬间就能完成启动 。
+*   可互换：您可以即时部署更新和升级。
 
-*   虚拟机 (VM) 是一个物理硬件层抽象，用于将一台服务器变成多台服务器。 管理程序允许多个 VM 在一台机器上运行。每个VM都包含一整套操作系统、一个或多个应用、必要的二进制文件和库资源，因此 占用大量空间 。而且 VM 启动也十分缓慢 。
+*   便携式：您可以在本地构建，部署到云，并在任何地方运行。
 
-  通过Docker官网，我们知道了这么多Docker的优势，但是大家也没有必要完全否定虚拟机技术，因为两者有不同的使用场景。虚拟机更擅长于彻底隔离整个运行环境。例如，云服务提供商通常采用虚拟机技术隔离不同的用户。而 Docker通常用于隔离不同的应用 ，例如前端，后端以及数据库。
+*   可扩展：您可以增加并自动分发容器副本。
 
-### 3.3 容器与虚拟机 (VM)两者是可以共存的
+*   可堆叠：您可以垂直和即时堆叠服务。
 
-就我而言，对于两者无所谓谁会取代谁，而是两者可以和谐共存。
+*   镜像和容器（contalners）
 
-![两者是可以共存的](https://user-gold-cdn.xitu.io/2018/6/17/1640cca26fc38f9e?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
 
-* * *
 
-> Docker中非常重要的三个基本概念，理解了这三个概念，就理解了 Docker 的整个生命周期。
 
-## 四 Docker基本概念
 
-Docker 包括三个基本概念
+通过镜像启动一个容器，一个镜像是一个可执行的包，其中包括运行应用程序所需要的所有内容包含代码，运行时间，库、环境变量、和配置文件。  容器是镜像的运行实例，当被运行时有镜像状态和用户进程，可以使用docker ps 查看。
 
-*   镜像（Image）
-*   容器（Container）
-*   仓库（Repository）
 
-理解了这三个概念，就理解了 Docker 的整个生命周期
 
-![Docker 包括三个基本概念](https://user-gold-cdn.xitu.io/2018/6/18/164109e4900357a9?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
 
-### 4.1 镜像（Image）——一个特殊的文件系统
 
-  操作系统分为内核和用户空间。对于 Linux 而言，内核启动后，会挂载 root 文件系统为其提供用户空间支持。而Docker 镜像（Image），就相当于是一个 root 文件系统。
+*   容器和虚拟机
 
-  Docker 镜像是一个特殊的文件系统，除了提供容器运行时所需的程序、库、资源、配置等文件外，还包含了一些为运行时准备的一些配置参数（如匿名卷、环境变量、用户等）。 镜像不包含任何动态数据，其内容在构建之后也不会被改变。
 
-  Docker 设计时，就充分利用 Union FS的技术，将其设计为 分层存储的架构 。 镜像实际是由多层文件系统联合组成。
 
-  镜像构建时，会一层层构建，前一层是后一层的基础。每一层构建完就不会再发生改变，后一层上的任何改变只发生在自己这一层。 比如，删除前一层文件的操作，实际不是真的删除前一层的文件，而是仅在当前层标记为该文件已删除。在最终容器运行的时候，虽然不会看到这个文件，但是实际上该文件会一直跟随镜像。因此，在构建镜像的时候，需要额外小心，每一层尽量只包含该层需要添加的东西，任何额外的东西应该在该层构建结束前清理掉。
 
-  分层存储的特征还使得镜像的复用、定制变的更为容易。甚至可以用之前构建好的镜像作为基础层，然后进一步添加新的层，以定制自己所需的内容，构建新的镜像。
 
-### 4.2 容器（Container)——镜像运行时的实体
+容器是在linux上本机运行，并与其他容器共享主机的内核，它运行的一个独立的进程，不占用其他任何可执行文件的内存，非常轻量。  虚拟机运行的是一个完成的操作系统，通过虚拟机管理程序对主机资源进行虚拟访问，相比之下需要的资源更多。
 
-  镜像（Image）和容器（Container）的关系，就像是面向对象程序设计中的 类 和 实例 一样，镜像是静态的定义，容器是镜像运行时的实体。容器可以被创建、启动、停止、删除、暂停等。
 
-  容器的实质是进程，但与直接在宿主执行的进程不同，容器进程运行于属于自己的独立的 命名空间。前面讲过镜像使用的是分层存储，容器也是如此。
 
-  容器存储层的生存周期和容器一样，容器消亡时，容器存储层也随之消亡。因此，任何保存于容器存储层的信息都会随容器删除而丢失。
 
-  按照 Docker 最佳实践的要求，容器不应该向其存储层内写入任何数据 ，容器存储层要保持无状态化。所有的文件写入操作，都应该使用数据卷（Volume）、或者绑定宿主目录，在这些位置的读写会跳过容器存储层，直接对宿主(或网络存储)发生读写，其性能和稳定性更高。数据卷的生存周期独立于容器，容器消亡，数据卷不会消亡。因此， 使用数据卷后，容器可以随意删除、重新 run ，数据却不会丢失。
 
-### 4.3 仓库（Repository）——集中存放镜像文件的地方
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230408120435.png)
 
-  镜像构建完成后，可以很容易的在当前宿主上运行，但是， 如果需要在其它服务器上使用这个镜像，我们就需要一个集中的存储、分发镜像的服务，Docker Registry就是这样的服务。
 
-  一个 Docker Registry中可以包含多个仓库（Repository）；每个仓库可以包含多个标签（Tag）；每个标签对应一个镜像。所以说：镜像仓库是Docker用来集中存放镜像文件的地方类似于我们之前常用的代码仓库。
 
-  通常，一个仓库会包含同一个软件不同版本的镜像，而标签就常用于对应该软件的各个版本 。我们可以通过`<仓库名>:<标签>`的格式来指定具体是这个软件哪个版本的镜像。如果不给出标签，将以 latest 作为默认标签.。
 
-这里补充一下Docker Registry 公开服务和私有 Docker Registry的概念：
 
-  Docker Registry 公开服务 是开放给用户使用、允许用户管理镜像的 Registry 服务。一般这类公开服务允许用户免费上传、下载公开的镜像，并可能提供收费服务供用户管理私有镜像。
+### 6、docker版本
 
-  最常使用的 Registry 公开服务是官方的 Docker Hub ，这也是默认的 Registry，并拥有大量的高质量的官方镜像，网址为：[hub.docker.com/](https://link.juejin.im/?target=https%3A%2F%2Fhub.docker.com%2F) 。在国内访问Docker Hub 可能会比较慢国内也有一些云服务商提供类似于 Docker Hub 的公开服务。比如 [时速云镜像库](https://link.juejin.im/?target=https%3A%2F%2Fhub.tenxcloud.com%2F)、[网易云镜像服务](https://link.juejin.im/?target=https%3A%2F%2Fwww.163yun.com%2Fproduct%2Frepo)、[DaoCloud 镜像市场](https://link.juejin.im/?target=https%3A%2F%2Fwww.daocloud.io%2F)、[阿里云镜像库](https://link.juejin.im/?target=https%3A%2F%2Fwww.aliyun.com%2Fproduct%2Fcontainerservice%3Futm_content%3Dse_1292836)等。
 
-  除了使用公开服务外，用户还可以在 本地搭建私有 Docker Registry 。Docker 官方提供了 Docker Registry 镜像，可以直接使用做为私有 Registry 服务。开源的 Docker Registry 镜像只提供了 Docker Registry API 的服务端实现，足以支持 docker 命令，不影响使用。但不包含图形界面，以及镜像维护、用户管理、访问控制等高级功能。
 
-* * *
 
-> Docker的概念基本上已经讲完，最后我们谈谈：Build, Ship, and Run。
 
-## 五 最后谈谈：Build, Ship, and Run
+Docker Community Edition（CE）社区版  Enterprise Edition(EE) 商业版
 
-如果你搜索Docker官网，会发现如下的字样：“Docker - Build, Ship, and Run Any App, Anywhere”。那么Build, Ship, and Run到底是在干什么呢？
 
-![build ship run](https://user-gold-cdn.xitu.io/2018/6/18/16411c521e79bd82?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
 
-*   Build（构建镜像） ： 镜像就像是集装箱包括文件以及运行环境等等资源。
-*   Ship（运输镜像） ：主机和仓库间运输，这里的仓库就像是超级码头一样。
-*   Run （运行镜像） ：运行的镜像就是一个容器，容器就是运行程序的地方。
 
-Docker 运行过程也就是去仓库把镜像拉到本地，然后用一条命令把镜像运行起来变成容器。所以，我们也常常将Docker称为码头工人或码头装卸工，这和Docker的中文翻译搬运工人如出一辙。
 
-## 六 总结
+### 7、docker和openstack的几项对比
 
-本文主要把Docker中的一些常见概念做了详细的阐述，但是并不涉及Docker的安装、镜像的使用、容器的操作等内容。这部分东西，希望读者自己可以通过阅读书籍与官方文档的形式掌握。如果觉得官方文档阅读起来很费力的话，这里推荐一本书籍《Docker技术入门与实战第二版》。
 
+
+
+
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230408120450.png)
+
+
+
+
+
+
+
+### 8、容器在内核中支持2种重要技术
+
+
+
+
+
+docker本质就是宿主机的一个进程，docker是通过namespace实现资源隔离，通过cgroup实现资源限制，通过写时复制技术（copy-on-write）实现了高效的文件操作（类似虚拟机的磁盘比如分配500g并不是实际占用物理磁盘500g）
+
+
+
+
+
+1）namespaces 名称空间
+
+
+
+
+
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230408120519.png)
+
+
+
+
+
+
+
+
+
+
+
+2）control Group 控制组cgroup的特点是：
+
+
+
+
+
+*   cgroup的api以一个伪文件系统的实现方式，用户的程序可以通过文件系统实现cgroup的组件管理
+
+*   cgroup的组件管理操作单元可以细粒度到线程级别，另外用户可以创建和销毁cgroup，从而实现资源的分配和再利用
+
+*   所有资源管理的功能都以子系统的方式实现，接口统一子任务创建之初与其父任务处于同一个cgroup的控制组
+
+
+
+
+
+四大功能：
+
+
+
+
+
+*   资源限制：可以对任务使用的资源总额进行限制
+
+*   优先级分配：通过分配的cpu时间片数量以及磁盘IO带宽大小，实际上相当于控制了任务运行优先级
+
+*   资源统计：可以统计系统的资源使用量，如cpu时长，内存用量等
+
+*   任务控制：cgroup可以对任务执行挂起、恢复等操作
+
+
+
+
+
+### 9、了解docker三个重要概念
+
+
+
+
+
+1）image镜像  docker镜像就是一个只读模板，比如，一个镜像可以包含一个完整的centos，里面仅安装apache或用户的其他应用，镜像可以用来创建docker容器，另外docker提供了一个很简单的机制来创建镜像或者更新现有的镜像，用户甚至可以直接从其他人那里下一个已经做好的镜像来直接使用
+
+
+
+
+
+2）container容器  docker利用容器来运行应用，容器是从镜像创建的运行实例，它可以被启动，开始、停止、删除、每个容器都是互相隔离的，保证安全的平台，可以把容器看做是要给简易版的linux环境（包括root用户权限、镜像空间、用户空间和网络空间等）和运行在其中的应用程序
+
+
+
+
+
+3）repostory仓库  仓库是集中存储镜像文件的沧桑，registry是仓库主从服务器，实际上参考注册服务器上存放着多个仓库，每个仓库中又包含了多个镜像，每个镜像有不同的标签（tag）  仓库分为两种，公有参考，和私有仓库，最大的公开仓库是docker Hub，存放了数量庞大的镜像供用户下载，国内的docker pool，这里仓库的概念与Git类似，registry可以理解为github这样的托管服务。
+
+
+
+
+
+### 10、docker的主要用途
+
+
+
+
+
+官方就是Bulid 、ship、run any app/any where，编译、装载、运行、任何app/在任意地方都能运行。就是实现了应用的封装、部署、运行的生命周期管理只要在glibc的环境下，都可以运行。运维生成环境中：docker化。
+
+
+
+
+
+*   发布服务不用担心服务器的运行环境，所有的服务器都是自动分配docker，自动部署，自动安装，自动运行
+
+*   再不用担心其他服务引擎的磁盘问题，cpu问题，系统问题了
+
+*   资源利用更出色
+
+*   自动迁移，可以制作镜像，迁移使用自定义的镜像即可迁移，不会出现什么问题
+
+*   管理更加方便了
+
+
+
+
+
+### 11、docker改变了什么
+
+
+
+
+
+*   面向产品：产品交付
+
+*   面向开发：简化环境配置
+
+*   面向测试：多版本测试
+
+*   面向运维：环境一致性
+
+*   面向架构：自动化扩容（微服务）
+
+
+
+
+
+**二、docker架构**
+
+
+
+
+
+### 1、总体架构
+
+
+
+
+
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230408120534.png)
+
+
+
+
+
+*   distribution 负责与docker registry交互，上传洗澡镜像以及v2 registry 有关的源数据
+
+*   registry负责docker registry有关的身份认证、镜像查找、镜像验证以及管理registry mirror等交互操作
+
+*   image 负责与镜像源数据有关的存储、查找，镜像层的索引、查找以及镜像tar包有关的导入、导出操作
+
+*   reference负责存储本地所有镜像的repository和tag名，并维护与镜像id之间的映射关系
+
+*   layer模块负责与镜像层和容器层源数据有关的增删改查，并负责将镜像层的增删改查映射到实际存储镜像层文件的graphdriver模块
+
+*   graghdriver是所有与容器镜像相关操作的执行者
+
+
+
+
+
+### 2、docker架构2
+
+
+
+
+
+如果觉得上面架构图比较乱可以看这个架构：
+
+
+
+
+
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230408120545.png)
+
+
+
+
+
+从上图不难看出，用户是使用Docker Client与Docker Daemon建立通信，并发送请求给后者。
+
+
+
+
+
+而Docker Daemon作为Docker架构中的主体部分，首先提供Server的功能使其可以接受Docker Client的请求；而后Engine执行Docker内部的一系列工作，每一项工作都是以一个Job的形式的存在。
+
+
+
+
+
+Job的运行过程中，当需要容器镜像时，则从Docker Registry中下载镜像，并通过镜像管理驱动graphdriver将下载镜像以Graph的形式存储；当需要为Docker创建网络环境时，通过网络管理驱动networkdriver创建并配置Docker容器网络环境；当需要限制Docker容器运行资源或执行用户指令等操作时，则通过execdriver来完成。
+
+
+
+
+
+而libcontainer是一项独立的容器管理包，networkdriver以及execdriver都是通过libcontainer来实现具体对容器进行的操作。当执行完运行容器的命令后，一个实际的Docker容器就处于运行状态，该容器拥有独立的文件系统，独立并且安全的运行环境等。
+
+
+
+
+
+### 3、docker架构3
+
+
+
+
+
+再来看看另外一个架构，这个个架构就简单清晰指明了server/client交互，容器和镜像、数据之间的一些联系。
+
+
+
+
+
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230408120558.png)
+
+
+
+
+
+这个架构图更加清晰了架构
+
+
+
+
+
+docker daemon就是docker的守护进程即server端，可以是远程的，也可以是本地的，这个不是C/S架构吗，客户端Docker client 是通过rest api进行通信。
+
+
+
+
+
+docker cli 用来管理容器和镜像，客户端提供一个只读镜像，然后通过镜像可以创建多个容器，这些容器可以只是一个RFS（Root file system根文件系统），也可以ishi一个包含了用户应用的RFS，容器在docker client中只是要给进程，两个进程之间互不可见。
+
+
+
+
+
+用户不能与server直接交互，但可以通过与容器这个桥梁来交互，由于是操作系统级别的虚拟技术，中间的损耗几乎可以不计。
+
+
+
+
+
+**三、docker架构2各个模块的功能（待完善）**
+
+
+
+
+
+主要的模块有：Docker Client、Docker Daemon、Docker Registry、Graph、Driver、libcontainer以及Docker container。
+
+
+
+
+
+### 1、docker client
+
+
+
+
+
+docker client 是docker架构中用户用来和docker daemon建立通信的客户端，用户使用的可执行文件为docker，通过docker命令行工具可以发起众多管理container的请求。
+
+
+
+
+
+docker client可以通过一下三宗方式和docker daemon建立通信：docker client可以通过设置命令行flag参数的形式设置安全传输层协议(TLS)的有关参数，保证传输的安全性。
+
+
+
+
+
+docker client发送容器管理请求后，由docker daemon接受并处理请求，当docker client 接收到返回的请求相应并简单处理后，docker client 一次完整的生命周期就结束了，当需要继续发送容器管理请求时，用户必须再次通过docker可以执行文件创建docker client。
+
+
+
+
+
+### 2、docker daemon
+
+
+
+
+
+docker daemon 是docker架构中一个常驻在后台的系统进程，功能是：接收处理docker client发送的请求。该守护进程在后台启动一个server，server负载接受docker client发送的请求；接受请求后，server通过路由与分发调度，找到相应的handler来执行请求。
+
+
+
+
+
+docker daemon启动所使用的可执行文件也为docker，与docker client启动所使用的可执行文件docker相同，在docker命令执行时，通过传入的参数来判别docker daemon与docker client。
+
+
+
+
+
+docker daemon的架构可以分为：docker server、engine、job。daemon
+
+
+
+
+
+### 3、docker server
+
+
+
+
+
+docker server在docker架构中时专门服务于docker client的server，该server的功能是：接受并调度分发docker client发送的请求，架构图如下：
+
+
+
+
+
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230408120607.png)
+
+
+
+
+
+在Docker的启动过程中，通过包gorilla/mux（golang的类库解析），创建了一个mux.Router，提供请求的路由功能。在Golang中，gorilla/mux是一个强大的URL路由器以及调度分发器。该mux.Router中添加了众多的路由项，每一个路由项由HTTP请求方法（PUT、POST、GET或DELETE）、URL、Handler三部分组成。
+
+
+
+
+
+若Docker Client通过HTTP的形式访问Docker Daemon，创建完mux.Router之后，Docker将Server的监听地址以及mux.Router作为参数，创建一个httpSrv=http.Server{}，最终执行httpSrv.Serve()为请求服务。
+
+
+
+
+
+在Server的服务过程中，Server在listener上接受Docker Client的访问请求，并创建一个全新的goroutine来服务该请求。在goroutine中，首先读取请求内容，然后做解析工作，接着找到相应的路由项，随后调用相应的Handler来处理该请求，最后Handler处理完请求之后回复该请求。
+
+
+
+
+
+需要注意的是：Docker Server的运行在Docker的启动过程中，是靠一个名为”serveapi”的job的运行来完成的。原则上，Docker Server的运行是众多job中的一个，但是为了强调Docker Server的重要性以及为后续job服务的重要特性，将该”serveapi”的job单独抽离出来分析，理解为Docker Server。
+
+
+
+
+
+### 4、engine
+
+
+
+
+
+Engine是Docker架构中的运行引擎，同时也Docker运行的核心模块。它扮演Docker container存储仓库的角色，并且通过执行job的方式来操纵管理这些容器。
+
+
+
+
+
+在Engine数据结构的设计与实现过程中，有一个handler对象。该handler对象存储的都是关于众多特定job的handler处理访问。举例说明，Engine的handler对象中有一项为：{“create”: daemon.ContainerCreate,}，则说明当名为”create”的job在运行时，执行的是daemon.ContainerCreate的handler。
+
+
+
+
+
+### 5、job
+
+
+
+
+
+一个Job可以认为是Docker架构中Engine内部最基本的工作执行单元。Docker可以做的每一项工作，都可以抽象为一个job。例如：在容器内部运行一个进程，这是一个job；创建一个新的容器，这是一个job，从Internet上下载一个文档，这是一个job；包括之前在Docker Server部分说过的，创建Server服务于HTTP的API，这也是一个job，等等。
+
+
+
+
+
+Job的设计者，把Job设计得与Unix进程相仿。比如说：Job有一个名称，有参数，有环境变量，有标准的输入输出，有错误处理，有返回状态等。
+
+
+
+
+
+### 6、docker registry
+
+
+
+
+
+Docker Registry是一个存储容器镜像的仓库。而容器镜像是在容器被创建时，被加载用来初始化容器的文件架构与目录。
+
+
+
+
+
+在Docker的运行过程中，Docker Daemon会与Docker Registry通信，并实现搜索镜像、下载镜像、上传镜像三个功能，这三个功能对应的job名称分别为”search”，”pull” 与 “push”。
+
+
+
+
+
+其中，在Docker架构中，Docker可以使用公有的Docker Registry，即大家熟知的Docker Hub，如此一来，Docker获取容器镜像文件时，必须通过互联网访问Docker Hub；同时Docker也允许用户构建本地私有的Docker Registry，这样可以保证容器镜像的获取在内网完成。
+
+
+
+
+
+### 7、Graph
+
+
+
+
+
+Graph在Docker架构中扮演已下载容器镜像的保管者，以及已下载容器镜像之间关系的记录者。一方面，Graph存储着本地具有版本信息的文件系统镜像，另一方面也通过GraphDB记录着所有文件系统镜像彼此之间的关系。Graph的架构如下：
+
+
+
+
+
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230408120623.png)
+
+
+
+
+
+其中，GraphDB是一个构建在SQLite之上的小型图数据库，实现了节点的命名以及节点之间关联关系的记录。它仅仅实现了大多数图数据库所拥有的一个小的子集，但是提供了简单的接口表示节点之间的关系。
+
+
+
+
+
+同时在Graph的本地目录中，关于每一个的容器镜像，具体存储的信息有：该容器镜像的元数据，容器镜像的大小信息，以及该容器镜像所代表的具体rootfs。
+
+
+
+
+
+### 8、driver
+
+
+
+
+
+Driver是Docker架构中的驱动模块。通过Driver驱动，Docker可以实现对Docker容器执行环境的定制。由于Docker运行的生命周期中，并非用户所有的操作都是针对Docker容器的管理，另外还有关于Docker运行信息的获取，Graph的存储与记录等。因此，为了将Docker容器的管理从Docker Daemon内部业务逻辑中区分开来，设计了Driver层驱动来接管所有这部分请求。
+
+
+
+
+
+在Docker Driver的实现中，可以分为以下三类驱动：graphdriver、networkdriver和execdriver。
+
+
+
+
+
+graphdriver主要用于完成容器镜像的管理，包括存储与获取。即当用户需要下载指定的容器镜像时，graphdriver将容器镜像存储在本地的指定目录；同时当用户需要使用指定的容器镜像来创建容器的rootfs时，graphdriver从本地镜像存储目录中获取指定的容器镜像。
+
+
+
+
+
+在graphdriver的初始化过程之前，有4种文件系统或类文件系统在其内部注册，它们分别是aufs、btrfs、vfs和devmapper。而Docker在初始化之时，通过获取系统环境变量”DOCKER_DRIVER”来提取所使用driver的指定类型。而之后所有的graph操作，都使用该driver来执行。
+
+
+
+
+
+graphdriver的架构如下：
+
+
+
+
+
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230408120634.png)
+
+
+
+
+
+networkdriver的用途是完成Docker容器网络环境的配置，其中包括Docker启动时为Docker环境创建网桥；Docker容器创建时为其创建专属虚拟网卡设备；以及为Docker容器分配IP、端口并与宿主机做端口映射，设置容器防火墙策略等。networkdriver的架构如下：
+
+
+
+
+
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230408120642.png)
+
+
+
+
+
+execdriver作为Docker容器的执行驱动，负责创建容器运行命名空间，负责容器资源使用的统计与限制，负责容器内部进程的真正运行等。在execdriver的实现过程中，原先可以使用LXC驱动调用LXC的接口，来操纵容器的配置以及生命周期，而现在execdriver默认使用native驱动，不依赖于LXC。具体体现在Daemon启动过程中加载的ExecDriverflag参数，该参数在配置文件已经被设为”native”。这可以认为是Docker在1.2版本上一个很大的改变，或者说Docker实现跨平台的一个先兆。execdriver架构如下：
+
+
+
+
+
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230408120652.png)
+
+
+
+
+
+### 9、libcontainer
+
+
+
+
+
+libcontainer是Docker架构中一个使用Go语言设计实现的库，设计初衷是希望该库可以不依靠任何依赖，直接访问内核中与容器相关的API。
+
+
+
+
+
+正是由于libcontainer的存在，Docker可以直接调用libcontainer，而最终操纵容器的namespace、cgroups、apparmor、网络设备以及防火墙规则等。这一系列操作的完成都不需要依赖LXC或者其他包。libcontainer架构如下：
+
+
+
+
+
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230408120659.png)
+
+
+
+
+
+另外，libcontainer提供了一整套标准的接口来满足上层对容器管理的需求。或者说，libcontainer屏蔽了Docker上层对容器的直接管理。又由于libcontainer使用Go这种跨平台的语言开发实现，且本身又可以被上层多种不同的编程语言访问，因此很难说，未来的Docker就一定会紧紧地和Linux捆绑在一起。而于此同时，Microsoft在其著名云计算平台Azure中，也添加了对Docker的支持，可见Docker的开放程度与业界的火热度。
+
+
+
+
+
+暂不谈Docker，由于libcontainer的功能以及其本身与系统的松耦合特性，很有可能会在其他以容器为原型的平台出现，同时也很有可能催生出云计算领域全新的项目。
+
+
+
+
+
+### 10、docker container
+
+
+
+
+
+Docker container（Docker容器）是Docker架构中服务交付的最终体现形式。Docker按照用户的需求与指令，订制相应的Docker容器：
+
+
+
+
+
+*   用户通过指定容器镜像，使得Docker容器可以自定义rootfs等文件系统；
+
+*   用户通过指定计算资源的配额，使得Docker容器使用指定的计算资源；
+
+*   用户通过配置网络及其安全策略，使得Docker容器拥有独立且安全的网络环境；
+
+*   用户通过指定运行的命令，使得Docker容器执行指定的工作。
+
+
+
+
+
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230408120710.png)

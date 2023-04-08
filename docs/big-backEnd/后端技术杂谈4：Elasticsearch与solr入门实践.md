@@ -1,44 +1,44 @@
-# Table of Contents
+# 目录
 
 * [阮一峰：全文搜索引擎 Elasticsearch 入门教程](#阮一峰：全文搜索引擎-elasticsearch-入门教程)
-  * [一、安装](#一、安装)
-  * [二、基本概念](#二、基本概念)
-    * [2.1 Node 与 Cluster](#21-node-与-cluster)
-    * [2.2 Index](#22-index)
-    * [2.3 Document](#23-document)
-    * [2.4 Type](#24-type)
-  * [三、新建和删除 Index](#三、新建和删除-index)
-  * [四、中文分词设置](#四、中文分词设置)
-  * [五、数据操作](#五、数据操作)
-    * [5.1 新增记录](#51-新增记录)
-    * [5.2 查看记录](#52-查看记录)
-    * [5.3 删除记录](#53-删除记录)
-    * [5.4 更新记录](#54-更新记录)
-  * [六、数据查询](#六、数据查询)
-    * [6.1 返回所有记录](#61-返回所有记录)
-    * [6.2 全文搜索](#62-全文搜索)
-    * [6.3 逻辑运算](#63-逻辑运算)
-  * [七、参考链接](#七、参考链接)
-      * [一、前言](#一、前言)
-      * [二、安装](#二、安装)
-      * [三、创建索引](#三、创建索引)
-      * [四、搜索干预](#四、搜索干预)
-      * [五、中文分词](#五、中文分词)
-      * [六、总结](#六、总结)
-      * [七、附录](#七、附录)
+    * [一、安装](#一、安装)
+    * [二、基本概念](#二、基本概念)
+        * [2.1 Node 与 Cluster](#21-node-与-cluster)
+        * [2.2 Index](#22-index)
+        * [2.3 Document](#23-document)
+        * [2.4 Type](#24-type)
+    * [三、新建和删除 Index](#三、新建和删除-index)
+    * [四、中文分词设置](#四、中文分词设置)
+    * [五、数据操作](#五、数据操作)
+        * [5.1 新增记录](#51-新增记录)
+        * [5.2 查看记录](#52-查看记录)
+        * [5.3 删除记录](#53-删除记录)
+        * [5.4 更新记录](#54-更新记录)
+    * [六、数据查询](#六、数据查询)
+        * [6.1 返回所有记录](#61-返回所有记录)
+        * [6.2 全文搜索](#62-全文搜索)
+        * [6.3 逻辑运算](#63-逻辑运算)
+    * [七、参考链接](#七、参考链接)
+        * [一、前言](#一、前言)
+        * [二、安装](#二、安装)
+        * [三、创建索引](#三、创建索引)
+        * [四、搜索干预](#四、搜索干预)
+        * [五、中文分词](#五、中文分词)
+        * [六、总结](#六、总结)
+        * [七、附录](#七、附录)
 * [搜索引擎选型整理：Elasticsearch vs Solr](#搜索引擎选型整理：elasticsearch-vs-solr)
-  * [Elasticsearch简介[*](https://link.juejin.im/?target=http%3A%2F%2Ffuxiaopang.gitbooks.io%2Flearnelasticsearch)](#elasticsearch简介[]httpslinkjuejinimtargethttp3a2f2ffuxiaopanggitbooksio2flearnelasticsearch)
-  * [Elasticsearch的优缺点[*](https://link.juejin.im/?target=http%3A%2F%2Fstackoverflow.com%2Fquestions%2F10213009%2Fsolr-vs-elasticsearch)[*](https://link.juejin.im/?target=http%3A%2F%2Fhuangx.in%2F22%2Ftranslation-solr-vs-elasticsearch):](#elasticsearch的优缺点[]httpslinkjuejinimtargethttp3a2f2fstackoverflowcom2fquestions2f102130092fsolr-vs-elasticsearch[]httpslinkjuejinimtargethttp3a2f2fhuangxin2f222ftranslation-solr-vs-elasticsearch)
-    * [优点](#优点)
-    * [缺点](#缺点)
-  * [Solr简介[*](https://link.juejin.im/?target=http%3A%2F%2Fzh.wikipedia.org%2Fwiki%2FSolr)](#solr简介[]httpslinkjuejinimtargethttp3a2f2fzhwikipediaorg2fwiki2fsolr)
-  * [Solr的优缺点](#solr的优缺点)
-    * [优点](#优点-1)
-    * [缺点](#缺点-1)
-  * [Elasticsearch与Solr的比较[*](https://link.juejin.im/?target=http%3A%2F%2Fblog.socialcast.com%2Frealtime-search-solr-vs-elasticsearch%2F)](#elasticsearch与solr的比较[]httpslinkjuejinimtargethttp3a2f2fblogsocialcastcom2frealtime-search-solr-vs-elasticsearch2f)
-  * [实际生产环境测试[*](https://link.juejin.im/?target=http%3A%2F%2Fblog.socialcast.com%2Frealtime-search-solr-vs-elasticsearch%2F)](#实际生产环境测试[]httpslinkjuejinimtargethttp3a2f2fblogsocialcastcom2frealtime-search-solr-vs-elasticsearch2f)
-  * [Elasticsearch 与 Solr 的比较总结](#elasticsearch-与-solr-的比较总结)
-  * [其他基于Lucene的开源搜索引擎解决方案[*](https://link.juejin.im/?target=http%3A%2F%2Fmail-archives.apache.org%2Fmod_mbox%2Fhbase-user%2F201006.mbox%2F%253C149150.78881.qm%40web50304.mail.re2.yahoo.com%253E)](#其他基于lucene的开源搜索引擎解决方案[]httpslinkjuejinimtargethttp3a2f2fmail-archivesapacheorg2fmod_mbox2fhbase-user2f201006mbox2f253c14915078881qm40web50304mailre2yahoocom253e)
+    * [Elasticsearch简介[*](https://link.juejin.im/?target=http%3A%2F%2Ffuxiaopang.gitbooks.io%2Flearnelasticsearch)](#elasticsearch简介[]httpslinkjuejinimtargethttp3a2f2ffuxiaopanggitbooksio2flearnelasticsearch)
+    * [Elasticsearch的优缺点[*](https://link.juejin.im/?target=http%3A%2F%2Fstackoverflow.com%2Fquestions%2F10213009%2Fsolr-vs-elasticsearch)[*](https://link.juejin.im/?target=http%3A%2F%2Fhuangx.in%2F22%2Ftranslation-solr-vs-elasticsearch):](#elasticsearch的优缺点[]httpslinkjuejinimtargethttp3a2f2fstackoverflowcom2fquestions2f102130092fsolr-vs-elasticsearch[]httpslinkjuejinimtargethttp3a2f2fhuangxin2f222ftranslation-solr-vs-elasticsearch)
+        * [优点](#优点)
+        * [缺点](#缺点)
+    * [Solr简介[*](https://link.juejin.im/?target=http%3A%2F%2Fzh.wikipedia.org%2Fwiki%2FSolr)](#solr简介[]httpslinkjuejinimtargethttp3a2f2fzhwikipediaorg2fwiki2fsolr)
+    * [Solr的优缺点](#solr的优缺点)
+        * [优点](#优点-1)
+        * [缺点](#缺点-1)
+    * [Elasticsearch与Solr的比较[*](https://link.juejin.im/?target=http%3A%2F%2Fblog.socialcast.com%2Frealtime-search-solr-vs-elasticsearch%2F)](#elasticsearch与solr的比较[]httpslinkjuejinimtargethttp3a2f2fblogsocialcastcom2frealtime-search-solr-vs-elasticsearch2f)
+    * [实际生产环境测试[*](https://link.juejin.im/?target=http%3A%2F%2Fblog.socialcast.com%2Frealtime-search-solr-vs-elasticsearch%2F)](#实际生产环境测试[]httpslinkjuejinimtargethttp3a2f2fblogsocialcastcom2frealtime-search-solr-vs-elasticsearch2f)
+    * [Elasticsearch 与 Solr 的比较总结](#elasticsearch-与-solr-的比较总结)
+    * [其他基于Lucene的开源搜索引擎解决方案[*](https://link.juejin.im/?target=http%3A%2F%2Fmail-archives.apache.org%2Fmod_mbox%2Fhbase-user%2F201006.mbox%2F%253C149150.78881.qm%40web50304.mail.re2.yahoo.com%253E)](#其他基于lucene的开源搜索引擎解决方案[]httpslinkjuejinimtargethttp3a2f2fmail-archivesapacheorg2fmod_mbox2fhbase-user2f201006mbox2f253c14915078881qm40web50304mailre2yahoocom253e)
 
 
 # 阮一峰：全文搜索引擎 Elasticsearch 入门教程
@@ -47,11 +47,13 @@
 作者：阮一峰
 
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看
+
 > https://github.com/h2pl/Java-Tutorial
 
 喜欢的话麻烦点下Star哈
 
 本系列文章将整理到我的个人博客
+
 > www.how2playlife.com
 
 更多Java技术文章会更新在我的微信公众号【Java技术江湖】上，欢迎关注
@@ -84,25 +86,25 @@ Elastic 需要 Java 8 环境。如果你的机器还没安装 Java，可以参�
 安装完 Java，就可以跟着[官方文档](https://link.juejin.im/?target=https%3A%2F%2Fwww.elastic.co%2Fguide%2Fen%2Felasticsearch%2Freference%2Fcurrent%2Fzip-targz.html)安装 Elastic。直接下载压缩包比较简单。
 
 > ```
->  $ wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.5.1.zip$ unzip elasticsearch-5.5.1.zip$ cd elasticsearch-5.5.1/ 
+> $ wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.5.1.zip$ unzip elasticsearch-5.5.1.zip$ cd elasticsearch-5.5.1/ 
 > ```
 
 接着，进入解压后的目录，运行下面的命令，启动 Elastic。
 
 > ```
->  $ ./bin/elasticsearch
+> $ ./bin/elasticsearch
 > ```
 
 如果这时[报错](https://link.juejin.im/?target=https%3A%2F%2Fgithub.com%2Fspujadas%2Felk-docker%2Fissues%2F92)"max virtual memory areas vm.max_map_count [65530] is too low"，要运行下面的命令。
 
 > ```
->  $ sudo sysctl -w vm.max_map_count=262144
+> $ sudo sysctl -w vm.max_map_count=262144
 > ```
 
 如果一切正常，Elastic 就会在默认的9200端口运行。这时，打开另一个命令行窗口，请求该端口，会得到说明信息。
 
 > ```
->  $ curl localhost:9200 {  "name" : "atntrTf",  "cluster_name" : "elasticsearch",  "cluster_uuid" : "tf9250XhQ6ee4h7YI11anA",  "version" : {    "number" : "5.5.1",    "build_hash" : "19c13d0",    "build_date" : "2017-07-18T20:44:24.823Z",    "build_snapshot" : false,    "lucene_version" : "6.6.0"  },  "tagline" : "You Know, for Search"}
+> $ curl localhost:9200 {  "name" : "atntrTf",  "cluster_name" : "elasticsearch",  "cluster_uuid" : "tf9250XhQ6ee4h7YI11anA",  "version" : {    "number" : "5.5.1",    "build_hash" : "19c13d0",    "build_date" : "2017-07-18T20:44:24.823Z",    "build_snapshot" : false,    "lucene_version" : "6.6.0"  },  "tagline" : "You Know, for Search"}
 > ```
 
 上面代码中，请求9200端口，Elastic 返回一个 JSON 对象，包含当前节点、集群、版本等信息。
@@ -112,7 +114,7 @@ Elastic 需要 Java 8 环境。如果你的机器还没安装 Java，可以参�
 默认情况下，Elastic 只允许本机访问，如果需要远程访问，可以修改 Elastic 安装目录的`config/elasticsearch.yml`文件，去掉`network.host`的注释，将它的值改成`0.0.0.0`，然后重新启动 Elastic。
 
 > ```
->  network.host: 0.0.0.0
+> network.host: 0.0.0.0
 > ```
 
 上面代码中，设成`0.0.0.0`让任何人都可以访问。线上服务不要这样设置，要设成具体的 IP。
@@ -134,7 +136,7 @@ Elastic 会索引所有字段，经过处理后写入一个反向索引（Invert
 下面的命令可以查看当前节点的所有 Index。
 
 > ```
->  $ curl -X GET 'http://localhost:9200/_cat/indices?v'
+> $ curl -X GET 'http://localhost:9200/_cat/indices?v'
 > ```
 
 ### 2.3 Document
@@ -144,7 +146,7 @@ Index 里面单条的记录称为 Document（文档）。许多条 Document 构�
 Document 使用 JSON 格式表示，下面是一个例子。
 
 > ```
->  {  "user": "张三",  "title": "工程师",  "desc": "数据库管理"}
+> {  "user": "张三",  "title": "工程师",  "desc": "数据库管理"}
 > ```
 
 同一个 Index 里面的 Document，不要求有相同的结构（scheme），但是最好保持相同，这样有利于提高搜索效率。
@@ -158,7 +160,7 @@ Document 可以分组，比如`weather`这个 Index 里面，可以按城市分�
 下面的命令可以列出每个 Index 所包含的 Type。
 
 > ```
->  $ curl 'localhost:9200/_mapping?pretty=true'
+> $ curl 'localhost:9200/_mapping?pretty=true'
 > ```
 
 根据[规划](https://link.juejin.im/?target=https%3A%2F%2Fwww.elastic.co%2Fblog%2Findex-type-parent-child-join-now-future-in-elasticsearch)，Elastic 6.x 版只允许每个 Index 包含一个 Type，7.x 版将会彻底移除 Type。
@@ -168,19 +170,19 @@ Document 可以分组，比如`weather`这个 Index 里面，可以按城市分�
 新建 Index，可以直接向 Elastic 服务器发出 PUT 请求。下面的例子是新建一个名叫`weather`的 Index。
 
 > ```
->  $ curl -X PUT 'localhost:9200/weather'
+> $ curl -X PUT 'localhost:9200/weather'
 > ```
 
 服务器返回一个 JSON 对象，里面的`acknowledged`字段表示操作成功。
 
 > ```
->  {  "acknowledged":true,  "shards_acknowledged":true}
+> {  "acknowledged":true,  "shards_acknowledged":true}
 > ```
 
 然后，我们发出 DELETE 请求，删除这个 Index。
 
 > ```
->  $ curl -X DELETE 'localhost:9200/weather'
+> $ curl -X DELETE 'localhost:9200/weather'
 > ```
 
 ## 四、中文分词设置
@@ -188,7 +190,7 @@ Document 可以分组，比如`weather`这个 Index 里面，可以按城市分�
 首先，安装中文分词插件。这里使用的是 [ik](https://link.juejin.im/?target=https%3A%2F%2Fgithub.com%2Fmedcl%2Felasticsearch-analysis-ik%2F)，也可以考虑其他插件（比如 [smartcn](https://link.juejin.im/?target=https%3A%2F%2Fwww.elastic.co%2Fguide%2Fen%2Felasticsearch%2Fplugins%2Fcurrent%2Fanalysis-smartcn.html)）。
 
 > ```
->  $ ./bin/elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v5.5.1/elasticsearch-analysis-ik-5.5.1.zip
+> $ ./bin/elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v5.5.1/elasticsearch-analysis-ik-5.5.1.zip
 > ```
 
 上面代码安装的是5.5.1版的插件，与 Elastic 5.5.1 配合使用。
@@ -198,7 +200,7 @@ Document 可以分组，比如`weather`这个 Index 里面，可以按城市分�
 然后，新建一个 Index，指定需要分词的字段。这一步根据数据结构而异，下面的命令只针对本文。基本上，凡是需要搜索的中文字段，都要单独设置一下。
 
 > ```
->  $ curl -X PUT 'localhost:9200/accounts' -d '{  "mappings": {    "person": {      "properties": {        "user": {          "type": "text",          "analyzer": "ik_max_word",          "search_analyzer": "ik_max_word"        },        "title": {          "type": "text",          "analyzer": "ik_max_word",          "search_analyzer": "ik_max_word"        },        "desc": {          "type": "text",          "analyzer": "ik_max_word",          "search_analyzer": "ik_max_word"        }      }    }  }}'
+> $ curl -X PUT 'localhost:9200/accounts' -d '{  "mappings": {    "person": {      "properties": {        "user": {          "type": "text",          "analyzer": "ik_max_word",          "search_analyzer": "ik_max_word"        },        "title": {          "type": "text",          "analyzer": "ik_max_word",          "search_analyzer": "ik_max_word"        },        "desc": {          "type": "text",          "analyzer": "ik_max_word",          "search_analyzer": "ik_max_word"        }      }    }  }}'
 > ```
 
 上面代码中，首先新建一个名称为`accounts`的 Index，里面有一个名称为`person`的 Type。`person`有三个字段。
@@ -212,7 +214,7 @@ Document 可以分组，比如`weather`这个 Index 里面，可以按城市分�
 Elastic 的分词器称为 [analyzer](https://link.juejin.im/?target=https%3A%2F%2Fwww.elastic.co%2Fguide%2Fen%2Felasticsearch%2Freference%2Fcurrent%2Fanalysis.html)。我们对每个字段指定分词器。
 
 > ```
->  "user": {  "type": "text",  "analyzer": "ik_max_word",  "search_analyzer": "ik_max_word"}
+> "user": {  "type": "text",  "analyzer": "ik_max_word",  "search_analyzer": "ik_max_word"}
 > ```
 
 上面代码中，`analyzer`是字段文本的分词器，`search_analyzer`是搜索词的分词器。`ik_max_word`分词器是插件`ik`提供的，可以对文本进行最大数量的分词。
@@ -224,13 +226,13 @@ Elastic 的分词器称为 [analyzer](https://link.juejin.im/?target=https%3A%2
 向指定的 /Index/Type 发送 PUT 请求，就可以在 Index 里面新增一条记录。比如，向`/accounts/person`发送请求，就可以新增一条人员记录。
 
 > ```
->  $ curl -X PUT 'localhost:9200/accounts/person/1' -d '{  "user": "张三",  "title": "工程师",  "desc": "数据库管理"}' 
+> $ curl -X PUT 'localhost:9200/accounts/person/1' -d '{  "user": "张三",  "title": "工程师",  "desc": "数据库管理"}' 
 > ```
 
 服务器返回的 JSON 对象，会给出 Index、Type、Id、Version 等信息。
 
 > ```
->  {  "_index":"accounts",  "_type":"person",  "_id":"1",  "_version":1,  "result":"created",  "_shards":{"total":2,"successful":1,"failed":0},  "created":true}
+> {  "_index":"accounts",  "_type":"person",  "_id":"1",  "_version":1,  "result":"created",  "_shards":{"total":2,"successful":1,"failed":0},  "created":true}
 > ```
 
 如果你仔细看，会发现请求路径是`/accounts/person/1`，最后的`1`是该条记录的 Id。它不一定是数字，任意字符串（比如`abc`）都可以。
@@ -238,13 +240,13 @@ Elastic 的分词器称为 [analyzer](https://link.juejin.im/?target=https%3A%2
 新增记录的时候，也可以不指定 Id，这时要改成 POST 请求。
 
 > ```
->  $ curl -X POST 'localhost:9200/accounts/person' -d '{  "user": "李四",  "title": "工程师",  "desc": "系统管理"}'
+> $ curl -X POST 'localhost:9200/accounts/person' -d '{  "user": "李四",  "title": "工程师",  "desc": "系统管理"}'
 > ```
 
 上面代码中，向`/accounts/person`发出一个 POST 请求，添加一个记录。这时，服务器返回的 JSON 对象里面，`_id`字段就是一个随机字符串。
 
 > ```
->  {  "_index":"accounts",  "_type":"person",  "_id":"AV3qGfrC6jMbsbXb6k1p",  "_version":1,  "result":"created",  "_shards":{"total":2,"successful":1,"failed":0},  "created":true}
+> {  "_index":"accounts",  "_type":"person",  "_id":"AV3qGfrC6jMbsbXb6k1p",  "_version":1,  "result":"created",  "_shards":{"total":2,"successful":1,"failed":0},  "created":true}
 > ```
 
 注意，如果没有先创建 Index（这个例子是`accounts`），直接执行上面的命令，Elastic 也不会报错，而是直接生成指定的 Index。所以，打字的时候要小心，不要写错 Index 的名称。
@@ -254,7 +256,7 @@ Elastic 的分词器称为 [analyzer](https://link.juejin.im/?target=https%3A%2
 向`/Index/Type/Id`发出 GET 请求，就可以查看这条记录。
 
 > ```
->  $ curl 'localhost:9200/accounts/person/1?pretty=true'
+> $ curl 'localhost:9200/accounts/person/1?pretty=true'
 > ```
 
 上面代码请求查看`/accounts/person/1`这条记录，URL 的参数`pretty=true`表示以易读的格式返回。
@@ -262,13 +264,13 @@ Elastic 的分词器称为 [analyzer](https://link.juejin.im/?target=https%3A%2
 返回的数据中，`found`字段表示查询成功，`_source`字段返回原始记录。
 
 > ```
->  {  "_index" : "accounts",  "_type" : "person",  "_id" : "1",  "_version" : 1,  "found" : true,  "_source" : {    "user" : "张三",    "title" : "工程师",    "desc" : "数据库管理"  }}
+> {  "_index" : "accounts",  "_type" : "person",  "_id" : "1",  "_version" : 1,  "found" : true,  "_source" : {    "user" : "张三",    "title" : "工程师",    "desc" : "数据库管理"  }}
 > ```
 
 如果 Id 不正确，就查不到数据，`found`字段就是`false`。
 
 > ```
->  $ curl 'localhost:9200/weather/beijing/abc?pretty=true' {  "_index" : "accounts",  "_type" : "person",  "_id" : "abc",  "found" : false}
+> $ curl 'localhost:9200/weather/beijing/abc?pretty=true' {  "_index" : "accounts",  "_type" : "person",  "_id" : "abc",  "found" : false}
 > ```
 
 ### 5.3 删除记录
@@ -276,7 +278,7 @@ Elastic 的分词器称为 [analyzer](https://link.juejin.im/?target=https%3A%2
 删除记录就是发出 DELETE 请求。
 
 > ```
->  $ curl -X DELETE 'localhost:9200/accounts/person/1'
+> $ curl -X DELETE 'localhost:9200/accounts/person/1'
 > ```
 
 这里先不要删除这条记录，后面还要用到。
@@ -286,13 +288,13 @@ Elastic 的分词器称为 [analyzer](https://link.juejin.im/?target=https%3A%2
 更新记录就是使用 PUT 请求，重新发送一次数据。
 
 > ```
->  $ curl -X PUT 'localhost:9200/accounts/person/1' -d '{    "user" : "张三",    "title" : "工程师",    "desc" : "数据库管理，软件开发"}'  {  "_index":"accounts",  "_type":"person",  "_id":"1",  "_version":2,  "result":"updated",  "_shards":{"total":2,"successful":1,"failed":0},  "created":false}
+> $ curl -X PUT 'localhost:9200/accounts/person/1' -d '{    "user" : "张三",    "title" : "工程师",    "desc" : "数据库管理，软件开发"}'  {  "_index":"accounts",  "_type":"person",  "_id":"1",  "_version":2,  "result":"updated",  "_shards":{"total":2,"successful":1,"failed":0},  "created":false}
 > ```
 
 上面代码中，我们将原始数据从"数据库管理"改成"数据库管理，软件开发"。 返回结果里面，有几个字段发生了变化。
 
 > ```
->  "_version" : 2,"result" : "updated","created" : false
+> "_version" : 2,"result" : "updated","created" : false
 > ```
 
 可以看到，记录的 Id 没变，但是版本（version）从`1`变成`2`，操作类型（result）从`created`变成`updated`，`created`字段变成`false`，因为这次不是新建记录。
@@ -304,7 +306,7 @@ Elastic 的分词器称为 [analyzer](https://link.juejin.im/?target=https%3A%2
 使用 GET 方法，直接请求`/Index/Type/_search`，就会返回所有记录。
 
 > ```
->  $ curl 'localhost:9200/accounts/person/_search' {  "took":2,  "timed_out":false,  "_shards":{"total":5,"successful":5,"failed":0},  "hits":{    "total":2,    "max_score":1.0,    "hits":[      {        "_index":"accounts",        "_type":"person",        "_id":"AV3qGfrC6jMbsbXb6k1p",        "_score":1.0,        "_source": {          "user": "李四",          "title": "工程师",          "desc": "系统管理"        }      },      {        "_index":"accounts",        "_type":"person",        "_id":"1",        "_score":1.0,        "_source": {          "user" : "张三",          "title" : "工程师",          "desc" : "数据库管理，软件开发"        }      }    ]  }}
+> $ curl 'localhost:9200/accounts/person/_search' {  "took":2,  "timed_out":false,  "_shards":{"total":5,"successful":5,"failed":0},  "hits":{    "total":2,    "max_score":1.0,    "hits":[      {        "_index":"accounts",        "_type":"person",        "_id":"AV3qGfrC6jMbsbXb6k1p",        "_score":1.0,        "_source": {          "user": "李四",          "title": "工程师",          "desc": "系统管理"        }      },      {        "_index":"accounts",        "_type":"person",        "_id":"1",        "_score":1.0,        "_source": {          "user" : "张三",          "title" : "工程师",          "desc" : "数据库管理，软件开发"        }      }    ]  }}
 > ```
 
 上面代码中，返回结果的 `took`字段表示该操作的耗时（单位为毫秒），`timed_out`字段表示是否超时，`hits`字段表示命中的记录，里面子字段的含义如下。
@@ -320,19 +322,19 @@ Elastic 的分词器称为 [analyzer](https://link.juejin.im/?target=https%3A%2
 Elastic 的查询非常特别，使用自己的[查询语法](https://link.juejin.im/?target=https%3A%2F%2Fwww.elastic.co%2Fguide%2Fen%2Felasticsearch%2Freference%2F5.5%2Fquery-dsl.html)，要求 GET 请求带有数据体。
 
 > ```
->  $ curl 'localhost:9200/accounts/person/_search'  -d '{  "query" : { "match" : { "desc" : "软件" }}}'
+> $ curl 'localhost:9200/accounts/person/_search'  -d '{  "query" : { "match" : { "desc" : "软件" }}}'
 > ```
 
 上面代码使用 [Match 查询](https://link.juejin.im/?target=https%3A%2F%2Fwww.elastic.co%2Fguide%2Fen%2Felasticsearch%2Freference%2F5.5%2Fquery-dsl-match-query.html)，指定的匹配条件是`desc`字段里面包含"软件"这个词。返回结果如下。
 
 > ```
->  {  "took":3,  "timed_out":false,  "_shards":{"total":5,"successful":5,"failed":0},  "hits":{    "total":1,    "max_score":0.28582606,    "hits":[      {        "_index":"accounts",        "_type":"person",        "_id":"1",        "_score":0.28582606,        "_source": {          "user" : "张三",          "title" : "工程师",          "desc" : "数据库管理，软件开发"        }      }    ]  }}
+> {  "took":3,  "timed_out":false,  "_shards":{"total":5,"successful":5,"failed":0},  "hits":{    "total":1,    "max_score":0.28582606,    "hits":[      {        "_index":"accounts",        "_type":"person",        "_id":"1",        "_score":0.28582606,        "_source": {          "user" : "张三",          "title" : "工程师",          "desc" : "数据库管理，软件开发"        }      }    ]  }}
 > ```
 
 Elastic 默认一次返回10条结果，可以通过`size`字段改变这个设置。
 
 > ```
->  $ curl 'localhost:9200/accounts/person/_search'  -d '{  "query" : { "match" : { "desc" : "管理" }},  "size": 1}'
+> $ curl 'localhost:9200/accounts/person/_search'  -d '{  "query" : { "match" : { "desc" : "管理" }},  "size": 1}'
 > ```
 
 上面代码指定，每次只返回一条结果。
@@ -340,7 +342,7 @@ Elastic 默认一次返回10条结果，可以通过`size`字段改变这个设�
 还可以通过`from`字段，指定位移。
 
 > ```
->  $ curl 'localhost:9200/accounts/person/_search'  -d '{  "query" : { "match" : { "desc" : "管理" }},  "from": 1,  "size": 1}'
+> $ curl 'localhost:9200/accounts/person/_search'  -d '{  "query" : { "match" : { "desc" : "管理" }},  "from": 1,  "size": 1}'
 > ```
 
 上面代码指定，从位置1开始（默认是从位置0开始），只返回一条结果。
@@ -350,7 +352,7 @@ Elastic 默认一次返回10条结果，可以通过`size`字段改变这个设�
 如果有多个搜索关键字， Elastic 认为它们是`or`关系。
 
 > ```
->  $ curl 'localhost:9200/accounts/person/_search'  -d '{  "query" : { "match" : { "desc" : "软件 系统" }}}'
+> $ curl 'localhost:9200/accounts/person/_search'  -d '{  "query" : { "match" : { "desc" : "软件 系统" }}}'
 > ```
 
 上面代码搜索的是`软件 or 系统`。
@@ -358,7 +360,7 @@ Elastic 默认一次返回10条结果，可以通过`size`字段改变这个设�
 如果要执行多个关键词的`and`搜索，必须使用[布尔查询](https://link.juejin.im/?target=https%3A%2F%2Fwww.elastic.co%2Fguide%2Fen%2Felasticsearch%2Freference%2F5.5%2Fquery-dsl-bool-query.html)。
 
 > ```
->  $ curl 'localhost:9200/accounts/person/_search'  -d '{  "query": {    "bool": {      "must": [        { "match": { "desc": "软件" } },        { "match": { "desc": "系统" } }      ]    }  }}'
+> $ curl 'localhost:9200/accounts/person/_search'  -d '{  "query": {    "bool": {      "must": [        { "match": { "desc": "软件" } },        { "match": { "desc": "系统" } }      ]    }  }}'
 > ```
 
 ## 七、参考链接
@@ -376,7 +378,7 @@ Elastic 默认一次返回10条结果，可以通过`size`字段改变这个设�
 
 
 
-![](https://upload-images.jianshu.io/upload_images/19687-3a3865f474573947.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/700)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/19687-3a3865f474573947.png)
 
 
 
@@ -393,7 +395,7 @@ Elastic 默认一次返回10条结果，可以通过`size`字段改变这个设�
 可以查询到所有标题含有 "法拉利跑车" 关键词的新闻，但是这种方式有明显的弊端：
 
 > 1、模糊查询性能极低，当数据量庞大的时候，往往会使数据库服务中断；
-> 
+>
 > 2、无法查询相关的数据，只能严格在标题中匹配关键词。
 
 因此，需要搭建专门提供搜索功能的服务，具备分词、全文检索等高级功能。 Solr 就是这样一款搜索引擎，可以让你快速搭建适用于自己业务的搜索服务。
@@ -403,9 +405,9 @@ Elastic 默认一次返回10条结果，可以通过`size`字段改变这个设�
 到官网 [http://lucene.apache.org/solr/](https://link.jianshu.com/?t=http://lucene.apache.org/solr/) 下载安装包，解压并进入 Solr 目录：
 
 > wget 'http://apache.website-solution.net/lucene/solr/6.2.0/solr-6.2.0.tgz'
-> 
+>
 > tar xvf solr-6.2.0.tgz
-> 
+>
 > cd solr-6.2.0
 
 目录结构如下：
@@ -414,7 +416,7 @@ Elastic 默认一次返回10条结果，可以通过`size`字段改变这个设�
 
 
 
-![](https://upload-images.jianshu.io/upload_images/19687-ddbb880dd1a7bcb0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/700)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/19687-ddbb880dd1a7bcb0.png)
 
 
 
@@ -428,7 +430,7 @@ Solr 6.2 目录结构
 
 
 
-![](https://upload-images.jianshu.io/upload_images/19687-049501dade838caf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/700)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/19687-049501dade838caf.png)
 
 
 
@@ -450,7 +452,7 @@ Solr 将默认监听 8983 端口，其中 -m 1g 指定分配给 JVM 的内存为
 
 
 
-![](https://upload-images.jianshu.io/upload_images/19687-19bdf6ec1077db99.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/700)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/19687-19bdf6ec1077db99.png)
 
 
 
@@ -468,7 +470,7 @@ Solr 管理后台
 
 
 
-![](https://upload-images.jianshu.io/upload_images/19687-9911b7416917ca06.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/700)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/19687-9911b7416917ca06.png)
 
 
 
@@ -482,7 +484,7 @@ my_news 目录结构
 
 
 
-![](https://upload-images.jianshu.io/upload_images/19687-81af0fb0b5d89edd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/700)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/19687-81af0fb0b5d89edd.png)
 
 
 
@@ -500,7 +502,7 @@ my_news 目录结构
 
 
 
-![](https://upload-images.jianshu.io/upload_images/19687-cbc2ba3d84087319.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/700)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/19687-cbc2ba3d84087319.png)
 
 
 
@@ -518,7 +520,7 @@ fieldType 指定一个字段类型的名称以及在查询/索引的时候可能
 
 
 
-![](https://upload-images.jianshu.io/upload_images/19687-2657cfb3507d1bae.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/700)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/19687-2657cfb3507d1bae.png)
 
 
 
@@ -532,7 +534,7 @@ fieldType 指定一个字段类型的名称以及在查询/索引的时候可能
 
 
 
-![](https://upload-images.jianshu.io/upload_images/19687-3a3e436e33fa9311.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/700)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/19687-3a3e436e33fa9311.png)
 
 
 
@@ -550,7 +552,7 @@ my_news 目录结构
 
 
 
-![](https://upload-images.jianshu.io/upload_images/19687-5609a84930ed96f0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/700)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/19687-5609a84930ed96f0.png)
 
 
 
@@ -564,7 +566,7 @@ text_ik 类型
 
 
 
-![](https://upload-images.jianshu.io/upload_images/19687-a46bba01779c0701.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/700)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/19687-a46bba01779c0701.png)
 
 
 
@@ -578,7 +580,7 @@ text_ik 类型
 
 
 
-![](https://upload-images.jianshu.io/upload_images/19687-ab4dec5179c0f5c3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/700)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/19687-ab4dec5179c0f5c3.png)
 
 
 
@@ -590,7 +592,7 @@ text_ik 类型
 
 
 
-![](https://upload-images.jianshu.io/upload_images/19687-e3dc609b92f395a1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/700)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/19687-e3dc609b92f395a1.png)
 
 
 
@@ -602,7 +604,7 @@ text_ik 类型
 
 
 
-![](https://upload-images.jianshu.io/upload_images/19687-7a145baf9aa36599.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/700)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/19687-7a145baf9aa36599.png)
 
 
 
@@ -616,7 +618,7 @@ dataimport config
 
 
 
-![](https://upload-images.jianshu.io/upload_images/19687-edc3bb352c36e8c2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/700)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/19687-edc3bb352c36e8c2.png)
 
 
 
@@ -630,7 +632,7 @@ dataimport config
 
 
 
-![](https://upload-images.jianshu.io/upload_images/19687-a4462a20df0716a2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/700)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/19687-a4462a20df0716a2.png)
 
 
 
@@ -644,7 +646,7 @@ dataimport config
 
 
 
-![](https://upload-images.jianshu.io/upload_images/19687-f437d561069eedd2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/700)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/19687-f437d561069eedd2.png)
 
 
 
@@ -658,7 +660,7 @@ dataimport config
 
 
 
-![](https://upload-images.jianshu.io/upload_images/19687-73d93e996f0a132c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/700)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/19687-73d93e996f0a132c.png)
 
 
 
@@ -672,7 +674,7 @@ dataimport config
 
 
 
-![](https://upload-images.jianshu.io/upload_images/19687-9f003409af70ae7a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/700)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/19687-9f003409af70ae7a.png)
 
 
 
@@ -692,7 +694,7 @@ dataimport config
 
 
 
-![](https://upload-images.jianshu.io/upload_images/19687-09494ec9437338cd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/700)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/19687-09494ec9437338cd.png)
 
 
 
@@ -706,7 +708,7 @@ dataimport config
 
 
 
-![](https://upload-images.jianshu.io/upload_images/19687-3f2587b4bb0dcee3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/700)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/19687-3f2587b4bb0dcee3.png)
 
 
 
@@ -718,7 +720,7 @@ dataimport config
 
 
 
-![](https://upload-images.jianshu.io/upload_images/19687-b12a6ec2234beaef.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/700)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/19687-b12a6ec2234beaef.png)
 
 
 
@@ -732,7 +734,7 @@ dataimport config
 
 
 
-![](https://upload-images.jianshu.io/upload_images/19687-f57a54656abc2f62.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/700)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/19687-f57a54656abc2f62.png)
 
 
 
@@ -750,7 +752,7 @@ dataimport config
 
 
 
-![](https://upload-images.jianshu.io/upload_images/19687-bc4dfa9a4801846f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/700)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/19687-bc4dfa9a4801846f.png)
 
 
 
@@ -768,7 +770,7 @@ dataimport config
 
 
 
-![](https://upload-images.jianshu.io/upload_images/19687-ac9e935a3b98661c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/700)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/19687-ac9e935a3b98661c.png)
 
 
 
@@ -782,7 +784,7 @@ dataimport config
 
 
 
-![](https://upload-images.jianshu.io/upload_images/19687-34e025db9e4db451.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/700)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/19687-34e025db9e4db451.png)
 
 
 
@@ -937,53 +939,53 @@ Solr 是传统搜索应用的有力解决方案，但 Elasticsearch 更适用于
 
 ## 其他基于Lucene的开源搜索引擎解决方案[*](https://link.juejin.im/?target=http%3A%2F%2Fmail-archives.apache.org%2Fmod_mbox%2Fhbase-user%2F201006.mbox%2F%253C149150.78881.qm%40web50304.mail.re2.yahoo.com%253E)
 
-1.  直接使用 [Lucene](https://link.juejin.im/?target=http%3A%2F%2Flucene.apache.org)
+1. 直接使用 [Lucene](https://link.juejin.im/?target=http%3A%2F%2Flucene.apache.org)
 
-    说明：Lucene 是一个 JAVA 搜索类库，它本身并不是一个完整的解决方案，需要额外的开发工作。
+   说明：Lucene 是一个 JAVA 搜索类库，它本身并不是一个完整的解决方案，需要额外的开发工作。
 
-    优点：成熟的解决方案，有很多的成功案例。apache 顶级项目，正在持续快速的进步。庞大而活跃的开发社区，大量的开发人员。它只是一个类库，有足够的定制和优化空间：经过简单定制，就可以满足绝大部分常见的需求；经过优化，可以支持 10亿+ 量级的搜索。
+   优点：成熟的解决方案，有很多的成功案例。apache 顶级项目，正在持续快速的进步。庞大而活跃的开发社区，大量的开发人员。它只是一个类库，有足够的定制和优化空间：经过简单定制，就可以满足绝大部分常见的需求；经过优化，可以支持 10亿+ 量级的搜索。
 
-    缺点：需要额外的开发工作。所有的扩展，分布式，可靠性等都需要自己实现；非实时，从建索引到可以搜索中间有一个时间延迟，而当前的“近实时”(Lucene Near Real Time search)搜索方案的可扩展性有待进一步完善
+   缺点：需要额外的开发工作。所有的扩展，分布式，可靠性等都需要自己实现；非实时，从建索引到可以搜索中间有一个时间延迟，而当前的“近实时”(Lucene Near Real Time search)搜索方案的可扩展性有待进一步完善
 
-*   [Katta](https://link.juejin.im/?target=http%3A%2F%2Fkatta.sourceforge.net)
+* [Katta](https://link.juejin.im/?target=http%3A%2F%2Fkatta.sourceforge.net)
 
-    说明：基于 Lucene 的，支持分布式，可扩展，具有容错功能，准实时的搜索方案。
+  说明：基于 Lucene 的，支持分布式，可扩展，具有容错功能，准实时的搜索方案。
 
-    优点：开箱即用，可以与 Hadoop 配合实现分布式。具备扩展和容错机制。
+  优点：开箱即用，可以与 Hadoop 配合实现分布式。具备扩展和容错机制。
 
-    缺点：只是搜索方案，建索引部分还是需要自己实现。在搜索功能上，只实现了最基本的需求。成功案例较少，项目的成熟度稍微差一些。因为需要支持分布式，对于一些复杂的查询需求，定制的难度会比较大。
+  缺点：只是搜索方案，建索引部分还是需要自己实现。在搜索功能上，只实现了最基本的需求。成功案例较少，项目的成熟度稍微差一些。因为需要支持分布式，对于一些复杂的查询需求，定制的难度会比较大。
 
-*   [Hadoop contrib/index](https://link.juejin.im/?target=http%3A%2F%2Fsvn.apache.org%2Frepos%2Fasf%2Fhadoop%2Fmapreduce%2Ftrunk%2Fsrc%2Fcontrib%2Findex%2FREADME)
+* [Hadoop contrib/index](https://link.juejin.im/?target=http%3A%2F%2Fsvn.apache.org%2Frepos%2Fasf%2Fhadoop%2Fmapreduce%2Ftrunk%2Fsrc%2Fcontrib%2Findex%2FREADME)
 
-    说明：Map/Reduce 模式的，分布式建索引方案，可以跟 Katta 配合使用。
+  说明：Map/Reduce 模式的，分布式建索引方案，可以跟 Katta 配合使用。
 
-    优点：分布式建索引，具备可扩展性。
+  优点：分布式建索引，具备可扩展性。
 
-    缺点：只是建索引方案，不包括搜索实现。工作在批处理模式，对实时搜索的支持不佳。
+  缺点：只是建索引方案，不包括搜索实现。工作在批处理模式，对实时搜索的支持不佳。
 
-*   [LinkedIn 的开源方案](https://link.juejin.im/?target=http%3A%2F%2Fsna-projects.com)
+* [LinkedIn 的开源方案](https://link.juejin.im/?target=http%3A%2F%2Fsna-projects.com)
 
-    说明：基于 Lucene 的一系列解决方案，包括 准实时搜索 zoie ，facet 搜索实现 bobo ，机器学习算法 decomposer ，摘要存储库 krati ，数据库模式包装 sensei 等等
+  说明：基于 Lucene 的一系列解决方案，包括 准实时搜索 zoie ，facet 搜索实现 bobo ，机器学习算法 decomposer ，摘要存储库 krati ，数据库模式包装 sensei 等等
 
-    优点：经过验证的解决方案，支持分布式，可扩展，丰富的功能实现
+  优点：经过验证的解决方案，支持分布式，可扩展，丰富的功能实现
 
-    缺点：与 linkedin 公司的联系太紧密，可定制性比较差
+  缺点：与 linkedin 公司的联系太紧密，可定制性比较差
 
-*   [Lucandra](https://link.juejin.im/?target=https%3A%2F%2Fgithub.com%2Ftjake%2FLucandra)
+* [Lucandra](https://link.juejin.im/?target=https%3A%2F%2Fgithub.com%2Ftjake%2FLucandra)
 
-    说明：基于 Lucene，索引存在 cassandra 数据库中
+  说明：基于 Lucene，索引存在 cassandra 数据库中
 
-    优点：参考 cassandra 的优点
+  优点：参考 cassandra 的优点
 
-    缺点：参考 cassandra 的缺点。另外，这只是一个 demo，没有经过大量验证
+  缺点：参考 cassandra 的缺点。另外，这只是一个 demo，没有经过大量验证
 
-*   [HBasene](https://link.juejin.im/?target=https%3A%2F%2Fgithub.com%2Fakkumar%2Fhbasene)
+* [HBasene](https://link.juejin.im/?target=https%3A%2F%2Fgithub.com%2Fakkumar%2Fhbasene)
 
-    说明：基于 Lucene，索引存在 HBase 数据库中
+  说明：基于 Lucene，索引存在 HBase 数据库中
 
-    优点：参考 HBase 的优点
+  优点：参考 HBase 的优点
 
-    缺点：参考 HBase 的缺点。另外，在实现中，lucene terms 是存成行，但每个 term 对应的 posting lists 是以列的方式存储的。随着单个 term 的 posting lists 的增大，查询时的速度受到的影响会非常大
+  缺点：参考 HBase 的缺点。另外，在实现中，lucene terms 是存成行，但每个 term 对应的 posting lists 是以列的方式存储的。随着单个 term 的 posting lists 的增大，查询时的速度受到的影响会非常大
 
 
 

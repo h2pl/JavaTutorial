@@ -1,61 +1,3 @@
-# Table of Contents
-
-  * [二、索引里面究竟存些什么](#二、索引里面究竟存些什么)
-  * [三、如何创建索引](#三、如何创建索引)
-    * [第一步：一些要索引的原文档(Document)。](#第一步：一些要索引的原文档document。)
-    * [第二步：将原文档传给分次组件(Tokenizer)。](#第二步：将原文档传给分次组件tokenizer。)
-    * [第三步：将得到的词元(Token)传给语言处理组件(Linguistic Processor)。](#第三步：将得到的词元token传给语言处理组件linguistic-processor。)
-    * [第四步：将得到的词(Term)传给索引组件(Indexer)。](#第四步：将得到的词term传给索引组件indexer。)
-  * [三、如何对索引进行搜索？](#三、如何对索引进行搜索？)
-    * [第一步：用户输入查询语句。](#第一步：用户输入查询语句。)
-    * [第二步：对查询语句进行词法分析，语法分析，及语言处理。](#第二步：对查询语句进行词法分析，语法分析，及语言处理。)
-    * [第三步：搜索索引，得到符合语法树的文档。](#第三步：搜索索引，得到符合语法树的文档。)
-    * [第四步：根据得到的文档和查询语句的相关性，对结果进行排序。](#第四步：根据得到的文档和查询语句的相关性，对结果进行排序。)
-      * [1\. 计算权重(Term weight)的过程。](#1-计算权重term-weight的过程。)
-      * [2\. 判断Term之间的关系从而得到文档相关性的过程，也即向量空间模型的算法(VSM)。](#2-判断term之间的关系从而得到文档相关性的过程，也即向量空间模型的算法vsm。)
-* [Spring Boot 中使用 Java API 调用 lucene](#spring-boot-中使用-java-api-调用-lucene)
-* [Github 代码](#github-代码)
-  * [添加依赖](#添加依赖)
-  * [配置 lucene](#配置-lucene)
-  * [创建索引](#创建索引)
-  * [删除文档](#删除文档)
-  * [更新文档](#更新文档)
-  * [按词条搜索](#按词条搜索)
-  * [多条件查询](#多条件查询)
-  * [匹配前缀](#匹配前缀)
-  * [短语搜索](#短语搜索)
-  * [相近词语搜索](#相近词语搜索)
-  * [通配符搜索](#通配符搜索)
-  * [分词查询](#分词查询)
-  * [多个 Field 分词查询](#多个-field-分词查询)
-  * [中文分词器](#中文分词器)
-  * [高亮处理](#高亮处理)
-
-
-本文转自互联网，侵删
-
-本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看
-> https://github.com/h2pl/Java-Tutorial
-
-喜欢的话麻烦点下Star哈
-
-本系列文章将整理到我的个人博客
-> www.how2playlife.com
-
-更多Java技术文章会更新在我的微信公众号【Java技术江湖】上，欢迎关注
-该系列博文会介绍常见的后端技术，这对后端工程师来说是一种综合能力，我们会逐步了解搜索技术，云计算相关技术、大数据研发等常见的技术喜提，以便让你更完整地了解后端技术栈的全貌，为后续参与分布式应用的开发和学习做好准备。
-
-
-如果对本系列文章有什么建议，或者是有什么疑问的话，也可以关注公众号【Java技术江湖】联系我，欢迎你参与本系列博文的创作和修订。
-
-
-
-
-
-**一、总论**
-
-根据[lucene.apache.org/java/docs/i…](https://link.juejin.im/?target=http%3A%2F%2Flucene.apache.org%2Fjava%2Fdocs%2Findex.html)定义：
-
 Lucene是一个高效的，基于Java的全文检索库。
 
 所以在了解Lucene之前要费一番工夫了解一下全文检索。
@@ -92,8 +34,6 @@ Lucene是一个高效的，基于Java的全文检索库。
 
 下面这幅图来自《Lucene in action》，但却不仅仅描述了Lucene的检索过程，而是描述了全文检索的一般过程。
 
-[![](https://user-gold-cdn.xitu.io/2016/11/29/a3cea9bc799d798340ded4e405204c4b.jpg?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)](https://link.juejin.im/?target=http%3A%2F%2Fimages.cnblogs.com%2Fcnblogs_com%2Fforfuture1978%2FWindowsLiveWriter%2F185c4e9316f3_147FA%2Fimage_2.png)
-
 全文检索大体分两个过程，索引创建(Indexing)和搜索索引(Search)。
 
 *   索引创建：将现实世界中所有的结构化和非结构化数据提取信息，创建索引的过程。
@@ -101,11 +41,11 @@ Lucene是一个高效的，基于Java的全文检索库。
 
 于是全文检索就存在三个重要问题：
 
-1. 索引里面究竟存些什么？(Index)
+1\. 索引里面究竟存些什么？(Index)
 
-2. 如何创建索引？(Indexing)
+2\. 如何创建索引？(Indexing)
 
-3. 如何对索引进行搜索？(Search)
+3\. 如何对索引进行搜索？(Search)
 
 下面我们顺序对每个个问题进行研究。
 
@@ -125,8 +65,6 @@ Lucene是一个高效的，基于Java的全文检索库。
 
 假设我的文档集合里面有100篇文档，为了方便表示，我们为文档编号从1到100，得到下面的结构
 
-[![](https://user-gold-cdn.xitu.io/2016/11/29/13bee3be594a9cc60a0be2217b794a55.jpg?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)](https://link.juejin.im/?target=http%3A%2F%2Fimages.cnblogs.com%2Fcnblogs_com%2Fforfuture1978%2FWindowsLiveWriter%2F185c4e9316f3_147FA%2Finverted%2520index_2.jpg)
-
 左边保存的是一系列字符串，称为词典。
 
 每个字符串都指向包含此字符串的文档(Document)链表，此文档链表称为倒排表(Posting List)。
@@ -141,7 +79,12 @@ Lucene是一个高效的，基于Java的全文检索库。
 
 3\. 通过合并链表，找出既包含“lucene”又包含“solr”的文件。
 
-[![](https://user-gold-cdn.xitu.io/2016/11/29/e4beee6343728d0086aa878e44ef6f13.jpg?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)](https://link.juejin.im/?target=http%3A%2F%2Fimages.cnblogs.com%2Fcnblogs_com%2Fforfuture1978%2FWindowsLiveWriter%2F185c4e9316f3_147FA%2Finverted%2520index%2520merge_2.jpg)
+<figure data-size="normal">
+
+
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/v2-c1064a6ada64169f76ec63e44e82f0f5_720w.webp)
+
+</figure>
 
 看到这个地方，有人可能会说，全文检索的确加快了搜索的速度，但是多了索引的过程，两者加起来不一定比顺序扫描快多少。的确，加上索引的过程，全文检索不一定比顺序扫描快，尤其是在数据量小的时候更是如此。而对一个很大量的数据创建索引也是一个很慢的过程。
 
@@ -165,11 +108,11 @@ Lucene是一个高效的，基于Java的全文检索库。
 
 分词组件(Tokenizer)会做以下几件事情(此过程称为Tokenize)：
 
-1. 将文档分成一个一个单独的单词。
+1\. 将文档分成一个一个单独的单词。
 
-2. 去除标点符号。
+2\. 去除标点符号。
 
-3. 去除停词(Stop word)。
+3\. 去除停词(Stop word)。
 
 所谓停词(Stop word)就是一种语言中最普通的一些单词，由于没有特别的意义，因而大多数情况下不能成为搜索的关键词，因而创建索引时，这种词会被去掉而减少索引的大小。
 
@@ -181,7 +124,13 @@ Lucene是一个高效的，基于Java的全文检索库。
 
 在我们的例子中，便得到以下词元(Token)：
 
+
+
+```
 “Students”，“allowed”，“go”，“their”，“friends”，“allowed”，“drink”，“beer”，“My”，“friend”，“Jerry”，“went”，“school”，“see”，“his”，“students”，“found”，“them”，“drunk”，“allowed”。
+```
+
+
 
 ### 第三步：将得到的词元(Token)传给语言处理组件(Linguistic Processor)。
 
@@ -189,28 +138,38 @@ Lucene是一个高效的，基于Java的全文检索库。
 
 对于英语，语言处理组件(Linguistic Processor)一般做以下几点：
 
-1. 变为小写(Lowercase)。
+1\. 变为小写(Lowercase)。
 
-2. 将单词缩减为词根形式，如“cars”到“car”等。这种操作称为：stemming。
+2\. 将单词缩减为词根形式，如“cars”到“car”等。这种操作称为：stemming。
 
-3. 将单词转变为词根形式，如“drove”到“drive”等。这种操作称为：lemmatization。
+3\. 将单词转变为词根形式，如“drove”到“drive”等。这种操作称为：lemmatization。
 
 Stemming 和 lemmatization的异同：
 
 *   相同之处：Stemming和lemmatization都要使词汇成为词根形式。
 *   两者的方式不同：
-    *   Stemming采用的是“缩减”的方式：“cars”到“car”，“driving”到“drive”。
-    *   Lemmatization采用的是“转变”的方式：“drove”到“drove”，“driving”到“drive”。
+
+*   Stemming采用的是“缩减”的方式：“cars”到“car”，“driving”到“drive”。
+*   Lemmatization采用的是“转变”的方式：“drove”到“drove”，“driving”到“drive”。
+
 *   两者的算法不同：
-    *   Stemming主要是采取某种固定的算法来做这种缩减，如去除“s”，去除“ing”加“e”，将“ational”变为“ate”，将“tional”变为“tion”。
-    *   Lemmatization主要是采用保存某种字典的方式做这种转变。比如字典中有“driving”到“drive”，“drove”到“drive”，“am, is, are”到“be”的映射，做转变时，只要查字典就可以了。
+
+*   Stemming主要是采取某种固定的算法来做这种缩减，如去除“s”，去除“ing”加“e”，将“ational”变为“ate”，将“tional”变为“tion”。
+*   Lemmatization主要是采用保存某种字典的方式做这种转变。比如字典中有“driving”到“drive”，“drove”到“drive”，“am, is, are”到“be”的映射，做转变时，只要查字典就可以了。
+
 *   Stemming和lemmatization不是互斥关系，是有交集的，有的词利用这两种方式都能达到相同的转换。
 
 语言处理组件(linguistic processor)的结果称为词(Term)。
 
 在我们的例子中，经过语言处理，得到的词(Term)如下：
 
+
+
+```
 “student”，“allow”，“go”，“their”，“friend”，“allow”，“drink”，“beer”，“my”，“friend”，“jerry”，“go”，“school”，“see”，“his”，“student”，“find”，“them”，“drink”，“allow”。
+```
+
+
 
 也正是因为有语言处理的步骤，才能使搜索drove，而drive也能被搜索出来。
 
@@ -222,69 +181,23 @@ Stemming 和 lemmatization的异同：
 
 在我们的例子中字典如下：
 
+<figure data-size="normal">
 
 
-| Term | Document ID |
-| --- | --- |
-| student | 1 |
-| allow | 1 |
-| go | 1 |
-| their | 1 |
-| friend | 1 |
-| allow | 1 |
-| drink | 1 |
-| beer | 1 |
-| my | 2 |
-| friend | 2 |
-| jerry | 2 |
-| go | 2 |
-| school | 2 |
-| see | 2 |
-| his | 2 |
-| student | 2 |
-| find | 2 |
-| them | 2 |
-| drink | 2 |
-| allow | 2 |
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/v2-b8477ac42cb442585aa090f33c0b34a6_720w.webp)
+
+</figure>
+
+2\. 对字典按字母顺序进行排序。
+
+<figure data-size="normal">
 
 
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230408113241.png)
 
+</figure>
 
-
-2. 对字典按字母顺序进行排序。
-
-
-
-| Term | Document ID |
-| --- | --- |
-| allow | 1 |
-| allow | 1 |
-| allow | 2 |
-| beer | 1 |
-| drink | 1 |
-| drink | 2 |
-| find | 2 |
-| friend | 1 |
-| friend | 2 |
-| go | 1 |
-| go | 2 |
-| his | 2 |
-| jerry | 2 |
-| my | 2 |
-| school | 2 |
-| see | 2 |
-| student | 1 |
-| student | 2 |
-| their | 1 |
-| them | 2 |
-
-
-
-
-
-3. 合并相同的词(Term)成为文档倒排(Posting List)链表。
-
-[![](https://user-gold-cdn.xitu.io/2016/11/29/dd7f48aa10cc188b651f9aa7fea1473d.jpg?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)](https://link.juejin.im/?target=http%3A%2F%2Fimages.cnblogs.com%2Fcnblogs_com%2Fforfuture1978%2FWindowsLiveWriter%2F185c4e9316f3_147FA%2Fpostinglist_2.jpg)
+3\. 合并相同的词(Term)成为文档倒排(Posting List)链表。
 
 在此表中，有几个定义：
 
@@ -304,8 +217,6 @@ Stemming 和 lemmatization的异同：
 然而事情并没有结束，找到了仅仅是全文检索的一个方面。不是吗？如果仅仅只有一个或十个文档包含我们查询的字符串，我们的确找到了。然而如果结果有一千个，甚至成千上万个呢？那个又是您最想要的文件呢？
 
 打开Google吧，比如说您想在微软找份工作，于是您输入“Microsoft job”，您却发现总共有22600000个结果返回。好大的数字呀，突然发现找不到是一个问题，找到的太多也是一个问题。在如此多的结果中，如何将最相关的放在最前面呢？
-
-[![](https://user-gold-cdn.xitu.io/2016/11/29/878a1496bd894af493571ce4d24ac127.jpg?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)](https://link.juejin.im/?target=http%3A%2F%2Fimages.cnblogs.com%2Fcnblogs_com%2Fforfuture1978%2FWindowsLiveWriter%2F185c4e9316f3_147FA%2Fclip_image0024.jpg)
 
 当然Google做的很不错，您一下就找到了jobs at Microsoft。想象一下，如果前几个全部是“Microsoft does a good job at software industry…”将是多么可怕的事情呀。
 
@@ -345,7 +256,12 @@ Stemming 和 lemmatization的异同：
 
 如上述例子，lucene AND learned NOT hadoop形成的语法树如下：
 
-[![](https://user-gold-cdn.xitu.io/2016/11/29/55095158d2639bde41aa734f2fa374e4.jpg?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)](https://link.juejin.im/?target=http%3A%2F%2Fimages.cnblogs.com%2Fcnblogs_com%2Fforfuture1978%2FWindowsLiveWriter%2F185c4e9316f3_147FA%2F%25E8%25AF%25AD%25E6%25B3%2595%25E6%25A0%2591_2.jpg)
+<figure data-size="normal">
+
+
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/v2-5acb4fdbd41e04fe83396ea82679bee9_720w.webp)
+
+</figure>
 
 3\. 语言处理同索引过程中的语言处理几乎相同。
 
@@ -353,7 +269,12 @@ Stemming 和 lemmatization的异同：
 
 经过第二步，我们得到一棵经过语言处理的语法树。
 
-[![](https://user-gold-cdn.xitu.io/2016/11/29/81ff3124457dd330914b29d8768ec794.jpg?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)](https://link.juejin.im/?target=http%3A%2F%2Fimages.cnblogs.com%2Fcnblogs_com%2Fforfuture1978%2FWindowsLiveWriter%2F185c4e9316f3_147FA%2F%25E8%25AF%25AD%25E6%25B3%2595%25E6%25A0%25911_2.jpg)
+<figure data-size="normal">
+
+
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230408113252.png)
+
+</figure>
 
 ### 第三步：搜索索引，得到符合语法树的文档。
 
@@ -408,7 +329,7 @@ Stemming 和 lemmatization的异同：
 
 下面仔细分析一下这两个过程：
 
-#### 1\. 计算权重(Term weight)的过程。
+### [1\. 计算权重(Term weight)的过程。](https://docs.qq.com/doc/DWVNPQXRvcWhMTktC)
 
 影响一个词(Term)在一篇文档中的重要性主要有两个因素：
 
@@ -421,13 +342,9 @@ Stemming 和 lemmatization的异同：
 
 道理明白了，我们来看看公式：
 
-[![](https://user-gold-cdn.xitu.io/2016/11/29/80b276886139c74129edaf696adaedae.jpg?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)](https://link.juejin.im/?target=http%3A%2F%2Fimages.cnblogs.com%2Fcnblogs_com%2Fforfuture1978%2FWindowsLiveWriter%2F185c4e9316f3_147FA%2Fimage_6.png)
-
-[![](https://user-gold-cdn.xitu.io/2016/11/29/68a0c696bfeb06818a6809d8757024e9.jpg?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)](https://link.juejin.im/?target=http%3A%2F%2Fimages.cnblogs.com%2Fcnblogs_com%2Fforfuture1978%2FWindowsLiveWriter%2F185c4e9316f3_147FA%2Fimage_4.png)
-
 这仅仅只term weight计算公式的简单典型实现。实现全文检索系统的人会有自己的实现，Lucene就与此稍有不同。
 
-#### 2\. 判断Term之间的关系从而得到文档相关性的过程，也即向量空间模型的算法(VSM)。
+### 2\. 判断Term之间的关系从而得到文档相关性的过程，也即向量空间模型的算法(VSM)。
 
 我们把文档看作一系列词(Term)，每一个词(Term)都有一个权重(Term weight)，不同的词(Term)根据自己在文档中的权重来影响文档相关性的打分计算。
 
@@ -445,10 +362,6 @@ Query Vector = {weight1, weight2, …… , weight N}
 
 我们把所有搜索出的文档向量及查询向量放到一个N维空间中，每个词(term)是一维。
 
-如图：
-
-[![](https://user-gold-cdn.xitu.io/2016/11/29/3b2b2a7e8a43a5a7e2f05356dbf73f94.jpg?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)](https://link.juejin.im/?target=http%3A%2F%2Fimages.cnblogs.com%2Fcnblogs_com%2Fforfuture1978%2FWindowsLiveWriter%2F185c4e9316f3_147FA%2Fvsm_2.jpg)
-
 我们认为两个向量之间的夹角越小，相关性越大。
 
 所以我们计算夹角的余弦值作为相关性的打分，夹角越小，余弦值越大，打分越高，相关性越大。
@@ -459,28 +372,16 @@ Query Vector = {weight1, weight2, …… , weight N}
 
 相关性打分公式如下：
 
-[![](https://user-gold-cdn.xitu.io/2016/11/29/3972cef9c3a49cc167bc4462cd484bc7.jpg?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)](https://link.juejin.im/?target=http%3A%2F%2Fimages.cnblogs.com%2Fcnblogs_com%2Fforfuture1978%2FWindowsLiveWriter%2F185c4e9316f3_147FA%2Fimage11.png)
-
 举个例子，查询语句有11个Term，共有三篇文档搜索出来。其中各自的权重(Term weight)，如下表格。
 
+<figure data-size="normal">
 
 
-|   |   |   |   |   |   |   |   |   |   | t10 | t11 |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-|   |   |   | .477 |   | .477 | .176 |   |   |   | .176 |   |
-|   |   | .176 |   | .477 |   |   |   |   | .954 |   | .176 |
-|   |   | .176 |   |   |   | .176 |   |   |   | .176 | .176 |
-|   |   |   |   |   |   | .176 |   |   | .477 |   | .176 |
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230408113310.png)
 
-
+</figure>
 
 于是计算，三篇文档同查询语句的相关性打分分别为：
-
-[![](https://user-gold-cdn.xitu.io/2016/11/29/4013f1bb4372740f7016dd482c4783a5.jpg?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)](https://link.juejin.im/?target=http%3A%2F%2Fimages.cnblogs.com%2Fcnblogs_com%2Fforfuture1978%2FWindowsLiveWriter%2F185c4e9316f3_147FA%2Fimage17.png)
-
-[](https://link.juejin.im/?target=http%3A%2F%2Fimages.cnblogs.com%2Fcnblogs_com%2Fforfuture1978%2FWindowsLiveWriter%2F185c4e9316f3_147FA%2Fimage20.png)
-
-[![](https://user-gold-cdn.xitu.io/2016/11/29/92f27945e9db90f897883acad3361cb1.jpg?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)](https://link.juejin.im/?target=http%3A%2F%2Fimages.cnblogs.com%2Fcnblogs_com%2Fforfuture1978%2FWindowsLiveWriter%2F185c4e9316f3_147FA%2Fimage23.png)
 
 于是文档二相关性最高，先返回，其次是文档一，最后是文档三。
 
@@ -490,235 +391,528 @@ Query Vector = {weight1, weight2, …… , weight N}
 
 在进入Lucene之前，对上述索引创建和搜索过程所一个总结，如图：
 
-此图参照[www.lucene.com.cn/about.htm](https://link.juejin.im/?target=http%3A%2F%2Fwww.lucene.com.cn%2Fabout.htm)中文章《开放源代码的全文检索引擎Lucene》
+<figure data-size="normal">
 
-[![](https://user-gold-cdn.xitu.io/2016/11/29/6d0d90f77554a1bbc3e80bc42e719438.jpg?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)](https://link.juejin.im/?target=http%3A%2F%2Fimages.cnblogs.com%2Fcnblogs_com%2Fforfuture1978%2FWindowsLiveWriter%2F185c4e9316f3_147FA%2Fclip_image016_2.jpg)
+
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230408113319.png)
+
+</figure>
 
 1\. 索引过程：
 
-1) 有一系列被索引文件
+1) 有一系列被索引文件
 
-2) 被索引文件经过语法分析和语言处理形成一系列词(Term)。
+2) 被索引文件经过语法分析和语言处理形成一系列词(Term)。
 
-3) 经过索引创建形成词典和反向索引表。
+3) 经过索引创建形成词典和反向索引表。
 
-4) 通过索引存储将索引写入硬盘。
+4) 通过索引存储将索引写入硬盘。
 
 2\. 搜索过程：
 
-a) 用户输入查询语句。
+a) 用户输入查询语句。
 
-b) 对查询语句经过语法分析和语言分析得到一系列词(Term)。
+b) 对查询语句经过语法分析和语言分析得到一系列词(Term)。
 
-c) 通过语法分析得到一个查询树。
+c) 通过语法分析得到一个查询树。
 
-d) 通过索引存储将索引读入到内存。
+d) 通过索引存储将索引读入到内存。
 
-e) 利用查询树搜索索引，从而得到每个词(Term)的文档链表，对文档链表进行交，差，并得到结果文档。
+e) 利用查询树搜索索引，从而得到每个词(Term)的文档链表，对文档链表进行交，差，并得到结果文档。
 
-f) 将搜索到的结果文档对查询的相关性进行排序。
+f) 将搜索到的结果文档对查询的相关性进行排序。
 
-g) 返回查询结果给用户。
+g) 返回查询结果给用户。
 
 下面我们可以进入Lucene的世界了。
 
-CSDN中此文章链接为[blog.csdn.net/forfuture19…](https://link.juejin.im/?target=http%3A%2F%2Fblog.csdn.net%2Fforfuture1978%2Farchive%2F2009%2F10%2F22%2F4711308.aspx)
+## Spring Boot 中使用 Java API 调用 lucene
 
-Javaeye中此文章链接为[forfuture1978.javaeye.com/blog/546771](https://link.juejin.im/?target=http%3A%2F%2Fforfuture1978.javaeye.com%2Fblog%2F546771) 
+## Github 代码
 
-# Spring Boot 中使用 Java API 调用 lucene
+代码我已放到 Github ，导入`spring-boot-lucene-demo` 项目
 
-# Github 代码
-
-代码我已放到 Github ，导入`spring-boot-lucene-demo` 项目
-
-github [spring-boot-lucene-demo](https://link.juejin.im/?target=https%3A%2F%2Fgithub.com%2Fsouyunku%2Fspring-boot-examples%2Ftree%2Fmaster%2Fspring-boot-lucene-demo)
+github [spring-boot-lucene-demo](https://link.juejin.im/?target=https%3A%2F%2Fgithub.com%2Fsouyunku%2Fspring-boot-examples%2Ftree%2Fmaster%2Fspring-boot-lucene-demo)
 
 ## 添加依赖
 
+
+
 ```
-<!--对分词索引查询解析--><dependency>    <groupId>org.apache.lucene</groupId>    lucene-queryparser    <version>7.1.0</version></dependency> <!--高亮 --><dependency>    <groupId>org.apache.lucene</groupId>    lucene-highlighter    <version>7.1.0</version></dependency> <!--smartcn 中文分词器 SmartChineseAnalyzer  smartcn分词器 需要lucene依赖 且和lucene版本同步--><dependency>    <groupId>org.apache.lucene</groupId>    lucene-analyzers-smartcn    <version>7.1.0</version></dependency> <!--ik-analyzer 中文分词器--><dependency>    <groupId>cn.bestwu</groupId>    ik-analyzers    <version>5.1.0</version></dependency> <!--MMSeg4j 分词器--><dependency>    <groupId>com.chenlb.mmseg4j</groupId>    mmseg4j-solr    <version>2.4.0</version>    <exclusions>        <exclusion>            <groupId>org.apache.solr</groupId>            solr-core        </exclusion>    </exclusions></dependency>
+      21  <!--对分词索引查询解析-->
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-queryparser</artifactId>
+            <version>7.1.0</version>
+        </dependency>
+        <!--高亮 -->
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-highlighter</artifactId>
+            <version>7.1.0</version>
+        </dependency>
+        <!--smartcn 中文分词器 SmartChineseAnalyzer  smartcn分词器 需要lucene依赖 且和lucene版本同步-->
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-analyzers-smartcn</artifactId>
+            <version>7.1.0</version>
+        </dependency>
+        <!--ik-analyzer 中文分词器-->
+        <dependency>
+            <groupId>cn.bestwu</groupId>
+            <artifactId>ik-analyzers</artifactId>
+            <version>5.1.0</version>
+        </dependency> <!--MMSeg4j 分词器-->
+        <dependency>
+            <groupId>com.chenlb.mmseg4j</groupId>
+            <artifactId>mmseg4j-solr</artifactId>
+            <version>2.4.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.solr</groupId>
+                    <artifactId>solr-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 ```
+
+
 
 ## 配置 lucene
 
+
+
 ```
-private Directory directory; private IndexReader indexReader; private IndexSearcher indexSearcher; @Beforepublic void setUp() throws IOException {    //索引存放的位置，设置在当前目录中    directory = FSDirectory.open(Paths.get("indexDir/"));     //创建索引的读取器    indexReader = DirectoryReader.open(directory);     //创建一个索引的查找器，来检索索引库    indexSearcher = new IndexSearcher(indexReader);} @Afterpublic void tearDown() throws Exception {    indexReader.close();} ** * 执行查询，并打印查询到的记录数 * * @param query * @throws IOException */public void executeQuery(Query query) throws IOException {     TopDocs topDocs = indexSearcher.search(query, 100);     //打印查询到的记录数    System.out.println("总共查询到" + topDocs.totalHits + "个文档");    for (ScoreDoc scoreDoc : topDocs.scoreDocs) {         //取得对应的文档对象        Document document = indexSearcher.doc(scoreDoc.doc);        System.out.println("id：" + document.get("id"));        System.out.println("title：" + document.get("title"));        System.out.println("content：" + document.get("content"));    }} /** * 分词打印 * * @param analyzer * @param text * @throws IOException */public void printAnalyzerDoc(Analyzer analyzer, String text) throws IOException {     TokenStream tokenStream = analyzer.tokenStream("content", new StringReader(text));    CharTermAttribute charTermAttribute = tokenStream.addAttribute(CharTermAttribute.class);    try {        tokenStream.reset();        while (tokenStream.incrementToken()) {            System.out.println(charTermAttribute.toString());        }        tokenStream.end();    } finally {        tokenStream.close();        analyzer.close();    }}
+private Directory directory; private IndexReader indexReader; 
+private IndexSearcher indexSearcher; 
+@Beforepublic void setUp() throws IOException {
+//索引存放的位置，设置在当前目录中    
+directory = FSDirectory.open(Paths.get("indexDir/"));     
+//创建索引的读取器    
+indexReader = DirectoryReader.open(directory);     
+//创建一个索引的查找器，来检索索引库    
+indexSearcher = new IndexSearcher(indexReader);
+} 
+@Afterpublic void tearDown() throws Exception {    
+indexReader.close();
+} 
+** * 执行查询，并打印查询到的记录数 * * 
+@param query * @throws IOException */
+public void executeQuery(Query query) throws IOException {     
+TopDocs topDocs = indexSearcher.search(query, 100);     
+//打印查询到的记录数    
+System.out.println("总共查询到" + topDocs.totalHits + "个文档");    
+for (ScoreDoc scoreDoc : topDocs.scoreDocs) {         
+//取得对应的文档对象        Document document = indexSearcher.doc(scoreDoc.doc);
+System.out.println("id：" + document.get("id"));        
+System.out.println("title：" + document.get("title"));        
+System.out.println("content：" + document.get("content"));    
+}} 
+/** * 分词打印 * * @param analyzer * @param text * @throws IOException */
+public void printAnalyzerDoc(Analyzer analyzer, String text) throws IOException {     
+TokenStream tokenStream = analyzer.tokenStream("content", new StringReader(text));    
+CharTermAttribute charTermAttribute = tokenStream.addAttribute(CharTermAttribute.class);    
+try {        
+tokenStream.reset();        
+while (tokenStream.incrementToken()) {            
+System.out.println(charTermAttribute.toString());        
+}        
+tokenStream.end();    
+} finally {        
+tokenStream.close();        
+analyzer.close();    
+}}
 ```
+
+
 
 ## 创建索引
 
+
+
 ```
-@Testpublic void indexWriterTest() throws IOException {    long start = System.currentTimeMillis();     //索引存放的位置，设置在当前目录中    Directory directory = FSDirectory.open(Paths.get("indexDir/"));     //在 6.6 以上版本中 version 不再是必要的，并且，存在无参构造方法，可以直接使用默认的 StandardAnalyzer 分词器。    Version version = Version.LUCENE_7_1_0;     //Analyzer analyzer = new StandardAnalyzer(); // 标准分词器，适用于英文    //Analyzer analyzer = new SmartChineseAnalyzer();//中文分词    //Analyzer analyzer = new ComplexAnalyzer();//中文分词    //Analyzer analyzer = new IKAnalyzer();//中文分词     Analyzer analyzer = new IKAnalyzer();//中文分词     //创建索引写入配置    IndexWriterConfig indexWriterConfig = new IndexWriterConfig(analyzer);     //创建索引写入对象    IndexWriter indexWriter = new IndexWriter(directory, indexWriterConfig);     //创建Document对象，存储索引     Document doc = new Document();     int id = 1;     //将字段加入到doc中    doc.add(new IntPoint("id", id));    doc.add(new StringField("title", "Spark", Field.Store.YES));    doc.add(new TextField("content", "Apache Spark 是专为大规模数据处理而设计的快速通用的计算引擎", Field.Store.YES));    doc.add(new StoredField("id", id));     //将doc对象保存到索引库中    indexWriter.addDocument(doc);     indexWriter.commit();    //关闭流    indexWriter.close();     long end = System.currentTimeMillis();    System.out.println("索引花费了" + (end - start) + " 毫秒");}
+@Test
+public void indexWriterTest() throws IOException {    
+long start = System.currentTimeMillis();     
+//索引存放的位置，设置在当前目录中   
+Directory directory = FSDirectory.open(Paths.get("indexDir/"));    
+//在 6.6 以上版本中 version 不再是必要的，并且，存在无参构造方法，可以直接使用默认的 StandardAnalyzer 分词器。    Version version = Version.LUCENE_7_1_0;     
+//Analyzer analyzer = new StandardAnalyzer(); 
+// 标准分词器，适用于英文    
+//Analyzer analyzer = new SmartChineseAnalyzer();
+//中文分词    
+//Analyzer analyzer = new ComplexAnalyzer();//中文分词    
+//Analyzer analyzer = new IKAnalyzer();//中文分词     
+Analyzer analyzer = new IKAnalyzer();
+//中文分词     
+//创建索引写入配置    
+IndexWriterConfig indexWriterConfig = new IndexWriterConfig(analyzer);     
+//创建索引写入对象    
+IndexWriter indexWriter = new IndexWriter(directory, indexWriterConfig);     
+//创建Document对象，存储索引     
+Document doc = new Document();     int id = 1;     
+//将字段加入到doc中    
+doc.add(new IntPoint("id", id));    
+doc.add(new StringField("title", "Spark", Field.Store.YES));    
+doc.add(new TextField("content", "Apache Spark 是专为大规模数据处理而设计的快速通用的计算引擎", Field.Store.YES));    
+doc.add(new StoredField("id", id));     
+//将doc对象保存到索引库中    
+indexWriter.addDocument(doc);     
+indexWriter.commit();    
+//关闭流    
+indexWriter.close();     
+long end = System.currentTimeMillis();    
+System.out.println("索引花费了" + (end - start) + " 毫秒");}
 ```
+
+
 
 响应
 
-```
 17:58:14.655 [main] DEBUG org.wltea.analyzer.dic.Dictionary - 加载扩展词典：ext.dic17:58:14.660 [main] DEBUG org.wltea.analyzer.dic.Dictionary - 加载扩展停止词典：stopword.dic索引花费了879 毫秒
-```
 
 ## 删除文档
 
+
+
 ```
-@Testpublic void deleteDocumentsTest() throws IOException {    //Analyzer analyzer = new StandardAnalyzer(); // 标准分词器，适用于英文    //Analyzer analyzer = new SmartChineseAnalyzer();//中文分词    //Analyzer analyzer = new ComplexAnalyzer();//中文分词    //Analyzer analyzer = new IKAnalyzer();//中文分词     Analyzer analyzer = new IKAnalyzer();//中文分词     //创建索引写入配置    IndexWriterConfig indexWriterConfig = new IndexWriterConfig(analyzer);     //创建索引写入对象    IndexWriter indexWriter = new IndexWriter(directory, indexWriterConfig);     // 删除title中含有关键词“Spark”的文档    long count = indexWriter.deleteDocuments(new Term("title", "Spark"));     //  除此之外IndexWriter还提供了以下方法：    // DeleteDocuments(Query query):根据Query条件来删除单个或多个Document    // DeleteDocuments(Query[] queries):根据Query条件来删除单个或多个Document    // DeleteDocuments(Term term):根据Term来删除单个或多个Document    // DeleteDocuments(Term[] terms):根据Term来删除单个或多个Document    // DeleteAll():删除所有的Document     //使用IndexWriter进行Document删除操作时，文档并不会立即被删除，而是把这个删除动作缓存起来，当IndexWriter.Commit()或IndexWriter.Close()时，删除操作才会被真正执行。     indexWriter.commit();    indexWriter.close();     System.out.println("删除完成:" + count);}
+@Testpublic void deleteDocumentsTest() throws IOException 
+// 标准分词器，适用于英文   
+//Analyzer analyzer = new SmartChineseAnalyzer();
+//中文分词    
+//Analyzer analyzer = new ComplexAnalyzer();
+//中文分词    
+//Analyzer analyzer = new IKAnalyzer();
+//中文分词     
+Analyzer analyzer = new IKAnalyzer();
+//中文分词     
+//创建索引写入配置    
+IndexWriterConfig indexWriterConfig = new IndexWriterConfig(analyzer);     
+//创建索引写入对象    
+IndexWriter indexWriter = new IndexWriter(directory, indexWriterConfig);     
+// 删除title中含有关键词“Spark”的文档    
+long count = indexWriter.deleteDocuments(new Term("title", "Spark"));     
+//  除此之外IndexWriter还提供了以下方法：   
+// DeleteDocuments(Query query):根据Query条件来删除单个或多个Document    
+// DeleteDocuments(Query[] queries):根据Query条件来删除单个或多个Document    
+// DeleteDocuments(Term term):根据Term来删除单个或多个Document    
+// DeleteDocuments(Term[] terms):根据Term来删除单个或多个Document    
+// DeleteAll():删除所有的Document     
+//使用IndexWriter进行Document删除操作时，文档并不会立即被删除，而是把这个删除动作缓存起来，当IndexWriter.Commit()或IndexWriter.Close()时，删除操作才会被真正执行。     
+indexWriter.commit();    
+indexWriter.close();     
+System.out.println("删除完成:" + count);
+}
 ```
+
+
 
 响应
 
-```
 删除完成:1
-```
 
 ## 更新文档
 
+
+
 ```
-/** * 测试更新 * 实际上就是删除后新增一条 * * @throws IOException */@Testpublic void updateDocumentTest() throws IOException {    //Analyzer analyzer = new StandardAnalyzer(); // 标准分词器，适用于英文    //Analyzer analyzer = new SmartChineseAnalyzer();//中文分词    //Analyzer analyzer = new ComplexAnalyzer();//中文分词    //Analyzer analyzer = new IKAnalyzer();//中文分词     Analyzer analyzer = new IKAnalyzer();//中文分词     //创建索引写入配置    IndexWriterConfig indexWriterConfig = new IndexWriterConfig(analyzer);     //创建索引写入对象    IndexWriter indexWriter = new IndexWriter(directory, indexWriterConfig);     Document doc = new Document();     int id = 1;     doc.add(new IntPoint("id", id));    doc.add(new StringField("title", "Spark", Field.Store.YES));    doc.add(new TextField("content", "Apache Spark 是专为大规模数据处理而设计的快速通用的计算引擎", Field.Store.YES));    doc.add(new StoredField("id", id));     long count = indexWriter.updateDocument(new Term("id", "1"), doc);    System.out.println("更新文档:" + count);    indexWriter.close();}
+/** * 测试更新 * 实际上就是删除后新增一条 * * @throws IOException */
+@Test
+public void updateDocumentTest() throws IOException {    
+//Analyzer analyzer = new StandardAnalyzer(); 
+// 标准分词器，适用于英文   
+//Analyzer analyzer = new SmartChineseAnalyzer();//中文分词    
+//Analyzer analyzer = new ComplexAnalyzer();
+//中文分词    
+//Analyzer analyzer = new IKAnalyzer();
+//中文分词     
+Analyzer analyzer = new IKAnalyzer();
+//中文分词     
+//创建索引写入配置    
+IndexWriterConfig indexWriterConfig = new IndexWriterConfig(analyzer);     
+//创建索引写入对象    
+IndexWriter indexWriter = new IndexWriter(directory, indexWriterConfig);    
+Document doc = new Document();     
+int id = 1;     
+doc.add(new IntPoint("id", id));    
+doc.add(new StringField("title", "Spark", Field.Store.YES));    
+doc.add(new TextField("content", "Apache Spark 是专为大规模数据处理而设计的快速通用的计算引擎", Field.Store.YES));    
+doc.add(new StoredField("id", id));     
+long count = indexWriter.updateDocument(new Term("id", "1"), doc);    
+System.out.println("更新文档:" + count);    
+indexWriter.close();
+}
 ```
+
+
 
 响应
 
-```
 更新文档:1
-```
 
 ## 按词条搜索
 
+
+
 ```
-/** * 按词条搜索 * <p> * TermQuery是最简单、也是最常用的Query。TermQuery可以理解成为“词条搜索”， * 在搜索引擎中最基本的搜索就是在索引中搜索某一词条，而TermQuery就是用来完成这项工作的。 * 在Lucene中词条是最基本的搜索单位，从本质上来讲一个词条其实就是一个名/值对。 * 只不过这个“名”是字段名，而“值”则表示字段中所包含的某个关键字。 * * @throws IOException */@Testpublic void termQueryTest() throws IOException {     String searchField = "title";    //这是一个条件查询的api，用于添加条件    TermQuery query = new TermQuery(new Term(searchField, "Spark"));     //执行查询，并打印查询到的记录数    executeQuery(query);}
+/** * 按词条搜索 * <p> * TermQuery是最简单、也是最常用的Query。TermQuery可以理解成为“词条搜索”， * 在搜索引擎中最基本的搜索就是在索引中搜索某一词条，而TermQuery就是用来完成这项工作的。 * 在Lucene中词条是最基本的搜索单位，从本质上来讲一个词条其实就是一个名/值对。 * 只不过这个“名”是字段名，而“值”则表示字段中所包含的某个关键字。 * * @throws IOException */
+@Test
+public void termQueryTest() throws IOException {
+     String searchField = "title";    
+     //这是一个条件查询的api，用于添加条件    
+     TermQuery query = new TermQuery(new Term(searchField, "Spark"));     
+     //执行查询，并打印查询到的记录数    
+     executeQuery(query);
+     }
 ```
+
+
 
 响应
 
-```
 总共查询到1个文档id：1title：Sparkcontent：Apache Spark 是专为大规模数据处理而设计的快速通用的计算引擎!
-```
 
 ## 多条件查询
 
+
+
 ```
-/** * 多条件查询 * * BooleanQuery也是实际开发过程中经常使用的一种Query。 * 它其实是一个组合的Query，在使用时可以把各种Query对象添加进去并标明它们之间的逻辑关系。 * BooleanQuery本身来讲是一个布尔子句的容器，它提供了专门的API方法往其中添加子句， * 并标明它们之间的关系，以下代码为BooleanQuery提供的用于添加子句的API接口： * * @throws IOException */@Testpublic void BooleanQueryTest() throws IOException {     String searchField1 = "title";    String searchField2 = "content";    Query query1 = new TermQuery(new Term(searchField1, "Spark"));    Query query2 = new TermQuery(new Term(searchField2, "Apache"));    BooleanQuery.Builder builder = new BooleanQuery.Builder();     // BooleanClause用于表示布尔查询子句关系的类，    // 包 括：    // BooleanClause.Occur.MUST，    // BooleanClause.Occur.MUST_NOT，    // BooleanClause.Occur.SHOULD。    // 必须包含,不能包含,可以包含三种.有以下6种组合：    //    // 1．MUST和MUST：取得连个查询子句的交集。    // 2．MUST和MUST_NOT：表示查询结果中不能包含MUST_NOT所对应得查询子句的检索结果。    // 3．SHOULD与MUST_NOT：连用时，功能同MUST和MUST_NOT。    // 4．SHOULD与MUST连用时，结果为MUST子句的检索结果,但是SHOULD可影响排序。    // 5．SHOULD与SHOULD：表示“或”关系，最终检索结果为所有检索子句的并集。    // 6．MUST_NOT和MUST_NOT：无意义，检索无结果。     builder.add(query1, BooleanClause.Occur.SHOULD);    builder.add(query2, BooleanClause.Occur.SHOULD);     BooleanQuery query = builder.build();     //执行查询，并打印查询到的记录数    executeQuery(query);}
+/** * 多条件查询 * * BooleanQuery也是实际开发过程中经常使用的一种Query。 * 它其实是一个组合的Query，在使用时可以把各种Query对象添加进去并标明它们之间的逻辑关系。 * BooleanQuery本身来讲是一个布尔子句的容器，它提供了专门的API方法往其中添加子句， * 并标明它们之间的关系，以下代码为BooleanQuery提供的用于添加子句的API接口： * * @throws IOException */
+@Testpublic void BooleanQueryTest() throws IOException { 
+    String searchField1 = "title";    
+    String searchField2 = "content";    
+    Query query1 = new TermQuery(new Term(searchField1, "Spark"));    
+    Query query2 = new TermQuery(new Term(searchField2, "Apache"));    
+    BooleanQuery.Builder builder = new BooleanQuery.Builder();     
+    // BooleanClause用于表示布尔查询子句关系的类，    
+    // 包 括：    
+    // BooleanClause.Occur.MUST，    
+    // BooleanClause.Occur.MUST_NOT，    
+    // BooleanClause.Occur.SHOULD。    
+    // 必须包含,不能包含,可以包含三种.有以下6种组合：    
+    //    
+    // 1．MUST和MUST：取得连个查询子句的交集。    
+    // 2．MUST和MUST_NOT：表示查询结果中不能包含MUST_NOT所对应得查询子句的检索结果。    
+    // 3．SHOULD与MUST_NOT：连用时，功能同MUST和MUST_NOT。    
+    // 4．SHOULD与MUST连用时，结果为MUST子句的检索结果,但是SHOULD可影响排序。    
+    // 5．SHOULD与SHOULD：表示“或”关系，最终检索结果为所有检索子句的并集。    
+    // 6．MUST_NOT和MUST_NOT：无意义，检索无结果。     
+    builder.add(query1, BooleanClause.Occur.SHOULD);   
+    builder.add(query2, BooleanClause.Occur.SHOULD);     
+    BooleanQuery query = builder.build();     
+    //执行查询，并打印查询到的记录数    
+    executeQuery(query);
+    }
 ```
+
+
 
 响应
 
-```
 总共查询到1个文档id：1title：Sparkcontent：Apache Spark 是专为大规模数据处理而设计的快速通用的计算引擎!
-```
 
 ## 匹配前缀
 
+
+
 ```
-/** * 匹配前缀 * <p> * PrefixQuery用于匹配其索引开始以指定的字符串的文档。就是文档中存在xxx% * <p> * * @throws IOException */@Testpublic void prefixQueryTest() throws IOException {    String searchField = "title";    Term term = new Term(searchField, "Spar");    Query query = new PrefixQuery(term);     //执行查询，并打印查询到的记录数    executeQuery(query);}
+/** * 匹配前缀 * <p> * PrefixQuery用于匹配其索引开始以指定的字符串的文档。就是文档中存在xxx% * <p> * * @throws IOException */
+@Testpublic void prefixQueryTest() throws IOException {    
+String searchField = "title";    
+Term term = new Term(searchField, "Spar");    
+Query query = new PrefixQuery(term);     
+//执行查询，并打印查询到的记录数    
+executeQuery(query);
+}
 ```
+
+
 
 响应
 
-```
 总共查询到1个文档id：1title：Sparkcontent：Apache Spark 是专为大规模数据处理而设计的快速通用的计算引擎!
-```
 
 ## 短语搜索
 
+
+
 ```
-/** * 短语搜索 * <p> * 所谓PhraseQuery，就是通过短语来检索，比如我想查“big car”这个短语， * 那么如果待匹配的document的指定项里包含了"big car"这个短语， * 这个document就算匹配成功。可如果待匹配的句子里包含的是“big black car”， * 那么就无法匹配成功了，如果也想让这个匹配，就需要设定slop， * 先给出slop的概念：slop是指两个项的位置之间允许的最大间隔距离 * * @throws IOException */@Testpublic void phraseQueryTest() throws IOException {     String searchField = "content";    String query1 = "apache";    String query2 = "spark";     PhraseQuery.Builder builder = new PhraseQuery.Builder();    builder.add(new Term(searchField, query1));    builder.add(new Term(searchField, query2));    builder.setSlop(0);    PhraseQuery phraseQuery = builder.build();     //执行查询，并打印查询到的记录数    executeQuery(phraseQuery);}
+/** * 短语搜索 * <p> * 所谓PhraseQuery，就是通过短语来检索，比如我想查“big car”这个短语， * 那么如果待匹配的document的指定项里包含了"big car"这个短语， * 这个document就算匹配成功。可如果待匹配的句子里包含的是“big black car”， * 那么就无法匹配成功了，如果也想让这个匹配，就需要设定slop， * 先给出slop的概念：slop是指两个项的位置之间允许的最大间隔距离 * * @throws IOException */
+@Testpublic void phraseQueryTest() throws IOException {     
+String searchField = "content";    
+String query1 = "apache";    
+String query2 = "spark";     
+PhraseQuery.Builder builder = new PhraseQuery.Builder();    
+builder.add(new Term(searchField, query1));    
+builder.add(new Term(searchField, query2));    
+builder.setSlop(0);    
+PhraseQuery phraseQuery = builder.build();     
+//执行查询，并打印查询到的记录数    
+executeQuery(phraseQuery);
+}
 ```
+
+
 
 响应
 
-```
 总共查询到1个文档id：1title：Sparkcontent：Apache Spark 是专为大规模数据处理而设计的快速通用的计算引擎!
-```
 
 ## 相近词语搜索
 
-```
-/** * 相近词语搜索 * <p> * FuzzyQuery是一种模糊查询，它可以简单地识别两个相近的词语。 * * @throws IOException */@Testpublic void fuzzyQueryTest() throws IOException {     String searchField = "content";    Term t = new Term(searchField, "大规模");    Query query = new FuzzyQuery(t);     //执行查询，并打印查询到的记录数    executeQuery(query);}
-```
+/** * 相近词语搜索 * <p> * FuzzyQuery是一种模糊查询，它可以简单地识别两个相近的词语。 * * @throws IOException */@Testpublic void fuzzyQueryTest() throws IOException { String searchField = "content"; Term t = new Term(searchField, "大规模"); Query query = new FuzzyQuery(t); //执行查询，并打印查询到的记录数 executeQuery(query);}
 
 响应
 
-```
 总共查询到1个文档id：1title：Sparkcontent：Apache Spark 是专为大规模数据处理而设计的快速通用的计算引擎!
-```
 
 ## 通配符搜索
 
-```
-/** * 通配符搜索 * <p> * Lucene也提供了通配符的查询，这就是WildcardQuery。 * 通配符“?”代表1个字符，而“*”则代表0至多个字符。 * * @throws IOException */@Testpublic void wildcardQueryTest() throws IOException {    String searchField = "content";    Term term = new Term(searchField, "大*规模");    Query query = new WildcardQuery(term);     //执行查询，并打印查询到的记录数    executeQuery(query);}
-```
+/** * 通配符搜索 * <p> * Lucene也提供了通配符的查询，这就是WildcardQuery。 * 通配符“?”代表1个字符，而“*”则代表0至多个字符。 * * @throws IOException */@Testpublic void wildcardQueryTest() throws IOException { String searchField = "content"; Term term = new Term(searchField, "大*规模"); Query query = new WildcardQuery(term); //执行查询，并打印查询到的记录数 executeQuery(query);}
 
 响应
 
-```
 总共查询到1个文档id：1title：Sparkcontent：Apache Spark 是专为大规模数据处理而设计的快速通用的计算引擎!
-```
 
 ## 分词查询
 
+
+
 ```
-/** * 分词查询 * * @throws IOException * @throws ParseException */@Testpublic void queryParserTest() throws IOException, ParseException {    //Analyzer analyzer = new StandardAnalyzer(); // 标准分词器，适用于英文    //Analyzer analyzer = new SmartChineseAnalyzer();//中文分词    //Analyzer analyzer = new ComplexAnalyzer();//中文分词    //Analyzer analyzer = new IKAnalyzer();//中文分词     Analyzer analyzer = new IKAnalyzer();//中文分词     String searchField = "content";     //指定搜索字段和分析器    QueryParser parser = new QueryParser(searchField, analyzer);     //用户输入内容    Query query = parser.parse("计算引擎");     //执行查询，并打印查询到的记录数    executeQuery(query);}
+/** * 分词查询 * * @throws IOException * @throws ParseException */
+@Test
+public void queryParserTest() throws IOException, ParseException {    
+//Analyzer analyzer = new StandardAnalyzer(); 
+// 标准分词器，适用于英文    
+//Analyzer analyzer = new SmartChineseAnalyzer();
+//中文分词    
+//Analyzer analyzer = new ComplexAnalyzer();
+//中文分词    //Analyzer analyzer = new IKAnalyzer();
+//中文分词     Analyzer analyzer = new IKAnalyzer();
+//中文分词     String searchField = "content";     
+//指定搜索字段和分析器    
+QueryParser parser = new QueryParser(searchField, analyzer);     
+//用户输入内容    Query query = parser.parse("计算引擎");     
+//执行查询，并打印查询到的记录数    
+executeQuery(query);
+}
 ```
+
+
 
 响应
 
-```
 总共查询到1个文档id：1title：Sparkcontent：Apache Spark 是专为大规模数据处理而设计的快速通用的计算引擎!
-```
 
 ## 多个 Field 分词查询
 
+
+
 ```
-/** * 多个 Field 分词查询 * * @throws IOException * @throws ParseException */@Testpublic void multiFieldQueryParserTest() throws IOException, ParseException {    //Analyzer analyzer = new StandardAnalyzer(); // 标准分词器，适用于英文    //Analyzer analyzer = new SmartChineseAnalyzer();//中文分词    //Analyzer analyzer = new ComplexAnalyzer();//中文分词    //Analyzer analyzer = new IKAnalyzer();//中文分词     Analyzer analyzer = new IKAnalyzer();//中文分词     String[] filedStr = new String[]{"title", "content"};     //指定搜索字段和分析器    QueryParser queryParser = new MultiFieldQueryParser(filedStr, analyzer);     //用户输入内容    Query query = queryParser.parse("Spark");     //执行查询，并打印查询到的记录数    executeQuery(query);}
+/** * 多个 Field 分词查询 * * @throws IOException * @throws ParseException */
+@Testpublic void multiFieldQueryParserTest() throws IOException, ParseException {    
+//Analyzer analyzer = new StandardAnalyzer(); 
+// 标准分词器，适用于英文    
+//Analyzer analyzer = new SmartChineseAnalyzer();//中文分词    
+//Analyzer analyzer = new ComplexAnalyzer();
+//中文分词    
+//Analyzer analyzer = new IKAnalyzer();
+//中文分词     Analyzer analyzer = new IKAnalyzer();
+//中文分词     String[] filedStr = new String[]{"title", "content"};     
+//指定搜索字段和分析器    
+QueryParser queryParser = new MultiFieldQueryParser(filedStr, analyzer);     
+//用户输入内容    
+Query query = queryParser.parse("Spark");     
+//执行查询，并打印查询到的记录数    executeQuery(query);}
 ```
+
+
 
 响应
 
-```
 总共查询到1个文档id：1title：Sparkcontent：Apache Spark 是专为大规模数据处理而设计的快速通用的计算引擎!
-```
 
 ## 中文分词器
 
+
+
 ```
-/** * IKAnalyzer  中文分词器 * SmartChineseAnalyzer  smartcn分词器 需要lucene依赖 且和lucene版本同步 * * @throws IOException */@Testpublic void AnalyzerTest() throws IOException {    //Analyzer analyzer = new StandardAnalyzer(); // 标准分词器，适用于英文    //Analyzer analyzer = new SmartChineseAnalyzer();//中文分词    //Analyzer analyzer = new ComplexAnalyzer();//中文分词    //Analyzer analyzer = new IKAnalyzer();//中文分词     Analyzer analyzer = null;    String text = "Apache Spark 是专为大规模数据处理而设计的快速通用的计算引擎";     analyzer = new IKAnalyzer();//IKAnalyzer 中文分词    printAnalyzerDoc(analyzer, text);    System.out.println();     analyzer = new ComplexAnalyzer();//MMSeg4j 中文分词    printAnalyzerDoc(analyzer, text);    System.out.println();     analyzer = new SmartChineseAnalyzer();//Lucene 中文分词器    printAnalyzerDoc(analyzer, text);}
+/** * IKAnalyzer  中文分词器 * SmartChineseAnalyzer  smartcn分词器 需要lucene依赖 且和lucene版本同步 * * @throws IOException */
+@Test
+public void AnalyzerTest() throws IOException { 
+//Analyzer analyzer = new StandardAnalyzer(); 
+// 标准分词器，适用于英文    
+//Analyzer analyzer = new SmartChineseAnalyzer();
+//中文分词    //Analyzer analyzer = new ComplexAnalyzer();
+//中文分词    //Analyzer analyzer = new IKAnalyzer();
+//中文分词     
+Analyzer analyzer = null;    
+String text = "Apache Spark 是专为大规模数据处理而设计的快速通用的计算引擎";
+analyzer = new IKAnalyzer();//IKAnalyzer 中文分词    
+printAnalyzerDoc(analyzer, text);    
+System.out.println();     
+analyzer = new ComplexAnalyzer();
+//MMSeg4j 中文分词    
+printAnalyzerDoc(analyzer, text);    
+System.out.println();     
+analyzer = new SmartChineseAnalyzer();
+//Lucene 中文分词器    
+printAnalyzerDoc(analyzer, text);}
 ```
+
+
 
 三种分词响应
 
-```
 apachespark专为大规模规模模数数据处理数据处理而设设计快速通用计算引擎
-```
 
-```
 apachespark是专为大规模数据处理而设计的快速通用的计算引擎
-```
 
-```
 apachspark是专为大规模数据处理而设计的快速通用的计算引擎
-```
 
 ## 高亮处理
 
+
+
 ```
-/** * 高亮处理 * * @throws IOException */@Testpublic void HighlighterTest() throws IOException, ParseException, InvalidTokenOffsetsException {    //Analyzer analyzer = new StandardAnalyzer(); // 标准分词器，适用于英文    //Analyzer analyzer = new SmartChineseAnalyzer();//中文分词    //Analyzer analyzer = new ComplexAnalyzer();//中文分词    //Analyzer analyzer = new IKAnalyzer();//中文分词     Analyzer analyzer = new IKAnalyzer();//中文分词     String searchField = "content";    String text = "Apache Spark 大规模数据处理";     //指定搜索字段和分析器    QueryParser parser = new QueryParser(searchField, analyzer);     //用户输入内容    Query query = parser.parse(text);     TopDocs topDocs = indexSearcher.search(query, 100);     // 关键字高亮显示的html标签，需要导入lucene-highlighter-xxx.jar    SimpleHTMLFormatter simpleHTMLFormatter = new SimpleHTMLFormatter("", "");    Highlighter highlighter = new Highlighter(simpleHTMLFormatter, new QueryScorer(query));     for (ScoreDoc scoreDoc : topDocs.scoreDocs) {         //取得对应的文档对象        Document document = indexSearcher.doc(scoreDoc.doc);         // 内容增加高亮显示        TokenStream tokenStream = analyzer.tokenStream("content", new StringReader(document.get("content")));        String content = highlighter.getBestFragment(tokenStream, document.get("content"));         System.out.println(content);    } }
+/** * 高亮处理 * * @throws IOException */
+@Test
+public void HighlighterTest() throws IOException, ParseException, InvalidTokenOffsetsException {
+//Analyzer analyzer = new StandardAnalyzer(); 
+// 标准分词器，适用于英文   
+//Analyzer analyzer = new SmartChineseAnalyzer();
+//中文分词   
+//Analyzer analyzer = new ComplexAnalyzer();
+//中文分词    
+//Analyzer analyzer = new IKAnalyzer();
+//中文分词     Analyzer analyzer = new IKAnalyzer();
+//中文分词     String searchField = "content";    
+String text = "Apache Spark 大规模数据处理";     
+//指定搜索字段和分析器    
+QueryParser parser = new QueryParser(searchField, analyzer);     
+//用户输入内容    
+Query query = parser.parse(text);     
+TopDocs topDocs = indexSearcher.search(query, 100);     
+// 关键字高亮显示的html标签，需要导入lucene-highlighter-xxx.jar    
+SimpleHTMLFormatter simpleHTMLFormatter = new SimpleHTMLFormatter("", "");    
+Highlighter highlighter = new Highlighter(simpleHTMLFormatter, new QueryScorer(query));     
+for (ScoreDoc scoreDoc : topDocs.scoreDocs) {         
+//取得对应的文档对象        
+Document document = indexSearcher.doc(scoreDoc.doc);         
+// 内容增加高亮显示        
+TokenStream tokenStream = analyzer.tokenStream("content", new StringReader(document.get("content")));        
+String content = highlighter.getBestFragment(tokenStream, document.get("content"));         
+System.out.println(content);    
+} 
+}
 ```
+
+
 
 响应
 
-```
 Apache Spark 是专为大规模数据处理而设计的快速通用的计算引擎!
-```
 
-代码我已放到 Github ，导入`spring-boot-lucene-demo` 项目
+代码我已放到 Github ，导入`spring-boot-lucene-demo` 项目
 
-github [spring-boot-lucene-demo](https://link.juejin.im/?target=https%3A%2F%2Fgithub.com%2Fsouyunku%2Fspring-boot-examples%2Ftree%2Fmaster%2Fspring-boot-lucene-demo)
-
-*   作者：Peng Lei
-*   出处：[Segment Fault PengLei `Blog 专栏](https://link.juejin.im/?target=https%3A%2F%2Fsegmentfault.com%2Fa%2F1190000011916639)
-*   版权归作者所有，转载请注明出处
-
-
-
-
-
+[github spring-boot-lucene-demo](https://docs.qq.com/doc/DWVNPQXRvcWhMTktC)

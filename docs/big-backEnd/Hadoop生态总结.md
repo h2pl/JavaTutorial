@@ -1,6 +1,7 @@
-# Table of Contents
+# 目录
 
 * [Hadoop生态](#hadoop生态)
+
   * [hdfs](#hdfs)
     * [架构](#架构)
     * [读写](#读写)
@@ -25,27 +26,33 @@
     * [个人公众号：黄小斜](#个人公众号：黄小斜)
 
 
+
 ---
-title: Hadoop生态学习总结
-date: 2018-07-08 22:15:53
+
+title: Hadoop生态学习总结  
+date: 2018-07-08 22:15:53  
 tags:
-	- Hadoop
-categories:
-	- 后端
-	- 技术总结
+
+- Hadoop  
+  categories:
+- 后端
+- 技术总结
+
 ---
+
 这篇总结主要是基于我之前Hadoop生态基础系列文章而形成的的。主要是把重要的知识点用自己的话说了一遍，可能会有一些错误，还望见谅和指点。谢谢
 
 更多详细内容可以查看我的专栏文章：Hadoop生态学习
 
 https://blog.csdn.net/a724888/article/category/7779280
-<!-- more -->
+<!-- more -->  
 
 # Hadoop生态
 
 ## hdfs
 
 ### 架构
+
 hdfs是一个分布式文件系统。底层的存储采用廉价的磁盘阵列RAID，由于可以并发读写所以效率很高。
 
 基本架构是一个namenode和多个dataNode。node的意思是节点，一般指主机，也可以是虚拟机。
@@ -76,8 +83,8 @@ MapReduce是基于Hadoop集群的分布式计算方案。一般先编写map函�
 
 ### wordcount
 
-首先是一个文本文件:hi hello good hello hi hi。
-三个节点，则进行三次map。hi hello，good hello，hi hi分别由三个节点处理。结果分别是hi 1 hello 1,good 1 hello 1,hi 1,hi 1。
+首先是一个文本文件:hi hello good hello hi hi。  
+三个节点，则进行三次map。hi hello，good hello，hi hi分别由三个节点处理。结果分别是hi 1 hello 1,good 1 hello 1,hi 1,hi 1。  
 shuffle时进行combine操作，得到hi 1,hello 1,good 1 hello 1,hi 2。最终reduce的结果是hi 3 hello 2 good 1.
 
 ## hive
@@ -94,10 +101,11 @@ hbase是基于列的数据库。
 
 首先在表结构上，hbase使用rowkey行键作为唯一主键，通过行键唯一确定一行数据。
 
-同时，hbase使用列族的概念，每个表都有固定的列族，每一行的数据的列族都一样，但是每一行所在列族的实际列都可以不一样。
+同时，hbase使用列族的概念，每个表都有固定的列族，每一行的数据的列族都一样，但是每一行所在列族的实际列都可以不一样。  
 比如列族是info，列可以是name age，也可以是sex address等。也就是说具体列可以在插入数据时再进行确认。
 
 并且，hbase的每一行数据还可以有多个版本，通过时间戳来表示不同的数据版本。
+
 ### 存储
 
 一般情况下hbase使用hdfs作为底层存储，所以hdfs提供了数据的可靠性以及并发读写的高效率。
@@ -129,42 +137,44 @@ zab协议实现原理：
 3选主结束以后，主节点与slave进行主从同步，保证数据一致性，然后对外提供服务，并且写入只能通过master而读取可以通过任意一台机器。
 
 ## sqoop
+
 将hive表中的内容导入到MySQL数据库，也可以将MySQL中的数据导入hive中。
 
 ## yarn
 
-没有yarn之前，hdfs使用jobtracker和tasktracker来执行和跟踪任务，jobtracker的任务太重，又要执行又要监控还要获取结果。
+没有yarn之前，hdfs使用jobtracker和tasktracker来执行和跟踪任务，jobtracker的任务太重，又要执行又要监控还要获取结果。  
 并且不同机器的资源情况没有被考虑在内。
 
 yarn是一个资源调度系统。提供applicationmaster对一个调度任务进行封装，然后有一个resourcemanager专门负责各节点资源的管理和监控。同时nodemanager则运行每个节点中用于监控节点状态和向rm汇报。还有一个container则是对节点资源的一个抽象，applicationmaster任务将由节点上的一个container进行执行。rm会将他调度到最合适的机器上。
+
 ## kafka
 
 架构
 
 > kafka是一个分布式的消息队列。
-> 
+>
 > 它组成一般包括kafka broker，每个broker中有多个的partition作为存储消息的队列。
-> 
+>
 > 并且向上提供服务时抽象为一个topic，我们访问topic时实际上执行的是对partition的写入和读取操作。
 
 
 读写和高可用
 
 > partition支持顺序写入，效率比较高，并且支持零拷贝机制，通过内存映射磁盘mmap的方式，写入partition的数据顺序写入到映射的磁盘中，比传统的IO要快。
-> 
-> 由于partition可能会宕机，所以一般也要支持partition的备份，1个broker ，master通常会有多个
+>
+> 由于partition可能会宕机，所以一般也要支持partition的备份，1个broker ，master通常会有多个  
 > broker slave，是主从关系，通过zookeeper进行选主和故障切换。
-> 
+>
 > 当数据写入队列时，一般也会通过日志文件的方式进行数据备份，会把broker中的partition被分在各个slave中以便于均匀分布和恢复。
 
 生产者和消费者
 
 > 生产者消费者需要访问kafka的队列时，如果是写入，直接向zk发送请求，一般是向一个topic写入消息，broker会自动分配partition进行写入。然后zk会告诉生产者写入的partition所在的broker地址，然后进行写入。
-> 
+>
 > 如果是读取的话，也是通过zk获取partition所在位置，然后通过给定的offset进行读取，读取完后更新offset。
-> 
+>
 > 由于kafka的partition支持顺序读写。所以保证一个partition中的读取和写入时是顺序的，但是如果是多个partition则不保证顺序。
-> 
+>
 > 正常情况下kafka使用topic来实现消息点对点发送，并且每个consumer都要在一个consumer group中，而且comsumer group中每次只能有一个消费者能接受对应topic的消息。因为为了实现订阅也就是一对多发送，我们让每个consumer在一个单独的group，于是每个consumer都可以接受到该消息。
 
 
@@ -172,25 +182,20 @@ yarn是一个资源调度系统。提供applicationmaster对一个调度任务�
 
 flume用于数据的收集和分发，flume可以监听端口的数据流入，监视文件的变动以及各种数据形式的数据流入，然后再把数据重新转发到其他需要数据的节点或存储中。
 
-1、Flume的概念 
-
-flume是分布式的日志收集系统，它将各个服务器中的数据收集起来并送到指定的地方去，比如说送到图中的HDFS，简单来说flume就是收集日志的。 
-
-2、Event的概念 
-在这里有必要先介绍一下flume中event的相关概念：flume的核心是把数据从数据源(source)收集过来，在将收集到的数据送到指定的目的地(sink)。为了保证输送的过程一定成功，在送到目的地(sink)之前，会先缓存数据(channel),待数据真正到达目的地(sink)后，flume在删除自己缓存的数据。 
-
-在整个数据的传输的过程中，流动的是event，即事务保证是在event级别进行的。那么什么是event呢？—–event将传输的数据进行封装，是flume传输数据的基本单位，如果是文本文件，通常是一行记录，event也是事务的基本单位。event从source，流向channel，再到sink，本身为一个字节数组，并可携带headers(头信息)信息。event代表着一个数据的最小完整单元，从外部数据源来，向外部的目的地去。       
-
-flume使用   
-## ambari
+1、Flume的概念   
+flume是分布式的日志收集系统，它将各个服务器中的数据收集起来并送到指定的地方去，比如说送到图中的HDFS，简单来说flume就是收集日志的。   
+2、Event的概念 在这里有必要先介绍一下flume中event的相关概念：flume的核心是把数据从数据源(source)收集过来，在将收集到的数据送到指定的目的地(sink)。为了保证输送的过程一定成功，在送到目的地(sink)之前，会先缓存数据(channel),待数据真正到达目的地(sink)后，flume在删除自己缓存的数据。   
+在整个数据的传输的过程中，流动的是event，即事务保证是在event级别进行的。那么什么是event呢？—–event将传输的数据进行封装，是flume传输数据的基本单位，如果是文本文件，通常是一行记录，event也是事务的基本单位。event从source，流向channel，再到sink，本身为一个字节数组，并可携带headers(头信息)信息。event代表着一个数据的最小完整单元，从外部数据源来，向外部的目的地去。         
+flume使用   ## ambari  
 ambari就是一个Hadoop的Web应用。
 
 ## spark
+
 spark和MapReduce不同的地方就是，把计算过程放在内存中运行。
 
 spark提出了抽象的RDD分布式内存模型，把每一步的计算操作转换成一个RDD结构，然后形成一个RDD连接而成的有向图。
 
-比如data.map().filter().reduce();
+比如data.map().filter().reduce();  
 程序提交到master以后，会解析成多个RDD，并且形成一个有向图，然后spark再根据这些RD结构在内存中执行对应的操作。当然这个拓扑结构会被拆分为各个子任务分发到各个spark节点上，然后计算完以后再形成下一个rdd。最后汇总结果即可。
 
 由于是在内存中对数据进行操作，省去了不必要的IO操作，，不需要像Mapreduce一样还得先去hdfs读取文件再完成计算。
@@ -216,9 +221,8 @@ Storm集群和Hadoop集群表面上看很类似。但是Hadoop上运行的是Map
 
 在Storm的集群里面有两种节点： 控制节点（master node）和工作节点（worker node）。控制节点上面运行一个叫Nimbus后台程序，它的作用类似Hadoop里面的JobTracker。Nimbus负责在集群里面分发代码，分配计算任务给机器， 并且监控状态。
 
-每一个工作节点上面运行一个叫做Supervisor的节点。Supervisor会监听分配给它那台机器的工作，根据需要启动/关闭工作进程。每一个工作进程执行一个topology的一个子集；一个运行的topology由运行在很多机器上的很多工作进程组成。 
-
-![](https://img-blog.csdn.net/20160107221357281?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center)
+每一个工作节点上面运行一个叫做Supervisor的节点。Supervisor会监听分配给它那台机器的工作，根据需要启动/关闭工作进程。每一个工作进程执行一个topology的一个子集；一个运行的topology由运行在很多机器上的很多工作进程组成。   
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230408112703.png)
 
 Nimbus和Supervisor之间的所有协调工作都是通过Zookeeper集群完成。另外，Nimbus进程和Supervisor进程都是快速失败（fail-fast)和无状态的。所有的状态要么在zookeeper里面， 要么在本地磁盘上。这也就意味着你可以用kill -9来杀死Nimbus和Supervisor进程， 然后再重启它们，就好像什么都没有发生过。这个设计使得Storm异常的稳定。
 
@@ -230,47 +234,37 @@ storm则不然。
 
 1.Topology
 
-　　Storm对任务的抽象，其实 就是将实时数据分析任务 分解为 不同的阶段　　　　
-
+Storm对任务的抽象，其实 就是将实时数据分析任务 分解为 不同的阶段　　　　  
 　　点： 计算组件   Spout   Bolt
 
-　　边： 数据流向    数据从上一个组件流向下一个组件  带方向
-
- 
+边： 数据流向    数据从上一个组件流向下一个组件  带方向
 
 2.tuple
 
-　　Storm每条记录 封装成一个tuple
+Storm每条记录 封装成一个tuple
 
-　　其实就是一些keyvalue对按顺序排列
+其实就是一些keyvalue对按顺序排列
 
-　　方便组件获取数据
-
- 
+方便组件获取数据
 
 3.Spout
 
-　　数据采集器
-
+数据采集器  
 　　源源不断的日志记录  如何被topology接收进行处理？
 
-　　Spout负责从数据源上获取数据，简单处理 封装成tuple向后面的bolt发射
+Spout负责从数据源上获取数据，简单处理 封装成tuple向后面的bolt发射
 
- 
 
 4.Bolt
 
-　　数据处理器
-　　
-二：开发wordcount案例
+数据处理器　　二：开发wordcount案例
 
 1.书写整个大纲的点线图
 
-　　![](https://images2015.cnblogs.com/blog/1027015/201701/1027015-20170126164121691-1448959654.png)
-　　
-topology就是一个拓扑图，类似于spark中的dag有向图，只不过storm执行的流式的数据，比dag执行更加具有实时性。
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230408112730.png) 
+　　topology就是一个拓扑图，类似于spark中的dag有向图，只不过storm执行的流式的数据，比dag执行更加具有实时性。
 
-topology包含了spout和bolt。
+topology包含了spout和bolt。  
 spout负责获取数据，并且将数据发送给bolt，这个过程就是把任务派发到多个节点，bolt则负责对数据进行处理，比如splitbolt负责把每个单词提取出来，countbolt负责单词数量的统计，最后的printbolt将每个结果集tuple打印出来。
 
 这就形成了一个完整的流程。
@@ -289,6 +283,5 @@ spout负责获取数据，并且将数据发送给bolt，这个过程就是把�
 
 作者是 985 硕士，蚂蚁金服 JAVA 工程师，专注于 JAVA 后端技术栈：SpringBoot、MySQL、分布式、中间件、微服务，同时也懂点投资理财，偶尔讲点算法和计算机理论基础，坚持学习和写作，相信终身学习的力量！
 
-**程序员3T技术学习资源：** 一些程序员学习技术的资源大礼包，关注公众号后，后台回复关键字 **“资料”** 即可免费无套路获取。	
-
+**程序员3T技术学习资源：** 一些程序员学习技术的资源大礼包，关注公众号后，后台回复关键字 **“资料”** 即可免费无套路获取。      
 ![](https://img-blog.csdnimg.cn/20190829222750556.jpg)
