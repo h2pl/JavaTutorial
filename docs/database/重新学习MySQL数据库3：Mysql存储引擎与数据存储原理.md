@@ -254,3 +254,5 @@ RR级别下
 ![img](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/v2-e87ad5dc811f52789e20adb3b53b8ba1_720w.webp)
 
 死锁在库表中有记录，通过kill 那个锁删除。
+
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/%E5%86%B3%E5%AE%9A%E7%89%88.jpeg)
