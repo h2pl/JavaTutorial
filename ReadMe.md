@@ -9,7 +9,7 @@
 
 <p align="center">
 <a href="https://github.com/h2pl/Java-Tutorial" target="_blank">
-    <img src="https://java-tutorial.oss-cn-shanghai.aliyuncs.com/Javatutorial.jpeg" width="200" height="160"/>
+    <img src="https://java-tutorial.oss-cn-shanghai.aliyuncs.com/Javatutorial.jpeg" width="1200" height="400"/>
 </a>
 </p>
 
