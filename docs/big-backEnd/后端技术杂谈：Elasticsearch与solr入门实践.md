@@ -909,7 +909,7 @@ dataimport config
 > 本文首发于[我的博客](https://link.juejin.im/?target=https%3A%2F%2Fblog.kittypanic.com%2F)
 > 原文链接：[Elasticsearch 与 Solr 的比较](https://link.juejin.im/?target=https%3A%2F%2Fblog.kittypanic.com%2Felastic_vs_solr%2F)
 
-## Elasticsearch简介[*](https://link.juejin.im/?target=http%3A%2F%2Ffuxiaopang.gitbooks.io%2Flearnelasticsearch)
+## Elasticsearch简介
 
 Elasticsearch是一个实时的分布式搜索和分析引擎。它可以帮助你用前所未有的速度去处理大规模数据。
 
@@ -951,7 +951,7 @@ Elasticsearch的上手是非常简单的。它附带了很多非常合理的默�
 
 但是Elasticsearch并不只是面向大型企业的，它还帮助了很多类似DataDog以及Klout的创业公司进行了功能的扩展。
 
-## Elasticsearch的优缺点[*](https://link.juejin.im/?target=http%3A%2F%2Fstackoverflow.com%2Fquestions%2F10213009%2Fsolr-vs-elasticsearch)[*](https://link.juejin.im/?target=http%3A%2F%2Fhuangx.in%2F22%2Ftranslation-solr-vs-elasticsearch):
+## Elasticsearch的优缺点
 
 ### 优点
 
@@ -968,7 +968,7 @@ Elasticsearch的上手是非常简单的。它附带了很多非常合理的默�
 
 *   还不够自动（不适合当前新的Index Warmup API）
 
-## Solr简介[*](https://link.juejin.im/?target=http%3A%2F%2Fzh.wikipedia.org%2Fwiki%2FSolr)
+## Solr简介
 
 Solr（读作“solar”）是Apache Lucene项目的开源企业搜索平台。其主要功能包括全文检索、命中标示、分面搜索、动态聚类、数据库集成，以及富文本（如Word、PDF）的处理。Solr是高度可扩展的，并提供了分布式搜索和索引复制。Solr是最流行的企业级搜索引擎，Solr4 还增加了NoSQL支持。
 
@@ -990,7 +990,7 @@ Solr是用Java编写、运行在Servlet容器（如 Apache Tomcat 或Jetty）的
 
 1.  建立索引时，搜索效率下降，实时索引搜索效率不高。
 
-## Elasticsearch与Solr的比较[*](https://link.juejin.im/?target=http%3A%2F%2Fblog.socialcast.com%2Frealtime-search-solr-vs-elasticsearch%2F)
+## Elasticsearch与Solr的比较
 
 当单纯的对已有数据进行搜索时，Solr更快。
 
@@ -1006,7 +1006,7 @@ Solr是用Java编写、运行在Servlet容器（如 Apache Tomcat 或Jetty）的
 
 综上所述，Solr的架构不适合实时搜索的应用。
 
-## 实际生产环境测试[*](https://link.juejin.im/?target=http%3A%2F%2Fblog.socialcast.com%2Frealtime-search-solr-vs-elasticsearch%2F)
+## 实际生产环境测试
 
 下图为将搜索引擎从Solr转到Elasticsearch以后的平均查询速度有了50倍的提升。
 
@@ -1023,7 +1023,7 @@ Solr是用Java编写、运行在Servlet容器（如 Apache Tomcat 或Jetty）的
 
 Solr 是传统搜索应用的有力解决方案，但 Elasticsearch 更适用于新兴的实时搜索应用。
 
-## 其他基于Lucene的开源搜索引擎解决方案[*](https://link.juejin.im/?target=http%3A%2F%2Fmail-archives.apache.org%2Fmod_mbox%2Fhbase-user%2F201006.mbox%2F%253C149150.78881.qm%40web50304.mail.re2.yahoo.com%253E)
+## 其他基于Lucene的开源搜索引擎解决方案
 
 1. 直接使用[Lucene](https://link.juejin.im/?target=http%3A%2F%2Flucene.apache.org)
 

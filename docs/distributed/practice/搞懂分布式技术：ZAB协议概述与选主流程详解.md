@@ -246,7 +246,7 @@ Zookeeper具体的启动日志如下图所示：
 ![Cluster start election step 3](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/start_election_3.png)
 
 
-### [](http://www.jasongj.com/zookeeper/fastleaderelection/?hmsr=toutiao.io&utm_medium=toutiao.io&utm_source=toutiao.io#Follower%E9%87%8D%E5%90%AF "Follower重启")Follower重启
+### Follower重启
 
 **_Follower重启投票给自己_**  
 Follower重启，或者发生网络分区后找不到Leader，会进入LOOKING状态并发起新的一轮投票。

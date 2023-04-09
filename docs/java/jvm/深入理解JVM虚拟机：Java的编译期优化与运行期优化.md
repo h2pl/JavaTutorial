@@ -34,7 +34,7 @@
 
 <!-- more -->
 
-## [java编译期优化](https://www.cnblogs.com/LeonNew/p/6187411.html)
+## java编译期优化
 
 java语言的编译期其实是一段不确定的操作过程，因为它可以分为三类编译过程：
 1.前端编译：把_.java文件转变为_.class文件

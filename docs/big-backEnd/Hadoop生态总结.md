@@ -225,13 +225,3 @@ topology包含了spout和bolt。
 spout负责获取数据，并且将数据发送给bolt，这个过程就是把任务派发到多个节点，bolt则负责对数据进行处理，比如splitbolt负责把每个单词提取出来，countbolt负责单词数量的统计，最后的printbolt将每个结果集tuple打印出来。
 
 这就形成了一个完整的流程。
-
-## 微信公众号
-
-### Java技术江湖
-
-如果大家想要实时关注我更新的文章以及分享的干货的话，可以关注我的公众号【Java技术江湖】一位阿里 Java 工程师的技术小站，作者黄小斜，专注 Java 相关技术：SSM、SpringBoot、MySQL、分布式、中间件、集群、Linux、网络、多线程，偶尔讲点Docker、ELK，同时也分享技术干货和学习经验，致力于Java全栈开发！
-
-**Java工程师必备学习资源:** 一些Java工程师常用学习资源，关注公众号后，后台回复关键字 **“Java”** 即可免费无套路获取。
-
-![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/Javatutorial.jpeg)

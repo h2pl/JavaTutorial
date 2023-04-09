@@ -20,15 +20,15 @@
 
 *   文章一：[JAVA 中原生的 socket 通信机制](https://github.com/jasonGeng88/blog/blob/master/201708/java-socket.md)
 
-## [](https://github.com/jasonGeng88/blog/blob/master/201708/java-nio.md#%E5%BD%93%E5%89%8D%E7%8E%AF%E5%A2%83)当前环境
+## 当前环境
 
 1.  jdk == 1.8
 
-## [](https://github.com/jasonGeng88/blog/blob/master/201708/java-nio.md#%E4%BB%A3%E7%A0%81%E5%9C%B0%E5%9D%80)代码地址
+## 代码地址
 
 git 地址：[https://github.com/jasonGeng88/java-network-programming](https://github.com/jasonGeng88/java-network-programming)
 
-## [](https://github.com/jasonGeng88/blog/blob/master/201708/java-nio.md#%E7%9F%A5%E8%AF%86%E7%82%B9)知识点
+## 知识点
 
 *   nio 下 I/O 阻塞与非阻塞实现
 *   SocketChannel 介绍
@@ -63,7 +63,7 @@ socketChannel.configureBlocking(true);
 // 建立连接
 socketChannel.connect(remote);
 ````
-### [](https://github.com/jasonGeng88/blog/blob/master/201708/java-nio.md#%E8%8E%B7%E5%8F%96-socket-%E8%BF%9E%E6%8E%A5)获取 socket 连接
+### 获取 socket 连接
 
 因为是同样是 I/O 阻塞的实现，所以后面的关于 socket 输入输出流的处理，和上一篇的基本相同。唯一差别是，这里需要通过 channel 来获取 socket 连接。
 
@@ -80,7 +80,7 @@ BufferedReader br = getReader(socketChannel.socket());
 ````
 
 
-### [](https://github.com/jasonGeng88/blog/blob/master/201708/java-nio.md#%E5%AE%8C%E6%95%B4%E7%A4%BA%E4%BE%8B)完整示例
+### 完整示例
 
 
 ````
@@ -261,7 +261,7 @@ public void select() throws IOException {
 
 _**注意：这里的`selector.select()`是同步阻塞的，等待有事件发生后，才会被唤醒。这就防止了 CPU 空转的产生。当然，我们也可以给它设置超时时间，`selector.select(long timeout)`来结束阻塞过程。**_
 
-### [](https://github.com/jasonGeng88/blog/blob/master/201708/java-nio.md#%E5%A4%84%E7%90%86%E8%BF%9E%E6%8E%A5%E5%B0%B1%E7%BB%AA%E4%BA%8B%E4%BB%B6)处理连接就绪事件
+### 处理连接就绪事件
 
 下面，我们分别来看下，一个 socket 是如何来处理连接、写入数据和读取数据的（_这些操作都是阻塞的过程，只是我们将等待就绪的过程变成了非阻塞的了_）。
 

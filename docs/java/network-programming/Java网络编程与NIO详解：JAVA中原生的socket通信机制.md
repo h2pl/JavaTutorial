@@ -46,7 +46,7 @@ socket.connect(remote);
 
 
 
-### [](https://github.com/jasonGeng88/blog/blob/master/201708/java-socket.md#%E5%A4%84%E7%90%86-socket-%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%E6%B5%81)处理 socket 输入输出流
+### 处理 socket 输入输出流
 
 成功建立 socket 连接后，我们就能获得它的输入输出流，通信的本质是对输入输出流的处理。通过输入流，读取网络连接上传来的数据，通过输出流，将本地的数据传出给远端。
 
@@ -117,7 +117,7 @@ while ((msg = reader.readLine()) != null){
     System.out.println(msg);
 }
 
-### [](https://github.com/jasonGeng88/blog/blob/master/201708/java-socket.md#%E7%BB%93%E6%9E%9C%E5%B1%95%E7%A4%BA)结果展示
+### 结果展示
 
 至此，讲完了原生 socket 下的创建连接、发送请求与接收响应的所有核心代码。
 
@@ -141,12 +141,7 @@ public class Application {
 }
 ````
 
-
-结果输出：
-
-[![](https://github.com/jasonGeng88/blog/raw/master/201708/assets/java-socket-01.png)](https://github.com/jasonGeng88/blog/blob/master/201708/assets/java-socket-01.png)
-
-## [](https://github.com/jasonGeng88/blog/blob/master/201708/java-socket.md#%E8%AF%B7%E6%B1%82%E6%A8%A1%E5%9E%8B%E4%BC%98%E5%8C%96)请求模型优化
+## 请求模型优化
 
 这种方式，虽然实现功能没什么问题。但是我们细看，发现在 IO 写入与读取过程，是发生了 IO 阻塞的情况。即：
 

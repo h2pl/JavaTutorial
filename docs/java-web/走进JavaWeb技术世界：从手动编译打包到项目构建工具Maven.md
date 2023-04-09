@@ -148,7 +148,7 @@ version指定了项目当前的版本0.0.1-SNAPSHOT,SNAPSHOT意为快照，说�
 
 name元素生命了一个对于用户更为友好的项目名称，虽然这不是必须的，但还是推荐为每个POM声明name,以方便信息交流
 
-## [](http://tengj.top/2018/01/01/maven/#%E4%BE%9D%E8%B5%96%E7%9A%84%E9%85%8D%E7%BD%AE "依赖的配置")依赖的配置
+## 依赖的配置
 
 
 
@@ -182,7 +182,7 @@ name元素生命了一个对于用户更为友好的项目名称，虽然这不�
 *   optional:标记依赖是否可选
 *   exclusions:用来排除传递性依赖
 
-## [](http://tengj.top/2018/01/01/maven/#%E4%BE%9D%E8%B5%96%E8%8C%83%E5%9B%B4 "依赖范围")依赖范围
+## 依赖范围
 
 依赖范围就是用来控制依赖和三种classpath(编译classpath，测试classpath、运行classpath)的关系，Maven有如下几种依赖范围：
 

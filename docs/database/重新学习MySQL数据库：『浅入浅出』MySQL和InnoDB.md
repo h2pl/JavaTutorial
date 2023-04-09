@@ -371,7 +371,7 @@ MySQL 中默认的事务隔离级别就是`REPEATABLE READ`，但是它通过 Ne
 
 由于篇幅所限仅能对数据库中一些重要内容进行简单的介绍和总结，文中内容难免有所疏漏，如果对文章内容的有疑问，可以在博客下面评论留言。
 
-## [Innodb与Myisam引擎的区别与应用场景](https://www.cnblogs.com/changna1314/p/6878900.html)
+## Innodb与Myisam引擎的区别与应用场景
 
 1. 区别：
 

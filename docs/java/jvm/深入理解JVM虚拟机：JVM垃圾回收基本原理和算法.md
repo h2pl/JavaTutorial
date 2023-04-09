@@ -389,8 +389,7 @@ class GCScope {
     }
 }
 ````
-## [JVM GC算法
-https://www.cnblogs.com/wupeixuan/p/8670341.html)
+## JVM GC算法
 
 在判断哪些内存需要回收和什么时候回收用到GC 算法，本文主要对GC 算法进行讲解。
 

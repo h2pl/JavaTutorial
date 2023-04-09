@@ -73,7 +73,7 @@ e、借助MappedStatement中的结果映射关系，将返回结果转化成Hash
 
 ![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230405165208.png)
 
-### [MyBatis框架及原理分析]
+### MyBatis框架及原理分析
 
 MyBatis 是支持定制化 SQL、存储过程以及高级映射的优秀的持久层框架，其主要就完成2件事情：
 

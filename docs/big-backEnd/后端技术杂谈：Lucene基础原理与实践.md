@@ -330,7 +330,7 @@ Stemming 和 lemmatization的异同：
 
 下面仔细分析一下这两个过程：
 
-### [1\. 计算权重(Term weight)的过程。](https://docs.qq.com/doc/DWVNPQXRvcWhMTktC)
+### 1. 计算权重(Term weight)的过程。
 
 影响一个词(Term)在一篇文档中的重要性主要有两个因素：
 

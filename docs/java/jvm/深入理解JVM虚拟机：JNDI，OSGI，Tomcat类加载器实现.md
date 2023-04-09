@@ -34,7 +34,7 @@
 
 ### JNDI
 
-### [JNDI 的理解](https://yq.aliyun.com/go/articleRenderRedirect?url=https%3A%2F%2Fwww.cnblogs.com%2Fzhchoutai%2Fp%2F7389089.html)
+### JNDI 的理解
 
 
 JNDI是 Java 命名与文件夹接口（Java Naming and Directory Interface），在J2EE规范中是重要的规范之中的一个，不少专家觉得，没有透彻理解JNDI的意义和作用，就没有真正掌握J2EE特别是EJB的知识。
