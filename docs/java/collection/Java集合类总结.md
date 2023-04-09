@@ -8,9 +8,7 @@
   * [collections和Arrays工具类](#collections和arrays工具类)
   * [comparable和comparator](#comparable和comparator)
   * [treemap和treeset](#treemap和treeset)
-  * [微信公众号](#微信公众号)
-    * [Java技术江湖](#java技术江湖)
-    * [个人公众号：黄小斜](#个人公众号：黄小斜)
+
 
 这篇总结是基于之前博客内容的一个整理和回顾。
 
@@ -101,20 +99,4 @@ set就是hashmap将value固定为一个object，只存key元素包装成一个en
 
 主要是基于红黑树实现的两个数据结构，可以保证key序列是有序的，获取sortedset就可以顺序打印key值了。其中涉及到红黑树的插入和删除，调整等操作，比较复杂，这里就不细说了。
 
-## 微信公众号
 
-### Java技术江湖
-
-如果大家想要实时关注我更新的文章以及分享的干货的话，可以关注我的公众号【Java技术江湖】一位阿里 Java 工程师的技术小站，作者黄小斜，专注 Java 相关技术：SSM、SpringBoot、MySQL、分布式、中间件、集群、Linux、网络、多线程，偶尔讲点Docker、ELK，同时也分享技术干货和学习经验，致力于Java全栈开发！
-
-**Java工程师必备学习资源:** 一些Java工程师常用学习资源，关注公众号后，后台回复关键字 **“Java”** 即可免费无套路获取。
-
-![我的公众号](https://img-blog.csdnimg.cn/20190805090108984.jpg)
-
-### 个人公众号：黄小斜
-
-作者是 985 硕士，蚂蚁金服 JAVA 工程师，专注于 JAVA 后端技术栈：SpringBoot、MySQL、分布式、中间件、微服务，同时也懂点投资理财，偶尔讲点算法和计算机理论基础，坚持学习和写作，相信终身学习的力量！
-
-**程序员3T技术学习资源：** 一些程序员学习技术的资源大礼包，关注公众号后，后台回复关键字 **“资料”** 即可免费无套路获取。	
-
-![](https://img-blog.csdnimg.cn/20190829222750556.jpg)

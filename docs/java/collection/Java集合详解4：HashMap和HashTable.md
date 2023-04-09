@@ -14,9 +14,7 @@
   * [HashTable与HashMap的异同点](#hashtable与hashmap的异同点)
   * [面试题：HashMap和HashTable的区别](#面试题：hashmap和hashtable的区别)
   * [参考文章](#参考文章)
-  * [微信公众号](#微信公众号)
-    * [Java技术江湖](#java技术江湖)
-    * [个人公众号：黄小斜](#个人公众号：黄小斜)
+
     
 本文参考http://cmsblogs.com/?p=176
 
@@ -594,23 +592,7 @@ https://blog.csdn.net/lihua5419/article/details/87691965
 
 https://www.cnblogs.com/aeolian/p/8468632.html
 
-## 微信公众号
 
-### Java技术江湖
-
-如果大家想要实时关注我更新的文章以及分享的干货的话，可以关注我的公众号【Java技术江湖】一位阿里 Java 工程师的技术小站，作者黄小斜，专注 Java 相关技术：SSM、SpringBoot、MySQL、分布式、中间件、集群、Linux、网络、多线程，偶尔讲点Docker、ELK，同时也分享技术干货和学习经验，致力于Java全栈开发！
-
-**Java工程师必备学习资源:** 一些Java工程师常用学习资源，关注公众号后，后台回复关键字 **“Java”** 即可免费无套路获取。
-
-![我的公众号](https://img-blog.csdnimg.cn/20190805090108984.jpg)
-
-### 个人公众号：黄小斜
-
-作者是 985 硕士，蚂蚁金服 JAVA 工程师，专注于 JAVA 后端技术栈：SpringBoot、MySQL、分布式、中间件、微服务，同时也懂点投资理财，偶尔讲点算法和计算机理论基础，坚持学习和写作，相信终身学习的力量！
-
-**程序员3T技术学习资源：** 一些程序员学习技术的资源大礼包，关注公众号后，后台回复关键字 **“资料”** 即可免费无套路获取。	
-
-![](https://img-blog.csdnimg.cn/20190829222750556.jpg)
 
 
 

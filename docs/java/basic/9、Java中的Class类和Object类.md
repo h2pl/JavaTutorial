@@ -16,9 +16,7 @@
     * [finalize()方法](#finalize方法)
   * [CLass类和Object类的关系](#class类和object类的关系)
   * [参考文章](#参考文章)
-  * [微信公众号](#微信公众号)
-    * [Java技术江湖](#java技术江湖)
-    * [个人公众号：黄小斜](#个人公众号：黄小斜)
+
 
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看
 > https://github.com/h2pl/Java-Tutorial
