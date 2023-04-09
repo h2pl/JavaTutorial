@@ -204,11 +204,11 @@ todo
 * [深入理解JVM虚拟机：JNDI，OSGI，Tomcat类加载器实现](docs/java/jvm/深入理解JVM虚拟机：JNDI，OSGI，Tomcat类加载器实现.md)
 * [深入了解JVM虚拟机：Java的编译期优化与运行期优化](docs/java/jvm/深入理解JVM虚拟机：Java的编译期优化与运行期优化.md)
 * [深入理解JVM虚拟机：JVM监控工具与诊断实践](docs/java/jvm/深入理解JVM虚拟机：JVM监控工具与诊断实践.md)
-* [深入理解JVM虚拟机：JVM常用参数以及调优实践](docs/java/jvm/temp/深入理解JVM虚拟机：JVM常用参数以及调优实践.md)
+* [深入理解JVM虚拟机：JVM常用参数以及调优实践](docs/java/jvm/深入理解JVM虚拟机：JVM常用参数以及调优实践.md)
 * [深入理解JVM虚拟机：Java内存异常原理与实践](docs/java/jvm/深入理解JVM虚拟机：Java内存异常原理与实践.md)
 * [深入理解JVM虚拟机：JVM性能管理神器VisualVM介绍与实战](docs/java/jvm/深入理解JVM虚拟机：JVM性能管理神器VisualVM介绍与实战.md)
 * [深入理解JVM虚拟机：再谈四种引用及GC实践](docs/java/jvm/深入理解JVM虚拟机：再谈四种引用及GC实践.md)
-* [深入理解JVM虚拟机：GC调优思路与常用工具](docs/java/jvm/temp/深入理解JVM虚拟机：GC调优思路与常用工具.md)
+* [深入理解JVM虚拟机：GC调优思路与常用工具](docs/java/jvm/深入理解JVM虚拟机：GC调优思路与常用工具.md)
 
 ### Java网络编程
 

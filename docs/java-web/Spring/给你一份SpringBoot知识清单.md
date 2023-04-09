@@ -8,7 +8,6 @@
     * [2.3、@Import](#23、import)
     * [2.4、@Conditional](#24、conditional)
     * [2.5、@ConfigurationProperties与@EnableConfigurationProperties](#25、configurationproperties与enableconfigurationproperties)
-        * [](#)
 * [三、削铁如泥：SpringFactoriesLoader详解](#三、削铁如泥：springfactoriesloader详解)
 * [四、另一件武器：Spring容器的事件监听机制](#四、另一件武器：spring容器的事件监听机制)
     * [Spring容器内的事件监听机制](#spring容器内的事件监听机制)
@@ -17,9 +16,6 @@
     * [6.1 SpringApplication初始化](#61-springapplication初始化)
     * [6.2 Spring Boot启动流程](#62-spring-boot启动流程)
 * [参考文章](#参考文章)
-* [微信公众号](#微信公众号)
-    * [个人公众号：黄小斜](#个人公众号：黄小斜)
-    * [技术公众号：Java技术江湖](#技术公众号：java技术江湖)
 
 
 本文转自互联网，侵删
@@ -806,30 +802,3 @@ public void initialize(ConfigurableApplicationContext context) {
 [5][spring boot实战：自动配置原理分析](https://link.jianshu.com/?t=http%3A%2F%2Fblog.csdn.net%2Fliaokailin%2Farticle%2Fdetails%2F49559951):[http://blog.csdn.net/liaokailin/article/details/49559951](https://link.jianshu.com/?t=http%3A%2F%2Fblog.csdn.net%2Fliaokailin%2Farticle%2Fdetails%2F49559951)  
 [6][spring boot实战：Spring boot Bean加载源码分析](https://link.jianshu.com/?t=http%3A%2F%2Fblog.csdn.net%2Fliaokailin%2Farticle%2Fdetails%2F49107209)：[http://blog.csdn.net/liaokailin/article/details/49107209](https://link.jianshu.com/?t=http%3A%2F%2Fblog.csdn.net%2Fliaokailin%2Farticle%2Fdetails%2F49107209)
 
-
-
-## 微信公众号
-
-### 个人公众号：黄小斜
-
-黄小斜是跨考软件工程的 985 硕士，自学 Java 两年，拿到了 BAT 等近十家大厂 offer，从技术小白成长为阿里工程师。
-
-作者专注于 JAVA 后端技术栈，热衷于分享程序员干货、学习经验、求职心得和程序人生，目前黄小斜的CSDN博客有百万+访问量，知乎粉丝2W+，全网已有10W+读者。
-
-黄小斜是一个斜杠青年，坚持学习和写作，相信终身学习的力量，希望和更多的程序员交朋友，一起进步和成长！
-
-**原创电子书:**  
-关注公众号【黄小斜】后回复【原创电子书】即可领取我原创的电子书《菜鸟程序员修炼手册：从技术小白到阿里巴巴Java工程师》
-
-**程序员3T技术学习资源：** 一些程序员学习技术的资源大礼包，关注公众号后，后台回复关键字 **“资料”** 即可免费无套路获取。      
-**考研复习资料：** 计算机考研大礼包，都是我自己考研复习时用的一些复习资料,包括公共课和专业的复习视频，这里也推荐给大家，关注公众号后，后台回复关键字 **“考研”** 即可免费获取。   
-![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20190829222750556.jpg)
-
-
-### 技术公众号：Java技术江湖
-
-如果大家想要实时关注我更新的文章以及分享的干货的话，可以关注我的公众号【Java技术江湖】一位阿里 Java 工程师的技术小站，作者黄小斜，专注 Java 相关技术：SSM、SpringBoot、MySQL、分布式、中间件、集群、Linux、网络、多线程，偶尔讲点Docker、ELK，同时也分享技术干货和学习经验，致力于Java全栈开发！
-
-**Java工程师必备学习资源:** 一些Java工程师常用学习资源，关注公众号后，后台回复关键字 **“Java”** 即可免费无套路获取。
-
-![我的公众号](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20190805090108984.jpg)

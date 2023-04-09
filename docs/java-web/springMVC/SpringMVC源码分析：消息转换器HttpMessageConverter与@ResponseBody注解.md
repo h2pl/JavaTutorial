@@ -1,5 +1,4 @@
 # 目录
-* [目录](#目录)
 * [前言](#前言)
 * [现象](#现象)
 * [源码分析](#源码分析)
@@ -29,17 +28,7 @@
 
 如果对本系列文章有什么建议，或者是有什么疑问的话，也可以关注公众号【Java技术江湖】联系作者，欢迎你参与本系列博文的创作和修订。
 
-<!-- more -->  
-
-## 目录
-
-*   [前言](http://www.cnblogs.com/fangjian0423/p/springMVC-xml-json-convert.html#preface)
-*   [现象](http://www.cnblogs.com/fangjian0423/p/springMVC-xml-json-convert.html#phenomenon)
-*   [源码分析](http://www.cnblogs.com/fangjian0423/p/springMVC-xml-json-convert.html#analysis)
-*   [实例讲解](http://www.cnblogs.com/fangjian0423/p/springMVC-xml-json-convert.html#demo)
-*   [关于配置](http://www.cnblogs.com/fangjian0423/p/springMVC-xml-json-convert.html#config)
-*   [总结](http://www.cnblogs.com/fangjian0423/p/springMVC-xml-json-convert.html#summary)
-*   [参考资料](http://www.cnblogs.com/fangjian0423/p/springMVC-xml-json-convert.html#reference)
+<!-- more -->
 
 ## 前言
 

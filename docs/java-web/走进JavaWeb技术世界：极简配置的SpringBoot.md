@@ -15,9 +15,6 @@
     * [Spring Boot 支持 JSP](#spring-boot-支持-jsp)
     * [集成 MyBatis](#集成-mybatis)
 * [springMVC和springboot的区别](#springmvc和springboot的区别)
-* [微信公众号](#微信公众号)
-    * [个人公众号：程序员黄小斜](#个人公众号：程序员黄小斜)
-    * [技术公众号：Java技术江湖](#技术公众号：java技术江湖)
 
 
 本文转载自互联网，侵删  

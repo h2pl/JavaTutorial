@@ -1,11 +1,7 @@
 # 目录
   * [前言](#前言)
-  * [<init-param>配置元素读取</init-param>](#init-param配置元素读取init-param)
   * [容器上下文的建立](#容器上下文的建立)
   * [初始化SpringMVC默认实现类](#初始化springmvc默认实现类)
-* [Default implementation classes for DispatcherServlet's strategy interfaces.](#default-implementation-classes-for-dispatcherservlets-strategy-interfaces)
-* [Used as fallback when no matching beans are found in the DispatcherServlet context.](#used-as-fallback-when-no-matching-beans-are-found-in-the-dispatcherservlet-context)
-* [Not meant to be customized by application developers.](#not-meant-to-be-customized-by-application-developers)
   * [总结](#总结)
 
 

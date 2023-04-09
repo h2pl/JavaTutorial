@@ -1,4 +1,4 @@
-# Table of Contents
+# 目录
 
 * [核心概念(Core Concepts)](#核心概念core-concepts)
   * [Latency(延迟)](#latency延迟)

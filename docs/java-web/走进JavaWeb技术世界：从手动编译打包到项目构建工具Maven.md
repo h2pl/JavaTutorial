@@ -9,8 +9,6 @@
     * [maven目录](#maven目录)
     * [Maven常用命令说明](#maven常用命令说明)
     * [Maven使用](#maven使用)
-  * [[](http://tengj.top/2018/01/01/maven/#%E4%BE%9D%E8%B5%96%E7%9A%84%E9%85%8D%E7%BD%AE "依赖的配置")依赖的配置](#[]httptengjtop20180101mavene4be9de8b596e79a84e9858de7bdae-依赖的配置依赖的配置)
-  * [[](http://tengj.top/2018/01/01/maven/#%E4%BE%9D%E8%B5%96%E8%8C%83%E5%9B%B4 "依赖范围")依赖范围](#[]httptengjtop20180101mavene4be9de8b596e88c83e59bb4-依赖范围依赖范围)
     * [传递性依赖](#传递性依赖)
     * [依赖范围](#依赖范围)
   * [Maven和Gradle的比较](#maven和gradle的比较)

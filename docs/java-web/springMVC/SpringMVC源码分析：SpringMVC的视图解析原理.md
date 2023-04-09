@@ -4,8 +4,6 @@
 * [重要接口和类介绍](#重要接口和类介绍)
 * [源码分析](#源码分析)
 * [编码自定义的ViewResolver](#编码自定义的viewresolver)
-    * [This is jsp page](#this-is-jsp-page)
-    * [This is freemarker page](#this-is-freemarker-page)
 * [总结](#总结)
 
 

@@ -1,4 +1,23 @@
 # 目录
+
+* [目录](#目录)
+  * [Buffer](#buffer)
+    * [position、limit、capacity](#position、limit、capacity)
+    * [初始化 Buffer](#初始化-buffer)
+    * [填充 Buffer](#填充-buffer)
+    * [提取 Buffer 中的值](#提取-buffer-中的值)
+    * [mark() & reset()](#mark--reset)
+    * [rewind() & clear() & compact()](#rewind--clear--compact)
+  * [Channel](#channel)
+    * [FileChannel](#filechannel)
+    * [SocketChannel](#socketchannel)
+    * [ServerSocketChannel](#serversocketchannel)
+    * [DatagramChannel](#datagramchannel)
+  * [Selector](#selector)
+  * [小结](#小结)
+
+
+# 目录
   * [Buffer](#buffer)
     * [position、limit、capacity](#position、limit、capacity)
     * [初始化 Buffer](#初始化-buffer)
