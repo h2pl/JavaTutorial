@@ -1,4 +1,21 @@
-本仓库为【Java工程师技术指南】力求打造最完整最实用的Java工程师学习指南！
+<div align="center">
+<a href="https://github.com/h2pl/Java-Tutorial">
+    <img src="https://java-tutorial.oss-cn-shanghai.aliyuncs.com/Javatutorial-v1.png" width="300" height="300"/>
+</a>
+</div>
+
+<p>
+<div align="center">
+    <a href="https://github.com/h2pl/Java-Tutorial"><img src="https://img.shields.io/github/stars/h2pl/JavaTutorial.svg"></a>
+    <a href="https://github.com/h2pl/Java-Tutorial"><img src="https://img.shields.io/github/forks/h2pl/JavaTutorial.svg"></a>
+    <a href="https://github.com/h2pl/Java-Tutorial"><img src="https://img.shields.io/github/issues/h2pl/JavaTutorial.svg"></a>
+    <a href="https://github.com/h2pl/Java-Tutorial"><img src="https://img.shields.io/github/license/h2pl/JavaTutorial.svg"></a>
+    <a href="https://github.com/h2pl/Java-Tutorial"><img src="https://img.shields.io/github/last-commit/h2pl/JavaTutorial.svg"></a>
+    <a href="https://github.com/h2pl/Java-Tutorial"><img src="https://img.shields.io/github/release/h2pl/JavaTutorial.svg"></a>
+</div>
+</p>
+
+力求打造最完整最实用的Java工程师学习指南！
 
 这些文章和总结都是我近几年学习Java总结和整理出来的，非常实用，对于学习Java后端的朋友来说应该是最全面最完整的技术仓库。
 我靠着这些内容进行复习，拿到了BAT等大厂的offer，这个仓库也已经帮助了很多的Java学习者，如果对你有用，希望能给个star支持我，谢谢！
@@ -9,12 +26,10 @@
 
 <p align="center">
 <a href="https://github.com/h2pl/Java-Tutorial" target="_blank">
-    <img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9ub3RlLnlvdWRhby5jb20veXdzL3B1YmxpYy9yZXNvdXJjZS8wNjk1ODIwMzc5MjhhMGU0OWViY2UyYjVhODVmM2UwZi94bWxub3RlLzRCNjhFODVCMzA4MzQwMjJCNzBGMTBBMTRDOEVENDVDLzg4MDQ3?x-oss-process=image/format,png" width="200" height="160"/>
+    <img src="https://java-tutorial.oss-cn-shanghai.aliyuncs.com/Javatutorial.jpeg" width="900" height="300"/>
 </a>
 </p>
-
-
-推荐使用 https://how2playlife.com/ 在线阅读，在线阅读内容本仓库同步一致。这种方式阅读的优势在于：左侧边栏有目录，阅读体验更好。
+                                                                          
 
 
 ## 目录
@@ -354,13 +369,6 @@ springboot和springcloud
 
 ## 微信公众号
 
-
 ### Java技术江湖
-
-如果大家想要实时关注我更新的文章以及分享的干货的话，可以关注我的公众号【Java技术江湖】前阿里 Java 工程师的技术小站，作者黄小斜，专注 Java 相关技术：SSM、SpringBoot、MySQL、分布式、中间件、集群、Linux、网络、多线程，偶尔讲点Docker、ELK，同时也分享技术干货和学习经验，致力于Java全栈开发！
-
-**Java工程师技术学习资料:** 一些Java工程师常用学习资源，关注公众号后，后台回复关键字 **“Java”** 即可免费无套路获取。
-
-**Java进阶架构师资料:** 关注公众号后回复 **”架构师“** 即可领取 Java基础、进阶、项目和架构师等免费学习资料，更有数据库、分布式、微服务等热门技术学习视频，内容丰富，兼顾原理和实践，另外也将赠送作者原创的Java学习指南、Java程序员面试指南等干货资源
-
-![我的公众号](https://img-blog.csdnimg.cn/20190805090108984.jpg)
+如果大家想要实时关注我更新的文章以及分享的干货的话，可以关注我的公众号【Java技术江湖】
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/Javatutorial.jpeg)
