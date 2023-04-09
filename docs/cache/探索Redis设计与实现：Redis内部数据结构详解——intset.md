@@ -1,4 +1,4 @@
-# Table of Contents
+# 目录
 
   * [intset数据结构简介](#intset数据结构简介)
   * [intset的查找和添加操作](#intset的查找和添加操作)

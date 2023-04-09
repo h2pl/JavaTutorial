@@ -1,4 +1,4 @@
-# Table of Contents
+# 目录
 
   * [Replication（主从复制）](#replication（主从复制）)
     * [配置主服务器](#配置主服务器)

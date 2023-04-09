@@ -1,4 +1,4 @@
-# Table of Contents
+# 目录
 
   * [ZAB协议](#zab协议)
   * [消息广播模式](#消息广播模式)

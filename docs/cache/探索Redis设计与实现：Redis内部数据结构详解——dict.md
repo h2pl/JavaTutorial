@@ -1,4 +1,4 @@
-# Table of Contents
+# 目录
 
   * [dict的数据结构定义](#dict的数据结构定义)
   * [dict的创建（dictCreate）](#dict的创建（dictcreate）)

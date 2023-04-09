@@ -1,4 +1,4 @@
-# Table of Contents
+# 目录
 
 * [Redis复制概论](#redis复制概论)
   * [Redis复制方式](#redis复制方式)

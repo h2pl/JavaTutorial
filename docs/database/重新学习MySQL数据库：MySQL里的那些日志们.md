@@ -1,4 +1,4 @@
-# Table of Contents
+# 目录
 
 * [目录](#目录)
   * [重新学习MySQL数据库10：MySQL里的那些日志们](#重新学习mysql数据库10：mysql里的那些日志们)

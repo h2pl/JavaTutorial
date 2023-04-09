@@ -1,4 +1,4 @@
-# Table of Contents
+# 目录
 
   * [Redis分布式锁进化史](#redis分布式锁进化史)
     * [各个版本的Redis分布式锁](#各个版本的redis分布式锁)

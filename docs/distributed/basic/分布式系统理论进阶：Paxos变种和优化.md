@@ -1,4 +1,4 @@
-# Table of Contents
+# 目录
   * [**引言**](#引言)
   * [**Multi Paxos**](#multi-paxos)
   * [**Fast Paxos**](#fast-paxos)
