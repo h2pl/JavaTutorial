@@ -5,12 +5,20 @@
 
 为了更好地讲清楚每个知识模块，我们也参考了很多网上的优质博文，力求不漏掉每一个知识点，所有参考博文都将声明转载来源，如有侵权，请联系我。
 
+
+
 点击关注[微信公众号](#微信公众号)及时获取笔主最新更新文章，并可免费领取Java工程师必备学习资源
 
 <p align="center">
 <a href="https://github.com/h2pl/Java-Tutorial" target="_blank">
     <img src="https://java-tutorial.oss-cn-shanghai.aliyuncs.com/Javatutorial.jpeg" width="1200" height="400"/>
 </a>
+</p>
+<p align="center>
+    <a href="https://github.com/h2pl/Java-Tutorial"><img src="https://img.shields.io/github/stars/h2pl/JavaTutorial.svg/></a>
+    <img src="https://img.shields.io/github/forks/h2pl/JavaTutorial.svg/>
+    <img src="https://img.shields.io/github/issues/h2pl/JavaTutorial.svg/>
+    <img src="https://img.shields.io/github/license/h2pl/JavaTutorial.svg/>
 </p>
 
 
