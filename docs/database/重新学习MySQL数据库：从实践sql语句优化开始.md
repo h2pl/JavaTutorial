@@ -8,9 +8,9 @@
   * [InnoDB](#innodb)
   * [0、自己写的海量数据sql优化实践](#0、自己写的海量数据sql优化实践)
 * [mysql百万级分页优化](#mysql百万级分页优化)
-  * [　　普通分页](#　　普通分页)
-  * [　　 优化分页](#　　-优化分页)
-* [　　总结](#　　总结)
+  * [普通分页](#普通分页)
+  * [优化分页](#优化分页)
+* [总结](#总结)
 
 
 本文转自互联网
@@ -667,7 +667,7 @@ SELECT s.* from  Student s INNER JOIN SC sc on sc.s_id = s.s_id where sc.c_id=0 
 
 ## mysql百万级分页优化
 
-### 　　普通分页
+### 普通分页
 
 数据分页在网页中十分多见，分页一般都是limit start,offset,然后根据页码page计算start
 
@@ -681,7 +681,7 @@ SELECT * from user limit **100001**,**20**; //time **0**.151s explain SELECT * f
 
 ![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/d327669b28bc017d62dfe25833ba98245cf.jpg)
 
-### 　　 优化分页
+### 优化分页
 
 使用主键索引来优化数据分页
 
@@ -693,7 +693,7 @@ SELECT * from user limit **100001**,**20**; //time **0**.151s explain SELECT * f
 
 ![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/05fffbffc5e3ef9add4719846ad53f25099.jpg)
 
-## 　　总结
+## 总结
 
 在数据量比较大的时候，我们尽量去利用索引来优化语句。上面的优化方法如果id不是主键索引，查询效率比第一种还要低点。我们可以先使用explain来分析语句，查看语句的执行顺序和执行性能。
 

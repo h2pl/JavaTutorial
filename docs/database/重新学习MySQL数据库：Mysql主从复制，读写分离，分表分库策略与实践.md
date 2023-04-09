@@ -11,8 +11,6 @@
     * [三、Mycat 垂直切分、水平切分实战](#三、mycat-垂直切分、水平切分实战)
         * [1、垂直切分](#1、垂直切分)
         * [2、水平切分](#2、水平切分)
-* [range start-end ,data node index](#range-start-end-data-node-index)
-* [K=1000,M=10000.](#k1000m10000)
   * [为什么需要读写分离](#为什么需要读写分离)
   * [MySQL主从复制](#mysql主从复制)
   * [Mycat读写分离设置](#mycat读写分离设置)

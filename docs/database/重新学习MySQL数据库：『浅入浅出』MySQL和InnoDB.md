@@ -22,7 +22,7 @@
     * [不可重复读](#不可重复读)
     * [幻读](#幻读)
   * [总结](#总结)
-  * [[Innodb与Myisam引擎的区别与应用场景](https://www.cnblogs.com/changna1314/p/6878900.html)](#[innodb与myisam引擎的区别与应用场景]httpswwwcnblogscomchangna1314p6878900html)
+  * [Innodb与Myisam引擎的区别与应用场景](#[innodb与myisam引擎的区别与应用场景])
 
 
 本文转自互联网
