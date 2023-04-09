@@ -1,3 +1,14 @@
+# Table of Contents
+
+  * [**引言**](#引言)
+  * [**CAP定理**](#cap定理)
+  * [**CAP的工程启示**](#cap的工程启示)
+    * [**1、关于 P 的理解**](#1、关于-p-的理解)
+    * [**2、CA非0/1的选择**](#2、ca非01的选择)
+    * [**3、跳出CAP**](#3、跳出cap)
+    * [**小结**](#小结)
+
+
 本文转自：https://www.cnblogs.com/bangerlee/p/5328888.html
 
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看
@@ -17,11 +28,11 @@
 如果对本系列文章有什么建议，或者是有什么疑问的话，也可以关注公众号【Java技术江湖】联系作者，欢迎你参与本系列博文的创作和修订。
 
 <!-- more -->  
-**引言**
+## **引言**
 
 CAP是分布式系统、特别是分布式存储领域中被讨论最多的理论，“[什么是CAP定理？](https://www.quora.com/What-Is-CAP-Theorem-1)”在Quora 分布式系统分类下排名 FAQ 的 No.1。CAP在程序员中也有较广的普及，它不仅仅是“C、A、P不能同时满足，最多只能3选2”，以下尝试综合各方观点，从发展历史、工程实践等角度讲述CAP理论。希望大家透过本文对CAP理论有更多地了解和认识。
 
-**CAP定理**
+## **CAP定理**
 
 CAP由[Eric Brewer](https://en.wikipedia.org/wiki/Eric_Brewer_(scientist))在2000年PODC会议上提出<sup>[1][2]</sup>，是Eric Brewer在Inktomi<sup>[3]</sup>期间研发搜索引擎、分布式web缓存时得出的关于数据一致性(consistency)、服务可用性(availability)、分区容错性(partition-tolerance)的猜想：
 
@@ -38,13 +49,13 @@ C、A、P三者最多只能满足其中两个，和FLP定理一样，CAP定理�
 
 ![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230407204500.png)
 
-**CAP的工程启示**
+## **CAP的工程启示**
 
 CAP理论提出7、8年后，NoSql圈将CAP理论当作对抗传统关系型数据库的依据、阐明自己放宽对数据一致性(consistency)要求的正确性<sup>[6]</sup>，随后引起了大范围关于CAP理论的讨论。
 
 CAP理论看似给我们出了一道3选2的选择题，但在工程实践中存在很多现实限制条件，需要我们做更多地考量与权衡，避免进入CAP认识误区<sup>[7]</sup>。
 
-**1、关于 P 的理解**
+### **1、关于 P 的理解**
 
 Partition字面意思是网络分区，即因网络因素将系统分隔为多个单独的部分，有人可能会说，网络分区的情况发生概率非常小啊，是不是不用考虑P，保证CA就好<sup>[8]</sup>。要理解P，我们看回CAP证明<sup>[4]</sup>中P的定义：
 
@@ -56,7 +67,7 @@ Partition字面意思是网络分区，即因网络因素将系统分隔为多�
 
 > In a network subject to communication failures, it is impossible for any web service to implement an atomic read/write shared memory that guarantees a response to every request.
 
-**2、CA非0/1的选择**
+### **2、CA非0/1的选择**
 
 P 是必选项，那3选2的选择题不就变成数据一致性(consistency)、服务可用性(availability) 2选1？工程实践中一致性有不同程度，可用性也有不同等级，在保证分区容错性的前提下，放宽约束后可以兼顾一致性和可用性，两者不是非此即彼<sup>[12]</sup>。
 
@@ -71,7 +82,7 @@ CAP定理证明中的一致性指强一致性，强一致性要求多节点组�
 
 工程实践中，较常见的做法是通过异步拷贝副本(asynchronous replication)、quorum/NRW，实现在调用端看来数据强一致、被调端最终一致，在调用端看来服务可用、被调端允许部分节点不可用(或被网络分隔)的效果<sup>[15]</sup>。
 
-**3、跳出CAP**
+### **3、跳出CAP**
 
 CAP理论对实现分布式系统具有指导意义，但CAP理论并没有涵盖分布式工程实践中的所有重要因素。
 
@@ -79,7 +90,7 @@ CAP理论对实现分布式系统具有指导意义，但CAP理论并没有涵�
 
 延时与数据一致性也是一对“冤家”，如果要达到强一致性、多个副本数据一致，必然增加延时。加上延时的考量，我们得到一个CAP理论的修改版本PACELC<sup>[17]</sup>：如果出现P(网络分区)，如何在A(服务可用性)、C(数据一致性)之间选择；否则，如何在L(延时)、C(数据一致性)之间选择。
 
-**小结**
+### **小结**
 
 以上介绍了CAP理论的源起和发展，介绍了CAP理论给分布式系统工程实践带来的启示。
 

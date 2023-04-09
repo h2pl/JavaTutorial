@@ -403,8 +403,8 @@ public class TheClass {
 你可以像这样来访问变量的注解：
 
 ```
-Field field = ... //获取方法对象</pre>
-<pre>Annotation[] annotations = field.getDeclaredAnnotations();
+Field field = ... //获取方法对象目录
+Annotation[] annotations = field.getDeclaredAnnotations();
 
 for(Annotation annotation : annotations){
  if(annotation instanceof MyAnnotation){
@@ -418,8 +418,8 @@ for(Annotation annotation : annotations){
 你可以像这样访问指定的变量注解：
 
 ```
-Field field = ...//获取方法对象</pre>
-<pre>
+Field field = ...//获取方法对象目录
+
 Annotation annotation = field.getAnnotation(MyAnnotation.class);
 
 if(annotation instanceof MyAnnotation){

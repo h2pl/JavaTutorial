@@ -1,3 +1,13 @@
+# Table of Contents
+
+  * [**ZK API**](#zk-api)
+  * [**ZK应用场景**](#zk应用场景)
+  * [**Leader选举**](#leader选举)
+  * [**配置管理**](#配置管理)
+  * [**ZK监控**](#zk监控)
+  * [**小结**](#小结)
+
+
 本文转自 https://www.cnblogs.com/bangerlee/p/5268485.html
 
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看
@@ -17,7 +27,6 @@
 <!-- more -->  
 
 
-## 分布式服务协调员zookeeper - 应用场景和监控
 
 zookeeper在分布式系统中作为协调员的角色，可应用于Leader选举、分布式锁、配置管理等服务的实现。以下我们从zookeeper供的API、应用场景和监控三方面学习和了解zookeeper（以下简称ZK）。
 
@@ -25,7 +34,7 @@ zookeeper在分布式系统中作为协调员的角色，可应用于Leader选�
 
 
 
-**ZK API**
+## **ZK API**
 
 ZK以Unix文件系统树结构的形式管理存储的数据，图示如下：
 
@@ -52,11 +61,11 @@ ZK提供了以下API，供client操作znode和znode中存储的数据：
 *   setData(path, data, version)：将data[]数据写入对应path/version的znode
 *   getChildren(path, watch)：返回指定znode的子节点集合
 
-**ZK应用场景**
+## **ZK应用场景**
 
 基于以上ZK提供的znode和znode数据的操作，可轻松实现Leader选举、分布式锁、配置管理等服务。
 
-**Leader选举**
+## **Leader选举**
 
 利用打上sequential标志的Ephemeral，我们可以实现Leader选举。假设需要从三个client中选取Leader，实现过程如下：
 
@@ -77,7 +86,7 @@ ZK提供了以下API，供client操作znode和znode中存储的数据：
 
 分布式锁的实现与以上Leader选举的实现相同，稍作修改，我们还可以基于ZK实现lease机制（有期限的授权服务）。
 
-**配置管理**
+## **配置管理**
 
 znode可以存储数据，基于这一点，我们可以用ZK实现分布式系统的配置管理，假设有服务A，A扩容设备时需要将相应新增的ip/port同步到全网服务器的A.conf配置，实现过程如下：
 
@@ -96,7 +105,7 @@ cZxid = 0x2ffdeda3be ……
 
 服务缩容的步骤类似，机器下线时将ZK相应节点删除，全网机器监听到该事件后将配置中的设备剔除。
 
-**ZK监控**
+## **ZK监控**
 
 ZK自身提供了一些“四字命令”，通过这些四字命令，我们可以获得ZK集群中，某台ZK的角色、znode数、健康状态等信息：
 
@@ -127,6 +136,6 @@ zk_znode_count 16216
 
 再根据返回值判断添加、删除znode是否成功，从而判断该台ZK状态是否正常。
 
-**小结**
+## **小结**
 
 zookeeper以目录树的形式管理数据，提供znode监听、数据设置等接口，基于这些接口，我们可以实现Leader选举、配置管理、命名服务等功能。结合四字命令，加上模拟zookeeper client 创建/删除znode，我们可以实现对zookeeper的有效监控。在各种分布式系统中，我们经常可以看到zookeeper的身影。

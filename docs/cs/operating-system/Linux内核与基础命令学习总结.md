@@ -309,7 +309,7 @@ linux使用inode来标识任意一个文件。inode存储除了文件名以外�
 
 
 
-<pre>#include <unistd> ssize_t write(int filedes, void *buf, size_t nbytes); // 返回：若成功则返回写入的字节数，若出错则返回-1 // filedes：文件描述符 // buf:待写入数据缓存区 // nbytes:要写入的字节数</pre>
+#include <unistd> ssize_t write(int filedes, void *buf, size_t nbytes); // 返回：若成功则返回写入的字节数，若出错则返回-1 // filedes：文件描述符 // buf:待写入数据缓存区 // nbytes:要写入的字节数目录
 
 
 
@@ -321,7 +321,7 @@ linux使用inode来标识任意一个文件。inode存储除了文件名以外�
 
 ![复制代码](http://common.cnblogs.com/images/copycode.gif)
 
-<pre> 1 ssize_t                        /* Write "n" bytes to a descriptor. */
+ 1 ssize_t                        /* Write "n" bytes to a descriptor. */
  2 writen(int fd, const void *vptr, size_t n)
  3 {
  4     size_t nleft;
@@ -335,7 +335,7 @@ linux使用inode来标识任意一个文件。inode存储除了文件名以外�
 18         nleft -= nwritten; 19         ptr   += nwritten; 20 } 21     return(n); 22 } 23 /* end writen */
 24 
 25 void
-26 Writen(int fd, void *ptr, size_t nbytes) 27 { 28     if (writen(fd, ptr, nbytes) != nbytes) 29         err_sys("writen error"); 30 }</pre>
+26 Writen(int fd, void *ptr, size_t nbytes) 27 { 28     if (writen(fd, ptr, nbytes) != nbytes) 29         err_sys("writen error"); 30 }目录
 
 ![复制代码](http://common.cnblogs.com/images/copycode.gif)
 
@@ -349,7 +349,7 @@ linux使用inode来标识任意一个文件。inode存储除了文件名以外�
 
 
 
-<pre>#include <unistd> ssize_t read(int filedes, void *buf, size_t nbytes); // 返回：若成功则返回读到的字节数，若已到文件末尾则返回0，若出错则返回-1 // filedes：文件描述符 // buf:读取数据缓存区 // nbytes:要读取的字节数</pre>
+#include <unistd> ssize_t read(int filedes, void *buf, size_t nbytes); // 返回：若成功则返回读到的字节数，若已到文件末尾则返回0，若出错则返回-1 // filedes：文件描述符 // buf:读取数据缓存区 // nbytes:要读取的字节数目录
 
 
 
@@ -375,7 +375,7 @@ linux使用inode来标识任意一个文件。inode存储除了文件名以外�
 
 ![复制代码](http://common.cnblogs.com/images/copycode.gif)
 
-<pre> 1 ssize_t                        /* Read "n" bytes from a descriptor. */
+ 1 ssize_t                        /* Read "n" bytes from a descriptor. */
  2 readn(int fd, void *vptr, size_t n)
  3 {
  4     size_t nleft;
@@ -390,7 +390,7 @@ linux使用inode来标识任意一个文件。inode存储除了文件名以外�
 23 } 24 /* end readn */
 25 
 26 ssize_t 27 Readn(int fd, void *ptr, size_t nbytes) 28 { 29 ssize_t        n; 30 
-31     if ( (n = readn(fd, ptr, nbytes)) < 0) 32         err_sys("readn error"); 33     return(n); 34 }</pre>
+31     if ( (n = readn(fd, ptr, nbytes)) < 0) 32         err_sys("readn error"); 33     return(n); 34 }目录
 
 ![复制代码](http://common.cnblogs.com/images/copycode.gif)
 
@@ -406,7 +406,7 @@ linux使用inode来标识任意一个文件。inode存储除了文件名以外�
 
 
 
-<pre>#include <unistd.h> ssize_t write(int fd, const void *buf, size_t count);</pre>
+#include <unistd.h> ssize_t write(int fd, const void *buf, size_t count);目录
 
 
 
@@ -416,10 +416,10 @@ linux使用inode来标识任意一个文件。inode存储除了文件名以外�
 
 
 
-<pre># 获取socket的发送/接受缓冲区的大小：（后面的值是在Linux 2.6.38 x86_64上测试的结果）</pre>
+# 获取socket的发送/接受缓冲区的大小：（后面的值是在Linux 2.6.38 x86_64上测试的结果）目录
 
-<pre>sysctl net.core.wmem_default       #126976
-sysctl net.core.wmem_max　　　　    #131071</pre>
+sysctl net.core.wmem_default       #126976
+sysctl net.core.wmem_max　　　　    #131071目录
 
 
 

@@ -1,3 +1,11 @@
+# Table of Contents
+  * [**引言**](#引言)
+  * [**Multi Paxos**](#multi-paxos)
+  * [**Fast Paxos**](#fast-paxos)
+  * [**EPaxos**](#epaxos)
+  * [**小结**](#小结)
+
+
 本文转自：https://www.cnblogs.com/bangerlee/p/6189646.html
 
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看
@@ -16,7 +24,7 @@
 
 <!-- more -->  
 
-**引言**
+## **引言**
 
 [《分布式系统理论进阶 - Paxos》](http://www.cnblogs.com/bangerlee/p/5655754.html)中我们了解了Basic Paxos、Multi Paxos的基本原理，但如果想把Paxos应用于工程实践，了解基本原理还不够。
 
@@ -24,7 +32,7 @@
 
 ![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/116770-20161217185911917-43631009.jpg)
 
-**Multi Paxos**
+## **Multi Paxos**
 
 首先我们来回顾一下Multi Paxos，Multi Paxos在Basic Paxos的基础上确定一系列值，其决议过程如下：
 
@@ -44,7 +52,7 @@ phase2b: acceptor将决议同步给learner
 
 Multi Paxos中leader用于避免活锁，但leader的存在会带来其他问题，一是如何选举和保持唯一leader(虽然无leader或多leader不影响一致性，但影响决议进程progress)，二是充当leader的节点会承担更多压力，如何均衡节点的负载。Mencius<sup>[1]</sup>提出节点轮流担任leader，以达到均衡负载的目的；租约(lease)可以帮助实现唯一leader，但leader故障情况下可导致服务短期不可用。
 
-**Fast Paxos**
+## **Fast Paxos**
 
 在Multi Paxos中，proposer -> leader -> acceptor -> learner，从提议到完成决议共经过3次通信，能不能减少通信步骤？
 
@@ -56,7 +64,7 @@ Multi Paxos里提议都由leader提出，因而不存在一次决议出现多个
 
 Paxos自身隐含的一个特性也可以达到减少通信步骤的目标，如果acceptor上一次确定(chosen)的提议来自proposerA，则当次决议proposerA可以直接提议减少一次通信步骤。如果想实现这样的效果，需要在proposer、acceptor记录上一次决议确定(chosen)的历史，用以在提议前知道哪个proposer的提议上一次被确定、当次决议能不能节省一次通信步骤。
 
-**EPaxos**
+## **EPaxos**
 
 除了从减少通信步骤的角度提高Paxos决议效率外，还有其他方面可以降低Paxos决议时延，比如Generalized Paxos<sup>[3]</sup>提出不冲突的提议(例如对不同key的写请求)可以同时决议、以降低Paxos时延。
 
@@ -72,7 +80,7 @@ Paxos自身隐含的一个特性也可以达到减少通信步骤的目标，如
 
 为判断决议是否相互影响，实现EPaxos得记录决议之间的依赖关系。
 
-**小结**
+## **小结**
 
 以上介绍了几个基于Paxos的变种，Mencius中节点轮流做leader、均衡节点负载，Fast Paxos减少一次通信步骤，Generalized Paxos允许互不影响的决议同时进行，EPaxos无全局leader、各节点平等分担负载。
 

@@ -317,7 +317,7 @@ todo
 * [分布式系统理论进阶：Paxos变种和优化 ](docs/distributed/basic/分布式系统理论进阶：Paxos变种和优化.md)
 * [分布式系统理论基础：zookeeper分布式协调服务 ](docs/distributed/basic/分布式系统理论基础：zookeeper分布式协调服务.md)
 
-* [分布式技术实践总结](docs/distributed/分布式理论总结.md)
+* [分布式技术实践总结](docs/distributed/practice/分布式理论总结.md)
 
 ### 技术
 * [搞懂分布式技术：分布式系统的一些基本概念](docs/distributed/practice/搞懂分布式技术：分布式系统的一些基本概念.md )

@@ -1,3 +1,11 @@
+# Table of Contents
+
+  * [**引言**](#引言)
+  * [**Basic Paxos**](#basic-paxos)
+  * [**Multi Paxos**](#multi-paxos)
+  * [**小结**](#小结)
+
+
 本文转自：https://www.cnblogs.com/bangerlee/p/5655754.html
 
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看
@@ -23,7 +31,7 @@
 
 Paxos协议同时又以其“艰深晦涩”著称，下面结合[Paxos Made Simple](http://research.microsoft.com/en-us/um/people/lamport/pubs/paxos-simple.pdf)、[The Part-Time Parliament](http://research.microsoft.com/en-us/um/people/lamport/pubs/lamport-paxos.pdf)两篇论文，尝试通过Paxos推演、学习和了解Paxos协议。
 
-**Basic Paxos**
+## **Basic Paxos**
 
 何为一致性问题？简单而言，一致性问题是在节点宕机、消息无序等场景可能出现的情况下，相互独立的节点之间如何达成决议的问题，作为解决一致性问题的协议，Paxos的核心是节点间如何确定并只确定一个值(value)。
 
@@ -125,7 +133,7 @@ _(注: 希腊字母ß表示多轮决议的集合，字母B表示一轮决议)_
 
 最后我们再引入一个新的角色：learner，learner依附于acceptor，用于习得已确定的决议。以上决议过程都只要求acceptor多数派参与，而我们希望尽量所有acceptor的状态一致。如果部分acceptor因宕机等原因未知晓已确定决议，宕机恢复后可经本机learner采用pull的方式从其他acceptor习得。
 
-**Multi Paxos**
+## **Multi Paxos**
 
 通过以上步骤分布式系统已经能确定一个值，“只确定一个值有什么用？这可解决不了我面临的问题。” 你心中可能有这样的疑问。
 
@@ -139,7 +147,7 @@ _(注: 希腊字母ß表示多轮决议的集合，字母B表示一轮决议)_
 
 proposer leader在Multi Paxos中还有助于提升性能，常态下统一由leader发起提议，可节省prepare步骤(leader不用问询acceptor曾接受过的ID最大的提议、只有leader提议也不需要acceptor进行promise)直至发生leader宕机、重新选主。
 
-**小结**
+## **小结**
 
 以上介绍了Paxos的推演过程、如何在Basic Paxos的基础上通过状态机构建Multi Paxos。Paxos协议比较“艰深晦涩”，但多读几遍论文一般能理解其内涵，更难的是如何将Paxos真正应用到工程实践。
 

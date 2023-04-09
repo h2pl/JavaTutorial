@@ -33,7 +33,7 @@
 
 6push和pull的区别，顺序写入和消息读取，零拷贝机制
 
-**Kafka的基本介绍**
+## **Kafka的基本介绍**
 
 Kafka是最初由Linkedin公司开发，是一个分布式、分区的、多副本的、多订阅者，基于zookeeper协调的分布式日志系统（也可以当做MQ系统），常见可以用于web/nginx日志、访问日志，消息服务等等，Linkedin于2010年贡献给了Apache基金会并成为顶级开源项目。
 
@@ -49,7 +49,7 @@ Kafka主要设计目标如下：
 
 *   同时支持离线数据处理和实时数据处理。
 
-**Kafka的设计原理分析**
+## **Kafka的设计原理分析**
 
 ![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/linkedkeeper0_3573ea93-7e93-49b4-9779-6765b4fb0878.jpg)
 
@@ -72,7 +72,7 @@ Kafka专用术语：
 
 *   Consumer Group：每个Consumer属于一个特定的Consumer Group。
 
-**Kafka数据传输的事务特点**
+## **Kafka数据传输的事务特点**
 
 *   at most once：最多一次，这个和JMS中"非持久化"消息类似，发送一次，无论成败，将不会重发。消费者fetch消息，然后保存offset，然后处理消息；当client保存offset之后，但是在消息处理过程中出现了异常，导致部分消息未能继续处理。那么此后"未处理"的消息将不能被fetch到，这就是"at most once"。
 
@@ -82,7 +82,7 @@ Kafka专用术语：
 
 通常情况下"at-least-once"是我们首选。
 
-**Kafka消息存储格式**
+## **Kafka消息存储格式**
 
 **Topic & Partition**
 
@@ -135,7 +135,7 @@ segment中index与data file对应关系物理结构如下：
 
 
 
-**副本（replication）策略**
+## **副本（replication）策略**
 
 Kafka的高可靠性的保障来源于其健壮的副本（replication）策略。
 
@@ -195,7 +195,7 @@ Leader选举本质上是一个分布式锁，有两种方式实现基于ZooKeepe
 
 Majority Vote的选举策略和ZooKeeper中的Zab选举是类似的，实际上ZooKeeper内部本身就实现了少数服从多数的选举策略。kafka中对于Partition的leader副本的选举采用了第一种方法：为Partition分配副本，指定一个ZNode临时节点，第一个成功创建节点的副本就是Leader节点，其他副本会在这个ZNode节点上注册Watcher监听器，一旦Leader宕机，对应的临时节点就会被自动删除，这时注册在该节点上的所有Follower都会收到监听器事件，它们都会尝试创建该节点，只有创建成功的那个follower才会成为Leader（ZooKeeper保证对于一个节点只有一个客户端能创建成功），其他follower继续重新注册监听事件。
 
-**Kafka消息分组，消息消费原理**
+## **Kafka消息分组，消息消费原理**
 
 同一Topic的一条消息只能被同一个Consumer Group内的一个Consumer消费，但多个Consumer Group可同时消费这一消息。
 
@@ -203,7 +203,7 @@ Majority Vote的选举策略和ZooKeeper中的Zab选举是类似的，实际上Z
 
 这是Kafka用来实现一个Topic消息的广播（发给所有的Consumer）和单播（发给某一个Consumer）的手段。一个Topic可以对应多个Consumer Group。如果需要实现广播，只要每个Consumer有一个独立的Group就可以了。要实现单播只要所有的Consumer在同一个Group里。用Consumer Group还可以将Consumer进行自由的分组而不需要多次发送消息到不同的Topic。
 
-**Push vs. Pull**
+## **Push vs. Pull**
 
 作为一个消息系统，Kafka遵循了传统的方式，选择由Producer向broker push消息并由Consumer从broker pull消息。
 
@@ -211,7 +211,7 @@ push模式很难适应消费速率不同的消费者，因为消息发送速率�
 
 对于Kafka而言，pull模式更合适。pull模式可简化broker的设计，Consumer可自主控制消费消息的速率，同时Consumer可以自己控制消费方式——即可批量消费也可逐条消费，同时还能选择不同的提交方式从而实现不同的传输语义。
 
-**Kafak顺序写入与数据读取**
+## **Kafak顺序写入与数据读取**
 
 生产者（producer）是负责向Kafka提交数据的，Kafka会把收到的消息都写入到硬盘中，它绝对不会丢失数据。为了优化写入速度Kafak采用了两个技术，顺序写入和MMFile。
 
@@ -235,7 +235,7 @@ push模式很难适应消费速率不同的消费者，因为消息发送速率�
 
 通过mmap，进程像读写硬盘一样读写内存（当然是虚拟机内存）。使用这种方式可以获取很大的I/O提升，省去了用户空间到内核空间复制的开销（调用文件的read会把数据先放到内核空间的内存中，然后再复制到用户空间的内存中。）
 
-**消费者（读取数据）**
+## **消费者（读取数据）**
 
 试想一下，一个Web Server传送一个静态文件，如何优化？答案是zero copy。传统模式下我们从硬盘读取一个文件是这样的。
 
@@ -263,7 +263,7 @@ Zero Copy中直接从内核空间（DMA的）到内核空间（Socket的），�
 
 *   [浅谈分布式服务协调技术 Zookeeper](http://www.linkedkeeper.com/detail/blog.action?bid=1014)
 
-**Reference**
+## **Reference**
 
 http://www.cnblogs.com/liuming1992/p/6423007.html
 
