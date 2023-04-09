@@ -160,12 +160,12 @@ initFrameworkServlet()方法是一个没有任何实现的空方法，除去一�
 this.webApplicationContext = initWebApplicationContext();
 ```
 
-这一句简单直白的代码，道破了FrameworkServlet这个类，在SpringMVC类体系中的设计目的，它是 用来抽离出建立 WebApplicationContext 上下文这个过程的。
+这一句简单直白的代码，道破了FrameworkServlet这个类，在SpringMVC类体系中的设计目的，它是用来抽离出建立WebApplicationContext上下文这个过程的。
 
 initWebApplicationContext()方法，封装了建立Spring容器上下文的整个过程，方法内的逻辑如下：
 
 1.  获取由ContextLoaderListener初始化并注册在ServletContext中的根上下文，记为rootContext
-2.  如果webApplicationContext已经不为空，表示这个Servlet类是通过编程式注册到容器中的（Servlet 3.0+中的ServletContext.addServlet() ），上下文也由编程式传入。若这个传入的上下文还没被初始化，将rootContext上下文设置为它的父上下文，然后将其初始化，否则直接使用。
+2.  如果webApplicationContext已经不为空，表示这个Servlet类是通过编程式注册到容器中的（Servlet 3.0+中的ServletContext.addServlet()），上下文也由编程式传入。若这个传入的上下文还没被初始化，将rootContext上下文设置为它的父上下文，然后将其初始化，否则直接使用。
 3.  通过wac变量的引用是否为null，判断第2步中是否已经完成上下文的设置（即上下文是否已经用编程式方式传入），如果wac==null成立，说明该Servlet不是由编程式注册到容器中的。此时以contextAttribute属性的值为键，在ServletContext中查找上下文，查找得到，说明上下文已经以别的方式初始化并注册在contextAttribute下，直接使用。
 4.  检查wac变量的引用是否为null，如果wac==null成立，说明2、3两步中的上下文初始化策略都没成功，此时调用createWebApplicationContext(rootContext)，建立一个全新的以rootContext为父上下文的上下文，作为SpringMVC配置元素的容器上下文。大多数情况下我们所使用的上下文，就是这个新建的上下文。
 5.  以上三种初始化上下文的策略，都会回调onRefresh(ApplicationContext context)方法（回调的方式根据不同策略有不同），onRefresh方法在DispatcherServlet类中被覆写，以上面得到的上下文为依托，完成SpringMVC中默认实现类的初始化。

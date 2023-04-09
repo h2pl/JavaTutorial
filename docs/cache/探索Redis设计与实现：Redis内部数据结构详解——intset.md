@@ -84,7 +84,7 @@ typedef struct intset {
 
 *   `encoding`: 数据编码，表示intset中的每个数据元素用几个字节来存储。它有三种可能的取值：INTSET_ENC_INT16表示每个元素用2个字节存储，INTSET_ENC_INT32表示每个元素用4个字节存储，INTSET_ENC_INT64表示每个元素用8个字节存储。因此，intset中存储的整数最多只能占用64bit。
 *   `length`: 表示intset中的元素个数。`encoding`和`length`两个字段构成了intset的头部（header）。
-*   `contents`: 是一个柔性数组（[flexible array member](https://en.wikipedia.org/wiki/Flexible_array_member)），表示intset的header后面紧跟着数据元素。这个数组的总长度（即总字节数）等于`encoding * length`。柔性数组在Redis的很多数据结构的定义中都出现过（例如[sds](http://zhangtielei.com/posts/blog-redis-sds.html), [quicklist](http://zhangtielei.com/posts/blog-redis-quicklist.html), [skiplist](http://zhangtielei.com/posts/blog-redis-skiplist.html)），用于表达一个偏移量。`contents`需要单独为其分配空间，这部分内存不包含在intset结构当中。
+*   `contents`: 是一个柔性数组（[flexible array member](https://en.wikipedia.org/wiki/Flexible_array_member)），表示intset的header后面紧跟着数据元素。这个数组的总长度（即总字节数）等于`encoding * length`。柔性数组在Redis的很多数据结构的定义中都出现过（例如[sds](http://zhangtielei.com/posts/blog-redis-sds.html),[quicklist](http://zhangtielei.com/posts/blog-redis-quicklist.html),[skiplist](http://zhangtielei.com/posts/blog-redis-skiplist.html)），用于表达一个偏移量。`contents`需要单独为其分配空间，这部分内存不包含在intset结构当中。
 
 其中需要注意的是，intset可能会随着数据的添加而改变它的数据编码：
 
@@ -97,7 +97,7 @@ typedef struct intset {
 
 在上图中：
 
-*   新创建的intset只有一个header，总共8个字节。其中`encoding` = 2, `length` = 0。
+*   新创建的intset只有一个header，总共8个字节。其中`encoding`= 2,`length`= 0。
 *   添加13, 5两个元素之后，因为它们是比较小的整数，都能使用2个字节表示，所以`encoding`不变，值还是2。
 *   当添加32768的时候，它不再能用2个字节来表示了（2个字节能表达的数据范围是-2<sup>15</sup>~2<sup>15</sup>-1，而32768等于2<sup>15</sup>，超出范围了），因此`encoding`必须升级到INTSET_ENC_INT32（值为4），即用4个字节表示一个元素。
 *   在添加每个元素的过程中，intset始终保持从小到大有序。
@@ -247,11 +247,11 @@ intset *intsetAdd(intset *is, int64_t value, uint8_t *success) {
 
 *   `sadd`用于分别向集合`s1`和`s2`中添加元素。添加的元素既有数字，也有非数字（”a”和”b”）。
 *   `sismember`用于判断指定的元素是否在集合内存在。
-*   `sinter`, `sunion`和`sdiff`分别用于计算集合的交集、并集和差集。
+*   `sinter`,`sunion`和`sdiff`分别用于计算集合的交集、并集和差集。
 
 我们前面提到过，set的底层实现，随着元素类型是否是整型以及添加的元素的数目多少，而有所变化。例如，具体到上述命令的执行过程中，集合`s1`的底层数据结构会发生如下变化：
 
-*   在开始执行完`sadd s1 13 5`之后，由于添加的都是比较小的整数，所以`s1`底层是一个intset，其数据编码`encoding` = 2。
+*   在开始执行完`sadd s1 13 5`之后，由于添加的都是比较小的整数，所以`s1`底层是一个intset，其数据编码`encoding`= 2。
 *   在执行完`sadd s1 32768 10 100000`之后，`s1`底层仍然是一个intset，但其数据编码`encoding`从2升级到了4。
 *   在执行完`sadd s1 a b`之后，由于添加的元素不再是数字，`s1`底层的实现会转成一个dict。
 

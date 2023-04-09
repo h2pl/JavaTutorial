@@ -120,7 +120,7 @@ public class HelloController {
     @RequestMapping("/hello")    public String hello() {        return "Hello Spring Boot!";    }}  
 ```  
 
-*   **@RestController 注解：** 该注解是 @Controller 和 @ResponseBody 注解的合体版
+*   **@RestController 注解：**该注解是 @Controller 和 @ResponseBody 注解的合体版
 
 #### 第三步：利用 IDEA 启动 Spring Boot
 
@@ -163,7 +163,7 @@ public class HelloController {
     <build>        <plugins>            <plugin>                <groupId>org.springframework.boot</groupId>                spring-boot-maven-plugin            </plugin>        </plugins>    </build></project>  
 ```  
 
-我们可以看到一个比较陌生一些的标签 `<parent>` ，这个标签是在配置 Spring Boot 的父级依赖：
+我们可以看到一个比较陌生一些的标签`<parent>`，这个标签是在配置 Spring Boot 的父级依赖：
 
 ```  
 <parent>  
@@ -176,12 +176,12 @@ public class HelloController {
 
 #### 应用入口类
 
-Spring Boot 项目通常有一个名为 *Application 的入口类，入口类里有一个 main 方法， **这个 main 方法其实就是一个标准的 Javay 应用的入口方法。**
+Spring Boot 项目通常有一个名为 *Application 的入口类，入口类里有一个 main 方法，**这个 main 方法其实就是一个标准的 Javay 应用的入口方法。**
 
-**@SpringBootApplication** 是 Spring Boot 的核心注解，它是一个组合注解，该注解组合了：**@Configuration、@EnableAutoConfiguration、@ComponentScan；** 若不是用 @SpringBootApplication 注解也可以使用这三个注解代替。
+**@SpringBootApplication**是 Spring Boot 的核心注解，它是一个组合注解，该注解组合了：**@Configuration、@EnableAutoConfiguration、@ComponentScan；**若不是用 @SpringBootApplication 注解也可以使用这三个注解代替。
 
 *   其中，**@EnableAutoConfiguration 让 Spring Boot 根据类路径中的 jar 包依赖为当前项目进行自动配置**，例如，添加了 spring-boot-starter-web 依赖，会自动添加 Tomcat 和 Spring MVC 的依赖，那么 Spring Boot 会对 Tomcat 和 Spring MVC 进行自动配置。
-*   **Spring Boot 还会自动扫描 @SpringBootApplication 所在类的同级包以及下级包里的 Bean** ，所以入口类建议就配置在 grounpID + arctifactID 组合的包名下（这里为 cn.wmyskxz.springboot 包）
+*   **Spring Boot 还会自动扫描 @SpringBootApplication 所在类的同级包以及下级包里的 Bean**，所以入口类建议就配置在 grounpID + arctifactID 组合的包名下（这里为 cn.wmyskxz.springboot 包）
 
 #### Spring Boot 的配置文件
 
@@ -209,7 +209,7 @@ Spring Boot 的全局配置文件的作用是对一些默认配置的配置值�
 
 ![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/7896890-c85216e8ea7910f0.png)
 
-*   **注意：** 我们并没有在 yml 文件中注明属性的类型，而是在使用的时候定义的。
+*   **注意：**我们并没有在 yml 文件中注明属性的类型，而是在使用的时候定义的。
 
 你也可以在配置文件中使用当前配置：
 
@@ -219,7 +219,7 @@ Spring Boot 的全局配置文件的作用是对一些默认配置的配置值�
 
 ![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/7896890-eabc3cd39b44fd0d.png)
 
-*   **问题：** 这样写配置文件繁琐而且可能会造成类的臃肿，因为有许许多多的 @Value 注解。
+*   **问题：**这样写配置文件繁琐而且可能会造成类的臃肿，因为有许许多多的 @Value 注解。
 
 > *   封装配置信息
 

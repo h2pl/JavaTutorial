@@ -14,7 +14,7 @@
   * [垃圾回收中实例的终结](#垃圾回收中实例的终结)
   * [对象什么时候符合垃圾回收的条件？](#对象什么时候符合垃圾回收的条件？)
     * [GC Scope 示例程序](#gc-scope-示例程序)
-  * [[JVM GC算法](https://www.cnblogs.com/wupeixuan/p/8670341.html)](#[jvm-gc算法]httpswwwcnblogscomwupeixuanp8670341html)
+  * [JVM GC算法](#JVM GC算法)
   * [JVM垃圾判定算法](#jvm垃圾判定算法)
     * [引用计数算法(Reference Counting)](#引用计数算法reference-counting)
     * [可达性分析算法（根搜索算法）](#可达性分析算法（根搜索算法）)

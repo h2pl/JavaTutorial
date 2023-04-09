@@ -905,4 +905,4 @@ title的选择性不足0.0001（精确值为0.00001579），所以实在没有�
 
 [5] Codd, E. F. (1970). "A relational model of data for large shared data banks". Communications of the ACM, , Vol. 13, No. 6, pp. 377-387
 
-[6] MySQL5.1参考手册 - [http://dev.mysql.com/doc/refman/5.1/zh/index.html](http://dev.mysql.com/doc/refman/5.1/zh/index.html "http://dev.mysql.com/doc/refman/5.1/zh/index.html")
+[6] MySQL5.1参考手册 -[http://dev.mysql.com/doc/refman/5.1/zh/index.html](http://dev.mysql.com/doc/refman/5.1/zh/index.html "http://dev.mysql.com/doc/refman/5.1/zh/index.html")

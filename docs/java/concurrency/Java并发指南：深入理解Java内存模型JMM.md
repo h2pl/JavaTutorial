@@ -176,7 +176,7 @@ Java 语言在遵循内存模型的基础上推出了 JMM 规范，目的是解�
 
 我们知道，Java程序是需要运行在Java虚拟机上面的，**Java内存模型（Java Memory Model ,JMM）就是一种符合内存模型规范的，屏蔽了各种硬件和操作系统的访问差异的，保证了Java程序在各种平台下对内存的访问都能保证效果一致的机制及规范。**
 
-提到Java内存模型，一般指的是JDK 5 开始使用的新的内存模型，主要由<u>[JSR-133: JavaTM Memory Model and Thread Specification](http://www.cs.umd.edu/~pugh/java/memoryModel/jsr133.pdf)</u> 描述。感兴趣的可以参看下这份PDF文档（[http://www.cs.umd.edu/~pugh/java/memoryModel/jsr133.pdf](http://www.cs.umd.edu/~pugh/java/memoryModel/jsr133.pdf)）
+提到Java内存模型，一般指的是JDK 5 开始使用的新的内存模型，主要由<u>[JSR-133: JavaTM Memory Model and Thread Specification](http://www.cs.umd.edu/~pugh/java/memoryModel/jsr133.pdf)</u>描述。感兴趣的可以参看下这份PDF文档（[http://www.cs.umd.edu/~pugh/java/memoryModel/jsr133.pdf](http://www.cs.umd.edu/~pugh/java/memoryModel/jsr133.pdf)）
 
 Java内存模型规定了所有的变量都存储在主内存中，每条线程还有自己的工作内存，线程的工作内存中保存了该线程中是用到的变量的主内存副本拷贝，线程对变量的所有操作都必须在工作内存中进行，而不能直接读写主内存。不同的线程之间也无法直接访问对方工作内存中的变量，线程间变量的传递均需要自己的工作内存和主存之间进行数据同步进行。
 

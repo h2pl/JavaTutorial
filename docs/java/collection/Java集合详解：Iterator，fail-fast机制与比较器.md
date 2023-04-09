@@ -6,12 +6,12 @@
       * [fail-fast示例](#fail-fast示例)
       * [fail-fast产生原因](#fail-fast产生原因)
       * [fail-fast解决办法](#fail-fast解决办法)
-* [Comparable 和 Comparator](#comparable-和-comparator)
-  * [Comparable](#comparable)
-    * [Comparator](#comparator)
-    * [Java8中使用lambda实现比较器](#java8中使用lambda实现比较器)
-  * [总结](#总结)
-  * [参考文章](#参考文章)
+  * [Comparable 和 Comparator](#comparable-和-comparator)
+    * [Comparable](#comparable)
+      * [Comparator](#comparator)
+      * [Java8中使用lambda实现比较器](#java8中使用lambda实现比较器)
+    * [总结](#总结)
+    * [参考文章](#参考文章)
 
 
 本文参考 cmsblogs.com/p=1185

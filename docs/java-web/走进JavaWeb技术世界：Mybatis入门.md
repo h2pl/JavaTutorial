@@ -252,7 +252,7 @@ Mybatis通过执行器与Mappered Statement的结合实现与数据库的交互�
 
 ## 测试工程搭建
 
-1. 新建maven工程
+1.新建maven工程
 
 ![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/577318-20180702181320571-1138935145.png)
 

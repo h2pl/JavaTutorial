@@ -92,7 +92,7 @@ public interface Executor {
 }
 ```
 
-我们可以看到 Executor 接口非常简单，就一个 `void execute(Runnable command)` 方法，代表提交一个任务。为了让大家理解 java 线程池的整个设计方案，我会按照 Doug Lea 的设计思路来多说一些相关的东西。
+我们可以看到 Executor 接口非常简单，就一个`void execute(Runnable command)`方法，代表提交一个任务。为了让大家理解 java 线程池的整个设计方案，我会按照 Doug Lea 的设计思路来多说一些相关的东西。
 
 我们经常这样启动一个线程：
 
@@ -171,7 +171,7 @@ class SerialExecutor implements Executor {
 }
 ```
 
-当然了，Executor 这个接口只有提交任务的功能，太简单了，我们想要更丰富的功能，比如我们想知道执行结果、我们想知道当前线程池有多少个线程活着、已经完成了多少任务等等，这些都是这个接口的不足的地方。接下来我们要介绍的是继承自 `Executor` 接口的 `ExecutorService` 接口，这个接口提供了比较丰富的功能，也是我们最常使用到的接口。
+当然了，Executor 这个接口只有提交任务的功能，太简单了，我们想要更丰富的功能，比如我们想知道执行结果、我们想知道当前线程池有多少个线程活着、已经完成了多少任务等等，这些都是这个接口的不足的地方。接下来我们要介绍的是继承自`Executor`接口的`ExecutorService`接口，这个接口提供了比较丰富的功能，也是我们最常使用到的接口。
 
 ## ExecutorService
 
@@ -277,13 +277,13 @@ public interface Callable<V> {
 
 在这里，就不展开说 FutureTask 类了，因为本文篇幅本来就够大了，这里我们需要知道怎么用就行了。
 
-下面，我们来看看 `ExecutorService` 的抽象实现 `AbstractExecutorService` 。
+下面，我们来看看`ExecutorService`的抽象实现`AbstractExecutorService`。
 
 ## AbstractExecutorService
 
 AbstractExecutorService 抽象类派生自 ExecutorService 接口，然后在其基础上实现了几个实用的方法，这些方法提供给子类进行调用。
 
-这个抽象类实现了 invokeAny 方法和 invokeAll 方法，这里的两个 newTaskFor 方法也比较有用，用于将任务包装成 FutureTask。定义于最上层接口 Executor中的 `void execute(Runnable command)` 由于不需要获取结果，不会进行 FutureTask 的包装。
+这个抽象类实现了 invokeAny 方法和 invokeAll 方法，这里的两个 newTaskFor 方法也比较有用，用于将任务包装成 FutureTask。定义于最上层接口 Executor中的`void execute(Runnable command)`由于不需要获取结果，不会进行 FutureTask 的包装。
 
 > 需要获取结果（FutureTask），用 submit 方法，不需要获取结果，可以用 execute 方法。
 
@@ -600,7 +600,7 @@ public <T> Future<T> submit(Callable<T> task) {
 
 当然，上图没有考虑队列是否有界，提交任务时队列满了怎么办？什么情况下会创建新的线程？提交任务时线程池满了怎么办？空闲线程怎么关掉？这些问题下面我们会一一解决。
 
-我们经常会使用 `Executors` 这个工具类来快速构造一个线程池，对于初学者而言，这种工具类是很有用的，开发者不需要关注太多的细节，只要知道自己需要一个线程池，仅仅提供必需的参数就可以了，其他参数都采用作者提供的默认值。
+我们经常会使用`Executors`这个工具类来快速构造一个线程池，对于初学者而言，这种工具类是很有用的，开发者不需要关注太多的细节，只要知道自己需要一个线程池，仅仅提供必需的参数就可以了，其他参数都采用作者提供的默认值。
 
 ```
 public static ExecutorService newFixedThreadPool(int nThreads) {
@@ -659,7 +659,7 @@ public static ExecutorService newCachedThreadPool() {
 
 *   keepAliveTime
 
-    > 空闲线程的保活时间，如果某线程的空闲时间超过这个值都没有任务给它做，那么可以被关闭了。注意这个值并不会对所有线程起作用，如果线程池中的线程数少于等于核心线程数 corePoolSize，那么这些线程不会因为空闲太长时间而被关闭，当然，也可以通过调用 `allowCoreThreadTimeOut(true)`使核心线程数内的线程也可以被回收。
+    > 空闲线程的保活时间，如果某线程的空闲时间超过这个值都没有任务给它做，那么可以被关闭了。注意这个值并不会对所有线程起作用，如果线程池中的线程数少于等于核心线程数 corePoolSize，那么这些线程不会因为空闲太长时间而被关闭，当然，也可以通过调用`allowCoreThreadTimeOut(true)`使核心线程数内的线程也可以被回收。
 
 *   threadFactory
 

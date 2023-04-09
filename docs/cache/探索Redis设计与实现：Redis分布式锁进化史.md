@@ -101,7 +101,7 @@ release(){
 tryLock(){      SETNX Key 1 Seconds}release(){    DELETE Key}
 ```
 
-Redis 2.6.12版本后SETNX增加过期时间参数，这样就解决了两条命令无法保证原子性的问题。但是设想下面一个场景： 
+Redis 2.6.12版本后SETNX增加过期时间参数，这样就解决了两条命令无法保证原子性的问题。但是设想下面一个场景：
 
 1\. C1成功获取到了锁，之后C1因为GC进入等待或者未知原因导致任务执行过长，最后在锁失效前C1没有主动释放锁 
 
@@ -167,7 +167,7 @@ release(){
 
 ```
 
-Redis 2.6.12后[SET](https://redis.io/commands/set)同样提供了一个NX参数，等同于SETNX命令，官方文档上提醒后面的版本有可能去掉[SETNX](https://redis.io/commands/setnx), [SETEX](https://redis.io/commands/setex), [PSETEX](https://redis.io/commands/psetex),并用SET命令代替，另外一个优化是使用一个自增的唯一UniqId代替时间戳来规避V3.0提到的时钟问题。
+Redis 2.6.12后[SET](https://redis.io/commands/set)同样提供了一个NX参数，等同于SETNX命令，官方文档上提醒后面的版本有可能去掉[SETNX](https://redis.io/commands/setnx),[SETEX](https://redis.io/commands/setex),[PSETEX](https://redis.io/commands/psetex),并用SET命令代替，另外一个优化是使用一个自增的唯一UniqId代替时间戳来规避V3.0提到的时钟问题。
 
 这个方案是目前最优的分布式锁方案，但是如果在Redis集群环境下依然存在问题：
 
@@ -175,7 +175,7 @@ Redis 2.6.12后[SET](https://redis.io/commands/set)同样提供了一个NX参数
 
 ### 分布式Redis锁：Redlock
 
-V3.1的版本仅在单实例的场景下是安全的，针对如何实现分布式Redis的锁，国外的分布式专家有过激烈的讨论， antirez提出了分布式锁算法Redlock，在[distlock](https://redis.io/topics/distlock)话题下可以看到对Redlock的详细说明，下面是Redlock算法的一个中文说明（引用）
+V3.1的版本仅在单实例的场景下是安全的，针对如何实现分布式Redis的锁，国外的分布式专家有过激烈的讨论，antirez提出了分布式锁算法Redlock，在[distlock](https://redis.io/topics/distlock)话题下可以看到对Redlock的详细说明，下面是Redlock算法的一个中文说明（引用）
 
 假设有N个独立的Redis节点
 

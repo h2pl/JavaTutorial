@@ -90,7 +90,7 @@ Maven不仅是构建工具，还是一个依赖管理工具和项目管理工具
 
 [![image.png](http://www.pianshen.com/images/370/fb1719c12ec1fec62d766168eb5fb2d2.png "image.png")](http://upload-images.jianshu.io/upload_images/5811881-7482108a7ff71031.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240 "image.png")
 
-三：最后设置一下环境变量，将Maven安装配置到操作系统环境中，主要就是配置M2_HOME 和PATH两项，如图
+三：最后设置一下环境变量，将Maven安装配置到操作系统环境中，主要就是配置M2_HOME和PATH两项，如图
 [![image.png](http://www.pianshen.com/images/162/46a29661ccbce3f798e931c61c9b39aa.png "image.png")](http://upload-images.jianshu.io/upload_images/5811881-ffdf167e64415703.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240 "image.png")
 
 都搞定后，验证一下，打开doc输入 mvn -v如何得到下面信息就说明配置成功了
@@ -187,7 +187,7 @@ name元素生命了一个对于用户更为友好的项目名称，虽然这不�
 依赖范围就是用来控制依赖和三种classpath(编译classpath，测试classpath、运行classpath)的关系，Maven有如下几种依赖范围：
 
 *   compile:编译依赖范围。如果没有指定，就会默认使用该依赖范围。使用此依赖范围的Maven依赖，对于编译、测试、运行三种classpath都有效。典型的例子是spring-code,在编译、测试和运行的时候都需要使用该依赖。
-*   test: 测试依赖范围。使用次依赖范围的Maven依赖，只对于测试classpath有效，在编译主代码或者运行项目的使用时将无法使用此依赖。典型的例子是Jnuit,它只有在编译测试代码及运行测试的时候才需要。
+*   test:测试依赖范围。使用次依赖范围的Maven依赖，只对于测试classpath有效，在编译主代码或者运行项目的使用时将无法使用此依赖。典型的例子是Jnuit,它只有在编译测试代码及运行测试的时候才需要。
 *   provided:已提供依赖范围。使用此依赖范围的Maven依赖，对于编译和测试classpath有效，但在运行时候无效。典型的例子是servlet-api,编译和测试项目的时候需要该依赖，但在运行项目的时候，由于容器以及提供，就不需要Maven重复地引入一遍。
 *   runtime:运行时依赖范围。使用此依赖范围的Maven依赖，对于测试和运行classpath有效，但在编译主代码时无效。典型的例子是JDBC驱动实现，项目主代码的编译只需要JDK提供的JDBC接口，只有在执行测试或者运行项目的时候才需要实现上述接口的具体JDBC驱动。
 *   system:系统依赖范围。该依赖与三种classpath的关系，和provided依赖范围完全一致，但是，使用system范围的依赖时必须通过systemPath元素显示地指定依赖文件的路径。由于此类依赖不是通过Maven仓库解析的，而且往往与本机系统绑定，可能构成构建的不可移植，因此应该谨慎使用。systemPath元素可以引用环境变量，如：

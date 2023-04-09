@@ -1,7 +1,7 @@
 # 目录
   * [打破双亲委派模型](#打破双亲委派模型)
     * [JNDI](#jndi)
-    * [[JNDI 的理解](https://yq.aliyun.com/go/articleRenderRedirect?url=https%3A%2F%2Fwww.cnblogs.com%2Fzhchoutai%2Fp%2F7389089.html)](#[jndi-的理解]httpsyqaliyuncomgoarticlerenderredirecturlhttps3a2f2fwwwcnblogscom2fzhchoutai2fp2f7389089html)
+    * [JNDI 的理解](#[jndi-的理解])
   * [OSGI](#osgi)
     * [1.如何正确的理解和认识OSGI技术？](#1如何正确的理解和认识osgi技术？)
   * [Tomcat类加载器以及应用间class隔离与共享](#tomcat类加载器以及应用间class隔离与共享)

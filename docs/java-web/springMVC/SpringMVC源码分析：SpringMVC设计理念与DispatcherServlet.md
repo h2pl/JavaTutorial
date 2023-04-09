@@ -106,7 +106,7 @@ HandlerExecutionChain getHandler(HttpServletRequest request) throws Exception;
     }
 ```
 
-是的，第一步处理就这么简单的完成了。一个web请求经过处理后，会得到一个HandlerExecutionChain对象，这就是SpringMVC对URl映射给出的回答。需要留意的是，HandlerMapping接口的getHandler方法参数是HttpServletRequest，这意味着，HandlerMapping的实现类可以利用HttpServletRequest中的 所有信息来做出这个HandlerExecutionChain对象的生成”决策“。这包括，请求头、url路径、cookie、session、参数等等一切你从一个web请求中可以得到的任何东西（最常用的是url路径）。
+是的，第一步处理就这么简单的完成了。一个web请求经过处理后，会得到一个HandlerExecutionChain对象，这就是SpringMVC对URl映射给出的回答。需要留意的是，HandlerMapping接口的getHandler方法参数是HttpServletRequest，这意味着，HandlerMapping的实现类可以利用HttpServletRequest中的所有信息来做出这个HandlerExecutionChain对象的生成”决策“。这包括，请求头、url路径、cookie、session、参数等等一切你从一个web请求中可以得到的任何东西（最常用的是url路径）。
 
 SpirngMVC的第一个扩展点，就出现在这里。我们可以编写任意的HandlerMapping实现类，依据任何策略来决定一个web请求到HandlerExecutionChain对象的生成。可以说，从第一个核心接口的声明开始，SpringMVC就把自己的灵活性和野心暴露无疑：哥玩的就是”Open-Closed“。
 

@@ -91,7 +91,7 @@ ReentrantReadWriteLock 分为读锁和写锁两个实例，读锁是共享锁，
 
 很清楚了，ReadLock 和 WriteLock 中的方法都是通过 Sync 这个类来实现的。Sync 是 AQS 的子类，然后再派生了公平模式和不公平模式。
 
-从它们调用的 Sync 方法，我们可以看到： **ReadLock 使用了共享模式，WriteLock 使用了独占模式**。
+从它们调用的 Sync 方法，我们可以看到：**ReadLock 使用了共享模式，WriteLock 使用了独占模式**。
 
 等等，**同一个 AQS 实例怎么可以同时使用共享模式和独占模式**？？？
 
@@ -99,7 +99,7 @@ ReentrantReadWriteLock 分为读锁和写锁两个实例，读锁是共享锁，
 
 ![13](https://www.javadoop.com/blogimages/reentrant-read-write-lock/13.png)
 
-AQS 的精髓在于内部的属性 **state**：
+AQS 的精髓在于内部的属性**state**：
 
 1.  对于独占模式来说，通常就是 0 代表可获取锁，1 代表锁被别人获取了，重入例外
 2.  而共享模式下，每个线程都可以对 state 进行加减操作
@@ -168,9 +168,9 @@ abstract static class Sync extends AbstractQueuedSynchronizer {
 
 1.  state 的高 16 位代表读锁的获取次数，包括重入次数，获取到读锁一次加 1，释放掉读锁一次减 1
 2.  state 的低 16 位代表写锁的获取次数，因为写锁是独占锁，同时只能被一个线程获得，所以它代表重入次数
-3.  每个线程都需要维护自己的 HoldCounter，记录该线程获取的读锁次数，这样才能知道到底是不是读锁重入，用 ThreadLocal 属性 **readHolds** 维护
-4.  **cachedHoldCounter** 有什么用？其实没什么用，但能提示性能。将最后一次获取读锁的线程的 HoldCounter 缓存到这里，这样比使用 ThreadLocal 性能要好一些，因为 ThreadLocal 内部是基于 map 来查询的。但是 cachedHoldCounter 这一个属性毕竟只能缓存一个线程，所以它要起提升性能作用的依据就是：通常读锁的获取紧随着就是该读锁的释放。我这里可能表达不太好，但是大家应该是懂的吧。
-5.  **firstReader** 和 **firstReaderHoldCount** 有什么用？其实也没什么用，但是它也能提示性能。将"第一个"获取读锁的线程记录在 firstReader 属性中，这里的**第一个**不是全局的概念，等这个 firstReader 当前代表的线程释放掉读锁以后，会有后来的线程占用这个属性的。**firstReader 和 firstReaderHoldCount 使得在读锁不产生竞争的情况下，记录读锁重入次数非常方便快速**
+3.  每个线程都需要维护自己的 HoldCounter，记录该线程获取的读锁次数，这样才能知道到底是不是读锁重入，用 ThreadLocal 属性**readHolds**维护
+4.  **cachedHoldCounter**有什么用？其实没什么用，但能提示性能。将最后一次获取读锁的线程的 HoldCounter 缓存到这里，这样比使用 ThreadLocal 性能要好一些，因为 ThreadLocal 内部是基于 map 来查询的。但是 cachedHoldCounter 这一个属性毕竟只能缓存一个线程，所以它要起提升性能作用的依据就是：通常读锁的获取紧随着就是该读锁的释放。我这里可能表达不太好，但是大家应该是懂的吧。
+5.  **firstReader**和**firstReaderHoldCount**有什么用？其实也没什么用，但是它也能提示性能。将"第一个"获取读锁的线程记录在 firstReader 属性中，这里的**第一个**不是全局的概念，等这个 firstReader 当前代表的线程释放掉读锁以后，会有后来的线程占用这个属性的。**firstReader 和 firstReaderHoldCount 使得在读锁不产生竞争的情况下，记录读锁重入次数非常方便快速**
 6.  如果一个线程使用了 firstReader，那么它就不需要占用 cachedHoldCounter
 7.  个人认为，读写锁源码中最让初学者头疼的就是这几个用于提升性能的属性了，使得大家看得云里雾里的。主要是因为 ThreadLocal 内部是通过一个 ThreadLocalMap 来操作的，会增加检索时间。而很多场景下，执行 unlock 的线程往往就是刚刚最后一次执行 lock 的线程，中间可能没有其他线程进行 lock。还有就是很多不怎么会发生读锁竞争的场景。
 
@@ -498,7 +498,7 @@ protected final boolean tryAcquire(int acquires) {
 }
 ```
 
-下面看一眼 **writerShouldBlock()** 的判定，然后你再回去看一篇写锁获取过程。
+下面看一眼**writerShouldBlock()**的判定，然后你再回去看一篇写锁获取过程。
 
 ```
 static final class NonfairSync extends Sync {

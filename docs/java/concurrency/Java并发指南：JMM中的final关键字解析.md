@@ -1,3 +1,12 @@
+# Table of Contents
+
+  * [一、properly constructed / this对象逸出](#一、properly-constructed--this对象逸出)
+  * [二、对象的安全发布](#二、对象的安全发布)
+  * [三、 final 关键字的内存语义](#三、-final-关键字的内存语义)
+  * [四、HotSpot VM中对final内存语义的实现](#四、hotspot-vm中对final内存语义的实现)
+* [参考文献](#参考文献)
+
+
 **本文转载自互联网，侵删**
 
 本系列文章将整理到我在GitHub上的《Java面试指南》仓库，更多精彩内容请到我的仓库里查看

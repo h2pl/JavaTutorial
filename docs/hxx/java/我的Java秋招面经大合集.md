@@ -1,11 +1,11 @@
 # 目录
 
-* [阿里面经  ](#阿里面经  )
-* [腾讯面经  ](#腾讯面经  )
-* [百度面经  ](#百度面经  )
-* [网易面经  ](#网易面经  )
-* [头条面经  ](#头条面经  )
-* [快手&拼多多面经  ](#快手拼多多面经  )
+* [阿里面经](#阿里面经)
+* [腾讯面经](#腾讯面经)
+* [百度面经](#百度面经)
+* [网易面经](#网易面经)
+* [头条面经](#头条面经)
+* [快手&拼多多面经](#快手拼多多面经)
 * [京东&美团面经](#京东美团面经)
 * [斗鱼面经](#斗鱼面经)
 * [有赞面经](#有赞面经)
@@ -20,7 +20,7 @@
 ![](https://mmbiz.qpic.cn/mmbiz_jpg/XHh0SksQZPPAdahlOcBvxxLrx0ibYleGQvVONWia2JjwyBDoUibkYrcm3viapMOCBPehbX6eOxWSHNAa8TYTqj2ibYQ/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1)
 
 
-# 阿里面经  
+# 阿里面经
 
 [阿里中间件研发面经](http://mp.weixin.qq.com/s?__biz=MzUyMDc5MTYxNA==&mid=2247483852&idx=1&sn=9ec90620478b35d63a4a971a2222095d&chksm=f9e5b29dce923b8b2b080151e4b6b78373ee3f3e6f75b69252fc00b1a009d85c6f96944ed6e6&scene=21#wechat_redirect)
 
@@ -36,7 +36,7 @@
 
 阿里的面试体验还是比较好的，至少不要求手写算法，但是非常注重Java基础，中间件部门还会特别安排Java基础笔试。
 
-# 腾讯面经  
+# 腾讯面经
 
 [腾讯研发面经](http://mp.weixin.qq.com/s?__biz=MzUyMDc5MTYxNA==&mid=2247483849&idx=1&sn=f81fd42954589fb2deaf128026ddd856&chksm=f9e5b298ce923b8ef02ae36f7e9029fef0ddb7d5ae456dfa9d64c0073bebaacfb78fac4c8035&scene=21#wechat_redirect)
 
@@ -48,7 +48,7 @@ SNG的部门捞了我的简历，开始了面试，他们的技术栈主要是Ja
 
 腾讯的面试一如既往地注重考查网络和操作系统，并且喜欢问Linux底层的一些知识，在这方面我还是有很多不足的。
 
-# 百度面经  
+# 百度面经
 
 [百度研发面经](http://mp.weixin.qq.com/s?__biz=MzUyMDc5MTYxNA==&mid=2247483857&idx=1&sn=214b0f93db93407a7ac5a5149778cbad&chksm=f9e5b280ce923b96fcd535b2ef639fee2de78f12aa961d525b21760b11a3b95c0879113c2944&scene=21#wechat_redirect)
 
@@ -60,7 +60,7 @@ SNG的部门捞了我的简历，开始了面试，他们的技术栈主要是Ja
 
 百度的面试风格非常统一，每次面试基本都要到电脑上写算法，所以那段时间写算法写的头皮发麻。
 
-# 网易面经  
+# 网易面经
 
 [网易研发面经](http://mp.weixin.qq.com/s?__biz=MzUyMDc5MTYxNA==&mid=2247483875&idx=1&sn=fa9eaedd9cc3da172ad71d360c46a054&chksm=f9e5b2b2ce923ba443b91d56b24486d22b15bea16a4788e5ed3421906e84f8edd9ee10b2b306&scene=21#wechat_redirect)
 
@@ -72,7 +72,7 @@ SNG的部门捞了我的简历，开始了面试，他们的技术栈主要是Ja
 
 网易的面试比我想象中的要难，面试官会问的问题都比较深，并且会让你写一些结合实践的代码。
 
-# 头条面经  
+# 头条面经
 
 [今日头条研发面经](http://mp.weixin.qq.com/s?__biz=MzUyMDc5MTYxNA==&mid=2247483869&idx=1&sn=eedb7aebcb90cf3d4fe2450ef2d99947&chksm=f9e5b28cce923b9a9b0852a1c998ec014eb1aeb0442916c9028da276be8db0b2934c92292961&scene=21#wechat_redirect)
 
@@ -82,7 +82,7 @@ SNG的部门捞了我的简历，开始了面试，他们的技术栈主要是Ja
 
 然后就开始了一下午的视频面试，一共三轮技术面试，每一轮都要写代码，问问题的风格有点像腾讯，也喜欢问一些底层知识，让我有点懵逼。
 
-# 快手&拼多多面经  
+# 快手&拼多多面经
 
 [拼多多&快手研发面经](http://mp.weixin.qq.com/s?__biz=MzUyMDc5MTYxNA==&mid=2247483878&idx=1&sn=aaafff4b1171361ccd1d94708d2beaa0&chksm=f9e5b2b7ce923ba10140dff71dd3a0f9a20593434a32cec66929116bba196dc7496abf502884&scene=21#wechat_redirect)
 

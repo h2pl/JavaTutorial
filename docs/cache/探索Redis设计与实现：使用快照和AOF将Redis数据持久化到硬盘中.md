@@ -39,7 +39,7 @@
 ```
 
 
-Redis给我们提供了两种不同方式的持久化方法：快照（Snapshotting） 和 只追加文件（append-only-file）。
+Redis给我们提供了两种不同方式的持久化方法：快照（Snapshotting）和只追加文件（append-only-file）。
 
 （1）名词简介
 
@@ -71,17 +71,17 @@ appendonly no  #是否使用AOF持久化appendfsync everysec  #多久执行一�
 
 一、创建快照的方式：
 
-（1）客户端通过向Redis发送`BGSAVE` 命令来创建快照。
+（1）客户端通过向Redis发送`BGSAVE`命令来创建快照。
 
 使用BGSAVE的时候，Redis会调用fork来创建一个子进程，然后子进程负责将快照写到硬盘中，而父进程则继续处理命令请求。
 
 使用场景：
 
-如果用户使用了save设置，例如：`save 60 1000` ,那么从Redis最近一次创建快照之后开始计算，当“60秒之内有1000次写入操作”这个条件满足的时候，Redis就会自动触发BGSAVE命令。
+如果用户使用了save设置，例如：`save 60 1000`,那么从Redis最近一次创建快照之后开始计算，当“60秒之内有1000次写入操作”这个条件满足的时候，Redis就会自动触发BGSAVE命令。
 
 如果用户使用了多个save设置，那么当任意一个save配置满足条件的时候，Redis都会触发一次BGSAVE命令。
 
-（2）客户端通过向Redis发送`SAVE` 命令来创建快照。
+（2）客户端通过向Redis发送`SAVE`命令来创建快照。
 
 接收到SAVE命令的Redis服务器在快照创建完毕之前将不再响应任何其他命令的请求。SAVE命令并不常用，我们通常只在没有足够的内存去执行BGSAVE命令的时候才会使用SAVE命令，或者即使等待持久化操作执行完毕也无所谓的情况下，才会使用这个命令；
 
@@ -149,7 +149,7 @@ Redis以每秒同步一次AOF文件的性能和不使用任何持久化特性时
 
 三、重写/压缩AOF文件
 
-随着数据量的增大，AOF的文件可能会很大，这样在每次进行数据恢复的时候就会进行很长的时间，为了解决日益增大的AOF文件，用户可以向Redis发送`BGREWRITEAOF` 命令，这个命令会通过移除AOF文件中的冗余命令来重写AOF文件，是AOF文件的体检变得尽可能的小。
+随着数据量的增大，AOF的文件可能会很大，这样在每次进行数据恢复的时候就会进行很长的时间，为了解决日益增大的AOF文件，用户可以向Redis发送`BGREWRITEAOF`命令，这个命令会通过移除AOF文件中的冗余命令来重写AOF文件，是AOF文件的体检变得尽可能的小。
 
 BGREWRITEAOF的工作原理和BGSAVE的原理很像：Redis会创建一个子进程，然后由子进程负责对AOF文件的重写操作。
 
@@ -157,7 +157,7 @@ BGREWRITEAOF的工作原理和BGSAVE的原理很像：Redis会创建一个子进
 
 四、触发重写/压缩AOF文件条件设定
 
-AOF通过设置`auto-aof-rewrite-percentage` 和 `auto-aof-rewrite-min-size` 选项来自动执行BGREWRITEAOF。
+AOF通过设置`auto-aof-rewrite-percentage`和`auto-aof-rewrite-min-size`选项来自动执行BGREWRITEAOF。
 
 其具体含义，通过实例可以看出，如下配置：
 
@@ -167,7 +167,7 @@ auto-aof-rewrite-percentage 100 auto-aof-rewrite-min-size 64mb
 
 表示当前AOF的文件体积大于64MB，并且AOF文件的体积比上一次重写之后的体积变大了至少一倍（100%）的时候，Redis将执行重写BGREWRITEAOF命令。
 
-如果AOF重写执行的过于频繁的话，可以将`auto-aof-rewrite-percentage` 选项的值设置为100以上，这种最偶发就可以让Redis在AOF文件的体积变得更大之后才执行重写操作，不过，这也使得在进行数据恢复的时候执行的时间变得更加长一些。
+如果AOF重写执行的过于频繁的话，可以将`auto-aof-rewrite-percentage`选项的值设置为100以上，这种最偶发就可以让Redis在AOF文件的体积变得更大之后才执行重写操作，不过，这也使得在进行数据恢复的时候执行的时间变得更加长一些。
 
 ## 验证快照文件和AOF文件
 
@@ -179,7 +179,7 @@ redis-check-aofredis-check-dump
 
 他们可以再系统发生故障的时候，检查快照和AOF文件的状态，并对有需要的情况对文件进行修复。
 
-如果用户在运行redis-check-aof命令的时候，指定了`--fix` 参数，那么程序将对AOF文件进行修复。
+如果用户在运行redis-check-aof命令的时候，指定了`--fix`参数，那么程序将对AOF文件进行修复。
 
 程序修复AOF文件的方法很简单：他会扫描给定的AOF文件，寻找不正确或者不完整的命令，当发现第一个出现错误命令的时候，程序会删除出错命令以及出错命令之后的所有命令，只保留那些位于出错命令之前的正确命令。大部分情况，被删除的都是AOF文件末尾的不完整的写命令。
 

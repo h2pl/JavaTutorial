@@ -169,7 +169,7 @@ Encoders和Decoders
 
 因为我们在网络传输时只能传输字节流，因此，在发送数据之前，我们必须把我们的message型转换为bytes，与之对应，我们在接收数据后，必须把接收到的bytes再转换成message。我们把bytes to message这个过程称作Decode(解码成我们可以理解的)，把message to bytes这个过程成为Encode。
 
-Netty中提供了很多现成的编码/解码器，我们一般从他们的名字中便可知道他们的用途，如**ByteToMessageDecoder**、**MessageToByteEncoder**，如专门用来处理Google Protobuf协议的**ProtobufEncoder**、 **ProtobufDecoder**。
+Netty中提供了很多现成的编码/解码器，我们一般从他们的名字中便可知道他们的用途，如**ByteToMessageDecoder**、**MessageToByteEncoder**，如专门用来处理Google Protobuf协议的**ProtobufEncoder**、**ProtobufDecoder**。
 
 我们前面说过，具体是哪种Handler就要看它们继承的是InboundAdapter还是OutboundAdapter，对于**Decoders**,很容易便可以知道它是继承自**ChannelInboundHandlerAdapter**或 ChannelInboundHandler，因为解码的意思是把ChannelPipeline**传入的bytes解码成我们可以理解的message**（即Java Object），而ChannelInboundHandler正是处理Inbound Event，而Inbound Event中传入的正是字节流。Decoder会覆盖其中的“ChannelRead()”方法，在这个方法中来调用具体的decode方法解码传递过来的字节流，然后通过调用ChannelHandlerContext.fireChannelRead(decodedMessage)方法把编码好的Message传递给下一个Handler。与之类似，Encoder就不必多少了。
 

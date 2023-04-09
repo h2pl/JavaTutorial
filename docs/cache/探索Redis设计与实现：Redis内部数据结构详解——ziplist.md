@@ -69,7 +69,7 @@ ziplist的数据结构组成是本文要讨论的重点。实际上，ziplist还
 *   `<entry>`: 表示真正存放数据的数据项，长度不定。一个数据项（entry）也有它自己的内部结构，这个稍后再解释。
 *   `<zlend>`: ziplist最后1个字节，是一个结束标记，值固定等于255。
 
-上面的定义中还值得注意的一点是：`<zlbytes>`, `<zltail>`, `<zllen>`既然占据多个字节，那么在存储的时候就有大端（big endian）和小端（little endian）的区别。ziplist采取的是小端模式来存储，这在下面我们介绍具体例子的时候还会再详细解释。
+上面的定义中还值得注意的一点是：`<zlbytes>`,`<zltail>`,`<zllen>`既然占据多个字节，那么在存储的时候就有大端（big endian）和小端（little endian）的区别。ziplist采取的是小端模式来存储，这在下面我们介绍具体例子的时候还会再详细解释。
 
 我们再来看一下每一个数据项`<entry>`的构成：
 
@@ -207,7 +207,7 @@ static unsigned char *__ziplistInsert(unsigned char *zl, unsigned char *p, unsig
 
 *   这个函数是在指定的位置p插入一段新的数据，待插入数据的地址指针是s，长度为slen。插入后形成一个新的数据项，占据原来p的配置，原来位于p位置的数据项以及后面的所有数据项，需要统一向后移动，给新插入的数据项留出空间。参数p指向的是ziplist中某一个数据项的起始位置，或者在向尾端插入的时候，它指向ziplist的结束标记`<zlend>`。
 *   函数开始先计算出待插入位置前一个数据项的长度`prevlen`。这个长度要存入新插入的数据项的`<prevrawlen>`字段。
-*   然后计算当前数据项占用的总字节数`reqlen`，它包含三部分：`<prevrawlen>`, `<len>`和真正的数据。其中的数据部分会通过调用`zipTryEncoding`先来尝试转成整数。
+*   然后计算当前数据项占用的总字节数`reqlen`，它包含三部分：`<prevrawlen>`,`<len>`和真正的数据。其中的数据部分会通过调用`zipTryEncoding`先来尝试转成整数。
 *   由于插入导致的ziplist对于内存的新增需求，除了待插入数据项占用的`reqlen`之外，还要考虑原来p位置的数据项（现在要排在待插入数据项之后）的`<prevrawlen>`字段的变化。本来它保存的是前一项的总长度，现在变成了保存当前插入的数据项的总长度。这样它的`<prevrawlen>`字段本身需要的存储空间也可能发生变化，这个变化可能是变大也可能是变小。这个变化了多少的值`nextdiff`，是调用`zipPrevLenByteDiff`计算出来的。如果变大了，`nextdiff`是正值，否则是负值。
 *   现在很容易算出来插入后新的ziplist需要多少字节了，然后调用`ziplistResize`来重新调整大小。ziplistResize的实现里会调用allocator的`zrealloc`，它有可能会造成数据拷贝。
 *   现在额外的空间有了，接下来就是将原来p位置的数据项以及后面的所有数据都向后挪动，并为它设置新的`<prevrawlen>`字段。此外，还可能需要调整ziplist的`<zltail>`字段。
@@ -223,7 +223,7 @@ hash是Redis中可以用来存储一个对象结构的比较理想的数据类�
 
 实际上，hash随着数据的增大，其底层数据结构的实现是会发生变化的，当然存储效率也就不同。在field比较少，各个value值也比较小的时候，hash采用ziplist来实现；而随着field增多和value值增大，hash可能会变成dict来实现。当hash底层变成dict来实现的时候，它的存储效率就没法跟那些序列化方式相比了。
 
-当我们为某个key第一次执行 `hset key field value` 命令的时候，Redis会创建一个hash结构，这个新创建的hash底层就是一个ziplist。
+当我们为某个key第一次执行`hset key field value`命令的时候，Redis会创建一个hash结构，这个新创建的hash底层就是一个ziplist。
 
 
 
