@@ -1,3 +1,18 @@
+# Table of Contents
+
+* [目录](#目录)
+  * [**Kafka的基本介绍**](#kafka的基本介绍)
+  * [**Kafka的设计原理分析**](#kafka的设计原理分析)
+  * [**Kafka数据传输的事务特点**](#kafka数据传输的事务特点)
+  * [**Kafka消息存储格式**](#kafka消息存储格式)
+  * [**副本（replication）策略**](#副本（replication）策略)
+  * [**Kafka消息分组，消息消费原理**](#kafka消息分组，消息消费原理)
+  * [**Push vs. Pull**](#push-vs-pull)
+  * [**Kafak顺序写入与数据读取**](#kafak顺序写入与数据读取)
+  * [**消费者（读取数据）**](#消费者（读取数据）)
+  * [**Reference**](#reference)
+
+
 # 目录
 
 本文转载自 linkedkeeper.com  

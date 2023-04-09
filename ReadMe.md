@@ -334,7 +334,7 @@ todo
 [//]: # (* [搞懂分布式技术：Nginx负载均衡原理与实践 ]&#;docs/distributed/practice/搞懂分布式技术：Nginx负载均衡原理与实践.md&#;)
 * [搞懂分布式技术：LVS实现负载均衡的原理与实践 ](docs/distributed/practice/搞懂分布式技术：LVS实现负载均衡的原理与实践.md )
 * [搞懂分布式技术：分布式session解决方案与一致性hash](docs/distributed/practice/搞懂分布式技术：分布式session解决方案与一致性hash.md)
-* [搞懂分布式技术：分布式ID生成方案 ](docs/distributed/practice/搞懂分布式技术：分布式ID生成方案.md )
+* [搞懂分布式技术：分布式ID生成方案 ](docs/distributed/搞懂分布式技术：分布式ID生成方案.md )
 * [搞懂分布式技术：缓存的那些事](docs/distributed/practice/搞懂分布式技术：缓存的那些事.md)
 * [搞懂分布式技术：SpringBoot使用注解集成Redis缓存](docs/distributed/practice/搞懂分布式技术：SpringBoot使用注解集成Redis缓存.md)
 * [搞懂分布式技术：缓存更新的套路 ](docs/distributed/practice/搞懂分布式技术：缓存更新的套路.md )
