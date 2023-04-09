@@ -1,3 +1,14 @@
+# Table of Contents
+
+  * [intset数据结构简介](#intset数据结构简介)
+  * [intset的查找和添加操作](#intset的查找和添加操作)
+  * [Redis的set](#redis的set)
+  * [Redis set的并、交、差算法](#redis-set的并、交、差算法)
+    * [交集](#交集)
+    * [并集](#并集)
+    * [差集](#差集)
+
+
 [toc]
 
 本文转自互联网

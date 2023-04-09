@@ -1,3 +1,12 @@
+# Table of Contents
+
+  * [dict的数据结构定义](#dict的数据结构定义)
+  * [dict的创建（dictCreate）](#dict的创建（dictcreate）)
+  * [dict的查找（dictFind）](#dict的查找（dictfind）)
+  * [dict的插入（dictAdd和dictReplace）](#dict的插入（dictadd和dictreplace）)
+  * [dict的删除（dictDelete）](#dict的删除（dictdelete）)
+
+
 [toc]
 
 本文转自互联网
@@ -167,7 +176,7 @@ dictCreate为dict的数据结构分配空间并为各个变量赋初值。其中
 
 ## dict的查找（dictFind）
 ````
-    #define dictIsRehashing(d) ((d)->rehashidx != -1)
+    //define dictIsRehashing(d) ((d)->rehashidx != -1)
     
     dictEntry *dictFind(dict *d, const void *key)
     {

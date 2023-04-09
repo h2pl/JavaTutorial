@@ -1,3 +1,17 @@
+# Table of Contents
+
+* [事务](#事务)
+  * [用法](#用法)
+  * [事务中的错误](#事务中的错误)
+  * [为什么 Redis 不支持回滚（roll back）](#为什么-redis-不支持回滚（roll-back）)
+  * [放弃事务](#放弃事务)
+  * [使用 check-and-set 操作实现乐观锁](#使用-check-and-set-操作实现乐观锁)
+  * [了解`WATCH`](#了解`watch`)
+    * [使用 WATCH 实现 ZPOP](#使用-watch-实现-zpop)
+  * [Redis 脚本和事务](#redis-脚本和事务)
+* [redis事务的ACID特性](#redis事务的acid特性)
+
+
 [toc]
 
 本文转自互联网

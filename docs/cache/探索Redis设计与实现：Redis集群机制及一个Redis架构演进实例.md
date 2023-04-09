@@ -1,3 +1,25 @@
+# Table of Contents
+
+  * [Replication（主从复制）](#replication（主从复制）)
+    * [配置主服务器](#配置主服务器)
+    * [配置从服务器](#配置从服务器)
+    * [测试](#测试)
+  * [Sentinel（哨兵）](#sentinel（哨兵）)
+    * [配置Sentinel](#配置sentinel)
+    * [启动 Sentinel](#启动-sentinel)
+    * [测试](#测试-1)
+  * [Twemproxy](#twemproxy)
+  * [Codis](#codis)
+  * [Redis 3.0集群](#redis-30集群)
+    * [环境搭建](#环境搭建)
+* [根据实际情况修改](#根据实际情况修改)
+* [允许redis支持集群模式](#允许redis支持集群模式)
+* [节点配置文件，由redis自动维护](#节点配置文件，由redis自动维护)
+* [节点超时毫秒](#节点超时毫秒)
+* [开启AOF同步模式](#开启aof同步模式)
+    * [创建集群](#创建集群)
+
+
 ## Replication（主从复制）
 
 Redis的replication机制允许slave从master那里通过网络传输拷贝到完整的数据备份，从而达到主从机制。为了实现主从复制，我们准备三个redis服务，依次命名为master，slave1，slave2。
