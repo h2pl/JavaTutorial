@@ -67,7 +67,6 @@
 * [2、Java基本数据类型](docs/java/basic/2、Java基本数据类型.md)
 * [3、string和包装类](docs/java/basic/3、string和包装类.md)
 * [4、final关键字特性](docs/java/basic/4、final关键字特性.md)
-
 * [5、Java类和包](docs/java/basic/5、Java类和包.md)
 * [6、抽象类和接口](docs/java/basic/6、抽象类和接口.md)
 * [7、代码块和代码执行顺序](docs/java/basic/7、代码块和代码执行顺序.md)
