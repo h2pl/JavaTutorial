@@ -133,11 +133,11 @@ Bean后处理器是一种特殊的Bean，这种特殊的Bean并不对外提供服务，它甚至可以无须id属
 
 容器中一旦注册了Bean后处理器，Bean后处理器就会自动启动，在容器中每个Bean创建时自动工作，Bean后处理器两个方法的回调时机如下图：
 
-![bean-post-process](https://www.runoob.com/wp-content/uploads/2015/07/e8970a58f831cd7613b680ef0541e7c7.jpg)
+![bean-post-process](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/e8970a58f831cd7613b680ef0541e7c7.jpg)
 
 注意一点，如果使用`BeanFactory`作为Spring容器，则必须手动注册Bean后处理器，程序必须获取Bean后处理器实例，然后手动注册。
 
- BeanPostProcessor bp =  (BeanPostProcessor)beanFactory.getBean("bp"); beanFactory.addBeanPostProcessor(bp);  Person p =  (Person)beanFactory.getBean("person"); 
+BeanPostProcessor bp =  (BeanPostProcessor)beanFactory.getBean("bp"); beanFactory.addBeanPostProcessor(bp);  Person p =  (Person)beanFactory.getBean("person");
 
 ### 容器后处理器
 
@@ -158,7 +158,7 @@ Spring提供如下几个Annotation来标注Spring Bean：
 
 在Spring配置文件中做如下配置，指定自动扫描的包：
 
- <context:component-scan  base-package="edu.shu.spring.domain"/> 
+<context:component-scan  base-package="edu.shu.spring.domain"/>
 
 ### 使用@Resource配置依赖
 
@@ -174,6 +174,7 @@ Spring提供如下几个Annotation来标注Spring Bean：
 Spring提供了`@Autowired`注解来指定自动装配，`@Autowired`可以修饰setter方法、普通方法、实例变量和构造器等。当使用`@Autowired`标注setter方法时，默认采用byType自动装配策略。在这种策略下，符合自动装配类型的候选Bean实例常常有多个，这个时候就可能引起异常，为了实现精确的自动装配，Spring提供了`@Qualifier`注解，通过使用`@Qualifier`，允许根据Bean的id来执行自动装配。
 
 # 参考文章
+
 https://www.w3cschool.cn/wkspring
 https://www.runoob.com/w3cnote/basic-knowledge-summary-of-spring.html
 http://codepub.cn/2015/06/21/Basic-knowledge-summary-of-Spring

@@ -65,17 +65,17 @@ public abstract class PropertySource<T> {
 
 ####  ****getProperty()内部执行逻辑****
 
-![env_getproperty_sequence.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/094b608865b54c03a0afd74997a8bf99~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp?)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/QQ%E6%88%AA%E5%9B%BE20230416193319.jpg)
 
 一般，_Environment_ 实现类中会持有一个`PropertyResolver`类型的成员变量，进而交由 _PropertyResolver_ 负责执行 _getProperty()_ 逻辑。_PropertyResolver_ 实现类中又会持有两个成员变量，分别是：`ConversionService`与`PropertySources`；首先，_PropertyResolver_ 遍历 `PropertySources` 中的 _PropertySource_，获取原生属性值；然后委派 _ConversionService_ 对原生属性值进行数据类型转换 (如果有必要的话)。**虽然 PropertySource 自身是具备根据属性名获取属性值这一能力的，但不具备占位符解析与类型转换能力，于是在中间引入具备这两种能力的 PropertyResolver， 这也印证了一个段子：在计算机科学中，没有什么问题是在中间加一层解决不了的，如果有，那就再加一层**。
 
 ####  ****PropertySource内部更新逻辑****
 
-![propertysources_crud.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ccf3b4977fac475e916f61325dbc2ef0~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp?)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/QQ%E6%88%AA%E5%9B%BE20230416193319.jpg)
 
 _Environment_ 实现类中除了持有`PropertyResolver`类型的成员变量外，还有一个`MutablePropertySources`类型的成员变量，但并不提供直接操作该 _MutablePropertySources_ 的方法，我们只能通过`getPropertySources()`方法获取 _MutablePropertySources_ 实例，然后借助 _MutablePropertySources_ 中的`addFirst()`、`addLast()`和`replace()`等方法去更新 _PropertySource_。_MutablePropertySources_ 是 _PropertySources_ 唯一一个实现类，如下图所示：
 
-![property_sources_uml.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/41fd41d7db004ce59d830afc7510dd7e~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp?)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230416193420.png)
 
 总的来说，_Environment_ 是对 _PropertySource_ 和 _Profile_ 的顶级抽象，下面介绍 _Profile_ 的概念。当应用程序需要部署到不同的运行环境时，一些属性项通常会有所不同，比如，数据源 URL 在开发环境和测试环境就会不一样。Spring 从3.1版本开始支持基于 _Profile_ 的条件化配置。
 
@@ -198,7 +198,7 @@ public class ConditionEvaluator {
 
 _Environment_ 中的这些 _PropertySource_ 究竟有啥用啊？当然是为了填充 _Bean_ 喽，废话不多说，上图。
 
-![propertysource_bean_population.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6f03b3f4881640b88679f2bef340d680~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp?)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230416193443.png)
 
 > 笔者以前都是用 visio 和 processOn 画图，第一次体验 draw.io，没想到如此优秀，强烈安利一波！
 
@@ -288,7 +288,7 @@ public class SpringApplication {
 
 `getOrCreateEnvironment()`主要负责构建 _Environment_ 实例。如果当前应用是基于`同步阻塞I/O`模型的，则 _Environment_ 选用`ApplicationServletEnvironment`；相反地，如果当前应用是基于`异步非阻塞I/O`模型的，则 _Environment_ 选用`ApplicationReactiveWebEnvironment`。我们工作中基本都是基于 Spring MVC 开发应用，Spring MVC 是一款构建于`Servlet API`之上、基于同步阻塞 I/O 模型的主流 Java Web 开发框架，这种 I/O 模型意味着一个 HTTP 请求对应一个线程，即每一个 HTTP 请求都是在各自线程上下文中完成处理的。_ApplicationServletEnvironment_ 继承关系如下图所示：
 
-![environment_uml.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1eaf7572da484c958ee9335b591301d9~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp?)
+![](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/20230416193515.png)
 
 从上图可以看出 _ApplicationServletEnvironment_ 家族相当庞大，在执行 _ApplicationServletEnvironment_ 构造方法的时候必然会触发各级父类构造方法中的逻辑，**依次为**：
 
@@ -832,10 +832,6 @@ public class DefaultPropertyResolver implements EncryptablePropertyResolver {
 
 总结性的文字就不再说了，笔者现在文思泉涌，否则又能水300字。最后，希望大家记住在当前 Spring Boot 版本中，由`ApplicationServletEnvironment`扮演 _Environment_，其最终将委派`ConfigurationPropertySourcesPropertyResolver`去获取属性值。
 
-## 5 参考文档
-
-1.  [docs.spring.io/spring-boot…](https://link.juejin.cn?target=https%3A%2F%2Fdocs.spring.io%2Fspring-boot%2Fdocs%2F2.5.7%2Freference%2Fhtml%2Ffeatures.html "https://docs.spring.io/spring-boot/docs/2.5.7/reference/html/features.html")
-
 
 
 作者：程序猿杜小头
@@ -844,6 +840,7 @@ public class DefaultPropertyResolver implements EncryptablePropertyResolver {
 著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
 
 # 参考文章
+
 https://www.w3cschool.cn/wkspring
 https://www.runoob.com/w3cnote/basic-knowledge-summary-of-spring.html
 http://codepub.cn/2015/06/21/Basic-knowledge-summary-of-Spring

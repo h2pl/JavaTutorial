@@ -1,6 +1,4 @@
-# ![](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAAAXNSR0IArs4c6QAABKFJREFUSA3tVl1oFVcQnrMbrak3QUgkya1akpJYcrUtIqW1JvFBE9LiQ5v6JmJpolbMg32rVrhgoYK0QiMY6i9Y6EMaW5D+xFJaTYItIuK2Kr3+BJNwkxBj05sQY3b3nM6cs2dv9t7NT/vQJw/sndk5M/PNzJkzewGerP+pAmy+ON8lLzUJgA8ZYxYIYZmGYRnctDaWvJJAmTtfP1pvXsBCCPP8QFcCaRkZYACgDZFO4stNIcBCajEOlmmC9XpJ9bAGCaPaPmzPl32dvLSVu3BWCTQs0XQQ6g0DYgwLIoAZbBCdW/i+781o1VVlm/410mw4h06Y7bIPHNyWDyL4FHkX03Q8SrzNhZTZriieckWt7cL6MM85YcLpsi/7O9/iXFT6MswI0DmmpkSaJ0qLxFIm3+i1THHB3zmBH3PYx9CcykcLOeQVVa7QtdxTgQgEleX2AjHYfwA+2ddV77ruGoJUbhGDI09YSNXyMpUt5ylOzxgbUmtOp7NmbNt8v3arjTBfYELmLUV+M+nSawNNAUqpT3ClJWg5I3BLT+cGW/DXNGCa6tx1aakCGEigArTn4TDIPdrXXYKCZNrHLMCOEPvHBlLQ99s9eHB7EB6NTki73CVPQ2F5MSx/uRQixfmq7rK0wYD8w8E905bnPDfwoWs/rfv93NWN/ZfvwsLIU7A09gxECyISeGJkHAau98L97tuw7NXnoPyNF8FcYGLGKsOs0mN3OEyec9esGW/ZEl945dTP34wlR2FZVQWU1q0Cw8Tr7p+hgLLNL0FPxx/Q35mA8aEUrH6nCgwEl0tn7wUiZYJnNRh6DK4UH/k0lfyrsBKdPVv/AriGIQcEDQZ65LBAGe2Rzui9Ybjz7XUppz1/uKBbyVPGkN3ZAeC6hr0x7Nr38N5+EqkoOm17xpoqR9ohQF55ERSvr4Dkr3chNfC3DMzGJlNBElW8w9nsGQvhNGIzDkXzCg8cLK951xHsFBlTJspJNi3ZFIMF2AeDV3q8DNOB+YHi6QTrChDIWDBRi5U5f+ZMfJLu3ccrqxtdxk4SKH336LFxSmkqefwU5T8fhdSdQf9IVKD6aNiwI/hnmcAZ91isYMJIaCUCx9W098+LgruikeTqzqqxKPUwqJyCPJiyemVVZBOijDGjD38Os0jOiSPL1z3SPjXNANbiNPXAdzTfukjjuknNBbyz3nwgTd3AVFqUJ5hpHlq9MveLnWwttUfoygBmvVjuikxND3znrhsELnZk7k+OjIGxeNEkomyLVta0xxn+HZhjBc4YZ/AFjHjz9u3xRZl2BN4aq9nFwWh16IrQ1aHHEd3j1+4/dB9OtH4e29A2H1DyHQRmOSfQZ1Fy7MHBTGB6J/Djq6p3OxyO2cB+4Car7v/o3GXgfAkj23+x9ID1Teoamo/SXcbvSf2PX7Vc8DdCmE1vN9di+32P9/5YR3vLnhCVGUWBjEkr3yh4H8v9CzmsbdhzOKzsJKM90iFdaTMjRPhGVsakRvOaRidljo6H6G7j+ctrJpsP+4COhDIl0La2+FS4+5mlocBaXY5QnGZysIBYoeSsl5qQzrSj/cgNrfuEzlWBfwA+EjrZyWUvpAAAAABJRU5ErkJggg==)Spring 校验
-
-
+# Spring 校验
 
 Java API 规范(`JSR303`)定义了`Bean`校验的标准`validation-api`，但没有提供实现。`hibernate validation`是对这个规范的实现，并增加了校验注解如`@Email`、`@Length`等。`Spring Validation`是对`hibernate validation`的二次封装，用于支持`spring mvc`参数自动校验。
 
@@ -108,7 +106,7 @@ public class ValidatorController {
 
 
 
-（3）如果请求参数不满足校验规则，则会抛出?`ConstraintViolationException`?或?`MethodArgumentNotValidException`?异常。
+（3）如果请求参数不满足校验规则，则会抛出 `ConstraintViolationException` 或 `MethodArgumentNotValidException` 异常。
 
 ### [#](https://dunwu.github.io/spring-tutorial/pages/fe6aad/#%E7%BB%9F%E4%B8%80%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86)统一异常处理
 
@@ -324,7 +322,7 @@ public class UserDTO {
 
 ### [#](https://dunwu.github.io/spring-tutorial/pages/fe6aad/#%E8%87%AA%E5%AE%9A%E4%B9%89%E6%A0%A1%E9%AA%8C%E6%B3%A8%E8%A7%A3)自定义校验注解
 
-（1）自定义校验注解?`@IsMobile`
+（1）自定义校验注解 `@IsMobile`
 
 
 
@@ -346,7 +344,7 @@ public @interface IsMobile {
 
 
 
-（2）实现?`ConstraintValidator`?接口，编写?`@IsMobile`?校验注解的解析器
+（2）实现 `ConstraintValidator` 接口，编写 `@IsMobile` 校验注解的解析器
 
 
 
@@ -380,16 +378,16 @@ public class MobileValidator implements ConstraintValidator<IsMobile, String> {
 
 ### [#](https://dunwu.github.io/spring-tutorial/pages/fe6aad/#%E8%87%AA%E5%AE%9A%E4%B9%89%E6%A0%A1%E9%AA%8C)自定义校验
 
-可以通过实现?`org.springframework.validation.Validator`?接口来自定义校验。
+可以通过实现 `org.springframework.validation.Validator` 接口来自定义校验。
 
 有以下要点
 
-*   实现?`supports`?方法
-*   实现?`validate`?方法
-    *   通过?`Errors`?对象收集错误
+*   实现 `supports` 方法
+*   实现 `validate` 方法
+    *   通过 `Errors` 对象收集错误
         *   `ObjectError`：对象（Bean）错误：
         *   `FieldError`：对象（Bean）属性（Property）错误
-    *   通过?`ObjectError`?和?`FieldError`?关联?`MessageSource`?实现获取最终的错误文案
+    *   通过 `ObjectError` 和 `FieldError` 关联 `MessageSource` 实现获取最终的错误文案
 
 
 
@@ -513,8 +511,8 @@ public Validator validator() {
 *   接口职责
     *   数据绑定和校验错误收集接口，与 Java Bean 和其属性有强关联性
 *   核心方法
-    *   `reject`?方法（重载）：收集错误文案
-    *   `rejectValue`?方法（重载）：收集对象字段中的错误文案
+    *   `reject` 方法（重载）：收集错误文案
+    *   `rejectValue` 方法（重载）：收集对象字段中的错误文案
 *   配套组件
     *   Java Bean 错误描述：`org.springframework.validation.ObjectError`
     *   Java Bean 属性错误描述：`org.springframework.validation.FieldError`
@@ -532,7 +530,7 @@ Errors 文案生成步骤
 
 #### [#](https://dunwu.github.io/spring-tutorial/pages/fe6aad/#requestbody-%E5%8F%82%E6%95%B0%E6%A0%A1%E9%AA%8C%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86)RequestBody 参数校验实现原理
 
-在 spring-mvc 中，`RequestResponseBodyMethodProcessor`?是用于解析?`@RequestBody`?标注的参数以及处理`@ResponseBody`?标注方法的返回值的。其中，执行参数校验的逻辑肯定就在解析参数的方法?`resolveArgument()`?中：
+在 spring-mvc 中，`RequestResponseBodyMethodProcessor` 是用于解析 `@RequestBody` 标注的参数以及处理`@ResponseBody` 标注方法的返回值的。其中，执行参数校验的逻辑肯定就在解析参数的方法 `resolveArgument()` 中：
 
 
 
@@ -594,7 +592,7 @@ protected void validateIfApplicable(WebDataBinder binder, MethodParameter parame
 
 
 
-以上代码，就解释了 Spring 为什么能同时支持?`@Validated`、`@Valid`?两个注解。
+以上代码，就解释了 Spring 为什么能同时支持 `@Validated`、`@Valid` 两个注解。
 
 接下来，看一下 WebDataBinder.validate() 的实现：
 
@@ -618,7 +616,7 @@ public void validate(Object target, Errors errors, Object... validationHints) {
 
 #### [#](https://dunwu.github.io/spring-tutorial/pages/fe6aad/#%E6%96%B9%E6%B3%95%E7%BA%A7%E5%88%AB%E7%9A%84%E5%8F%82%E6%95%B0%E6%A0%A1%E9%AA%8C%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86)方法级别的参数校验实现原理
 
-Spring 支持根据方法去进行拦截、校验，原理就在于应用了 AOP 技术。具体来说，是通过?`MethodValidationPostProcessor`?动态注册 AOP 切面，然后使用?`MethodValidationInterceptor`?对切点方法织入增强。
+Spring 支持根据方法去进行拦截、校验，原理就在于应用了 AOP 技术。具体来说，是通过 `MethodValidationPostProcessor` 动态注册 AOP 切面，然后使用 `MethodValidationInterceptor` 对切点方法织入增强。
 
 
 
@@ -642,7 +640,7 @@ public class MethodValidationPostProcessor extends AbstractBeanFactoryAwareAdvis
 
 
 
-接着看一下?`MethodValidationInterceptor`：
+接着看一下 `MethodValidationInterceptor`：
 
 
 

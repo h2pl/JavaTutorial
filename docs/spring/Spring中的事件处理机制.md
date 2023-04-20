@@ -18,7 +18,7 @@
 
 ## Spring 中的事件处理
 
-你已经看到了在所有章节中 Spring 的核心是?**ApplicationContext**，它负责管理 beans 的完整生命周期。当加载 beans 时，ApplicationContext 发布某些类型的事件。例如，当上下文启动时，ContextStartedEvent 发布，当上下文停止时，ContextStoppedEvent 发布。
+你已经看到了在所有章节中 Spring 的核心是 **ApplicationContext**，它负责管理 beans 的完整生命周期。当加载 beans 时，ApplicationContext 发布某些类型的事件。例如，当上下文启动时，ContextStartedEvent 发布，当上下文停止时，ContextStoppedEvent 发布。
 
 通过 ApplicationEvent 类和 ApplicationListener 接口来提供在 ApplicationContext 中处理事件。如果一个 bean 实现 ApplicationListener，那么每次 ApplicationEvent 被发布到 ApplicationContext 上，那个 bean 会被通知。
 
@@ -36,19 +36,19 @@ Spring 提供了以下的标准事件：
 
 ## 监听上下文事件
 
-为了监听上下文事件，一个 bean 应该实现只有一个方法?**onApplicationEvent()**?的 ApplicationListener 接口。因此，我们写一个例子来看看事件是如何传播的，以及如何可以用代码来执行基于某些事件所需的任务。
+为了监听上下文事件，一个 bean 应该实现只有一个方法 **onApplicationEvent()** 的 ApplicationListener 接口。因此，我们写一个例子来看看事件是如何传播的，以及如何可以用代码来执行基于某些事件所需的任务。
 
 让我们在恰当的位置使用 Eclipse IDE，然后按照下面的步骤来创建一个 Spring 应用程序：
 
 | 步骤 | 描述 |
 | --- | --- |
-| 1 | 创建一个名称为 SpringExample 的项目，并且在创建项目的?**src**?文件夹中创建一个包 com.tutorialspoint。 |
+| 1 | 创建一个名称为 SpringExample 的项目，并且在创建项目的 **src** 文件夹中创建一个包 com.tutorialspoint。 |
 | 2 | 使用 Add External JARs 选项，添加所需的 Spring 库，解释见 Spring Hello World Example 章节。 |
 | 3 | 在 com.tutorialspoint 包中创建 Java 类 HelloWorld、CStartEventHandler、CStopEventHandler 和 MainApp。 |
-| 4 | 在?**src**?文件夹中创建 Bean 的配置文件 Beans.xml。 |
+| 4 | 在 **src** 文件夹中创建 Bean 的配置文件 Beans.xml。 |
 | 5 | 最后一步是创建的所有 Java 文件和 Bean 配置文件的内容，并运行应用程序，解释如下所示。 |
 
-这里是?**HelloWorld.java**?文件的内容：
+这里是 **HelloWorld.java** 文件的内容：
 
 ```
 package com.tutorialspoint;
@@ -63,7 +63,7 @@ public class HelloWorld {
 }
 ```
 
-下面是?**CStartEventHandler.java**?文件的内容：
+下面是 **CStartEventHandler.java** 文件的内容：
 
 ```
 package com.tutorialspoint;
@@ -77,7 +77,7 @@ public class CStartEventHandler
 }
 ```
 
-下面是?**CStopEventHandler.java**?文件的内容：
+下面是 **CStopEventHandler.java** 文件的内容：
 
 ```
 package com.tutorialspoint;
@@ -91,7 +91,7 @@ public class CStopEventHandler
 }
 ```
 
-下面是?**MainApp.java**?文件的内容：
+下面是 **MainApp.java** 文件的内容：
 
 ```
 package com.tutorialspoint;
@@ -117,7 +117,7 @@ public class MainApp {
 }
 ```
 
-下面是配置文件?**Beans.xml**?文件：
+下面是配置文件 **Beans.xml** 文件：
 
 ```
 <?xml version="1.0" encoding="UTF-8"?>
@@ -160,15 +160,15 @@ ContextStoppedEvent Received
 
 | 步骤 | 描述 |
 | --- | --- |
-| 1 | 创建一个名称为 SpringExample 的项目，并且在创建项目的?**src**?文件夹中创建一个包 com.tutorialspoint。 |
+| 1 | 创建一个名称为 SpringExample 的项目，并且在创建项目的 **src** 文件夹中创建一个包 com.tutorialspoint。 |
 | 2 | 使用 Add External JARs 选项，添加所需的 Spring 库，解释见 Spring Hello World Example 章节。 |
-| 3 | 通过扩展?**ApplicationEvent**,创建一个事件类 CustomEvent。这个类必须定义一个默认的构造函数，它应该从 ApplicationEvent 类中继承的构造函数。 |
+| 3 | 通过扩展 **ApplicationEvent**,创建一个事件类 CustomEvent。这个类必须定义一个默认的构造函数，它应该从 ApplicationEvent 类中继承的构造函数。 |
 | 4 | 一旦定义事件类，你可以从任何类中发布它，假定 EventClassPublisher 实现了 ApplicationEventPublisherAware。你还需要在 XML 配置文件中声明这个类作为一个 bean，之所以容器可以识别 bean 作为事件发布者，是因为它实现了 ApplicationEventPublisherAware 接口。 |
 | 5 | 发布的事件可以在一个类中被处理，假定 EventClassHandler 实现了 ApplicationListener 接口，而且实现了自定义事件的 onApplicationEvent 方法。 |
-| 6 | 在?**src**?文件夹中创建 bean 的配置文件 Beans.xml 和 MainApp 类，它可以作为一个 Spring 应用程序来运行。 |
+| 6 | 在 **src** 文件夹中创建 bean 的配置文件 Beans.xml 和 MainApp 类，它可以作为一个 Spring 应用程序来运行。 |
 | 7 | 最后一步是创建的所有 Java 文件和 Bean 配置文件的内容，并运行应用程序，解释如下所示。 |
 
-这个是?**CustomEvent.java**?文件的内容：
+这个是 **CustomEvent.java** 文件的内容：
 
 ```
 package com.tutorialspoint;
@@ -184,7 +184,7 @@ public class CustomEvent extends ApplicationEvent{
 
 ```
 
-下面是?**CustomEventPublisher.java**?文件的内容：
+下面是 **CustomEventPublisher.java** 文件的内容：
 
 ```
 package com.tutorialspoint;
@@ -204,7 +204,7 @@ public class CustomEventPublisher
 }
 ```
 
-下面是?**CustomEventHandler.java**?文件的内容：
+下面是 **CustomEventHandler.java** 文件的内容：
 
 ```
 package com.tutorialspoint;
@@ -217,7 +217,7 @@ public class CustomEventHandler
 }
 ```
 
-下面是?**MainApp.java**?文件的内容：
+下面是 **MainApp.java** 文件的内容：
 
 ```
 package com.tutorialspoint;
@@ -235,7 +235,7 @@ public class MainApp {
 }
 ```
 
-下面是配置文件?**Beans.xml**：
+下面是配置文件 **Beans.xml**：
 
 ```
 <?xml version="1.0" encoding="UTF-8"?>

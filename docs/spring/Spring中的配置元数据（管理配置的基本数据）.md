@@ -95,12 +95,12 @@ Spring Bean 定义注解
 
 | Spring 注解 | 场景说明 | 起始版本 |
 | --- | --- | --- |
-| `@Bean` | 替换 XML 元素?`<bean>` | 3.0 |
-| `@DependsOn` | 替代 XML 属性?`<bean depends-on="..."/>` | 3.0 |
-| `@Lazy` | 替代 XML 属性?`<bean lazy-init="true | falses" />` | 3.0 |
-| `@Primary` | 替换 XML 元素?`<bean primary="true | false" />` | 3.0 |
-| `@Role` | 替换 XML 元素?`<bean role="..." />` | 3.1 |
-| `@Lookup` | 替代 XML 属性?`<bean lookup-method="...">` | 4.1 |
+| `@Bean` | 替换 XML 元素 `<bean>` | 3.0 |
+| `@DependsOn` | 替代 XML 属性 `<bean depends-on="..."/>` | 3.0 |
+| `@Lazy` | 替代 XML 属性 `<bean lazy-init="true | falses" />` | 3.0 |
+| `@Primary` | 替换 XML 元素 `<bean primary="true | false" />` | 3.0 |
+| `@Role` | 替换 XML 元素 `<bean role="..." />` | 3.1 |
+| `@Lookup` | 替代 XML 属性 `<bean lookup-method="...">` | 4.1 |
 
 Spring Bean 依赖注入注解
 
@@ -109,7 +109,7 @@ Spring Bean 依赖注入注解
 | `@Autowired` | Bean 依赖注入，支持多种依赖查找方式 | 2.5 |
 | `@Qualifier` | 细粒度的 @Autowired 依赖查找 | 2.5 |
 
-?
+ 
 
 | Java 注解 | 场景说明 | 起始版本 |
 | --- | --- | --- |
@@ -127,8 +127,8 @@ Spring Bean 生命周期回调注解
 
 | Spring 注解 | 场景说明 | 起始版本 |
 | --- | --- | --- |
-| @PostConstruct | 替换 XML 元素?<bean init-method="..."></bean>或 InitializingBean | 2.5 |
-| @PreDestroy | 替换 XML 元素?<bean destroy-method="..."></bean>或 DisposableBean | 2.5 |
+| @PostConstruct | 替换 XML 元素 <bean init-method="..."></bean>或 InitializingBean | 2.5 |
+| @PreDestroy | 替换 XML 元素 <bean destroy-method="..."></bean>或 DisposableBean | 2.5 |
 
 Spring BeanDefinition 解析与注册
 
@@ -194,7 +194,7 @@ Spring IoC 容器装配注解
 
 | Spring 注解 | 场景说明 | 起始版本 |
 | --- | --- | --- |
-| @ImportResource | 替换 XML 元素?`<import>` | 3.0 |
+| @ImportResource | 替换 XML 元素 `<import>` | 3.0 |
 | @Import | 导入 Configuration Class | 3.0 |
 | @ComponentScan | 扫描指定 package 下标注 Spring 模式注解的类 | 3.1 |
 

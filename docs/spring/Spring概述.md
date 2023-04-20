@@ -26,14 +26,14 @@ Rod Johnson 在其 2004 年编著的畅销书《Expert One-on-One J2EE Development without
 
 这些子项目涵盖了从企业级应用开发到云计算等各方面的内容，能够帮助开发人员解决软件发展过程中不断产生的各种实际问题，给开发人员带来了更好的开发体验。
 
-| 项目名称 | 描述 |
-| --- | --- |
-| Spring Data | Spring 提供的数据访问模块，对 JDBC 和 ORM 提供了很好的支持。通过它，开发人员可以使用一种相对统一的方式，来访问位于不同类型数据库中的数据。 |
-| Spring Batch | 一款专门针对企业级系统中的日常批处理任务的轻量级框架，能够帮助开发人员方便的开发出健壮、高效的批处理应用程序。 |
-| Spring Security | 前身为 Acegi，是 Spring 中较成熟的子模块之一。它是一款可以定制化的身份验证和访问控制框架。 |
-| Spring Mobile | 是对 Spring MVC 的扩展，用来简化移动端 Web 应用的开发。 |
-| Spring Boot | 是 Spring 团队提供的全新框架，它为 Spring 以及第三方库一些开箱即用的配置，可以简化 Spring 应用的搭建及开发过程。 |
-| Spring Cloud | 一款基于 Spring Boot 实现的微服务框架。它并不是某一门技术，而是一系列微服务解决方案或框架的有序集合。它将市面上成熟的、经过验证的微服务框架整合起来，并通过 Spring Boot 的思想进行再封装，屏蔽调其中复杂的配置和实现原理，最终为开发人员提供了一套简单易懂、易部署和易维护的分布式系统开发工具包。 |
+| 项目名称 | 描述 |  
+| --- | --- |  
+| Spring Data | Spring 提供的数据访问模块，对 JDBC 和 ORM 提供了很好的支持。通过它，开发人员可以使用一种相对统一的方式，来访问位于不同类型数据库中的数据。 |  
+| Spring Batch | 一款专门针对企业级系统中的日常批处理任务的轻量级框架，能够帮助开发人员方便的开发出健壮、高效的批处理应用程序。 |  
+| Spring Security | 前身为 Acegi，是 Spring 中较成熟的子模块之一。它是一款可以定制化的身份验证和访问控制框架。 |  
+| Spring Mobile | 是对 Spring MVC 的扩展，用来简化移动端 Web 应用的开发。 |  
+| Spring Boot | 是 Spring 团队提供的全新框架，它为 Spring 以及第三方库一些开箱即用的配置，可以简化 Spring 应用的搭建及开发过程。 |  
+| Spring Cloud | 一款基于 Spring Boot 实现的微服务框架。它并不是某一门技术，而是一系列微服务解决方案或框架的有序集合。它将市面上成熟的、经过验证的微服务框架整合起来，并通过 Spring Boot 的思想进行再封装，屏蔽调其中复杂的配置和实现原理，最终为开发人员提供了一套简单易懂、易部署和易维护的分布式系统开发工具包。 |  
 
 ### 狭义的 Spring：Spring Framework
 
@@ -43,10 +43,10 @@ Spring 框架是一个分层的、面向切面的 Java 应用程序的一站式轻量级解决方案，它是 Sp
 
 Spring 有两个核心部分： IoC 和 AOP。
 
-| 核心 | 描述 |
-| --- | --- |
-| IOC | Inverse of Control 的简写，译为“控制反转”，指把创建对象过程交给 Spring 进行管理。 |
-| AOP | Aspect Oriented Programming 的简写，译为“面向切面编程”。AOP 用来封装多个类的公共行为，将那些与业务无关，却为业务模块所共同调用的逻辑封装起来，减少系统的重复代码，降低模块间的耦合度。另外，AOP 还解决一些系统层面上的问题，比如日志、事务、权限等。 |
+| 核心 | 描述 |  
+| --- | --- |  
+| IOC | Inverse of Control 的简写，译为“控制反转”，指把创建对象过程交给 Spring 进行管理。 |  
+| AOP | Aspect Oriented Programming 的简写，译为“面向切面编程”。AOP 用来封装多个类的公共行为，将那些与业务无关，却为业务模块所共同调用的逻辑封装起来，减少系统的重复代码，降低模块间的耦合度。另外，AOP 还解决一些系统层面上的问题，比如日志、事务、权限等。 |  
 
 Spring 是一种基于 Bean 的编程技术，它深刻地改变着 Java 开发世界。Spring 使用简单、基本的 Java Bean 来完成以前只有 EJB 才能完成的工作，使得很多复杂的代码变得优雅和简洁，避免了 EJB 臃肿、低效的开发模式，极大的方便项目的后期维护、升级和扩展。
 
@@ -92,13 +92,13 @@ Spring 提供面向切面编程，可以方便地实现对程序进行权限拦截和运行监控等功能。
 
 Spring 框架基本涵盖了企业级应用开发的各个方面，它包含了 20 多个不同的模块。
 
-<pre>spring-aop      spring-context-indexer  spring-instrument  spring-orm    spring-web
-spring-aspects  spring-context-support  spring-jcl         spring-oxm    spring-webflux
-spring-beans    spring-core             spring-jdbc        spring-r2dbc  spring-webmvc
-spring-context  spring-expression       spring-jms         spring-test   spring-websocket
-spring-messaging   spring-tx  </pre>
+ spring-aop      spring-context-indexer  spring-instrument  spring-orm    spring-web  
+spring-aspects  spring-context-support  spring-jcl         spring-oxm    spring-webflux  
+spring-beans    spring-core             spring-jdbc        spring-r2dbc  spring-webmvc  
+spring-context  spring-expression       spring-jms         spring-test   spring-websocket  
+spring-messaging   spring-tx     
 
-![Spring体系结构图](http://c.biancheng.net/uploads/allimg/220119/163550G63-0.png)
+![Spring体系结构图](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/163550G63-0.png)  
 图1：Spring架构图
 
 上图中包含了 Spring 框架的所有模块，这些模块可以满足一切企业级应用开发的需求，在开发过程中可以根据需求有选择性地使用所需要的模块。下面分别对这些模块的作用进行简单介绍。
