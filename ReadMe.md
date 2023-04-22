@@ -33,12 +33,10 @@
 ## Java基础
 
 ### 基础知识
-
 * [面向对象基础](docs/Java/basic/面向对象基础.md)
 * [Java基本数据类型](docs/Java/basic/Java基本数据类型.md)
 * [string和包装类](docs/Java/basic/string和包装类.md)
 * [final关键字特性](docs/Java/basic/final关键字特性.md)
-
 * [Java类和包](docs/Java/basic/Java类和包.md)
 * [抽象类和接口](docs/Java/basic/抽象类和接口.md)
 * [代码块和代码执行顺序](docs/Java/basic/代码块和代码执行顺序.md)
