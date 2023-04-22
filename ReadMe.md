@@ -307,7 +307,7 @@ todo
 * [后端技术杂谈：捋一捋大数据研发的基本概念](docs/backend/后端技术杂谈：捋一捋大数据研发的基本概念.md)
 
 ## 分布式
-### 理论
+### 分布式理论
 * [分布式系统理论基础：一致性PC和PC ](docs/distributed/basic/分布式系统理论基础：一致性PC和PC.md)
 * [分布式系统理论基础：CAP ](docs/distributed/basic/分布式系统理论基础：CAP.md)
 * [分布式系统理论基础：时间时钟和事件顺序](docs/distributed/basic/分布式系统理论基础：时间时钟和事件顺序.md)
@@ -316,22 +316,15 @@ todo
 * [分布式系统理论基础：RaftZab ](docs/distributed/basic/分布式系统理论基础：RaftZab.md)
 * [分布式系统理论进阶：Paxos变种和优化 ](docs/distributed/basic/分布式系统理论进阶：Paxos变种和优化.md)
 * [分布式系统理论基础：zookeeper分布式协调服务 ](docs/distributed/basic/分布式系统理论基础：zookeeper分布式协调服务.md)
+* [分布式理论总结](docs/distributed/分布式技术实践总结.md)
 
-* [分布式技术实践总结](docs/distributed/分布式理论总结.md)
-
-### 技术
+### 分布式技术
 * [搞懂分布式技术：分布式系统的一些基本概念](docs/distributed/practice/搞懂分布式技术：分布式系统的一些基本概念.md )
 * [搞懂分布式技术：分布式一致性协议与Paxos，Raft算法](docs/distributed/practice/搞懂分布式技术：分布式一致性协议与Paxos，Raft算法.md)
 * [搞懂分布式技术：初探分布式协调服务zookeeper](docs/distributed/practice/搞懂分布式技术：初探分布式协调服务zookeeper.md )
 * [搞懂分布式技术：ZAB协议概述与选主流程详解](docs/distributed/practice/搞懂分布式技术：ZAB协议概述与选主流程详解.md )
 * [搞懂分布式技术：Zookeeper的配置与集群管理实战](docs/distributed/practice/搞懂分布式技术：Zookeeper的配置与集群管理实战.md)
 * [搞懂分布式技术：Zookeeper典型应用场景及实践](docs/distributed/practice/搞懂分布式技术：Zookeeper典型应用场景及实践.md )
-
-[//]: # (* [搞懂分布式技术：负载均衡概念与主流方案]&#;docs/distributed/practice/搞懂分布式技术：负载均衡概念与主流方案.md&#;)
-
-[//]: # (* [搞懂分布式技术：负载均衡原理剖析 ]&#;docs/distributed/practice/搞懂分布式技术：负载均衡原理剖析.md &#;)
-
-[//]: # (* [搞懂分布式技术：Nginx负载均衡原理与实践 ]&#;docs/distributed/practice/搞懂分布式技术：Nginx负载均衡原理与实践.md&#;)
 * [搞懂分布式技术：LVS实现负载均衡的原理与实践 ](docs/distributed/practice/搞懂分布式技术：LVS实现负载均衡的原理与实践.md )
 * [搞懂分布式技术：分布式session解决方案与一致性hash](docs/distributed/practice/搞懂分布式技术：分布式session解决方案与一致性hash.md)
 * [搞懂分布式技术：分布式ID生成方案 ](docs/distributed/practice/搞懂分布式技术：分布式ID生成方案.md )
@@ -344,8 +337,8 @@ todo
 * [搞懂分布式技术：使用RocketMQ事务消息解决分布式事务 ](docs/distributed/practice/搞懂分布式技术：使用RocketMQ事务消息解决分布式事务.md )
 * [搞懂分布式技术：消息队列因何而生](docs/distributed/practice/搞懂分布式技术：消息队列因何而生.md)
 * [搞懂分布式技术：浅谈分布式消息技术Kafka](docs/distributed/practice/搞懂分布式技术：浅谈分布式消息技术Kafka.md )
+* [分布式技术实践总结](docs/distributed/分布式理论总结.md)
 
-* [分布式理论总结](docs/distributed/分布式技术实践总结.md)
 ## 面试指南
 
 todo
