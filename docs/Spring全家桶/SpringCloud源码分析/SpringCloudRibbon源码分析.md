@@ -945,3 +945,11 @@ getInitialListOfServers是获取初始化的服务列表。
 getUpdatedListOfServers是获取更新的服务列表。
 ServerList有多个实现类，具体用的哪个呢，可以在
 EurekaRibbonClientConfiguration类中找到，这是Ribbon和Eureka结合的自动配置类，但是目前我们没有整合Eureka，是通过配置文件配置，所以会走ConfigurationBasedServerList类。
+
+# 参考文章
+https://lijunyi.xyz/docs/SpringCloud/SpringCloud.html#_2-2-x-%E5%88%86%E6%94%AF
+https://mp.weixin.qq.com/s/2jeovmj77O9Ux96v3A0NtA
+https://juejin.cn/post/6931922457741770760
+https://github.com/D2C-Cai/herring
+http://c.biancheng.net/springcloud
+https://github.com/macrozheng/springcloud-learning

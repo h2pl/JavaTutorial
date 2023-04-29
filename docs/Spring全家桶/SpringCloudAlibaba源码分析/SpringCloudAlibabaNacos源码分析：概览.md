@@ -492,3 +492,10 @@ NACOSÏà¹ØÔ´ÂëÍ¨Ë×Ò×¶®£¬Ã»ÓĞÊ²Ã´¸ßÉîµÄÀíÄî£¬Ò²Ã»ÓĞ½øĞĞ²ã²ã·â×°ºÍ°ü¹ü£¬ÓĞÒ»¶¨±à³Ì¾
 µ±È»£¬Ò²»á´æÔÚÒ»Ğ©²»¿ÉºöÊÓµÄÈ±µã£¬±ÈÈç£¬×¢ÊÍ¹ıÉÙ£¬´úÂë»¹ÓĞºÜ´óµÄÖØ¹¹¿Õ¼ä£¬tenantºÍnamespaceÁ½¸ö¸ÅÄî»ìÏıÊ¹ÓÃ¡£
 
 ¹ØÓÚSpring Cloud Alibaba NacosµÄ½éÉÜµ½´Ë¾Í½áÊøÁË£¬Ï£Íû¶ÔÄãÓĞËù°ïÖú¡£
+# ²Î¿¼ÎÄÕÂ
+https://lijunyi.xyz/docs/SpringCloud/SpringCloud.html#_2-2-x-%E5%88%86%E6%94%AF
+https://mp.weixin.qq.com/s/2jeovmj77O9Ux96v3A0NtA
+https://juejin.cn/post/6931922457741770760
+https://github.com/D2C-Cai/herring
+http://c.biancheng.net/springcloud
+https://github.com/macrozheng/springcloud-learning

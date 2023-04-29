@@ -496,9 +496,18 @@ eureka:
 2\. 重启```micro-service-cloud-gateway-9527，使用浏览器访问“http://eureka7001.com:9527/dept/list”，我们会发现访问报 406 错误，控制台输出如下。
 
 ```2021-10-21 16:25:39.450  INFO 19116 --- [ctor-http-nio-4] net.biancheng.c.filter.MyGlobalFilter    : Thu Oct 21 16:25:39 CST 2021进入自定义的全局过滤器 MyGlobalFilter
-2021-10-21 16:25:39.451  INFO 19116 --- [ctor-http-nio-4] net.biancheng.c.filter.MyGlobalFilter    : 参数 uname 不能为 null！```
+2021-10-21 16:25:39.451  INFO 19116 --- [ctor-http-nio-4] net.biancheng.c.filter.MyGlobalFilter    : 参数 uname 不能为 null！
+```
 
 3\. 使用浏览器访问“http://eureka7001.com:9527/dept/list?uname=123”,结果如下图。
 
 ![自定义全局网关过滤器](http://c.biancheng.net/uploads/allimg/211210/101P43096-6.png)
 图7：自定义全局网关过滤器
+
+# 参考文章
+https://lijunyi.xyz/docs/SpringCloud/SpringCloud.html#_2-2-x-%E5%88%86%E6%94%AF
+https://mp.weixin.qq.com/s/2jeovmj77O9Ux96v3A0NtA
+https://juejin.cn/post/6931922457741770760
+https://github.com/D2C-Cai/herring
+http://c.biancheng.net/springcloud
+https://github.com/macrozheng/springcloud-learning

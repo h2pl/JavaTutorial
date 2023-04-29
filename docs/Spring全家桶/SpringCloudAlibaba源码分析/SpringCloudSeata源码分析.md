@@ -995,3 +995,11 @@ public BranchStatus branchRollback(BranchType branchType, String xid, long branc
 
 
 最终回滚方法调用的是UndoLogManager.undo(dataSourceProxy, xid, branchId);![SpringCloud Alibaba系列——17Seata AT模式源码分析（下）-开源基础软件社区](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/4842a0701546824cf2720855d8310a1274c576.jpg "SpringCloud Alibaba系列——17Seata AT模式源码分析（下）-开源基础软件社区")判断undolog是否存在，存在则删除对应undolog，并一起提交，到此seata的AT模式源码解析完毕。
+
+# 参考文章
+https://lijunyi.xyz/docs/SpringCloud/SpringCloud.html#_2-2-x-%E5%88%86%E6%94%AF
+https://mp.weixin.qq.com/s/2jeovmj77O9Ux96v3A0NtA
+https://juejin.cn/post/6931922457741770760
+https://github.com/D2C-Cai/herring
+http://c.biancheng.net/springcloud
+https://github.com/macrozheng/springcloud-learning

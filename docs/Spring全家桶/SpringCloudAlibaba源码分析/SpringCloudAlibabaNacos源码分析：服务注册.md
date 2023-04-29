@@ -347,3 +347,11 @@ task任务我们需要看一下run方法：
 也就是在对象初始化的时候就进行启动一个线程池，去运行notifier对应的方法。这个run方法就是这样run的。启动后就会实时监听异步队列。这样写的好处，就是将写和处理完全隔离了。通过监听高性能的内存队列，来处理这个事情，他这样的好处，1、提高性能
 
 ![image.png](https://java-tutorial.oss-cn-shanghai.aliyuncs.com/e27c8e72b30845c3ab9346b89932fb42.png "image.png")
+
+# 参考文章
+https://lijunyi.xyz/docs/SpringCloud/SpringCloud.html#_2-2-x-%E5%88%86%E6%94%AF
+https://mp.weixin.qq.com/s/2jeovmj77O9Ux96v3A0NtA
+https://juejin.cn/post/6931922457741770760
+https://github.com/D2C-Cai/herring
+http://c.biancheng.net/springcloud
+https://github.com/macrozheng/springcloud-learning

@@ -384,3 +384,9 @@ Zuul中有以下几种典型的过滤器类型。
 #项目源码地址
 
 https://github.com/macrozheng/springcloud-learning
+# 参考文章
+https://lijunyi.xyz/docs/SpringCloud/SpringCloud.html#_2-2-x-%E5%88%86%E6%94%AF
+https://mp.weixin.qq.com/s/2jeovmj77O9Ux96v3A0NtA
+https://juejin.cn/post/6931922457741770760
+https://github.com/D2C-Cai/herring
+http://c.biancheng.net/springcloud

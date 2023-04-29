@@ -480,3 +480,10 @@ Logger.Level 的具体级别如下：
 2021-10-12 14:33:07.991 DEBUG 13388 --- [p-nio-80-exec-2] n.biancheng.c.service.DeptFeignService   : [DeptFeignService#list] [{"deptNo":1,"deptName":"开发部","dbSource":"bianchengbang_jdbc"},{"deptNo":2,"deptName":"人事部","dbSource":"bianchengbang_jdbc"},{"deptNo":3,"deptName":"财务部","dbSource":"bianchengbang_jdbc"},{"deptNo":4,"deptName":"市场部","dbSource":"bianchengbang_jdbc"},{"deptNo":5,"deptName":"运维部","dbSource":"bianchengbang_jdbc"}]
 2021-10-12 14:33:07.991 DEBUG 13388 --- [p-nio-80-exec-2] n.biancheng.c.service.DeptFeignService   : [DeptFeignService#list] <--- END HTTP (341-byte body)```
 ```
+# 参考文章
+https://lijunyi.xyz/docs/SpringCloud/SpringCloud.html#_2-2-x-%E5%88%86%E6%94%AF
+https://mp.weixin.qq.com/s/2jeovmj77O9Ux96v3A0NtA
+https://juejin.cn/post/6931922457741770760
+https://github.com/D2C-Cai/herring
+http://c.biancheng.net/springcloud
+https://github.com/macrozheng/springcloud-learning

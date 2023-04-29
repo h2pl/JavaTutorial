@@ -135,3 +135,9 @@ Spring Boot 与 Spring Cloud 的版本对应关系如下表（参考自[ ](https://spring.io/pr
 }
 
 ````
+# 参考文章
+https://lijunyi.xyz/docs/SpringCloud/SpringCloud.html#_2-2-x-%E5%88%86%E6%94%AF
+https://mp.weixin.qq.com/s/2jeovmj77O9Ux96v3A0NtA
+https://juejin.cn/post/6931922457741770760
+https://github.com/D2C-Cai/herring
+http://c.biancheng.net/springcloud
