@@ -316,6 +316,7 @@
 * [SpringCloudAlibaba nacos源码分析：服务发现](docs/Spring全家桶/SpringCloudAlibaba源码分析/SpringCloudAlibaba nacos源码分析：服务发现.md)
 * [SpringCloudAlibaba nacos源码分析：服务注册](docs/Spring全家桶/SpringCloudAlibaba源码分析/SpringCloudAlibaba nacos源码分析：服务注册.md)
 * [SpringCloudAlibaba nacos源码分析：配置中心](docs/Spring全家桶/SpringCloudAlibaba源码分析/SpringCloudAlibaba nacos源码分析：配置中心.md)
+* [Spring Cloud RocketMQ源码分析](docs/Spring全家桶/SpringCloudAlibaba源码分析/Spring Cloud RocketMQ源码分析.md)
 
 todo
 
