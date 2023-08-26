@@ -394,6 +394,25 @@ todo
 # 消息队列
 
 ## Kafka
+* [消息队列kafka详解：Kafka 快速上手（Java版）](docs/mq/kafka/消息队列kafka详解：Kafka 快速上手（Java版）.md)
+* [消息队列kafka详解：Kafka一条消息存到broker的过程](docs/mq/kafka/消息队列kafka详解：Kafka一条消息存到broker的过程.md)
+* [消息队列kafka详解：消息队列kafka详解：Kafka介绍](docs/mq/kafka/消息队列kafka详解：Kafka介绍.md)
+* [消息队列kafka详解：Kafka原理分析总结篇](docs/mq/kafka/消息队列kafka详解：Kafka原理分析总结篇.md)
+* [消息队列kafka详解：Kafka常见命令及配置总结](docs/mq/kafka/消息队列kafka详解：Kafka常见命令及配置总结.md)
+* [消息队列kafka详解：Kafka架构介绍](docs/mq/kafka/消息队列kafka详解：Kafka架构介绍.md)
+* [消息队列kafka详解：Kafka的集群工作原理](docs/mq/kafka/消息队列kafka详解：Kafka的集群工作原理.md)
+* [消息队列kafka详解：Kafka重要知识点+面试题大全](docs/mq/kafka/消息队列kafka详解：Kafka重要知识点+面试题大全.md)
+* [消息队列kafka详解：如何实现延迟队列](docs/mq/kafka/消息队列kafka详解：如何实现延迟队列.md)
+* [消息队列kafka详解：如何实现死信队列](docs/mq/kafka/消息队列kafka详解：如何实现死信队列.md)
+
+## RocketMQ
+* [RocketMQ系列：事务消息（最终一致性）](docs/mq/RocketMQ/RocketMQ系列：事务消息（最终一致性）.md)
+* [RocketMQ系列：基本概念](docs/mq/RocketMQ/RocketMQ系列：基本概念.md)
+* [RocketMQ系列：广播与延迟消息](docs/mq/RocketMQ/RocketMQ系列：广播与延迟消息.md)
+* [RocketMQ系列：批量发送与过滤](docs/mq/RocketMQ/RocketMQ系列：批量发送与过滤.md)
+* [RocketMQ系列：消息的生产与消费](docs/mq/RocketMQ/RocketMQ系列：消息的生产与消费.md)
+* [RocketMQ系列：环境搭建](docs/mq/RocketMQ/RocketMQ系列：环境搭建.md)
+* [RocketMQ系列：顺序消费](docs/mq/RocketMQ/RocketMQ系列：顺序消费.md)
 
 # 大后端
 * [后端技术杂谈开篇：云计算，大数据与AI的故事](docs/backend/后端技术杂谈开篇：云计算，大数据与AI的故事.md)
