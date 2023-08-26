@@ -394,7 +394,7 @@ todo
 # 消息队列
 
 ## Kafka
-* [消息队列kafka详解：Kafka 快速上手（Java版）](docs/mq/kafka/消息队列kafka详解：Kafka 快速上手（Java版）.md)
+* [消息队列kafka详解：Kafka快速上手（Java版）](docs/mq/kafka/消息队列kafka详解：Kafka快速上手（Java版）.md)
 * [消息队列kafka详解：Kafka一条消息存到broker的过程](docs/mq/kafka/消息队列kafka详解：Kafka一条消息存到broker的过程.md)
 * [消息队列kafka详解：消息队列kafka详解：Kafka介绍](docs/mq/kafka/消息队列kafka详解：Kafka介绍.md)
 * [消息队列kafka详解：Kafka原理分析总结篇](docs/mq/kafka/消息队列kafka详解：Kafka原理分析总结篇.md)
