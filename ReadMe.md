@@ -30,6 +30,16 @@
 </a>
 </p>
 
+<p>
+    
+<p align="center">
+<a href="https://github.com/h2pl/Java-Tutorial" target="_blank">
+    <img src="https://i.miji.bid/2025/04/16/ef9a0076f464d69ba16e99e7e8f26a87.png" alt="ef9a0076f464d69ba16e99e7e8f26a87.png" border="0" />
+</a>
+</p>
+
+Swiftproxy-90M+全球高质量纯净住宅IP，注册可领免费500MB测试流量，动态流量不过期！使用折扣码：GHB5立享九折优惠！
+
 # Java基础
 
 ## 基础知识
