@@ -1,4 +1,3 @@
-<div align="center">
 <a href="https://github.com/h2pl/Java-Tutorial">
     <img src="https://java-tutorial.oss-cn-shanghai.aliyuncs.com/Javatutorial-v1.png" width="300" height="300"/>
 </a>
@@ -33,8 +32,8 @@
 <p>
     
 <p align="center">
-<a href="https://github.com/h2pl/Java-Tutorial" target="_blank">
-    <img src="https://i.miji.bid/2025/04/16/ef9a0076f464d69ba16e99e7e8f26a87.png" alt="ef9a0076f464d69ba16e99e7e8f26a87.png" border="0" />
+<a href="https://www.swiftproxy.net/?ref=h2pl" target="_blank">
+    <img src="https://github.com/user-attachments/assets/74d03bb9-b6a2-438b-a834-56cd8f277e2f" alt="ef9a0076f464d69ba16e99e7e8f26a87.png" border="0" />
 </a>
 </p>
 
