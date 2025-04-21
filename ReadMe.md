@@ -1,3 +1,4 @@
+<div align="center">
 <a href="https://github.com/h2pl/Java-Tutorial">
     <img src="https://java-tutorial.oss-cn-shanghai.aliyuncs.com/Javatutorial-v1.png" width="300" height="300"/>
 </a>
