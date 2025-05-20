@@ -32,14 +32,6 @@
 
 <p>
     
-<p align="center">
-<a href="https://www.swiftproxy.net/?ref=h2pl" target="_blank">
-    <img src="https://github.com/user-attachments/assets/74d03bb9-b6a2-438b-a834-56cd8f277e2f" alt="ef9a0076f464d69ba16e99e7e8f26a87.png" border="0" />
-</a>
-</p>
-
-Swiftproxy-90M+全球高质量纯净住宅IP，注册可领免费500MB测试流量，动态流量不过期！使用折扣码：GHB5立享九折优惠！
-
 # Java基础
 
 ## 基础知识
